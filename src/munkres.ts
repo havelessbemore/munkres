@@ -79,19 +79,12 @@ export class Munkres {
 
   protected _step3(): number {
     const starX = this.starX;
-    const starY = this.starY;
     const X = starX.length;
-    const Y = starY.length;
 
-    // Look for stars in the matrix
+    // Count stars
     let stars = 0;
     for (let x = 0; x < X; ++x) {
-      for (let y = 0; y < Y; ++y) {
-        if (starX[x] == y) {
-          ++stars;
-          break;
-        }
-      }
+      stars += +(starX[x] >= 0);
     }
 
     // Go to DONE if all columns starred.
