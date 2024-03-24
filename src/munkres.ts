@@ -43,7 +43,7 @@ export class Munkres {
     }
 
     console.log("DONE");
-    console.log(toString(this.mat, this.mask));
+    console.log(toString(this.mat, this.starX, this.primeY));
   }
 
   protected _steps1And2(): number {
@@ -261,7 +261,11 @@ export class Munkres {
   }
 }
 
-export function toString(mat: CostMatrix, mask: number[][]): string {
+export function toString(
+  mat: CostMatrix,
+  starX: number[],
+  primeY: number[]
+): string {
   const buf: string[] = [""];
   const X = mat[0].length;
   const Y = mat.length;
@@ -278,15 +282,10 @@ export function toString(mat: CostMatrix, mask: number[][]): string {
   for (let y = 0; y < Y; ++y) {
     for (let x = 0; x < X; ++x) {
       let val = `${mat[y][x]}`;
-      switch (mask[y][x]) {
-        case Zero.STAR:
-          val += "*";
-          break;
-        case Zero.PRIME:
-          val += '"';
-          break;
-        default:
-          break;
+      if (starX[x] == y) {
+        val += "*";
+      } else if (primeY[y] == x) {
+        val += '"';
       }
       buf.push(val.padEnd(cw, " "));
     }
