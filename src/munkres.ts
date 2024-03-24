@@ -2,19 +2,19 @@ import { CostMatrix } from "./types/costMatrix";
 import { getMin } from "./utils/array";
 
 export class Munkres {
+  protected covY: number[];
   protected mat: CostMatrix;
   protected primeY: number[];
   protected starX: number[];
-  protected starY: number[];
 
   constructor(mat: CostMatrix) {
     const X = mat[0].length;
     const Y = mat.length;
 
+    this.covY = new Array(Y).fill(-1);
     this.mat = mat;
     this.primeY = new Array(Y).fill(-1);
     this.starX = new Array(X).fill(-1);
-    this.starY = new Array(Y).fill(-1);
   }
 
   assign(): void {
@@ -41,11 +41,11 @@ export class Munkres {
   }
 
   protected _steps1And2(): number {
+    const covY = this.covY;
     const mat = this.mat;
     const starX = this.starX;
-    const starY = this.starY;
     const X = starX.length;
-    const Y = starY.length;
+    const Y = covY.length;
 
     // Step 1: Subtract each row's min from the row
     for (let y = 0; y < Y; ++y) {
@@ -93,9 +93,9 @@ export class Munkres {
   }
 
   protected _step4(): number {
+    const covY = this.covY;
     const primeY = this.primeY;
     const starX = this.starX;
-    const starY = this.starY;
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -120,16 +120,16 @@ export class Munkres {
       }
 
       // Cover the row and uncover the star's column
-      starY[y] = sx;
+      covY[y] = sx;
       starX[sx] = -1;
     }
   }
 
   protected _step5(y: number, x: number): void {
+    const covY = this.covY;
     const path: number[] = [y, x];
     const primeY = this.primeY;
     const starX = this.starX;
-    const starY = this.starY;
 
     // Find alternating path between
     // stars in columns and primes in rows
@@ -151,21 +151,20 @@ export class Munkres {
     }
 
     primeY.fill(-1);
-    // starX.fill(-1);
-    starY.fill(-1);
+    covY.fill(-1);
   }
 
   protected _step6(): number {
+    const covY = this.covY;
     const mat = this.mat;
     const starX = this.starX;
-    const starY = this.starY;
     const X = starX.length;
-    const Y = starY.length;
+    const Y = covY.length;
 
     const min = this._findMinUncovered();
     for (let y = 0; y < Y; ++y) {
       for (let x = 0; x < X; ++x) {
-        if (starY[y] >= 0) {
+        if (covY[y] >= 0) {
           mat[y][x] += min;
         }
         if (starX[x] < 0) {
@@ -178,15 +177,15 @@ export class Munkres {
   }
 
   protected _findMinUncovered(): number {
+    const covY = this.covY;
     const mat = this.mat;
     const starX = this.starX;
-    const starY = this.starY;
     const X = starX.length;
-    const Y = starY.length;
+    const Y = covY.length;
 
     let min = Infinity;
     for (let y = 0; y < Y; ++y) {
-      if (starY[y] >= 0) {
+      if (covY[y] >= 0) {
         continue;
       }
       const row = mat[y];
@@ -214,14 +213,14 @@ export class Munkres {
   }
 
   protected _findUncoveredZero(): [number, number] {
+    const covY = this.covY;
     const mat = this.mat;
     const starX = this.starX;
-    const starY = this.starY;
     const X = starX.length;
-    const Y = starY.length;
+    const Y = covY.length;
 
     for (let y = 0; y < Y; ++y) {
-      if (starY[y] >= 0) {
+      if (covY[y] >= 0) {
         continue;
       }
       const row = mat[y];
