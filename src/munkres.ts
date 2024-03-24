@@ -1,9 +1,7 @@
 import { CostMatrix } from "./types/costMatrix";
-import { Zero } from "./types/zero";
 import { getMin } from "./utils/array";
 
 export class Munkres {
-  protected mask: number[][];
   protected mat: CostMatrix;
   protected primeY: number[];
   protected starX: number[];
@@ -12,11 +10,7 @@ export class Munkres {
   constructor(mat: CostMatrix) {
     const X = mat[0].length;
     const Y = mat.length;
-    const mask = new Array(Y);
-    for (let y = 0; y < Y; ++y) {
-      mask[y] = new Array(X).fill(Zero.NONE);
-    }
-    this.mask = mask;
+
     this.mat = mat;
     this.primeY = new Array(Y).fill(-1);
     this.starX = new Array(X).fill(-1);
@@ -47,7 +41,6 @@ export class Munkres {
   }
 
   protected _steps1And2(): number {
-    const mask = this.mask;
     const mat = this.mat;
     const starX = this.starX;
     const starY = this.starY;
@@ -69,11 +62,8 @@ export class Munkres {
       const row = mat[y];
       for (let x = 0; x < X; ++x) {
         if (row[x] == 0 && starX[x] < 0) {
-          // Cover the column and row
-          starX[x] = y;
-
           // Star the zero
-          mask[y][x] = Zero.STAR;
+          starX[x] = y;
           ++stars;
 
           // Go to next row
@@ -88,7 +78,6 @@ export class Munkres {
   }
 
   protected _step3(): number {
-    const mask = this.mask;
     const starX = this.starX;
     const starY = this.starY;
     const X = starX.length;
@@ -98,12 +87,8 @@ export class Munkres {
     let stars = 0;
     for (let x = 0; x < X; ++x) {
       for (let y = 0; y < Y; ++y) {
-        if (mask[y][x] == Zero.STAR) {
-          // Cover the column
-          starX[x] = y;
+        if (starX[x] == y) {
           ++stars;
-
-          // Go to next column
           break;
         }
       }
@@ -161,20 +146,19 @@ export class Munkres {
       path.push(y, x);
     }
 
-    const mask = this.mask;
     const N = path.length;
     for (let i = 1; i < N; ++i) {
       y = path[i - (i & 1)];
       x = path[i - (i ^ 1)];
       if (starX[x] == y) {
-        mask[y][x] = Zero.NONE;
+        starX[x] = -1;
       } else {
-        mask[y][x] = Zero.STAR;
+        starX[x] = y;
       }
     }
 
     primeY.fill(-1);
-    starX.fill(-1);
+    // starX.fill(-1);
     starY.fill(-1);
   }
 
