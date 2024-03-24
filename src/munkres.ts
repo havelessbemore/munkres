@@ -226,11 +226,11 @@ export class Munkres {
   }
 
   protected _findStarInRow(y: number): number {
-    const row = this.mask[y];
-    const X = row.length;
+    const starX = this.starX;
+    const X = starX.length;
 
     for (let x = 0; x < X; ++x) {
-      if (row[x] == Zero.STAR) {
+      if (starX[x] == y) {
         return x;
       }
     }
