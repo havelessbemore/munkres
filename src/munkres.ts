@@ -115,7 +115,6 @@ export class Munkres {
   }
 
   protected _step4(): number {
-    const mask = this.mask;
     const primeY = this.primeY;
     const starX = this.starX;
     const starY = this.starY;
@@ -132,7 +131,6 @@ export class Munkres {
 
       // Prime the zero
       primeY[y] = x;
-      mask[y][x] = Zero.PRIME;
 
       // Find a star in the same row
       const sx = this._findStarInRow(y);
