@@ -5,9 +5,9 @@ import { getMin } from "./utils/array";
 export class Munkres {
   protected mask: number[][];
   protected mat: CostMatrix;
-  protected covY: number[];
   protected primeY: number[];
   protected starX: number[];
+  protected starY: number[];
 
   constructor(mat: CostMatrix) {
     const X = mat[0].length;
@@ -20,7 +20,7 @@ export class Munkres {
     this.mat = mat;
     this.primeY = new Array(Y).fill(-1);
     this.starX = new Array(X).fill(-1);
-    this.covY = new Array(Y).fill(-1);
+    this.starY = new Array(Y).fill(-1);
   }
 
   assign(): void {
@@ -50,9 +50,9 @@ export class Munkres {
     const mask = this.mask;
     const mat = this.mat;
     const starX = this.starX;
-    const covY = this.covY;
+    const starY = this.starY;
     const X = starX.length;
-    const Y = covY.length;
+    const Y = starY.length;
 
     // Step 1: Subtract each row's min from the row
     for (let y = 0; y < Y; ++y) {
@@ -90,9 +90,9 @@ export class Munkres {
   protected _step3(): number {
     const mask = this.mask;
     const starX = this.starX;
-    const covY = this.covY;
+    const starY = this.starY;
     const X = starX.length;
-    const Y = covY.length;
+    const Y = starY.length;
 
     // Look for stars in the matrix
     let stars = 0;
@@ -118,7 +118,7 @@ export class Munkres {
     const mask = this.mask;
     const primeY = this.primeY;
     const starX = this.starX;
-    const covY = this.covY;
+    const starY = this.starY;
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -144,7 +144,7 @@ export class Munkres {
       }
 
       // Cover the row and uncover the star's column
-      covY[y] = sx;
+      starY[y] = sx;
       starX[sx] = -1;
     }
   }
@@ -153,6 +153,7 @@ export class Munkres {
     const path: number[] = [y, x];
     const primeY = this.primeY;
     const starX = this.starX;
+    const starY = this.starY;
 
     // Find alternating path between
     // stars in columns and primes in rows
@@ -167,25 +168,29 @@ export class Munkres {
     for (let i = 1; i < N; ++i) {
       y = path[i - (i & 1)];
       x = path[i - (i ^ 1)];
-      mask[y][x] = mask[y][x] == Zero.STAR ? Zero.NONE : Zero.STAR;
+      if (starX[x] == y) {
+        mask[y][x] = Zero.NONE;
+      } else {
+        mask[y][x] = Zero.STAR;
+      }
     }
 
     primeY.fill(-1);
-    this.starX.fill(-1);
-    this.covY.fill(-1);
+    starX.fill(-1);
+    starY.fill(-1);
   }
 
   protected _step6(): number {
     const mat = this.mat;
     const starX = this.starX;
-    const covY = this.covY;
+    const starY = this.starY;
     const X = starX.length;
-    const Y = covY.length;
+    const Y = starY.length;
 
     const min = this._findMinUncovered();
     for (let y = 0; y < Y; ++y) {
       for (let x = 0; x < X; ++x) {
-        if (covY[y] >= 0) {
+        if (starY[y] >= 0) {
           mat[y][x] += min;
         }
         if (starX[x] < 0) {
@@ -200,13 +205,13 @@ export class Munkres {
   protected _findMinUncovered(): number {
     const mat = this.mat;
     const starX = this.starX;
-    const covY = this.covY;
+    const starY = this.starY;
     const X = starX.length;
-    const Y = covY.length;
+    const Y = starY.length;
 
     let min = Infinity;
     for (let y = 0; y < Y; ++y) {
-      if (covY[y] >= 0) {
+      if (starY[y] >= 0) {
         continue;
       }
       const row = mat[y];
@@ -236,12 +241,12 @@ export class Munkres {
   protected _findUncoveredZero(): [number, number] {
     const mat = this.mat;
     const starX = this.starX;
-    const covY = this.covY;
+    const starY = this.starY;
     const X = starX.length;
-    const Y = covY.length;
+    const Y = starY.length;
 
     for (let y = 0; y < Y; ++y) {
-      if (covY[y] >= 0) {
+      if (starY[y] >= 0) {
         continue;
       }
       const row = mat[y];
@@ -274,10 +279,10 @@ export function toString(mat: CostMatrix, mask: number[][]): string {
     for (let x = 0; x < X; ++x) {
       let val = `${mat[y][x]}`;
       switch (mask[y][x]) {
-        case 1:
+        case Zero.STAR:
           val += "*";
           break;
-        case 2:
+        case Zero.PRIME:
           val += '"';
           break;
         default:
