@@ -36,7 +36,7 @@ export class Munkres {
     rowReduction(mat);
     colReduction(mat);
 
-    // Step 2: Look for zeros to star in the matrix.
+    // Step 2: Look for zeros to star.
     // There can only be 1 star in a column / row.
     let stars = 0;
     for (let y = 0; y < Y; ++y) {
@@ -54,7 +54,7 @@ export class Munkres {
       }
     }
 
-    // Check if all columns have a star
+    // Return the number of stars found
     return stars;
   }
 
@@ -70,6 +70,8 @@ export class Munkres {
     while (stars < X) {
       // Find an uncovered zero
       const [y, x] = this._findUncoveredZero(covY);
+
+      // If not found
       if (y < 0) {
         this._step6(covY);
         continue;
@@ -81,19 +83,20 @@ export class Munkres {
       // Find a star in the same row
       const sx = starY[y];
 
-      // If star not found
-      if (sx < 0) {
-        covY.fill(false);
+      // If star found
+      if (sx >= 0) {
+        // Cover the row and remove the star
+        covY[y] = true;
+        starX[sx] = -1;
+        starY[y] = -1;
+        --stars;
+      } else {
+        // Replace stars with primes and reset coverage
         this._step5(y, x, primeY);
+        covY.fill(false);
+        primeY.fill(-1);
         ++stars;
-        continue;
       }
-
-      // Cover the row and unstar the zero
-      covY[y] = true;
-      starX[sx] = -1;
-      starY[y] = -1;
-      --stars;
     }
 
     console.log("DONE");
@@ -105,16 +108,13 @@ export class Munkres {
     const starX = this.starX;
     const starY = this.starY;
 
-    // Find alternating path between
+    // Create alternating path between
     // stars in columns and primes in rows
     while (starX[x] >= 0) {
       y = starX[x];
       x = primeY[y];
       path.push(y, x);
     }
-
-    // Reset primes
-    primeY.fill(-1);
 
     // Replace stars with primes
     const N = path.length;
