@@ -1,5 +1,6 @@
 import { CostMatrix } from "./types/costMatrix";
 import { getMin } from "./utils/array";
+import { copy } from "./utils/matrix";
 
 export class Munkres {
   protected covY: number[];
@@ -11,16 +12,17 @@ export class Munkres {
     const X = mat[0].length;
     const Y = mat.length;
 
+    this.mat = copy(mat);
     this.covY = new Array(Y).fill(-1);
-    this.mat = mat;
     this.primeY = new Array(Y).fill(-1);
     this.starX = new Array(X).fill(-1);
   }
 
-  assign(): void {
+  run(): [number, number][] {
     let step = this._steps1And2();
 
     while (step != 7) {
+      console.log(toString(this.mat, this.starX, this.primeY));
       switch (step) {
         case 3:
           step = this._step3();
@@ -38,6 +40,16 @@ export class Munkres {
 
     console.log("DONE");
     console.log(toString(this.mat, this.starX, this.primeY));
+
+    // Get assignments
+    const starX = this.starX;
+    const X = starX.length;
+    const pairs: [number, number][] = new Array(X);
+    for (let x = 0; x < X; ++x) {
+      pairs[x] = [starX[x], x];
+    }
+
+    return pairs;
   }
 
   protected _steps1And2(): number {
@@ -47,12 +59,23 @@ export class Munkres {
     const X = starX.length;
     const Y = covY.length;
 
-    // Step 1: Subtract each row's min from the row
+    // Step 1a: Row reduction
     for (let y = 0; y < Y; ++y) {
       const row = mat[y];
       const min = getMin(row)!;
       for (let x = 0; x < X; ++x) {
         row[x] -= min;
+      }
+    }
+
+    // Step 1b: Column reduction
+    for (let x = 0; x < X; ++x) {
+      let min = Infinity;
+      for (let y = 0; y < Y; ++y) {
+        min = min <= mat[y][x] ? min : mat[y][x];
+      }
+      for (let y = 0; y < Y; ++y) {
+        mat[y][x] -= min;
       }
     }
 
