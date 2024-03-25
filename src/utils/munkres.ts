@@ -18,22 +18,24 @@ import { map } from "./matrix";
 export function findUncoveredZeroOrMin(
   mat: CostMatrix,
   primeY: number[],
-  starX: number[]
+  starX: number[],
+  covX: boolean[],
+  covY: boolean[]
 ): [number, number] {
-  const X = starX.length;
-  const Y = primeY.length;
+  const X = covX.length;
+  const Y = covY.length;
 
   let minX = -1;
   let minY = -1;
   let min = Infinity;
 
   for (let y = 0; y < Y; ++y) {
-    if (primeY[y] >= 0) {
+    if (covY[y]) {
       continue;
     }
     const vals = mat[y];
     for (let x = 0; x < X; ++x) {
-      if (starX[x] >= 0) {
+      if (covX[x]) {
         continue;
       }
       if (vals[x] == 0) {
@@ -101,6 +103,36 @@ export function steps2to3(
   return stars;
 }
 
+export function step2(mat: CostMatrix, starX: number[], starY: number[]): void {
+  const X = starX.length;
+  const Y = starY.length;
+
+  for (let y = 0; y < Y; ++y) {
+    const vals = mat[y];
+    for (let x = 0; x < X; ++x) {
+      if (vals[x] == 0 && starX[x] < 0) {
+        starX[x] = y;
+        starY[y] = x;
+        break;
+      }
+    }
+  }
+}
+
+export function step3(starX: number[], covX: boolean[]): number {
+  const X = starX.length;
+
+  let stars = 0;
+  for (let x = 0; x < X; ++x) {
+    if (starX[x] >= 0) {
+      covX[x] = true;
+      ++stars;
+    }
+  }
+
+  return stars;
+}
+
 /**
  * Find and augment assignments until an optimal set is found.
  *
@@ -122,18 +154,20 @@ export function step4(
   stars: number,
   mat: CostMatrix,
   starX: number[],
-  starY: number[]
+  starY: number[],
+  covX: boolean[],
+  covY: boolean[]
 ): void {
   const X = starX.length;
   const primeY = new Array<number>(starY.length).fill(-1);
 
   while (stars < X) {
     // Find an uncovered zero
-    const [y, x] = findUncoveredZeroOrMin(mat, primeY, starX);
+    const [y, x] = findUncoveredZeroOrMin(mat, primeY, starX, covX, covY);
 
     // If not found
     if (mat[y][x] != 0) {
-      step6(mat[y][x], mat, primeY, starX);
+      step6(mat[y][x], mat, primeY, starX, covX, covY);
       continue;
     }
 
@@ -145,15 +179,16 @@ export function step4(
 
     // If star found
     if (sx >= 0) {
-      // Cover the row and remove the star
-      starX[sx] = -1;
-      starY[y] = -1;
-      --stars;
+      // Cover the row and uncover the column
+      covX[sx] = false;
+      covY[y] = true;
     } else {
       // Replace stars with primes and reset coverage
       step5(y, x, primeY, starX, starY);
+      covY.fill(false);
+      covX.fill(false);
       primeY.fill(-1);
-      ++stars;
+      stars = step3(starX, covX);
     }
   }
 }
@@ -184,14 +219,18 @@ export function step5(
     throw new Error("Input must be prime.");
   }
 
+  let del = 1;
   for (let py = starX[x]; py >= 0; py = starX[x]) {
     starX[x] = y;
     starY[y] = x;
     x = primeY[py];
     y = py;
+    ++del;
   }
   starX[x] = y;
   starY[y] = x;
+
+  console.log("D", del);
 }
 
 /**
@@ -211,18 +250,20 @@ export function step6(
   val: number,
   mat: CostMatrix,
   primeY: number[],
-  starX: number[]
+  starX: number[],
+  covX: boolean[],
+  covY: boolean[]
 ): void {
-  const X = starX.length;
-  const Y = primeY.length;
+  const X = covX.length;
+  const Y = covY.length;
 
   for (let y = 0; y < Y; ++y) {
     const vals = mat[y];
     for (let x = 0; x < X; ++x) {
-      if (starX[x] < 0) {
+      if (!covX[x]) {
         vals[x] -= val;
       }
-      if (primeY[y] >= 0) {
+      if (covY[y]) {
         vals[x] += val;
       }
     }
