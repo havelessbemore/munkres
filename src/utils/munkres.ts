@@ -17,8 +17,6 @@ import { map } from "./matrix";
  */
 export function findUncoveredZeroOrMin(
   mat: CostMatrix,
-  primeY: number[],
-  starX: number[],
   covX: boolean[],
   covY: boolean[]
 ): [number, number] {
@@ -79,30 +77,6 @@ export function step1(mat: CostMatrix): void {
  *
  * @returns The number of stars made.
  */
-export function steps2to3(
-  mat: CostMatrix,
-  starX: number[],
-  starY: number[]
-): number {
-  const X = starX.length;
-  const Y = starY.length;
-
-  let stars = 0;
-  for (let y = 0; y < Y; ++y) {
-    const vals = mat[y];
-    for (let x = 0; x < X; ++x) {
-      if (vals[x] == 0 && starX[x] < 0) {
-        starX[x] = y;
-        starY[y] = x;
-        ++stars;
-        break;
-      }
-    }
-  }
-
-  return stars;
-}
-
 export function step2(mat: CostMatrix, starX: number[], starY: number[]): void {
   const X = starX.length;
   const Y = starY.length;
@@ -124,10 +98,8 @@ export function step3(starX: number[], covX: boolean[]): number {
 
   let stars = 0;
   for (let x = 0; x < X; ++x) {
-    if (starX[x] >= 0) {
-      covX[x] = true;
-      ++stars;
-    }
+    covX[x] = starX[x] >= 0;
+    stars += +covX[x];
   }
 
   return stars;
@@ -150,24 +122,21 @@ export function step3(starX: number[], covX: boolean[]): number {
  * @param starX - An array of star x coordinates to y coordinates.
  * @param starY - An array of star y coordinates to x coordinates.
  */
-export function step4(
-  stars: number,
-  mat: CostMatrix,
-  starX: number[],
-  starY: number[],
-  covX: boolean[],
-  covY: boolean[]
-): void {
+export function step4(mat: CostMatrix, starX: number[], starY: number[]): void {
   const X = starX.length;
+  const Y = starY.length;
+  const covX = new Array<boolean>(X).fill(false);
+  const covY = new Array<boolean>(Y).fill(false);
   const primeY = new Array<number>(starY.length).fill(-1);
 
+  let stars = step3(starX, covX);
   while (stars < X) {
     // Find an uncovered zero
-    const [y, x] = findUncoveredZeroOrMin(mat, primeY, starX, covX, covY);
+    const [y, x] = findUncoveredZeroOrMin(mat, covX, covY);
 
     // If not found
     if (mat[y][x] != 0) {
-      step6(mat[y][x], mat, primeY, starX, covX, covY);
+      step6(mat[y][x], mat, covX, covY);
       continue;
     }
 
@@ -180,16 +149,19 @@ export function step4(
     // If star found
     if (sx >= 0) {
       // Cover the row and uncover the column
-      covX[sx] = false;
       covY[y] = true;
-    } else {
-      // Replace stars with primes and reset coverage
-      step5(y, x, primeY, starX, starY);
-      covY.fill(false);
-      covX.fill(false);
-      primeY.fill(-1);
-      stars = step3(starX, covX);
+      covX[sx] = false;
+      continue;
     }
+
+    // Replace stars with primes
+    step5(y, x, primeY, starX, starY);
+    primeY.fill(-1);
+    ++stars;
+
+    // Reset coverage
+    covY.fill(false);
+    step3(starX, covX);
   }
 }
 
@@ -219,18 +191,18 @@ export function step5(
     throw new Error("Input must be prime.");
   }
 
-  let del = 1;
+  let len = 1;
   for (let py = starX[x]; py >= 0; py = starX[x]) {
     starX[x] = y;
     starY[y] = x;
     x = primeY[py];
     y = py;
-    ++del;
+    ++len;
   }
   starX[x] = y;
   starY[y] = x;
 
-  console.log("D", del);
+  console.log(len);
 }
 
 /**
@@ -249,8 +221,6 @@ export function step5(
 export function step6(
   val: number,
   mat: CostMatrix,
-  primeY: number[],
-  starX: number[],
   covX: boolean[],
   covY: boolean[]
 ): void {
