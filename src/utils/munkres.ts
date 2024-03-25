@@ -124,7 +124,6 @@ export function step3(starX: number[], covX: boolean[]): number {
  */
 export function step4(mat: CostMatrix, starX: number[], starY: number[]): void {
   const X = starX.length;
-  const Y = starY.length;
   const covX = new Array<boolean>(X).fill(false);
   const primeY = new Array<number>(starY.length).fill(-1);
 
@@ -152,17 +151,8 @@ export function step4(mat: CostMatrix, starX: number[], starY: number[]): void {
     }
 
     // Replace stars with primes
-    step5(y, x, primeY, starX, starY);
+    step5(y, covX, primeY, starX, starY);
     ++stars;
-
-    // Reset coverage
-    covX.fill(false);
-    for (let y = 0; y < Y; ++y) {
-      if (primeY[y] >= 0) {
-        covX[primeY[y]] = true;
-        primeY[y] = -1;
-      }
-    }
   }
 }
 
@@ -175,35 +165,40 @@ export function step4(mat: CostMatrix, starX: number[], starY: number[]): void {
  * in the matrix, bringing the algorithm closer to an optimal assignment.
  *
  * @param y - The starting prime's y coordinate.
- * @param x - The starting prime's x coordinate.
  * @param primeY - An array of prime y coordinates to x coordinates.
  * @param starX - An array of star x coordinates to y coordinates.
  * @param starY - An array of star y coordinates to x coordinates.
  */
 export function step5(
   y: number,
-  x: number,
+  covX: boolean[],
   primeY: number[],
   starX: number[],
   starY: number[]
 ): void {
   // Sanity check
-  if (primeY[y] != x) {
+  if (primeY[y] < 0) {
     throw new Error("Input must be prime.");
   }
 
-  let len = 1;
-  for (let py = starX[x]; py >= 0; py = starX[x]) {
+  // let len = 0;
+  let sy = y;
+  while (sy >= 0) {
+    // ++len;
+
+    // Go to the next prime
+    const x = primeY[sy];
+    y = sy;
+    sy = starX[x];
+
+    // Mark prime as a star
+    covX[x] = true;
+    primeY[y] = -1;
     starX[x] = y;
     starY[y] = x;
-    x = primeY[py];
-    y = py;
-    ++len;
   }
-  starX[x] = y;
-  starY[y] = x;
 
-  console.log(len);
+  // console.log(len);
 }
 
 /**
