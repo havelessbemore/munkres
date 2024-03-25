@@ -28,12 +28,12 @@ describe(Munkres.name, () => {
         [5, 2, 3],
         [9, 4, 8],
       ];
-      const algo = new Munkres(costs);
-      const res = algo.run();
+      const algo = new Munkres();
+      const res = algo.run(costs);
       expect(res).toEqual([
         [0, 0],
-        [2, 1],
         [1, 2],
+        [2, 1],
       ]);
     });
 
@@ -43,12 +43,12 @@ describe(Munkres.name, () => {
         [2, 4, 6],
         [3, 6, 9],
       ];
-      const algo = new Munkres(costs);
-      const res = algo.run();
+      const algo = new Munkres();
+      const res = algo.run(costs);
       expect(res).toEqual([
-        [2, 0],
-        [1, 1],
         [0, 2],
+        [1, 1],
+        [2, 0],
       ]);
     });
 
@@ -58,8 +58,8 @@ describe(Munkres.name, () => {
         [9, 4, 17],
         [11, 26, 1],
       ];
-      const algo = new Munkres(costs);
-      const res = algo.run();
+      const algo = new Munkres();
+      const res = algo.run(costs);
       expect(res).toEqual([
         [0, 0],
         [1, 1],
@@ -73,8 +73,8 @@ describe(Munkres.name, () => {
         [9, 4, 17],
         [11, 1, 10],
       ];
-      const algo = new Munkres(costs);
-      const res = algo.run();
+      const algo = new Munkres();
+      const res = algo.run(costs);
       expect(res).toEqual([
         [0, 0],
         [1, 1],
@@ -88,12 +88,12 @@ describe(Munkres.name, () => {
         [25, 30, 45],
         [55, 30, 25],
       ];
-      const algo = new Munkres(costs);
-      const res = algo.run();
+      const algo = new Munkres();
+      const res = algo.run(costs);
       expect(res).toEqual([
+        [0, 2],
         [1, 0],
         [2, 1],
-        [0, 2],
       ]);
     });
 
@@ -104,13 +104,13 @@ describe(Munkres.name, () => {
         [8, 6, 5, 9],
         [3, 4, 5, 11],
       ];
-      const algo = new Munkres(costs);
-      const res = algo.run();
+      const algo = new Munkres();
+      const res = algo.run(costs);
       expect(res).toEqual([
-        [3, 0],
         [0, 1],
-        [2, 2],
         [1, 3],
+        [2, 2],
+        [3, 0],
       ]);
     });
 
@@ -120,12 +120,12 @@ describe(Munkres.name, () => {
         [9, 18, 5],
         [6, 14, 3],
       ];
-      const algo = new Munkres(costs);
-      const res = algo.run();
+      const algo = new Munkres();
+      const res = algo.run(costs);
       expect(res).toEqual([
-        [2, 0],
         [0, 1],
         [1, 2],
+        [2, 0],
       ]);
     });
 
@@ -138,14 +138,14 @@ describe(Munkres.name, () => {
         [89, 90, 4, 5, 79],
       ];
 
-      const algo = new Munkres(costs);
-      const res = algo.run();
+      const algo = new Munkres();
+      const res = algo.run(costs);
       const sol = [
         [0, 0],
-        [2, 1],
-        [4, 2],
-        [3, 3],
         [1, 4],
+        [2, 1],
+        [3, 3],
+        [4, 2],
       ];
       expect(res).toEqual(sol);
     });
@@ -167,24 +167,18 @@ describe(Munkres.name, () => {
         [
           [0, 0],
           [1, 1],
+          [2, 3],
           [3, 2],
-          [2, 3],
         ],
         [
-          [0, 0],
-          [3, 1],
-          [2, 2],
-          [2, 3],
-        ],
-        [
-          [3, 0],
-          [1, 1],
           [0, 2],
+          [1, 1],
           [2, 3],
+          [3, 0],
         ],
       ];
-      const algo = new Munkres(costs);
-      const res = algo.run();
+      const algo = new Munkres();
+      const res = algo.run(costs);
       oneOf(res, sols);
     });
 
@@ -195,13 +189,13 @@ describe(Munkres.name, () => {
         [15, 9, 12, 0],
         [27, 5, 13, 0],
       ];
-      const algo = new Munkres(costs);
-      const res = algo.run();
+      const algo = new Munkres();
+      const res = algo.run(costs);
       const sol = [
-        [1, 0],
-        [3, 1],
-        [2, 2],
         [0, 3],
+        [1, 0],
+        [2, 2],
+        [3, 1],
       ];
       expect(res).toEqual(sol);
     });
