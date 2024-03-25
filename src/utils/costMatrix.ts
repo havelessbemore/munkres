@@ -56,7 +56,7 @@ export function createCostMatrix<W, J>(
  *
  * @returns The maximum value, or `undefined` if the matrix is empty.
  */
-export function getMax(mat: CostMatrix): number | undefined {
+export function getMaxCost(mat: CostMatrix): number | undefined {
   const Y = mat.length;
   const X = mat[0]?.length ?? 0;
   if (Y <= 0 || X <= 0) {
@@ -83,7 +83,7 @@ export function getMax(mat: CostMatrix): number | undefined {
  *
  * @returns The maximum value, or `undefined` if the matrix is empty.
  */
-export function getMin(mat: CostMatrix): number | undefined {
+export function getMinCost(mat: CostMatrix): number | undefined {
   const Y = mat.length;
   const X = mat[0]?.length ?? 0;
   if (Y <= 0 || X <= 0) {
@@ -151,7 +151,7 @@ export function invertCostMatrix(mat: CostMatrix, bigVal?: number): void {
     return undefined;
   }
 
-  bigVal = bigVal ?? getMax(mat)!;
+  bigVal = bigVal ?? getMaxCost(mat)!;
   for (let y = 0; y < Y; ++y) {
     const row = mat[y];
     for (let x = 0; x < X; ++x) {

@@ -6,6 +6,8 @@ export type { Matrix } from "./types/matrix";
 // Functions
 export {
   createCostMatrix,
+  getMaxCost,
+  getMinCost,
   invertCostMatrix,
   negateCostMatrix,
 } from "./utils/costMatrix";

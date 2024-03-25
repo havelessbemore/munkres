@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 
 import {
   createCostMatrix,
-  getMax,
-  getMin,
+  getMaxCost,
+  getMinCost,
   invertCostMatrix,
   negateCostMatrix,
   reduceCols,
@@ -70,30 +70,30 @@ describe(`${createCostMatrix.name}()`, () => {
   });
 });
 
-describe(`${getMax.name}()`, () => {
+describe(`${getMaxCost.name}()`, () => {
   it("returns undefined for an empty matrix", () => {
     const mat = [];
-    expect(getMax(mat)).toBeUndefined();
+    expect(getMaxCost(mat)).toBeUndefined();
   });
 
   it("returns undefined for a matrix with empty rows", () => {
     const mat = [[], []];
-    expect(getMax(mat)).toBeUndefined();
+    expect(getMaxCost(mat)).toBeUndefined();
   });
 
   it("handles a matrix with a single element", () => {
     const mat = [[42]];
-    expect(getMax(mat)).toBe(42);
+    expect(getMaxCost(mat)).toBe(42);
   });
 
   it("finds the maximum value in a matrix with a single row", () => {
     const mat = [[1, 2, 3, 4, 5]];
-    expect(getMax(mat)).toBe(5);
+    expect(getMaxCost(mat)).toBe(5);
   });
 
   it("finds the maximum value in a matrix with a single column", () => {
     const mat = [[1], [2], [3], [4], [5]];
-    expect(getMax(mat)).toBe(5);
+    expect(getMaxCost(mat)).toBe(5);
   });
 
   it("finds the maximum value in a matrix of positive numbers", () => {
@@ -102,7 +102,7 @@ describe(`${getMax.name}()`, () => {
       [4, 5, 6],
       [7, 8, 9],
     ];
-    expect(getMax(mat)).toBe(9);
+    expect(getMaxCost(mat)).toBe(9);
   });
 
   it("finds the maximum value in a matrix with negative numbers", () => {
@@ -111,7 +111,7 @@ describe(`${getMax.name}()`, () => {
       [-4, -5, -6],
       [-7, -8, -9],
     ];
-    expect(getMax(mat)).toBe(-1);
+    expect(getMaxCost(mat)).toBe(-1);
   });
 
   it("finds the maximum value in a matrix containing both positive and negative numbers", () => {
@@ -119,34 +119,34 @@ describe(`${getMax.name}()`, () => {
       [-11, 22],
       [33, -44],
     ];
-    expect(getMax(mat)).toBe(33);
+    expect(getMaxCost(mat)).toBe(33);
   });
 });
 
-describe(`${getMin.name}()`, () => {
+describe(`${getMinCost.name}()`, () => {
   it("returns undefined for an empty matrix", () => {
     const mat = [];
-    expect(getMin(mat)).toBeUndefined();
+    expect(getMinCost(mat)).toBeUndefined();
   });
 
   it("returns undefined for a matrix with empty rows", () => {
     const mat = [[], []];
-    expect(getMin(mat)).toBeUndefined();
+    expect(getMinCost(mat)).toBeUndefined();
   });
 
   it("handles a matrix with a single element", () => {
     const mat = [[42]];
-    expect(getMin(mat)).toBe(42);
+    expect(getMinCost(mat)).toBe(42);
   });
 
   it("finds the minimum value in a matrix with a single row", () => {
     const mat = [[3, 2, 1, 4, 5]];
-    expect(getMin(mat)).toBe(1);
+    expect(getMinCost(mat)).toBe(1);
   });
 
   it("finds the minimum value in a matrix with a single column", () => {
     const mat = [[2], [3], [1], [4], [5]];
-    expect(getMin(mat)).toBe(1);
+    expect(getMinCost(mat)).toBe(1);
   });
 
   it("finds the minimum value in a matrix of positive numbers", () => {
@@ -155,7 +155,7 @@ describe(`${getMin.name}()`, () => {
       [4, 1, 6],
       [7, 8, 9],
     ];
-    expect(getMin(mat)).toBe(1);
+    expect(getMinCost(mat)).toBe(1);
   });
 
   it("finds the minimum value in a matrix with negative numbers", () => {
@@ -164,7 +164,7 @@ describe(`${getMin.name}()`, () => {
       [-4, -5, -6],
       [-7, -8, -9],
     ];
-    expect(getMin(mat)).toBe(-9);
+    expect(getMinCost(mat)).toBe(-9);
   });
 
   it("finds the minimum value in a matrix containing both positive and negative numbers", () => {
@@ -172,7 +172,7 @@ describe(`${getMin.name}()`, () => {
       [-11, 22],
       [33, -44],
     ];
-    expect(getMin(mat)).toBe(-44);
+    expect(getMinCost(mat)).toBe(-44);
   });
 });
 
@@ -206,7 +206,7 @@ describe(`${invertCostMatrix.name}()`, () => {
       [1, 2, 3],
       [4, 5, 6],
     ];
-    const maxVal = getMax(mat)!;
+    const maxVal = getMaxCost(mat)!;
     invertCostMatrix(mat);
     expect(mat).toEqual([
       [maxVal - 1, maxVal - 2, maxVal - 3],
@@ -232,7 +232,7 @@ describe(`${invertCostMatrix.name}()`, () => {
       [-1, -2, -3],
       [-4, -5, -6],
     ];
-    const maxVal = getMax(mat)!;
+    const maxVal = getMaxCost(mat)!;
     invertCostMatrix(mat);
     expect(mat).toEqual([
       [maxVal + 1, maxVal + 2, maxVal + 3],
