@@ -168,22 +168,14 @@ export class Munkres {
     const Y = covY.length;
 
     const min = this._findMinUncovered();
-
-    for (let x = 0; x < X; ++x) {
-      if (starX[x] >= 0) {
-        continue;
-      }
-      for (let y = 0; y < Y; ++y) {
-        mat[y][x] -= min;
-      }
-    }
-
     for (let y = 0; y < Y; ++y) {
-      if (!covY[y]) {
-        continue;
-      }
+      const vals = mat[y];
       for (let x = 0; x < X; ++x) {
-        mat[y][x] += min;
+        if (covY[y]) {
+          vals[x] += starX[x] >= 0 ? min : 0;
+        } else if (starX[x] < 0) {
+          vals[x] -= min;
+        }
       }
     }
 
@@ -202,10 +194,10 @@ export class Munkres {
       if (covY[y]) {
         continue;
       }
-      const row = mat[y];
+      const vals = mat[y];
       for (let x = 0; x < X; ++x) {
-        if (starX[x] < 0 && row[x] < min) {
-          min = row[x];
+        if (starX[x] < 0 && vals[x] < min) {
+          min = vals[x];
         }
       }
     }
@@ -224,9 +216,9 @@ export class Munkres {
       if (covY[y]) {
         continue;
       }
-      const row = mat[y];
+      const vals = mat[y];
       for (let x = 0; x < X; ++x) {
-        if (starX[x] < 0 && row[x] == 0) {
+        if (starX[x] < 0 && vals[x] == 0) {
           return [y, x];
         }
       }
