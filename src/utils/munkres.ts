@@ -18,14 +18,18 @@ export function toString(
   }
   cw = `${cw}`.length + 1;
 
+  // Print each value
   for (let y = 0; y < Y; ++y) {
     for (let x = 0; x < X; ++x) {
       let val = `${mat[y][x]}`;
+
+      // Mark value as a star or prime
       if (starX[x] == y) {
         val += "*";
       } else if (primeY[y] == x) {
         val += '"';
       }
+
       buf.push(val.padEnd(cw, " "));
     }
     buf.push("\n");
