@@ -21,13 +21,19 @@ import { step1, step4, steps2to3 } from "./utils/munkres";
  * - Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this description} and enhanced with custom optimizations.
  */
 export function munkres(mat: CostMatrix): [number, number][] {
+  // Check input
   const Y = mat.length;
   const X = mat[0]?.length ?? 0;
+  if (Y <= 0 || X <= 0) {
+    return [];
+  }
+
+  // Make a copy of the matrix
+  mat = copy(mat);
+
+  // Initialize variables
   const starX = new Array<number>(X).fill(-1);
   const starY = new Array<number>(Y).fill(-1);
-
-  // Make a copy of the cost matrix
-  mat = copy(mat);
 
   // Step 1: Reduce
   step1(mat);

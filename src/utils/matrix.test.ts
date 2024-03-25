@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { copy } from "./matrix";
+import { copy, map } from "./matrix";
 
 describe(`${copy.name}()`, () => {
   it("returns an empty matrix when copying an empty matrix", () => {
@@ -71,5 +71,80 @@ describe(`${copy.name}()`, () => {
     // Modifying the duplicate does not affect the original
     duplicate[1][2] = 99;
     expect(original[1][2]).toBeNull();
+  });
+});
+
+describe(`${map.name}()`, () => {
+  it("handles an empty matrix", () => {
+    const matrix: number[][] = [];
+    const result = map(matrix, value => value * 2);
+    const expected: number[][] = [];
+
+    expect(result).toEqual(expected);
+  });
+
+  it("applies a function to every element of a numeric matrix", () => {
+    const matrix = [
+      [1, 2],
+      [3, 4],
+    ];
+    const result = map(matrix, value => value * 2);
+    const expected = [
+      [2, 4],
+      [6, 8],
+    ];
+
+    expect(result).toEqual(expected);
+  });
+
+  it("passes the correct coordinates to the callback function", () => {
+    const matrix = [
+      ["a", "b"],
+      ["c", "d"],
+    ];
+    const coords: [number, number][] = [];
+    map(matrix, (value, y, x) => {
+      coords.push([y, x]);
+      return value.toUpperCase();
+    });
+
+    const expectedCoords = [
+      [0, 0],
+      [0, 1],
+      [1, 0],
+      [1, 1],
+    ];
+
+    expect(coords).toEqual(expectedCoords);
+  });
+
+  it("correctly transforms a matrix of strings", () => {
+    const matrix = [
+      ["hello", "world"],
+      ["foo", "bar"],
+    ];
+    const result = map(matrix, value => value.toUpperCase());
+    const expected = [
+      ["HELLO", "WORLD"],
+      ["FOO", "BAR"],
+    ];
+
+    expect(result).toEqual(expected);
+  });
+
+  it("transforms a matrix with mixed data types", () => {
+    const matrix: (number | string)[][] = [
+      [1, "a"],
+      ["b", 2],
+    ];
+    const result = map(matrix, value => {
+      return typeof value === "number" ? value * 2 : value.toUpperCase();
+    });
+    const expected = [
+      [2, "A"],
+      ["B", 4],
+    ];
+
+    expect(result).toEqual(expected);
   });
 });
