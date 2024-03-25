@@ -104,26 +104,28 @@ export class Munkres {
   }
 
   protected _step5(y: number, x: number, primeY: number[]): void {
-    const path: number[] = [y, x];
+    // Sanity check
+    if (primeY[y] != x) {
+      throw new Error("Input must be prime.");
+    }
+
     const starX = this.starX;
     const starY = this.starY;
 
-    // Create alternating path between
-    // stars in columns and primes in rows
-    while (starX[x] >= 0) {
-      y = starX[x];
-      x = primeY[y];
-      path.push(y, x);
-    }
-
-    // Replace stars with primes
-    const N = path.length;
-    for (let i = 1; i < N; i += 2) {
-      y = path[i - 1];
-      x = path[i];
+    // Starting at a prime, walk an alternating
+    // path between stars in columns and primes in rows,
+    // starring each prime along the way. Continue
+    // until a prime cannot alternate with a star.
+    for (let py = starX[x]; py >= 0; py = starX[x]) {
       starX[x] = y;
       starY[y] = x;
+      x = primeY[py];
+      y = py;
     }
+
+    // Star the last prime
+    starX[x] = y;
+    starY[y] = x;
   }
 
   protected _step6(covY: boolean[]): void {
