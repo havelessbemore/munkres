@@ -7,8 +7,6 @@ import { toString } from "./utils/munkres";
 export class Munkres {
   protected covY: boolean[];
   protected mat: CostMatrix;
-  protected primeY: number[];
-  protected stars: number;
   protected starY: number[];
   protected starX: number[];
 
@@ -18,41 +16,15 @@ export class Munkres {
 
     this.mat = copy(mat);
     this.covY = new Array(Y).fill(false);
-    this.primeY = new Array(Y).fill(-1);
-    this.stars = 0;
     this.starX = new Array(X).fill(-1);
     this.starY = new Array(Y).fill(-1);
   }
 
   run(): [number, number][] {
-    let step = this._steps1to3();
-
-    while (step != 7) {
-      console.log(toString(this.mat, this.starX, this.primeY));
-      switch (step) {
-        case 4:
-          step = this._step4();
-          break;
-        case 6:
-          step = this._step6();
-          break;
-        default:
-          throw new Error(`Invalid state ${step}`);
-      }
-    }
-
-    console.log("DONE");
-    console.log(toString(this.mat, this.starX, this.primeY));
+    this._step4();
 
     // Get assignments
-    const starX = this.starX;
-    const X = starX.length;
-    const pairs: [number, number][] = new Array(X);
-    for (let x = 0; x < X; ++x) {
-      pairs[x] = [starX[x], x];
-    }
-
-    return pairs;
+    return this._getAssignments();
   }
 
   protected _steps1to3(): number {
@@ -85,24 +57,24 @@ export class Munkres {
     }
 
     // Check if all columns have a star
-    this.stars = stars;
-    return stars < X ? 4 : 7;
+    return stars;
   }
 
-  protected _step4(): number {
+  protected _step4(): void {
     const covY = this.covY;
-    const primeY = this.primeY;
     const starX = this.starX;
     const starY = this.starY;
+    const X = starX.length;
+    const Y = starY.length;
+    const primeY = new Array(Y).fill(-1);
 
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
+    let stars = this._steps1to3();
+    while (stars < X) {
       // Find an uncovered zero
       const [y, x] = this._findUncoveredZero();
-
-      // If not found, go to step 6
       if (y < 0) {
-        return 6;
+        this._step6();
+        continue;
       }
 
       // Prime the zero
@@ -113,20 +85,25 @@ export class Munkres {
 
       // If star not found
       if (sx < 0) {
-        return this._step5(y, x);
+        covY.fill(false);
+        this._step5(y, x, primeY);
+        ++stars;
+        continue;
       }
 
       // Cover the row and unstar the zero
       covY[y] = true;
       starX[sx] = -1;
       starY[y] = -1;
-      --this.stars;
+      --stars;
     }
+
+    console.log("DONE");
+    console.log(toString(this.mat, starX, primeY));
   }
 
-  protected _step5(y: number, x: number): number {
+  protected _step5(y: number, x: number, primeY: number[]): void {
     const path: number[] = [y, x];
-    const primeY = this.primeY;
     const starX = this.starX;
     const starY = this.starY;
 
@@ -138,29 +115,20 @@ export class Munkres {
       path.push(y, x);
     }
 
-    // Star the primes and unstar the stars
-    const N = path.length;
-    for (let i = 1; i < N; ++i) {
-      y = path[i - (i & 1)];
-      x = path[i - (i ^ 1)];
-      if (starX[x] >= 0) {
-        starX[x] = -1;
-        starY[y] = -1;
-        --this.stars;
-      } else {
-        starX[x] = y;
-        starY[y] = x;
-        ++this.stars;
-      }
-    }
-
+    // Reset primes
     primeY.fill(-1);
-    this.covY.fill(false);
 
-    return this.stars < starX.length ? 4 : 7;
+    // Replace stars with primes
+    const N = path.length;
+    for (let i = 1; i < N; i += 2) {
+      y = path[i - 1];
+      x = path[i];
+      starX[x] = y;
+      starY[y] = x;
+    }
   }
 
-  protected _step6(): number {
+  protected _step6(): void {
     const covY = this.covY;
     const mat = this.mat;
     const starX = this.starX;
@@ -178,8 +146,16 @@ export class Munkres {
         }
       }
     }
+  }
 
-    return 4;
+  protected _getAssignments(): [number, number][] {
+    const starX = this.starX;
+    const X = starX.length;
+    const pairs: [number, number][] = new Array(X);
+    for (let x = 0; x < X; ++x) {
+      pairs[x] = [starX[x], x];
+    }
+    return pairs;
   }
 
   protected _findMinUncovered(): number {
