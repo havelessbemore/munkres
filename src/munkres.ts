@@ -3,10 +3,8 @@ import { copy } from "./utils/matrix";
 import { step1, step4, steps2to3 } from "./utils/munkres";
 
 /**
- * Find the minimum total cost of assigning `y` workers to `x` jobs.
- *
- * Runs the {@link https://en.wikipedia.org/wiki/Hungarian_algorithm | Munkres algorithm (aka Hungarian algorithm)} to solve
- * the {@link https://en.wikipedia.org/wiki/Assignment_problem | assignment problem}.
+ * Find the optimal assignments of `y` workers to `x` jobs to
+ * minimize total cost.
  *
  * @param mat - The cost matrix where `mat[y][x]` represents the cost of
  * assigning worker `y` to job `x`.
@@ -16,9 +14,11 @@ import { step1, step4, steps2to3 } from "./utils/munkres";
  * index `x`, indicating that worker `y` is assigned to job `x`.
  *
  * @remarks
+ * Runs the {@link https://en.wikipedia.org/wiki/Hungarian_algorithm | Munkres algorithm (aka Hungarian algorithm)} to solve
+ * the {@link https://en.wikipedia.org/wiki/Assignment_problem | assignment problem}.
  *
- * - The input cost matrix is not modified.
- * - Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this description} and enhanced with custom optimizations.
+ * @privateRemarks
+ * Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this outline} and enhanced with custom optimizations.
  */
 export function munkres(mat: CostMatrix): [number, number][] {
   // Check input
