@@ -22,6 +22,21 @@ function oneOf<T>(actual: T, expecteds: Iterable<T>): void {
 
 describe(Munkres.name, () => {
   describe("run()", () => {
+    test("test 0", () => {
+      const costs: CostMatrix = [
+        [8, 4, 7],
+        [5, 2, 3],
+        [9, 4, 8],
+      ];
+      const algo = new Munkres(costs);
+      const res = algo.run();
+      expect(res).toEqual([
+        [0, 0],
+        [2, 1],
+        [1, 2],
+      ]);
+    });
+
     test("test 1", () => {
       const costs: CostMatrix = [
         [1, 2, 3],
