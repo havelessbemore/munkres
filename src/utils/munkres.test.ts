@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 
-import { step5, step6, steps2to3 } from "./munkres";
+import { step5, step6, steps2to3, toString } from "./munkres";
 import { copy, map } from "./matrix";
+import { CostMatrix } from "../types/costMatrix";
 
 describe(`${steps2to3.name}()`, () => {
   it("handles an empty matrix", () => {
@@ -191,5 +192,57 @@ describe(`${step6.name}()`, () => {
 
     step6(val, mat, primeY, starX);
     expect(mat).toEqual(expectedMat);
+  });
+});
+
+describe(`${toString.name}()`, () => {
+  it("handles an empty matrix", () => {
+    const mat: CostMatrix = [];
+    const primeY: number[] = [];
+    const starX: number[] = [];
+    const expectedOutput = "";
+
+    const result = toString(mat, primeY, starX);
+    expect(result).toBe(expectedOutput);
+  });
+
+  it("correctly annotates a simple matrix with stars and primes", () => {
+    const mat = [
+      [1, 2],
+      [3, 4],
+    ];
+    const primeY = [1, -1]; // Prime at (0, 1)
+    const starX = [1, -1]; // Star at (1, 0)
+    const expectedOutput = ' 1, "2\n' + "*3,  4";
+
+    const result = toString(mat, primeY, starX);
+    expect(result).toBe(expectedOutput);
+  });
+
+  it("formats matrix entries to have uniform width", () => {
+    const mat = [
+      [1, 10],
+      [100, 2],
+    ];
+    const primeY = [-1, -1]; // No primes
+    const starX = [1, -1]; // Star at (1, 0)
+    const expectedOutput = "   1,   10\n" + "*100,    2";
+
+    const result = toString(mat, primeY, starX);
+    expect(result).toBe(expectedOutput);
+  });
+
+  it("correctly annotates matrix with multiple stars and primes", () => {
+    const mat = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ];
+    const primeY = [2, -1, 0]; // Prime at (0, 2), (2, 0)
+    const starX = [-1, 2, 1]; // Star at (2, 1), (1, 2)
+    const expectedOutput = ' 1,  2, "3\n' + " 4,  5, *6\n" + '"7, *8,  9';
+
+    const result = toString(mat, primeY, starX);
+    expect(result).toBe(expectedOutput);
   });
 });
