@@ -63,17 +63,16 @@ export class Munkres {
     const starY = this.starY;
     const X = starX.length;
     const Y = starY.length;
-    const covY = new Array(Y).fill(false);
     const primeY = new Array(Y).fill(-1);
 
     let stars = this._steps1to3();
     while (stars < X) {
       // Find an uncovered zero
-      const [y, x] = this._findUncoveredZero(covY);
+      const [y, x] = this._findUncoveredZero(primeY);
 
       // If not found
       if (y < 0) {
-        this._step6(covY);
+        this._step6(primeY);
         continue;
       }
 
@@ -86,14 +85,12 @@ export class Munkres {
       // If star found
       if (sx >= 0) {
         // Cover the row and remove the star
-        covY[y] = true;
         starX[sx] = -1;
         starY[y] = -1;
         --stars;
       } else {
         // Replace stars with primes and reset coverage
         this._step5(y, x, primeY);
-        covY.fill(false);
         primeY.fill(-1);
         ++stars;
       }
@@ -128,17 +125,17 @@ export class Munkres {
     starY[y] = x;
   }
 
-  protected _step6(covY: boolean[]): void {
+  protected _step6(primeY: number[]): void {
     const mat = this.mat;
     const starX = this.starX;
     const X = starX.length;
-    const Y = covY.length;
+    const Y = primeY.length;
 
-    const min = this._findMinUncovered(covY);
+    const min = this._findMinUncovered(primeY);
     for (let y = 0; y < Y; ++y) {
       const vals = mat[y];
       for (let x = 0; x < X; ++x) {
-        if (covY[y]) {
+        if (primeY[y] >= 0) {
           vals[x] += starX[x] >= 0 ? min : 0;
         } else if (starX[x] < 0) {
           vals[x] -= min;
@@ -157,15 +154,15 @@ export class Munkres {
     return pairs;
   }
 
-  protected _findMinUncovered(covY: boolean[]): number {
+  protected _findMinUncovered(primeY: number[]): number {
     const mat = this.mat;
     const starX = this.starX;
     const X = starX.length;
-    const Y = covY.length;
+    const Y = primeY.length;
 
     let min = Infinity;
     for (let y = 0; y < Y; ++y) {
-      if (covY[y]) {
+      if (primeY[y] >= 0) {
         continue;
       }
       const vals = mat[y];
@@ -179,14 +176,14 @@ export class Munkres {
     return min;
   }
 
-  protected _findUncoveredZero(covY: boolean[]): [number, number] {
+  protected _findUncoveredZero(primeY: number[]): [number, number] {
     const mat = this.mat;
     const starX = this.starX;
     const X = starX.length;
-    const Y = covY.length;
+    const Y = primeY.length;
 
     for (let y = 0; y < Y; ++y) {
-      if (covY[y]) {
+      if (primeY[y] >= 0) {
         continue;
       }
       const vals = mat[y];
