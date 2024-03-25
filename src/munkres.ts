@@ -86,6 +86,7 @@ export class Munkres {
       for (let x = 0; x < X; ++x) {
         if (row[x] == 0 && starX[x] < 0) {
           // Star the zero
+          covY[y] = x;
           starX[x] = y;
           ++stars;
 
@@ -101,13 +102,17 @@ export class Munkres {
   }
 
   protected _step3(): number {
+    const covY = this.covY;
     const starX = this.starX;
     const X = starX.length;
 
     // Count stars
     let stars = 0;
     for (let x = 0; x < X; ++x) {
-      stars += +(starX[x] >= 0);
+      if (starX[x] >= 0) {
+        covY[starX[x]] = x;
+        ++stars;
+      }
     }
 
     // Go to DONE if all columns starred.
@@ -134,16 +139,15 @@ export class Munkres {
       primeY[y] = x;
 
       // Find a star in the same row
-      const sx = this._findStarInRow(y);
+      const sx = covY[y];
 
       // If not found, go to step 5, then 3
-      if (sx < 0) {
+      if (!(sx >= 0 && starX[sx] >= 0)) {
         this._step5(y, x);
         return 3;
       }
 
       // Cover the row and uncover the star's column
-      covY[y] = sx;
       starX[sx] = -1;
     }
   }
@@ -187,12 +191,14 @@ export class Munkres {
     const min = this._findMinUncovered();
     for (let y = 0; y < Y; ++y) {
       for (let x = 0; x < X; ++x) {
-        if (covY[y] >= 0) {
-          mat[y][x] += min;
-        }
+        let diff = 0;
         if (starX[x] < 0) {
-          mat[y][x] -= min;
+          diff -= min;
         }
+        if (covY[y] >= 0 && starX[covY[y]] < 0) {
+          diff += min;
+        }
+        mat[y][x] += diff;
       }
     }
 
@@ -208,7 +214,7 @@ export class Munkres {
 
     let min = Infinity;
     for (let y = 0; y < Y; ++y) {
-      if (covY[y] >= 0) {
+      if (covY[y] >= 0 && starX[covY[y]] < 0) {
         continue;
       }
       const row = mat[y];
@@ -222,19 +228,6 @@ export class Munkres {
     return min;
   }
 
-  protected _findStarInRow(y: number): number {
-    const starX = this.starX;
-    const X = starX.length;
-
-    for (let x = 0; x < X; ++x) {
-      if (starX[x] == y) {
-        return x;
-      }
-    }
-
-    return -1;
-  }
-
   protected _findUncoveredZero(): [number, number] {
     const covY = this.covY;
     const mat = this.mat;
@@ -243,7 +236,7 @@ export class Munkres {
     const Y = covY.length;
 
     for (let y = 0; y < Y; ++y) {
-      if (covY[y] >= 0) {
+      if (covY[y] >= 0 && starX[covY[y]] < 0) {
         continue;
       }
       const row = mat[y];
