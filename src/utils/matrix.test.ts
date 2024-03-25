@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 
 import { copy } from "./matrix";
 
-describe("copy", () => {
+describe(`${copy.name}()`, () => {
   it("returns an empty matrix when copying an empty matrix", () => {
     const original: unknown[][] = [];
     const duplicate = copy(original);
