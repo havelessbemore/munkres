@@ -10,6 +10,3 @@ export {
   negateCostMatrix,
 } from "./utils/costMatrix";
 export { munkres } from "./munkres";
-
-// Classes
-export { Munkres } from "./munkres";
