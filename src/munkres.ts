@@ -100,6 +100,15 @@ export class Munkres {
     console.log(toString(this.mat, starX, primeY));
   }
 
+  /**
+   * Given a prime, walks an alternating path to stars in columns and primes
+   * in rows, starring each prime and removing each star along the way.
+   * The path continues until a prime cannot alternate with a star.
+   *
+   * @param y - The initial prime's y coordinate.
+   * @param x - The initial prime's x coordinate.
+   * @param primeY - An array of prime y coordinates to x coordinates.
+   */
   protected _step5(y: number, x: number, primeY: number[]): void {
     // Sanity check
     if (primeY[y] != x) {
@@ -108,19 +117,12 @@ export class Munkres {
 
     const starX = this.starX;
     const starY = this.starY;
-
-    // Starting at a prime, walk an alternating
-    // path between stars in columns and primes in rows,
-    // starring each prime along the way. Continue
-    // until a prime cannot alternate with a star.
     for (let py = starX[x]; py >= 0; py = starX[x]) {
       starX[x] = y;
       starY[y] = x;
       x = primeY[py];
       y = py;
     }
-
-    // Star the last prime
     starX[x] = y;
     starY[y] = x;
   }
@@ -131,7 +133,7 @@ export class Munkres {
     const X = starX.length;
     const Y = primeY.length;
 
-    const min = this._findMinUncovered(primeY);
+    const min = this._findUncoveredMin(primeY);
     for (let y = 0; y < Y; ++y) {
       const vals = mat[y];
       for (let x = 0; x < X; ++x) {
@@ -154,7 +156,7 @@ export class Munkres {
     return pairs;
   }
 
-  protected _findMinUncovered(primeY: number[]): number {
+  protected _findUncoveredMin(primeY: number[]): number {
     const mat = this.mat;
     const starX = this.starX;
     const X = starX.length;
