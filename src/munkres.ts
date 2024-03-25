@@ -54,11 +54,12 @@ export class Munkres {
       }
     }
 
-    // Return the number of stars found
+    // Step 3: Return the number of stars found
     return stars;
   }
 
   protected _step4(): void {
+    const mat = this.mat;
     const starX = this.starX;
     const starY = this.starY;
     const X = starX.length;
@@ -68,11 +69,11 @@ export class Munkres {
     let stars = this._steps1to3();
     while (stars < X) {
       // Find an uncovered zero
-      const [y, x] = this._findUncoveredZero(primeY);
+      const [y, x] = this._findUncoveredZeroOrMin(primeY);
 
       // If not found
-      if (y < 0) {
-        this._step6(primeY);
+      if (mat[y][x] != 0) {
+        this._step6(mat[y][x], primeY);
         continue;
       }
 
@@ -127,20 +128,20 @@ export class Munkres {
     starY[y] = x;
   }
 
-  protected _step6(primeY: number[]): void {
+  protected _step6(min: number, primeY: number[]): void {
     const mat = this.mat;
     const starX = this.starX;
     const X = starX.length;
     const Y = primeY.length;
 
-    const min = this._findUncoveredMin(primeY);
     for (let y = 0; y < Y; ++y) {
       const vals = mat[y];
       for (let x = 0; x < X; ++x) {
-        if (primeY[y] >= 0) {
-          vals[x] += starX[x] >= 0 ? min : 0;
-        } else if (starX[x] < 0) {
+        if (starX[x] < 0) {
           vals[x] -= min;
+        }
+        if (primeY[y] >= 0) {
+          vals[x] += min;
         }
       }
     }
@@ -156,46 +157,36 @@ export class Munkres {
     return pairs;
   }
 
-  protected _findUncoveredMin(primeY: number[]): number {
+  protected _findUncoveredZeroOrMin(primeY: number[]): [number, number] {
     const mat = this.mat;
     const starX = this.starX;
     const X = starX.length;
     const Y = primeY.length;
 
+    let minX = -1;
+    let minY = -1;
     let min = Infinity;
+
     for (let y = 0; y < Y; ++y) {
       if (primeY[y] >= 0) {
         continue;
       }
       const vals = mat[y];
       for (let x = 0; x < X; ++x) {
-        if (starX[x] < 0 && vals[x] < min) {
-          min = vals[x];
+        if (starX[x] >= 0) {
+          continue;
         }
-      }
-    }
-
-    return min;
-  }
-
-  protected _findUncoveredZero(primeY: number[]): [number, number] {
-    const mat = this.mat;
-    const starX = this.starX;
-    const X = starX.length;
-    const Y = primeY.length;
-
-    for (let y = 0; y < Y; ++y) {
-      if (primeY[y] >= 0) {
-        continue;
-      }
-      const vals = mat[y];
-      for (let x = 0; x < X; ++x) {
-        if (starX[x] < 0 && vals[x] == 0) {
+        if (vals[x] == 0) {
           return [y, x];
         }
+        if (vals[x] < min) {
+          min = vals[x];
+          minX = x;
+          minY = y;
+        }
       }
     }
 
-    return [-1, -1];
+    return [minY, minX];
   }
 }
