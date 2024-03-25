@@ -5,7 +5,6 @@ import { copy } from "./utils/matrix";
 import { toString } from "./utils/munkres";
 
 export class Munkres {
-  protected covY: boolean[];
   protected mat: CostMatrix;
   protected starY: number[];
   protected starX: number[];
@@ -15,7 +14,6 @@ export class Munkres {
     const Y = mat.length;
 
     this.mat = copy(mat);
-    this.covY = new Array(Y).fill(false);
     this.starX = new Array(X).fill(-1);
     this.starY = new Array(Y).fill(-1);
   }
@@ -61,19 +59,19 @@ export class Munkres {
   }
 
   protected _step4(): void {
-    const covY = this.covY;
     const starX = this.starX;
     const starY = this.starY;
     const X = starX.length;
     const Y = starY.length;
+    const covY = new Array(Y).fill(false);
     const primeY = new Array(Y).fill(-1);
 
     let stars = this._steps1to3();
     while (stars < X) {
       // Find an uncovered zero
-      const [y, x] = this._findUncoveredZero();
+      const [y, x] = this._findUncoveredZero(covY);
       if (y < 0) {
-        this._step6();
+        this._step6(covY);
         continue;
       }
 
@@ -128,14 +126,13 @@ export class Munkres {
     }
   }
 
-  protected _step6(): void {
-    const covY = this.covY;
+  protected _step6(covY: boolean[]): void {
     const mat = this.mat;
     const starX = this.starX;
     const X = starX.length;
     const Y = covY.length;
 
-    const min = this._findMinUncovered();
+    const min = this._findMinUncovered(covY);
     for (let y = 0; y < Y; ++y) {
       const vals = mat[y];
       for (let x = 0; x < X; ++x) {
@@ -158,8 +155,7 @@ export class Munkres {
     return pairs;
   }
 
-  protected _findMinUncovered(): number {
-    const covY = this.covY;
+  protected _findMinUncovered(covY: boolean[]): number {
     const mat = this.mat;
     const starX = this.starX;
     const X = starX.length;
@@ -181,8 +177,7 @@ export class Munkres {
     return min;
   }
 
-  protected _findUncoveredZero(): [number, number] {
-    const covY = this.covY;
+  protected _findUncoveredZero(covY: boolean[]): [number, number] {
     const mat = this.mat;
     const starX = this.starX;
     const X = starX.length;
