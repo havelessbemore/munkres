@@ -1,11 +1,15 @@
 import { CostMatrix } from "./types/costMatrix";
-import { getMin } from "./utils/array";
+
+import { colReduction, rowReduction } from "./utils/costMatrix";
 import { copy } from "./utils/matrix";
+import { toString } from "./utils/munkres";
 
 export class Munkres {
-  protected covY: number[];
+  protected covY: boolean[];
   protected mat: CostMatrix;
   protected primeY: number[];
+  protected stars: number;
+  protected starY: number[];
   protected starX: number[];
 
   constructor(mat: CostMatrix) {
@@ -13,20 +17,19 @@ export class Munkres {
     const Y = mat.length;
 
     this.mat = copy(mat);
-    this.covY = new Array(Y).fill(-1);
+    this.covY = new Array(Y).fill(false);
     this.primeY = new Array(Y).fill(-1);
+    this.stars = 0;
     this.starX = new Array(X).fill(-1);
+    this.starY = new Array(Y).fill(-1);
   }
 
   run(): [number, number][] {
-    let step = this._steps1And2();
+    let step = this._steps1to3();
 
     while (step != 7) {
       console.log(toString(this.mat, this.starX, this.primeY));
       switch (step) {
-        case 3:
-          step = this._step3();
-          break;
         case 4:
           step = this._step4();
           break;
@@ -52,42 +55,27 @@ export class Munkres {
     return pairs;
   }
 
-  protected _steps1And2(): number {
-    const covY = this.covY;
+  protected _steps1to3(): number {
     const mat = this.mat;
     const starX = this.starX;
+    const starY = this.starY;
     const X = starX.length;
-    const Y = covY.length;
+    const Y = starY.length;
 
-    // Step 1a: Row reduction
-    for (let y = 0; y < Y; ++y) {
-      const row = mat[y];
-      const min = getMin(row)!;
-      for (let x = 0; x < X; ++x) {
-        row[x] -= min;
-      }
-    }
+    // Step 1: Reduction
+    rowReduction(mat);
+    colReduction(mat);
 
-    // Step 1b: Column reduction
-    for (let x = 0; x < X; ++x) {
-      let min = Infinity;
-      for (let y = 0; y < Y; ++y) {
-        min = min <= mat[y][x] ? min : mat[y][x];
-      }
-      for (let y = 0; y < Y; ++y) {
-        mat[y][x] -= min;
-      }
-    }
-
-    // Step 2: Look for uncovered zeros in the matrix
+    // Step 2: Look for zeros to star in the matrix.
+    // There can only be 1 star in a column / row.
     let stars = 0;
     for (let y = 0; y < Y; ++y) {
-      const row = mat[y];
+      const vals = mat[y];
       for (let x = 0; x < X; ++x) {
-        if (row[x] == 0 && starX[x] < 0) {
+        if (vals[x] == 0 && starX[x] < 0) {
           // Star the zero
-          covY[y] = x;
           starX[x] = y;
+          starY[y] = x;
           ++stars;
 
           // Go to next row
@@ -96,27 +84,8 @@ export class Munkres {
       }
     }
 
-    // Go to DONE if all columns starred.
-    // Otherwise, go to next step
-    return stars < X ? 4 : 7;
-  }
-
-  protected _step3(): number {
-    const covY = this.covY;
-    const starX = this.starX;
-    const X = starX.length;
-
-    // Count stars
-    let stars = 0;
-    for (let x = 0; x < X; ++x) {
-      if (starX[x] >= 0) {
-        covY[starX[x]] = x;
-        ++stars;
-      }
-    }
-
-    // Go to DONE if all columns starred.
-    // Otherwise, go to next step
+    // Check if all columns have a star
+    this.stars = stars;
     return stars < X ? 4 : 7;
   }
 
@@ -124,6 +93,7 @@ export class Munkres {
     const covY = this.covY;
     const primeY = this.primeY;
     const starX = this.starX;
+    const starY = this.starY;
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -139,24 +109,26 @@ export class Munkres {
       primeY[y] = x;
 
       // Find a star in the same row
-      const sx = covY[y];
+      const sx = starY[y];
 
-      // If not found, go to step 5, then 3
-      if (!(sx >= 0 && starX[sx] >= 0)) {
-        this._step5(y, x);
-        return 3;
+      // If star not found
+      if (sx < 0) {
+        return this._step5(y, x);
       }
 
-      // Cover the row and uncover the star's column
+      // Cover the row and unstar the zero
+      covY[y] = true;
       starX[sx] = -1;
+      starY[y] = -1;
+      --this.stars;
     }
   }
 
-  protected _step5(y: number, x: number): void {
-    const covY = this.covY;
+  protected _step5(y: number, x: number): number {
     const path: number[] = [y, x];
     const primeY = this.primeY;
     const starX = this.starX;
+    const starY = this.starY;
 
     // Find alternating path between
     // stars in columns and primes in rows
@@ -166,19 +138,26 @@ export class Munkres {
       path.push(y, x);
     }
 
+    // Star the primes and unstar the stars
     const N = path.length;
     for (let i = 1; i < N; ++i) {
       y = path[i - (i & 1)];
       x = path[i - (i ^ 1)];
-      if (starX[x] == y) {
+      if (starX[x] >= 0) {
         starX[x] = -1;
+        starY[y] = -1;
+        --this.stars;
       } else {
         starX[x] = y;
+        starY[y] = x;
+        ++this.stars;
       }
     }
 
     primeY.fill(-1);
-    covY.fill(-1);
+    this.covY.fill(false);
+
+    return this.stars < starX.length ? 4 : 7;
   }
 
   protected _step6(): number {
@@ -189,16 +168,22 @@ export class Munkres {
     const Y = covY.length;
 
     const min = this._findMinUncovered();
+
+    for (let x = 0; x < X; ++x) {
+      if (starX[x] >= 0) {
+        continue;
+      }
+      for (let y = 0; y < Y; ++y) {
+        mat[y][x] -= min;
+      }
+    }
+
     for (let y = 0; y < Y; ++y) {
+      if (!covY[y]) {
+        continue;
+      }
       for (let x = 0; x < X; ++x) {
-        let diff = 0;
-        if (starX[x] < 0) {
-          diff -= min;
-        }
-        if (covY[y] >= 0 && starX[covY[y]] < 0) {
-          diff += min;
-        }
-        mat[y][x] += diff;
+        mat[y][x] += min;
       }
     }
 
@@ -214,7 +199,7 @@ export class Munkres {
 
     let min = Infinity;
     for (let y = 0; y < Y; ++y) {
-      if (covY[y] >= 0 && starX[covY[y]] < 0) {
+      if (covY[y]) {
         continue;
       }
       const row = mat[y];
@@ -236,7 +221,7 @@ export class Munkres {
     const Y = covY.length;
 
     for (let y = 0; y < Y; ++y) {
-      if (covY[y] >= 0 && starX[covY[y]] < 0) {
+      if (covY[y]) {
         continue;
       }
       const row = mat[y];
@@ -249,38 +234,4 @@ export class Munkres {
 
     return [-1, -1];
   }
-}
-
-export function toString(
-  mat: CostMatrix,
-  starX: number[],
-  primeY: number[]
-): string {
-  const buf: string[] = [""];
-  const X = mat[0].length;
-  const Y = mat.length;
-
-  // Get cell width
-  let cw = -Infinity;
-  for (let y = 0; y < Y; ++y) {
-    for (let x = 0; x < X; ++x) {
-      cw = Math.max(cw, mat[y][x]);
-    }
-  }
-  cw = `${cw}`.length + 1;
-
-  for (let y = 0; y < Y; ++y) {
-    for (let x = 0; x < X; ++x) {
-      let val = `${mat[y][x]}`;
-      if (starX[x] == y) {
-        val += "*";
-      } else if (primeY[y] == x) {
-        val += '"';
-      }
-      buf.push(val.padEnd(cw, " "));
-    }
-    buf.push("\n");
-  }
-
-  return buf.join(" ");
 }
