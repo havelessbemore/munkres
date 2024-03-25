@@ -1,55 +1,5 @@
 import { CostMatrix } from "../types/costMatrix";
-import { colReduction, rowReduction } from "./costMatrix";
-import { copy } from "./matrix";
-
-export function munkres(mat: CostMatrix): [number, number][] {
-  const Y = mat.length;
-  const X = mat[0]?.length ?? 0;
-  const starX = new Array<number>(X).fill(-1);
-  const starY = new Array<number>(Y).fill(-1);
-  const primeY = new Array<number>(Y).fill(-1);
-
-  // Make a copy of the cost matrix
-  mat = copy(mat);
-
-  let stars = steps1to3(mat, starX, starY);
-
-  // Step 4
-  while (stars < X) {
-    // Find an uncovered zero
-    const [y, x] = findUncoveredZeroOrMin(mat, primeY, starX);
-
-    // If not found
-    if (mat[y][x] != 0) {
-      step6(mat[y][x], mat, primeY, starX);
-      continue;
-    }
-
-    // Prime the zero
-    primeY[y] = x;
-
-    // Find a star in the same row
-    const sx = starY[y];
-
-    // If star found
-    if (sx >= 0) {
-      // Cover the row and remove the star
-      starX[sx] = -1;
-      starY[y] = -1;
-      --stars;
-    } else {
-      // Replace stars with primes and reset coverage
-      step5(y, x, primeY, starX, starY);
-      primeY.fill(-1);
-      ++stars;
-    }
-  }
-
-  console.log(toString(mat, starX, primeY));
-
-  // Return assignments
-  return Array.from(starY.entries());
-}
+import { reduceCols, reduceRows } from "./costMatrix";
 
 export function steps1to3(
   mat: CostMatrix,
@@ -60,8 +10,8 @@ export function steps1to3(
   const Y = starY.length;
 
   // Step 1: Reduction
-  rowReduction(mat);
-  colReduction(mat);
+  reduceRows(mat);
+  reduceCols(mat);
 
   // Step 2: Look for zeros to star.
   // There can only be 1 star in a column / row.

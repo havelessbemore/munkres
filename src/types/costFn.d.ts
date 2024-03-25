@@ -1,1 +1,1 @@
-export type costFn = <A, B = A>(a: A, b: B) => number;
+export type CostFn<A, B = A> = (a: A, b: B) => number;
