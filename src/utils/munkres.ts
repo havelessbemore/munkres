@@ -18,17 +18,17 @@ import { map } from "./matrix";
 export function findUncoveredZeroOrMin(
   mat: CostMatrix,
   covX: boolean[],
-  covY: boolean[]
+  primeY: number[]
 ): [number, number] {
   const X = covX.length;
-  const Y = covY.length;
+  const Y = primeY.length;
 
   let minX = -1;
   let minY = -1;
   let min = Infinity;
 
   for (let y = 0; y < Y; ++y) {
-    if (covY[y]) {
+    if (primeY[y] >= 0) {
       continue;
     }
     const vals = mat[y];
@@ -126,42 +126,43 @@ export function step4(mat: CostMatrix, starX: number[], starY: number[]): void {
   const X = starX.length;
   const Y = starY.length;
   const covX = new Array<boolean>(X).fill(false);
-  const covY = new Array<boolean>(Y).fill(false);
   const primeY = new Array<number>(starY.length).fill(-1);
 
   let stars = step3(starX, covX);
   while (stars < X) {
     // Find an uncovered zero
-    const [y, x] = findUncoveredZeroOrMin(mat, covX, covY);
+    const [y, x] = findUncoveredZeroOrMin(mat, covX, primeY);
 
     // If not found
     if (mat[y][x] != 0) {
-      step6(mat[y][x], mat, covX, covY);
+      step6(mat[y][x], mat, covX, primeY);
       continue;
     }
 
-    // Prime the zero
+    // Prime the zero / cover the row
     primeY[y] = x;
 
     // Find a star in the same row
     const sx = starY[y];
 
-    // If star found
+    // If found, uncover its column
     if (sx >= 0) {
-      // Cover the row and uncover the column
-      covY[y] = true;
       covX[sx] = false;
       continue;
     }
 
     // Replace stars with primes
     step5(y, x, primeY, starX, starY);
-    primeY.fill(-1);
     ++stars;
 
     // Reset coverage
-    covY.fill(false);
-    step3(starX, covX);
+    covX.fill(false);
+    for (let y = 0; y < Y; ++y) {
+      if (primeY[y] >= 0) {
+        covX[primeY[y]] = true;
+        primeY[y] = -1;
+      }
+    }
   }
 }
 
@@ -222,10 +223,10 @@ export function step6(
   val: number,
   mat: CostMatrix,
   covX: boolean[],
-  covY: boolean[]
+  primeY: number[]
 ): void {
   const X = covX.length;
-  const Y = covY.length;
+  const Y = primeY.length;
 
   for (let y = 0; y < Y; ++y) {
     const vals = mat[y];
@@ -233,7 +234,7 @@ export function step6(
       if (!covX[x]) {
         vals[x] -= val;
       }
-      if (covY[y]) {
+      if (primeY[y] >= 0) {
         vals[x] += val;
       }
     }
