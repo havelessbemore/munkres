@@ -1,7 +1,34 @@
 import { CostMatrix } from "../types/costMatrix";
 import { reduceCols, reduceRows } from "./costMatrix";
 
-export function steps1to3(
+/**
+ * Reduces the given cost matrix by performing row-wise and column-wise
+ * reductions.
+ *
+ * This is a preprocessing step to simplify the matrix
+ * and improve the efficiency of subsequent steps.
+ *
+ * @param mat - The cost matrix. Modified in place.
+ */
+export function step1(mat: CostMatrix): void {
+  reduceRows(mat);
+  reduceCols(mat);
+}
+
+/**
+ * Performs the initial steps of searching for zeros in the cost matrix to
+ * "star", then returns the number of stars made.
+ *
+ * A star indicates a potential part of the optimal solution. Each star is
+ * the only one in its row and column.
+ *
+ * @param mat - The cost matrix.
+ * @param starX - An array tracking the star status of columns.
+ * @param starY - An array tracking the star status of rows.
+ *
+ * @returns The number of stars made.
+ */
+export function steps2to3(
   mat: CostMatrix,
   starX: number[],
   starY: number[]
@@ -9,39 +36,32 @@ export function steps1to3(
   const X = starX.length;
   const Y = starY.length;
 
-  // Step 1: Reduction
-  reduceRows(mat);
-  reduceCols(mat);
-
-  // Step 2: Look for zeros to star.
-  // There can only be 1 star in a column / row.
   let stars = 0;
   for (let y = 0; y < Y; ++y) {
     const vals = mat[y];
     for (let x = 0; x < X; ++x) {
       if (vals[x] == 0 && starX[x] < 0) {
-        // Star the zero
         starX[x] = y;
         starY[y] = x;
         ++stars;
-
-        // Go to next row
         break;
       }
     }
   }
 
-  // Step 3: Return the number of stars found
   return stars;
 }
 
 /**
- * Given a prime, walks an alternating path to stars in columns and primes
- * in rows, starring each prime and removing each star along the way.
- * The path continues until a prime cannot alternate with a star.
+ * Given a prime, walks an alternating path to a star in the prime's column
+ * and then a prime in the star's row, starring each prime and removing each
+ * star along the way. The path continues until a star cannot be found.
  *
- * @param y - The initial prime's y coordinate.
- * @param x - The initial prime's x coordinate.
+ * This step effectively increases the number of independent zeros (stars)
+ * in the matrix, bringing the algorithm closer to an optimal assignment.
+ *
+ * @param y - The starting prime's y coordinate.
+ * @param x - The starting prime's x coordinate.
  * @param primeY - An array of prime y coordinates to x coordinates.
  * @param starX - An array of star x coordinates to y coordinates.
  * @param starY - An array of star y coordinates to x coordinates.
@@ -68,8 +88,20 @@ export function step5(
   starY[y] = x;
 }
 
+/**
+ * Adjusts a cost matrix to uncover more zeros.
+ *
+ * The matrix is modified by adding a given value to each element in a row
+ * with a prime, and subtracting the given value to each element not in a
+ * column with a star.
+ *
+ * @param val - The value to adjust the matrix by. Should be the smallest uncovered value.
+ * @param mat - The cost matrix. Modified in place.
+ * @param primeY - An array of prime y coordinates to x coordinates.
+ * @param starX - An array of star x coordinates to y coordinates.
+ */
 export function step6(
-  min: number,
+  val: number,
   mat: CostMatrix,
   primeY: number[],
   starX: number[]
@@ -81,15 +113,27 @@ export function step6(
     const vals = mat[y];
     for (let x = 0; x < X; ++x) {
       if (starX[x] < 0) {
-        vals[x] -= min;
+        vals[x] -= val;
       }
       if (primeY[y] >= 0) {
-        vals[x] += min;
+        vals[x] += val;
       }
     }
   }
 }
 
+/**
+ * Searches for an uncovered zero in the matrix and returns its coordinates.
+ * If not found, the coordinates of the smallest uncovered value are returned
+ * instead.
+ *
+ * @param mat - The cost matrix.
+ * @param primeY - An array of prime y coordinates to x coordinates.
+ * @param starX - An array of star x coordinates to y coordinates.
+ *
+ * @returns The coordinates of an uncovered zero, if found.
+ * Otherwise, the coordinates to the smallest uncovered value.
+ */
 export function findUncoveredZeroOrMin(
   mat: CostMatrix,
   primeY: number[],
@@ -125,10 +169,25 @@ export function findUncoveredZeroOrMin(
   return [minY, minX];
 }
 
+/**
+ * Generates a string representation of the cost matrix,
+ * annotating starred (*) and primed (") elements.
+ *
+ * Stars (*) indicate part of a potential solution, while primes (") mark
+ * elements considered for augmenting the current solution. This visualization
+ * aids in understanding and debugging the matrix's state at various steps of
+ * the algorithm.
+ *
+ * @param mat - The cost matrix.
+ * @param primeY - An array of prime y coordinates to x coordinates.
+ * @param starX - An array of star x coordinates to y coordinates.
+ *
+ * @returns A string visualization of the matrix with stars and primes.
+ */
 export function toString(
   mat: CostMatrix,
-  starX: number[],
-  primeY: number[]
+  primeY: number[],
+  starX: number[]
 ): string {
   const buf: string[] = [""];
   const X = mat[0].length;

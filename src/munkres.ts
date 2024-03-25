@@ -2,9 +2,10 @@ import { CostMatrix } from "./types/costMatrix";
 import { copy } from "./utils/matrix";
 import {
   findUncoveredZeroOrMin,
+  step1,
   step5,
   step6,
-  steps1to3,
+  steps2to3,
 } from "./utils/munkres";
 
 export class Munkres {
@@ -41,7 +42,11 @@ export function munkres(mat: CostMatrix): [number, number][] {
   // Make a copy of the cost matrix
   mat = copy(mat);
 
-  let stars = steps1to3(mat, starX, starY);
+  // Step 1: Reduce
+  step1(mat);
+
+  // Steps 2 and 3: Look for and star zeros
+  let stars = steps2to3(mat, starX, starY);
 
   // Step 4
   while (stars < X) {
