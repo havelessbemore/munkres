@@ -17,6 +17,8 @@ import { step4 } from "./utils/munkres";
  * Runs the {@link https://en.wikipedia.org/wiki/Hungarian_algorithm | Munkres algorithm (aka Hungarian algorithm)} to solve
  * the {@link https://en.wikipedia.org/wiki/Assignment_problem | assignment problem}.
  */
-export function munkres(mat: CostMatrix): [number, number][] {
-  return Array.from(step4(copy(mat)).entries());
+export function munkres(mat: CostMatrix, debug = false): [number, number][] {
+  return Array.from(step4(copy(mat), debug).entries()).filter(
+    ([, x]) => x >= 0
+  );
 }

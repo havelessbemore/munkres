@@ -196,10 +196,10 @@ describe(`${toString.name}()`, () => {
   it("handles an empty matrix", () => {
     const mat: CostMatrix = [];
     const primeY: number[] = [];
-    const starX: number[] = [];
+    const starY: number[] = [];
     const expectedOutput = "";
 
-    const result = toString(mat, primeY, starX);
+    const result = toString(mat, starY, primeY);
     expect(result).toBe(expectedOutput);
   });
 
@@ -209,10 +209,10 @@ describe(`${toString.name}()`, () => {
       [3, 4],
     ];
     const primeY = [1, -1]; // Prime at (0, 1)
-    const starX = [1, -1]; // Star at (1, 0)
-    const expectedOutput = ' 1, "2\n' + "*3,  4";
+    const starY = [-1, 0]; // Star at (1, 0)
+    const expectedOutput = '[ 1, "2],\n' + "[*3,  4]";
 
-    const result = toString(mat, primeY, starX);
+    const result = toString(mat, starY, primeY);
     expect(result).toBe(expectedOutput);
   });
 
@@ -222,10 +222,10 @@ describe(`${toString.name}()`, () => {
       [100, 2],
     ];
     const primeY = [-1, -1]; // No primes
-    const starX = [1, -1]; // Star at (1, 0)
-    const expectedOutput = "   1,   10\n" + "*100,    2";
+    const starY = [-1, 0]; // Star at (1, 0)
+    const expectedOutput = "[   1,   10],\n" + "[*100,    2]";
 
-    const result = toString(mat, primeY, starX);
+    const result = toString(mat, starY, primeY);
     expect(result).toBe(expectedOutput);
   });
 
@@ -236,10 +236,11 @@ describe(`${toString.name}()`, () => {
       [7, 8, 9],
     ];
     const primeY = [2, -1, 0]; // Prime at (0, 2), (2, 0)
-    const starX = [-1, 2, 1]; // Star at (2, 1), (1, 2)
-    const expectedOutput = ' 1,  2, "3\n' + " 4,  5, *6\n" + '"7, *8,  9';
+    const starY = [-1, 2, 1]; // Star at (2, 1), (1, 2)
+    const expectedOutput =
+      '[ 1,  2, "3],\n' + "[ 4,  5, *6],\n" + '["7, *8,  9]';
 
-    const result = toString(mat, primeY, starX);
+    const result = toString(mat, starY, primeY);
     expect(result).toBe(expectedOutput);
   });
 });

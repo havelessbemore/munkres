@@ -121,36 +121,45 @@ export function steps2To3(
  * @privateRemarks
  * Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this outline} and enhanced with custom optimizations.
  */
-export function step4(mat: CostMatrix): number[] {
-  const Y = mat.length;
-  const X = mat[0]?.length ?? 0;
-  const starX = new Array<number>(X).fill(-1);
-  const starY = new Array<number>(Y).fill(-1);
-  const primeY = new Array<number>(Y).fill(-1);
+export function step4(mat: CostMatrix, debug = false): number[] {
+  const starX = new Array<number>(mat[0]?.length ?? 0).fill(-1);
+  const starY = new Array<number>(mat.length).fill(-1);
+  const primeY = new Array<number>(mat.length).fill(-1);
+
+  debug && console.log("0:\n\n%s\n", toString(mat, starY, primeY));
 
   // Step 1: Reduce
   step1(mat);
+  debug && console.log("1:\n\n%s\n", toString(mat, starY, primeY));
 
   // Steps 2 & 3: Find initial stars
   let stars = steps2To3(mat, starX, starY);
+  debug && console.log("2&3:\n\n%s\n", toString(mat, starY, primeY));
 
   // Step 4: Find optimal assignments
-  while (stars < X) {
+  const S = Math.min(starX.length, starY.length);
+  while (stars < S) {
     // Find an uncovered zero or the uncovered min
     const [y, x] = findUncoveredZeroOrMin(mat, primeY, starX);
 
     // Step 6: If no zero found, create a zero(s) from the min
     if (mat[y][x] != 0) {
       step6(mat[y][x], mat, primeY, starX);
+      debug && console.log("6:\n\n%s\n", toString(mat, starY, primeY));
     }
 
     // Prime the zero / cover the row
     primeY[y] = x;
+    debug && console.log("4:\n\n%s\n", toString(mat, starY, primeY));
+    if (starY[y] == x) {
+      throw new Error("DDDD");
+    }
 
     // Step 5: If no star in the prime's row, turn primes into stars
     if (starY[y] < 0) {
       step5(y, primeY, starX, starY);
       ++stars;
+      debug && console.log("5:\n\n%s\n", toString(mat, starY, primeY));
     }
   }
 
@@ -203,14 +212,40 @@ export function step5(
  * with a prime, and subtracting the given value to each element not in a
  * column with a star.
  *
- * @param val - The value to adjust the matrix by.
+ * @param min - The value to adjust the matrix by.
  * Should be the smallest uncovered value.
  * @param mat - The cost matrix. Modified in place.
  * @param primeY - An array of prime y coordinates to x coordinates.
  * @param starX - An array of star x coordinates to y coordinates.
  */
 export function step6(
-  val: number,
+  min: number,
+  mat: CostMatrix,
+  primeY: number[],
+  starX: number[]
+): void {
+  const X = starX.length;
+  const Y = primeY.length;
+
+  if (!isFinite(min)) {
+    return step6Inf(mat, primeY, starX);
+  }
+
+  for (let y = 0; y < Y; ++y) {
+    const vals = mat[y];
+    for (let x = 0; x < X; ++x) {
+      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
+        if (primeY[y] >= 0) {
+          vals[x] += min;
+        }
+      } else if (primeY[y] < 0) {
+        vals[x] -= min;
+      }
+    }
+  }
+}
+
+export function step6Inf(
   mat: CostMatrix,
   primeY: number[],
   starX: number[]
@@ -221,11 +256,12 @@ export function step6(
   for (let y = 0; y < Y; ++y) {
     const vals = mat[y];
     for (let x = 0; x < X; ++x) {
-      if (starX[x] < 0 || primeY[starX[x]] >= 0) {
-        vals[x] -= val;
-      }
-      if (primeY[y] >= 0) {
-        vals[x] += val;
+      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
+        if (primeY[y] >= 0) {
+          vals[x] += Infinity;
+        }
+      } else if (primeY[y] < 0) {
+        vals[x] = 0;
       }
     }
   }
@@ -241,15 +277,15 @@ export function step6(
  * the algorithm.
  *
  * @param mat - The cost matrix.
- * @param primeY - An array of prime y coordinates to x coordinates.
- * @param starX - An array of star x coordinates to y coordinates.
+ * @param starY - An array of star y coordinates to x coordinates.
+ * @param primeY - (Optional) An array of prime y coordinates to x coordinates.
  *
  * @returns A string visualization of the matrix with stars and primes.
  */
 export function toString(
   mat: CostMatrix,
-  primeY: number[],
-  starX: number[]
+  starY: number[],
+  primeY: number[] = []
 ): string {
   const strs: Matrix<string> = map(mat, v => `${v}`);
   const Y = strs.length;
@@ -258,13 +294,11 @@ export function toString(
   // Mark values as stars or primes
   for (let y = 0; y < Y; ++y) {
     const row = strs[y];
-    for (let x = 0; x < X; ++x) {
-      if (starX[x] == y) {
-        row[x] = "*" + row[x];
-      }
-      if (primeY[y] == x) {
-        row[x] = '"' + row[x];
-      }
+    if (starY[y] >= 0) {
+      row[starY[y]] = "*" + row[starY[y]];
+    }
+    if (primeY[y] >= 0) {
+      row[primeY[y]] = '"' + row[primeY[y]];
     }
   }
 
@@ -289,7 +323,7 @@ export function toString(
   // Create output
   const buf: string[] = new Array(Y);
   for (let y = 0; y < Y; ++y) {
-    buf[y] = strs[y].join(", ");
+    buf[y] = `[${strs[y].join(", ")}]`;
   }
-  return buf.join("\n");
+  return buf.join(",\n");
 }
