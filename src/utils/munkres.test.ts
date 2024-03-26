@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
 
-import { toString } from "./munkres";
+import { step5, step6, steps2To3, toString } from "./munkres";
 import { CostMatrix } from "../types/costMatrix";
+import { copy, map } from "./matrix";
 
-/*
-describe(`${steps2to3.name}()`, () => {
+describe(`${steps2To3.name}()`, () => {
   it("handles an empty matrix", () => {
-    const starsMade = steps2to3([], [], []);
+    const starsMade = steps2To3([], [], []);
     expect(starsMade).toBe(0);
   });
 
@@ -14,7 +14,7 @@ describe(`${steps2to3.name}()`, () => {
     const mat = [[1]];
     const starX = new Array(mat[0].length).fill(-1);
     const starY = new Array(mat.length).fill(-1);
-    const starsMade = steps2to3(mat, starX, starY);
+    const starsMade = steps2To3(mat, starX, starY);
     expect(starsMade).toBe(0);
     expect(starX).toEqual([-1]);
     expect(starY).toEqual([-1]);
@@ -24,7 +24,7 @@ describe(`${steps2to3.name}()`, () => {
     const mat = [[0]];
     const starX = new Array(mat[0].length).fill(-1);
     const starY = new Array(mat.length).fill(-1);
-    const starsMade = steps2to3(mat, starX, starY);
+    const starsMade = steps2To3(mat, starX, starY);
     expect(starsMade).toBe(1);
     expect(starX).toEqual([0]);
     expect(starY).toEqual([0]);
@@ -39,7 +39,7 @@ describe(`${steps2to3.name}()`, () => {
     const starX = new Array(mat[0].length).fill(-1);
     const starY = new Array(mat.length).fill(-1);
 
-    const starsMade = steps2to3(mat, starX, starY);
+    const starsMade = steps2To3(mat, starX, starY);
 
     expect(starsMade).toBe(0);
     expect(starX.every(val => val === -1)).toBe(true);
@@ -55,7 +55,7 @@ describe(`${steps2to3.name}()`, () => {
     const starX = new Array(mat[0].length).fill(-1);
     const starY = new Array(mat.length).fill(-1);
 
-    const starsMade = steps2to3(mat, starX, starY);
+    const starsMade = steps2To3(mat, starX, starY);
 
     expect(starsMade).toBe(3);
     expect(starX).toEqual([0, 1, 2]);
@@ -71,7 +71,7 @@ describe(`${steps2to3.name}()`, () => {
     const starX = new Array(mat[0].length).fill(-1);
     const starY = new Array(mat.length).fill(-1);
 
-    const starsMade = steps2to3(mat, starX, starY);
+    const starsMade = steps2To3(mat, starX, starY);
     expect(starsMade).toBe(3);
     expect(starX.filter(x => x !== -1).length).toBe(starX.length);
     expect(starY.filter(y => y !== -1).length).toBe(starY.length);
@@ -85,7 +85,7 @@ describe(`${steps2to3.name}()`, () => {
     const starX = new Array(mat[0].length).fill(-1);
     const starY = new Array(mat.length).fill(-1);
 
-    const starsMade = steps2to3(mat, starX, starY);
+    const starsMade = steps2To3(mat, starX, starY);
     expect(starsMade).toBe(2);
     expect(starX).toEqual([0, 1]);
     expect(starY).toEqual([0, 1]);
@@ -94,35 +94,32 @@ describe(`${steps2to3.name}()`, () => {
 
 describe(`${step5.name}()`, () => {
   it("throws an error if the starting coordinates do not represent a prime", () => {
-    const y = 0,
-      x = 1;
+    const y = 0;
     const primeY = [-1, -1, -1]; // No primes
     const starX = [-1, -1, -1]; // No stars
     const starY = [-1, -1, -1];
 
-    expect(() => step5(y, x, primeY, starX, starY)).toThrow();
+    expect(() => step5(y, primeY, starX, starY)).toThrow();
   });
 
   it("handles a simple path", () => {
     const y = 0;
-    const x = 0;
     const primeY = [0, -1, -1];
     const starX = [-1, 0, -1];
     const starY = [1, -1, -1];
 
-    step5(y, x, primeY, starX, starY);
+    step5(y, primeY, starX, starY);
     expect(starX).toEqual([0, 0, -1]);
     expect(starY).toEqual([0, -1, -1]);
   });
 
   it("handles a longer path with multiple alterations", () => {
-    const y = 0,
-      x = 0;
+    const y = 0;
     const primeY = [0, 1, 2];
     const starX = [2, -1, 1];
     const starY = [-1, 2, 0];
 
-    step5(y, x, primeY, starX, starY);
+    step5(y, primeY, starX, starY);
     expect(starX).toEqual([0, 1, 2]);
     expect(starY).toEqual([0, 1, 2]);
   });
@@ -159,7 +156,7 @@ describe(`${step6.name}()`, () => {
     const primeY = [-1, 0, -1]; // Prime at (1, 0)
     const starX = [-1, -1, 1]; // Star at (2, 1)
     const expectedMat = map(mat, (v, y, x) => {
-      if (starX[x] < 0) {
+      if (starX[x] < 0 || primeY[starX[x]] >= 0) {
         v -= val;
       }
       if (primeY[y] >= 0) {
@@ -181,7 +178,7 @@ describe(`${step6.name}()`, () => {
     const primeY = [1, -1]; // Prime at (0, 1)
     const starX = [-1, 0]; // Star at (1, 0)
     const expectedMat = map(mat, (v, y, x) => {
-      if (starX[x] < 0) {
+      if (starX[x] < 0 || primeY[starX[x]] >= 0) {
         v -= val;
       }
       if (primeY[y] >= 0) {
@@ -194,7 +191,6 @@ describe(`${step6.name}()`, () => {
     expect(mat).toEqual(expectedMat);
   });
 });
-*/
 
 describe(`${toString.name}()`, () => {
   it("handles an empty matrix", () => {

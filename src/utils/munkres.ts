@@ -77,28 +77,25 @@ export function step1(mat: CostMatrix): void {
  *
  * @returns The number of stars made.
  */
-export function step2(mat: CostMatrix, starX: number[], starY: number[]): void {
+export function steps2To3(
+  mat: CostMatrix,
+  starX: number[],
+  starY: number[]
+): number {
   const X = starX.length;
   const Y = starY.length;
 
+  let stars = 0;
   for (let y = 0; y < Y; ++y) {
     const vals = mat[y];
     for (let x = 0; x < X; ++x) {
       if (vals[x] == 0 && starX[x] < 0) {
         starX[x] = y;
         starY[y] = x;
+        ++stars;
         break;
       }
     }
-  }
-}
-
-export function step3(starX: number[]): number {
-  const X = starX.length;
-
-  let stars = 0;
-  for (let x = 0; x < X; ++x) {
-    stars += +(starX[x] >= 0);
   }
 
   return stars;
@@ -121,11 +118,15 @@ export function step3(starX: number[]): number {
  * @param starX - An array of star x coordinates to y coordinates.
  * @param starY - An array of star y coordinates to x coordinates.
  */
-export function step4(mat: CostMatrix, starX: number[], starY: number[]): void {
+export function step4(
+  stars: number,
+  mat: CostMatrix,
+  starX: number[],
+  starY: number[]
+): void {
   const X = starX.length;
   const primeY = new Array<number>(starY.length).fill(-1);
 
-  let stars = step3(starX);
   while (stars < X) {
     // Find an uncovered zero
     const [y, x] = findUncoveredZeroOrMin(mat, primeY, starX);

@@ -1,6 +1,6 @@
 import { CostMatrix } from "./types/costMatrix";
 import { copy } from "./utils/matrix";
-import { step1, step2, step4 } from "./utils/munkres";
+import { step1, steps2To3, step4 } from "./utils/munkres";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -39,10 +39,10 @@ export function munkres(mat: CostMatrix): [number, number][] {
   step1(mat);
 
   // Steps 2: Find initial stars
-  step2(mat, starX, starY);
+  const stars = steps2To3(mat, starX, starY);
 
   // Step 4: Find optimal assignments
-  step4(mat, starX, starY);
+  step4(stars, mat, starX, starY);
 
   // Return assignments
   return Array.from(starY.entries());
