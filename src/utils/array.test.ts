@@ -44,4 +44,12 @@ describe(`${getMin.name}()`, () => {
     const result = getMin(array);
     expect(result).toBe(1);
   });
+
+  it("finds the minimum value in an array of bigints", () => {
+    expect(getMin([2n, 3n, 1n, 4n])).toBe(1n);
+  });
+
+  it("finds the minimum value in an array of strings", () => {
+    expect(getMin(["b", "c", "a"])).toBe("a");
+  });
 });

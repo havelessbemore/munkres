@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { copy, map } from "./matrix";
+import { copy, getColMin, map } from "./matrix";
 
 describe(`${copy.name}()`, () => {
   it("returns an empty matrix when copying an empty matrix", () => {
@@ -71,6 +71,58 @@ describe(`${copy.name}()`, () => {
     // Modifying the duplicate does not affect the original
     duplicate[1][2] = 99;
     expect(original[1][2]).toBeNull();
+  });
+});
+
+describe(`${getColMin.name}()`, () => {
+  it("returns undefined for an empty matrix", () => {
+    const matrix: number[][] = [];
+    expect(getColMin(matrix, 0)).toBeUndefined();
+  });
+
+  it("returns undefined for a column index out of bounds", () => {
+    const matrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+    expect(getColMin(matrix, -1)).toBeUndefined();
+    expect(getColMin(matrix, 3)).toBeUndefined();
+  });
+
+  it("finds the minimum value in a column of a number matrix", () => {
+    const matrix = [
+      [2, 3, 5],
+      [1, 4, 6],
+      [3, 2, 1],
+    ];
+    expect(getColMin(matrix, 1)).toBe(2);
+  });
+
+  it("finds the minimum value in a column of a bigint matrix", () => {
+    const matrix = [
+      [2n, 3n, 5n],
+      [1n, 4n, 6n],
+      [3n, 2n, 1n],
+    ];
+    expect(getColMin(matrix, 2)).toBe(1n);
+  });
+
+  it("finds the minimum value in a column of a string matrix", () => {
+    const matrix = [
+      ["b", "d", "c"],
+      ["e", "a", "g"],
+      ["h", "f", "i"],
+    ];
+    expect(getColMin(matrix, 0)).toBe("b");
+  });
+
+  it("handles a column with equal values correctly", () => {
+    const matrix = [
+      [3, 1, 2],
+      [3, 1, 2],
+      [3, 1, 2],
+    ];
+    expect(getColMin(matrix, 0)).toBe(3);
   });
 });
 
