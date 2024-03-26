@@ -23,9 +23,9 @@ export function findUncoveredZeroOrMin(
   const X = starX.length;
   const Y = primeY.length;
 
-  let minX = 0;
-  let minY = 0;
-  let minV = Infinity;
+  let minX = -1;
+  let minY = -1;
+  let minV = undefined as unknown as number;
 
   for (let y = 0; y < Y; ++y) {
     if (primeY[y] >= 0) {
@@ -39,7 +39,7 @@ export function findUncoveredZeroOrMin(
       if (vals[x] == 0) {
         return [y, x];
       }
-      if (vals[x] < minV) {
+      if (!(minV <= vals[x])) {
         minV = vals[x];
         minX = x;
         minY = y;
@@ -151,9 +151,6 @@ export function step4(mat: CostMatrix, debug = false): number[] {
     // Prime the zero / cover the row
     primeY[y] = x;
     debug && console.log("4:\n\n%s\n", toString(mat, starY, primeY));
-    if (starY[y] == x) {
-      throw new Error("DDDD");
-    }
 
     // Step 5: If no star in the prime's row, turn primes into stars
     if (starY[y] < 0) {
@@ -319,6 +316,34 @@ export function toString(
       }
     }
   }
+
+  /*
+
+  // Create starX
+  const starX: number[] = new Array(X).fill(-1);
+  for (let y = 0; y < Y; ++y) {
+    if (starY[y] >= 0) {
+      starX[starY[y]] = y;
+    }
+  }
+  
+  // Mark values as covered
+  for (let y = 0; y < Y; ++y) {
+    for (let x = 0; x < X; ++x) {
+      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
+        if (primeY[y] >= 0) {
+          strs[y][x] = `⫢${strs[y][x]}⫤`;
+        } else {
+          strs[y][x] = `|${strs[y][x]}|`;
+        }
+      } else if (primeY[y] >= 0) {
+        strs[y][x] = `=${strs[y][x]}=`;
+      } else {
+        strs[y][x] = ` ${strs[y][x]} `;
+      }
+    }
+  }
+  */
 
   // Create output
   const buf: string[] = new Array(Y);
