@@ -430,6 +430,79 @@ describe(`${reduceCols.name}()`, () => {
     reduceCols(mat);
     expect(mat).toEqual(expected);
   });
+
+  it("handles a matrix with all Infinity", () => {
+    const mat = [
+      [Infinity, Infinity, Infinity],
+      [Infinity, Infinity, Infinity],
+      [Infinity, Infinity, Infinity],
+    ];
+    const expected = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    reduceCols(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with all -Infinity", () => {
+    const mat = [
+      [-Infinity, -Infinity, -Infinity],
+      [-Infinity, -Infinity, -Infinity],
+      [-Infinity, -Infinity, -Infinity],
+    ];
+    const expected = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    reduceCols(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with all Infinity and -Infinity", () => {
+    const mat = [
+      [Infinity, Infinity, -Infinity],
+      [-Infinity, Infinity, -Infinity],
+      [Infinity, Infinity, Infinity],
+    ];
+    const expected = [
+      [Infinity, 0, 0],
+      [0, 0, 0],
+      [Infinity, 0, Infinity],
+    ];
+    reduceCols(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles columns with Infinity correctly", () => {
+    const mat = [
+      [Infinity, 1, 2],
+      [Infinity, 3, 1],
+      [Infinity, 2, Infinity],
+    ];
+    reduceCols(mat);
+    expect(mat).toEqual([
+      [0, 0, 1],
+      [0, 2, 0],
+      [0, 1, Infinity],
+    ]);
+  });
+
+  it("handles columns with -Infinity correctly", () => {
+    const mat = [
+      [-Infinity, 1, Infinity],
+      [0, 3, 1],
+      [5, 2, -Infinity],
+    ];
+    reduceCols(mat);
+    expect(mat).toEqual([
+      [0, 0, Infinity],
+      [Infinity, 2, Infinity],
+      [Infinity, 1, 0],
+    ]);
+  });
 });
 
 describe(`${reduceRows.name}()`, () => {
@@ -519,5 +592,78 @@ describe(`${reduceRows.name}()`, () => {
     ];
     reduceRows(mat);
     expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with all Infinity", () => {
+    const mat = [
+      [Infinity, Infinity, Infinity],
+      [Infinity, Infinity, Infinity],
+      [Infinity, Infinity, Infinity],
+    ];
+    const expected = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with all -Infinity", () => {
+    const mat = [
+      [-Infinity, -Infinity, -Infinity],
+      [-Infinity, -Infinity, -Infinity],
+      [-Infinity, -Infinity, -Infinity],
+    ];
+    const expected = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with all Infinity and -Infinity", () => {
+    const mat = [
+      [Infinity, Infinity, -Infinity],
+      [-Infinity, Infinity, -Infinity],
+      [Infinity, Infinity, Infinity],
+    ];
+    const expected = [
+      [Infinity, Infinity, 0],
+      [0, Infinity, 0],
+      [0, 0, 0],
+    ];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles rows with Infinity correctly", () => {
+    const mat = [
+      [1, 3, 2],
+      [Infinity, Infinity, Infinity],
+      [2, Infinity, 3],
+    ];
+    reduceRows(mat);
+    expect(mat).toEqual([
+      [0, 2, 1],
+      [0, 0, 0],
+      [0, Infinity, 1],
+    ]);
+  });
+
+  it("handles rows with -Infinity correctly", () => {
+    const mat = [
+      [5, 0, -Infinity],
+      [2, 3, 1],
+      [-Infinity, 1, Infinity],
+    ];
+    reduceRows(mat);
+    expect(mat).toEqual([
+      [Infinity, Infinity, 0],
+      [1, 2, 0],
+      [0, Infinity, Infinity],
+    ]);
   });
 });

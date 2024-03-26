@@ -1,6 +1,7 @@
 import { CostFn } from "../types/costFn";
 import { CostMatrix } from "../types/costMatrix";
 import { getMin as getArrayMin } from "./array";
+import { getColMin } from "./matrix";
 
 /**
  * Constructs a cost matrix for a set of
@@ -226,14 +227,15 @@ export function reduceCols(mat: CostMatrix): void {
   const X = mat[0]?.length ?? 0;
 
   for (let x = 0; x < X; ++x) {
-    let min = Infinity;
-    for (let y = 0; y < Y; ++y) {
-      if (min > mat[y][x]) {
-        min = mat[y][x];
+    const min = getColMin(mat, x)!;
+    if (isFinite(min)) {
+      for (let y = 0; y < Y; ++y) {
+        mat[y][x] -= min;
       }
-    }
-    for (let y = 0; y < Y; ++y) {
-      mat[y][x] -= min;
+    } else {
+      for (let y = 0; y < Y; ++y) {
+        mat[y][x] = mat[y][x] == min ? 0 : Infinity;
+      }
     }
   }
 }
@@ -270,8 +272,14 @@ export function reduceRows(mat: CostMatrix): void {
   for (let y = 0; y < Y; ++y) {
     const row = mat[y];
     const min = getArrayMin(row)!;
-    for (let x = 0; x < X; ++x) {
-      row[x] -= min;
+    if (isFinite(min)) {
+      for (let x = 0; x < X; ++x) {
+        row[x] -= min;
+      }
+    } else {
+      for (let x = 0; x < X; ++x) {
+        row[x] = row[x] == min ? 0 : Infinity;
+      }
     }
   }
 }
