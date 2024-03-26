@@ -17,10 +17,10 @@ import { map } from "./matrix";
  */
 export function findUncoveredZeroOrMin(
   mat: CostMatrix,
-  covX: boolean[],
-  primeY: number[]
+  primeY: number[],
+  starX: number[]
 ): [number, number] {
-  const X = covX.length;
+  const X = starX.length;
   const Y = primeY.length;
 
   let minX = -1;
@@ -33,7 +33,7 @@ export function findUncoveredZeroOrMin(
     }
     const vals = mat[y];
     for (let x = 0; x < X; ++x) {
-      if (covX[x]) {
+      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
         continue;
       }
       if (vals[x] == 0) {
@@ -93,13 +93,12 @@ export function step2(mat: CostMatrix, starX: number[], starY: number[]): void {
   }
 }
 
-export function step3(starX: number[], covX: boolean[]): number {
+export function step3(starX: number[]): number {
   const X = starX.length;
 
   let stars = 0;
   for (let x = 0; x < X; ++x) {
-    covX[x] = starX[x] >= 0;
-    stars += +covX[x];
+    stars += +(starX[x] >= 0);
   }
 
   return stars;
@@ -124,17 +123,16 @@ export function step3(starX: number[], covX: boolean[]): number {
  */
 export function step4(mat: CostMatrix, starX: number[], starY: number[]): void {
   const X = starX.length;
-  const covX = new Array<boolean>(X).fill(false);
   const primeY = new Array<number>(starY.length).fill(-1);
 
-  let stars = step3(starX, covX);
+  let stars = step3(starX);
   while (stars < X) {
     // Find an uncovered zero
-    const [y, x] = findUncoveredZeroOrMin(mat, covX, primeY);
+    const [y, x] = findUncoveredZeroOrMin(mat, primeY, starX);
 
     // If not found
     if (mat[y][x] != 0) {
-      step6(mat[y][x], mat, covX, primeY);
+      step6(mat[y][x], mat, primeY, starX);
       continue;
     }
 
@@ -144,15 +142,11 @@ export function step4(mat: CostMatrix, starX: number[], starY: number[]): void {
     // Find a star in the same row
     const sx = starY[y];
 
-    // If found, uncover its column
-    if (sx >= 0) {
-      covX[sx] = false;
-      continue;
+    // If not found, replace stars with primes
+    if (sx < 0) {
+      step5(y, primeY, starX, starY);
+      ++stars;
     }
-
-    // Replace stars with primes
-    step5(y, covX, primeY, starX, starY);
-    ++stars;
   }
 }
 
@@ -171,7 +165,6 @@ export function step4(mat: CostMatrix, starX: number[], starY: number[]): void {
  */
 export function step5(
   y: number,
-  covX: boolean[],
   primeY: number[],
   starX: number[],
   starY: number[]
@@ -181,24 +174,18 @@ export function step5(
     throw new Error("Input must be prime.");
   }
 
-  // let len = 0;
   let sy = y;
   while (sy >= 0) {
-    // ++len;
-
     // Go to the next prime
     const x = primeY[sy];
     y = sy;
     sy = starX[x];
 
     // Mark prime as a star
-    covX[x] = true;
     primeY[y] = -1;
     starX[x] = y;
     starY[y] = x;
   }
-
-  // console.log(len);
 }
 
 /**
@@ -217,16 +204,16 @@ export function step5(
 export function step6(
   val: number,
   mat: CostMatrix,
-  covX: boolean[],
-  primeY: number[]
+  primeY: number[],
+  starX: number[]
 ): void {
-  const X = covX.length;
+  const X = starX.length;
   const Y = primeY.length;
 
   for (let y = 0; y < Y; ++y) {
     const vals = mat[y];
     for (let x = 0; x < X; ++x) {
-      if (!covX[x]) {
+      if (starX[x] < 0 || primeY[starX[x]] >= 0) {
         vals[x] -= val;
       }
       if (primeY[y] >= 0) {
