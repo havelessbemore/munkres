@@ -188,4 +188,152 @@ describe(`${munkres.name}()`, () => {
     ];
     expect(res).toEqual(sol);
   });
+
+  test("test 10", () => {
+    const costs: CostMatrix = [
+      [400, 150, 400],
+      [400, 450, 600],
+      [300, 225, 300],
+    ];
+    const res = munkres(costs);
+    const sol = [
+      [0, 1],
+      [1, 0],
+      [2, 2],
+    ];
+    expect(res).toEqual(sol);
+  });
+
+  test("test 11", () => {
+    const costs: CostMatrix = [
+      [0, 0, 0, 0],
+      [0, 1, 2, 3],
+      [0, 2, 4, 6],
+      [0, 3, 6, 9],
+    ];
+    const res = munkres(costs);
+    const sol = [
+      [0, 3],
+      [1, 2],
+      [2, 1],
+      [3, 0],
+    ];
+    expect(res).toEqual(sol);
+  });
+
+  test("test 12", () => {
+    const costs: CostMatrix = [
+      [Infinity, Infinity, Infinity],
+      [Infinity, Infinity, Infinity],
+      [Infinity, Infinity, Infinity],
+    ];
+    const res = munkres(costs);
+    const sol = [
+      [0, 0],
+      [1, 1],
+      [2, 2],
+    ];
+    expect(res).toEqual(sol);
+  });
+
+  /*
+  test("test 13", () => {
+    const costs: CostMatrix = [
+      [5, Infinity, Infinity],
+      [6, Infinity, Infinity],
+      [Infinity, Infinity, 10],
+    ];
+    const res = munkres(costs);
+    const sol = [
+      [0, 1],
+      [1, 2],
+      [2, 3]
+    ];
+    expect(res).toEqual(sol);
+  });
+  */
+
+  /*
+  test("test 14", () => {
+    const costs: CostMatrix = [
+      [5, Infinity, Infinity],
+      [6, Infinity, Infinity],
+      [4, Infinity, Infinity],
+    ];
+    const res = munkres(costs);
+    const sol = [
+      [0, 1],
+      [1, 2],
+      [2, 3]
+    ];
+    expect(res).toEqual(sol);
+  });
+  */
+
+  test("test 15", () => {
+    const costs: CostMatrix = [
+      [-Infinity, -Infinity, -Infinity],
+      [-Infinity, -Infinity, -Infinity],
+      [-Infinity, -Infinity, -Infinity],
+    ];
+    const res = munkres(costs);
+    const sol = [
+      [0, 0],
+      [1, 1],
+      [2, 2],
+    ];
+    expect(res).toEqual(sol);
+  });
+
+  /*
+  test("test 16", () => {
+    const costs: CostMatrix = [
+      [5, -Infinity, -Infinity],
+      [6, -Infinity, -Infinity],
+      [-Infinity, -Infinity, 10],
+    ];
+    const res = munkres(costs);
+    const sol = [
+      [0, 1],
+      [1, 2],
+      [2, 3]
+    ];
+    expect(res).toEqual(sol);
+  });
+  */
+
+  /*
+  test("test 17", () => {
+    const costs: CostMatrix = [
+      [5, -Infinity, -Infinity],
+      [6, -Infinity, -Infinity],
+      [4, -Infinity, -Infinity],
+    ];
+    const res = munkres(costs);
+    const sol = [
+      [0, 1],
+      [1, 2],
+      [2, 3]
+    ];
+    expect(res).toEqual(sol);
+  });
+  */
+
+  /*
+  test("test 18", () => {
+    const costs: CostMatrix = [
+      [Infinity, Infinity, Infinity],
+      [Infinity, Infinity, -Infinity],
+      [Infinity, -Infinity, -Infinity]
+    ];
+
+    const res = munkres(costs);
+    const sol = [
+      [0, 1],
+      [1, 2],
+      [2, 3]
+    ];
+    expect(res).toEqual(sol);
+  });
+  */
 });

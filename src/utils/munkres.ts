@@ -23,9 +23,9 @@ export function findUncoveredZeroOrMin(
   const X = starX.length;
   const Y = primeY.length;
 
-  let minX = -1;
-  let minY = -1;
-  let min = Infinity;
+  let minX = 0;
+  let minY = 0;
+  let minV = Infinity;
 
   for (let y = 0; y < Y; ++y) {
     if (primeY[y] >= 0) {
@@ -39,8 +39,8 @@ export function findUncoveredZeroOrMin(
       if (vals[x] == 0) {
         return [y, x];
       }
-      if (vals[x] < min) {
-        min = vals[x];
+      if (vals[x] < minV) {
+        minV = vals[x];
         minX = x;
         minY = y;
       }
@@ -117,38 +117,45 @@ export function steps2To3(
  * @param mat - The cost matrix. Modified in place.
  * @param starX - An array of star x coordinates to y coordinates.
  * @param starY - An array of star y coordinates to x coordinates.
+ *
+ * @privateRemarks
+ * Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this outline} and enhanced with custom optimizations.
  */
-export function step4(
-  stars: number,
-  mat: CostMatrix,
-  starX: number[],
-  starY: number[]
-): void {
-  const X = starX.length;
-  const primeY = new Array<number>(starY.length).fill(-1);
+export function step4(mat: CostMatrix): number[] {
+  const Y = mat.length;
+  const X = mat[0]?.length ?? 0;
+  const starX = new Array<number>(X).fill(-1);
+  const starY = new Array<number>(Y).fill(-1);
+  const primeY = new Array<number>(Y).fill(-1);
 
+  // Step 1: Reduce
+  step1(mat);
+
+  // Steps 2 & 3: Find initial stars
+  let stars = steps2To3(mat, starX, starY);
+
+  // Step 4: Find optimal assignments
   while (stars < X) {
-    // Find an uncovered zero
+    // Find an uncovered zero or the uncovered min
     const [y, x] = findUncoveredZeroOrMin(mat, primeY, starX);
 
-    // If not found
+    // Step 6: If no zero found, create a zero(s) from the min
     if (mat[y][x] != 0) {
       step6(mat[y][x], mat, primeY, starX);
-      continue;
     }
 
     // Prime the zero / cover the row
     primeY[y] = x;
 
-    // Find a star in the same row
-    const sx = starY[y];
-
-    // If not found, replace stars with primes
-    if (sx < 0) {
+    // Step 5: If no star in the prime's row, turn primes into stars
+    if (starY[y] < 0) {
       step5(y, primeY, starX, starY);
       ++stars;
     }
   }
+
+  // Return assignments ([y] -> x)
+  return starY;
 }
 
 /**

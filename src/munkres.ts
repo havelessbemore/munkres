@@ -1,6 +1,6 @@
 import { CostMatrix } from "./types/costMatrix";
 import { copy } from "./utils/matrix";
-import { step1, steps2To3, step4 } from "./utils/munkres";
+import { step4 } from "./utils/munkres";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -16,34 +16,7 @@ import { step1, steps2To3, step4 } from "./utils/munkres";
  * @remarks
  * Runs the {@link https://en.wikipedia.org/wiki/Hungarian_algorithm | Munkres algorithm (aka Hungarian algorithm)} to solve
  * the {@link https://en.wikipedia.org/wiki/Assignment_problem | assignment problem}.
- *
- * @privateRemarks
- * Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this outline} and enhanced with custom optimizations.
  */
 export function munkres(mat: CostMatrix): [number, number][] {
-  // Check input
-  const Y = mat.length;
-  const X = mat[0]?.length ?? 0;
-  if (Y <= 0 || X <= 0) {
-    return [];
-  }
-
-  // Make a copy of the matrix
-  mat = copy(mat);
-
-  // Initialize variables
-  const starX = new Array<number>(X).fill(-1);
-  const starY = new Array<number>(Y).fill(-1);
-
-  // Step 1: Reduce
-  step1(mat);
-
-  // Steps 2: Find initial stars
-  const stars = steps2To3(mat, starX, starY);
-
-  // Step 4: Find optimal assignments
-  step4(stars, mat, starX, starY);
-
-  // Return assignments
-  return Array.from(starY.entries());
+  return Array.from(step4(copy(mat)).entries());
 }
