@@ -22,12 +22,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
-var __defProp = Object.defineProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => {
-  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
 function getMin(array) {
   const N = array.length;
   if (N <= 0) {
@@ -35,283 +29,326 @@ function getMin(array) {
   }
   let min = array[0];
   for (let i = 1; i < N; ++i) {
-    min = min >= array[i] ? min : array[i];
+    if (min > array[i]) {
+      min = array[i];
+    }
   }
   return min;
 }
-const Zero = {
-  NONE: 0,
-  STAR: 1,
-  PRIME: 2
-};
-class Munkres {
-  constructor(mat2) {
-    __publicField(this, "covY");
-    __publicField(this, "covX");
-    __publicField(this, "mask");
-    this.mat = mat2;
-    const Y = mat2.length;
-    const X = mat2[0].length;
-    const mask = new Array(Y);
-    for (let y = 0; y < Y; ++y) {
-      mask[y] = new Array(X).fill(0);
+function copy(matrix) {
+  const Y = matrix.length;
+  const dupe = new Array(Y);
+  for (let y = 0; y < Y; ++y) {
+    dupe[y] = Array.from(matrix[y]);
+  }
+  return dupe;
+}
+function getColMin(matrix, x) {
+  const Y = matrix.length;
+  if (Y <= 0 || x < 0 || x >= matrix[0].length) {
+    return void 0;
+  }
+  let min = matrix[0][x];
+  for (let y = 1; y < Y; ++y) {
+    if (min > matrix[y][x]) {
+      min = matrix[y][x];
     }
-    this.covY = new Array(X).fill(false);
-    this.covX = new Array(Y).fill(false);
-    this.mask = mask;
   }
-  assign() {
-    this._step1();
-    this._step2();
-    let step = 3;
-    do {
-      switch (step) {
-        case 3:
-          step = this._step3();
-          break;
-        case 4:
-          step = this._step4();
-          break;
-        case 6:
-          step = this._step6();
-          break;
-        default:
-          throw new Error(`Invalid state ${step}`);
+  return min;
+}
+function map(matrix, callbackFn) {
+  const Y = matrix.length;
+  const out = new Array(Y);
+  for (let y = 0; y < Y; ++y) {
+    const from = matrix[y];
+    const X = from.length;
+    const to = new Array(X);
+    for (let x = 0; x < X; ++x) {
+      to[x] = callbackFn(from[x], y, x, matrix);
+    }
+    out[y] = to;
+  }
+  return out;
+}
+function createCostMatrix(workers, jobs, costFn) {
+  const X = jobs.length;
+  const Y = workers.length;
+  const mat = new Array(Y);
+  for (let y = 0; y < Y; ++y) {
+    const row = new Array(X);
+    for (let x = 0; x < X; ++x) {
+      row[x] = costFn(workers[y], jobs[x]);
+    }
+    mat[y] = row;
+  }
+  return mat;
+}
+function getMaxCost(mat) {
+  var _a;
+  const Y = mat.length;
+  const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
+  if (Y <= 0 || X <= 0) {
+    return void 0;
+  }
+  let max = mat[0][0];
+  for (let y = 0; y < Y; ++y) {
+    const row = mat[y];
+    for (let x = 0; x < X; ++x) {
+      if (max < row[x]) {
+        max = row[x];
       }
-    } while (step != 7);
-    console.log(toString(this.mat, this.mask));
+    }
   }
-  _step1() {
-    const mat2 = this.mat;
-    const Y = mat2.length;
-    const X = mat2[0].length;
-    for (let y = 0; y < Y; ++y) {
-      const row = mat2[y];
-      const min = getMin(row);
+  return max;
+}
+function getMinCost(mat) {
+  var _a;
+  const Y = mat.length;
+  const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
+  if (Y <= 0 || X <= 0) {
+    return void 0;
+  }
+  let min = mat[0][0];
+  for (let y = 0; y < Y; ++y) {
+    const row = mat[y];
+    for (let x = 0; x < X; ++x) {
+      if (min > row[x]) {
+        min = row[x];
+      }
+    }
+  }
+  return min;
+}
+function invertCostMatrix(mat, bigVal) {
+  var _a;
+  const Y = mat.length;
+  const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
+  if (Y <= 0 || X <= 0) {
+    return void 0;
+  }
+  bigVal = bigVal ?? getMaxCost(mat);
+  for (let y = 0; y < Y; ++y) {
+    const row = mat[y];
+    for (let x = 0; x < X; ++x) {
+      row[x] = bigVal - row[x];
+    }
+  }
+}
+function negateCostMatrix(mat) {
+  var _a;
+  const Y = mat.length;
+  const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
+  for (let y = 0; y < Y; ++y) {
+    const row = mat[y];
+    for (let x = 0; x < X; ++x) {
+      row[x] = -row[x];
+    }
+  }
+}
+function reduceCols(mat) {
+  var _a;
+  const Y = mat.length;
+  const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
+  for (let x = 0; x < X; ++x) {
+    const min = getColMin(mat, x);
+    if (isFinite(min)) {
+      for (let y = 0; y < Y; ++y) {
+        mat[y][x] -= min;
+      }
+    } else {
+      for (let y = 0; y < Y; ++y) {
+        mat[y][x] = mat[y][x] == min ? 0 : Infinity;
+      }
+    }
+  }
+}
+function reduceRows(mat) {
+  var _a;
+  const Y = mat.length;
+  const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
+  for (let y = 0; y < Y; ++y) {
+    const row = mat[y];
+    const min = getMin(row);
+    if (isFinite(min)) {
       for (let x = 0; x < X; ++x) {
         row[x] -= min;
       }
+    } else {
+      for (let x = 0; x < X; ++x) {
+        row[x] = row[x] == min ? 0 : Infinity;
+      }
     }
   }
-  _step2() {
-    const mat2 = this.mat;
-    const Y = mat2.length;
-    const X = mat2[0].length;
-    const covY = this.covY;
-    const covX = this.covX;
-    const mask = this.mask;
-    for (let y = 0; y < Y; ++y) {
-      if (covY[y]) {
+}
+function findUncoveredZeroOrMin(mat, primeY, starX) {
+  const X = starX.length;
+  const Y = primeY.length;
+  let minX = -1;
+  let minY = -1;
+  let minV = void 0;
+  for (let y = 0; y < Y; ++y) {
+    if (primeY[y] >= 0) {
+      continue;
+    }
+    const vals = mat[y];
+    for (let x = 0; x < X; ++x) {
+      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
         continue;
       }
-      const row = mat2[y];
-      for (let x = 0; x < X; ++x) {
-        if (!covX[x] && row[x] == 0) {
-          covX[x] = true;
-          covY[y] = true;
-          mask[y][x] = Zero.STAR;
-        }
+      if (vals[x] == 0) {
+        return [y, x];
+      }
+      if (!(minV <= vals[x])) {
+        minV = vals[x];
+        minX = x;
+        minY = y;
       }
     }
-    this._resetCoverage();
   }
-  _step3() {
-    const mat2 = this.mat;
-    const Y = mat2.length;
-    const X = mat2[0].length;
-    const covX = this.covX;
-    const mask = this.mask;
-    let covered = 0;
+  return [minY, minX];
+}
+function step1(mat) {
+  reduceRows(mat);
+  reduceCols(mat);
+}
+function steps2To3(mat, starX, starY) {
+  const X = starX.length;
+  const Y = starY.length;
+  let stars = 0;
+  for (let y = 0; y < Y; ++y) {
+    const vals = mat[y];
     for (let x = 0; x < X; ++x) {
-      for (let y = 0; y < Y; ++y) {
-        if (mask[y][x] == Zero.STAR) {
-          covX[x] = true;
-          ++covered;
-          break;
-        }
-      }
-    }
-    return covered < X ? 4 : 7;
-  }
-  _step4() {
-    const covY = this.covY;
-    const covX = this.covX;
-    const mask = this.mask;
-    while (true) {
-      let [y, x] = this._findUncoveredZero();
-      if (y < 0) {
-        return 6;
-      }
-      mask[y][x] = Zero.PRIME;
-      const sx = this._findStarInRow(y);
-      if (sx < 0) {
-        this._step5(y, x);
-        return 3;
-      }
-      covY[y] = true;
-      covX[sx] = false;
-    }
-  }
-  _step5(y, x) {
-    const path = [y, x];
-    while (true) {
-      y = this._findStarInCol(x);
-      if (y < 0) {
+      if (vals[x] == 0 && starX[x] < 0) {
+        starX[x] = y;
+        starY[y] = x;
+        ++stars;
         break;
       }
-      path.push(y, this._findPrimeInRow(y));
     }
-    const mask = this.mask;
-    const N = path.length;
-    for (let i = 1; i < N; ++i) {
-      y = path[i - (i & 1)];
-      x = path[i - (i ^ 1)];
-      mask[y][x] = mask[y][x] == Zero.STAR ? Zero.NONE : Zero.STAR;
-    }
-    this._resetCoverage();
-    this._resetPrimes();
   }
-  _step6() {
-    const covY = this.covY;
-    const covX = this.covX;
-    const mat2 = this.mat;
-    const Y = covY.length;
-    const X = covX.length;
-    const min = this._findMinUncovered();
-    for (let y = 0; y < Y; ++y) {
-      for (let x = 0; x < X; ++x) {
-        if (covY[y]) {
-          mat2[y][x] += min;
-        }
-        if (!covX[x]) {
-          mat2[y][x] -= min;
-        }
-      }
+  return stars;
+}
+function step4(mat, debug = false) {
+  var _a;
+  const starX = new Array(((_a = mat[0]) == null ? void 0 : _a.length) ?? 0).fill(-1);
+  const starY = new Array(mat.length).fill(-1);
+  const primeY = new Array(mat.length).fill(-1);
+  debug && console.log("0:\n\n%s\n", toString(mat, starY, primeY));
+  step1(mat);
+  debug && console.log("1:\n\n%s\n", toString(mat, starY, primeY));
+  let stars = steps2To3(mat, starX, starY);
+  debug && console.log("2&3:\n\n%s\n", toString(mat, starY, primeY));
+  const S = Math.min(starX.length, starY.length);
+  while (stars < S) {
+    const [y, x] = findUncoveredZeroOrMin(mat, primeY, starX);
+    if (mat[y][x] != 0) {
+      step6(mat[y][x], mat, primeY, starX);
+      debug && console.log("6:\n\n%s\n", toString(mat, starY, primeY));
     }
-    return 4;
-  }
-  _findMinUncovered() {
-    const covY = this.covY;
-    const covX = this.covX;
-    const mat2 = this.mat;
-    const Y = covY.length;
-    const X = covX.length;
-    let min = Infinity;
-    for (let y = 0; y < Y; ++y) {
-      if (covY[y]) {
-        continue;
-      }
-      const row = mat2[y];
-      for (let x = 0; x < X; ++x) {
-        if (!covX[x] && row[x] < min) {
-          min = row[x];
-        }
-      }
+    primeY[y] = x;
+    debug && console.log("4:\n\n%s\n", toString(mat, starY, primeY));
+    if (starY[y] < 0) {
+      step5(y, primeY, starX, starY);
+      ++stars;
+      debug && console.log("5:\n\n%s\n", toString(mat, starY, primeY));
     }
-    return min;
   }
-  _findPrimeInRow(y) {
-    const row = this.mask[y];
-    const X = row.length;
+  return starY;
+}
+function step5(y, primeY, starX, starY) {
+  if (primeY[y] < 0) {
+    throw new Error("Input must be prime.");
+  }
+  let sy = y;
+  while (sy >= 0) {
+    const x = primeY[sy];
+    y = sy;
+    sy = starX[x];
+    primeY[y] = -1;
+    starX[x] = y;
+    starY[y] = x;
+  }
+}
+function step6(min, mat, primeY, starX) {
+  const X = starX.length;
+  const Y = primeY.length;
+  if (!isFinite(min)) {
+    return step6Inf(mat, primeY, starX);
+  }
+  for (let y = 0; y < Y; ++y) {
+    const vals = mat[y];
     for (let x = 0; x < X; ++x) {
-      if (row[x] == Zero.PRIME) {
-        return x;
-      }
-    }
-    return -1;
-  }
-  _findStarInCol(x) {
-    const mask = this.mask;
-    const Y = mask.length;
-    for (let y = 0; y < Y; ++y) {
-      if (mask[y][x] == Zero.STAR) {
-        return Y;
-      }
-    }
-    return -1;
-  }
-  _findStarInRow(y) {
-    const row = this.mask[y];
-    const X = row.length;
-    for (let x = 0; x < X; ++x) {
-      if (row[x] == Zero.STAR) {
-        return x;
-      }
-    }
-    return -1;
-  }
-  _findUncoveredZero() {
-    const mat2 = this.mat;
-    const Y = mat2.length;
-    const X = mat2[0].length;
-    const covY = this.covY;
-    const covX = this.covX;
-    for (let y = 0; y < Y; ++y) {
-      if (covY[y]) {
-        continue;
-      }
-      const row = mat2[y];
-      for (let x = 0; x < X; ++x) {
-        if (!covX[x] && row[x] == 0) {
-          return [y, x];
+      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
+        if (primeY[y] >= 0) {
+          vals[x] += min;
         }
-      }
-    }
-    return [-1, -1];
-  }
-  _resetCoverage() {
-    this.covX.fill(false);
-    this.covY.fill(false);
-  }
-  _resetPrimes() {
-    const mask = this.mask;
-    const Y = mask.length;
-    const X = mask[0].length;
-    for (let y = 0; y < Y; ++y) {
-      const row = mask[y];
-      for (let x = 0; x < X; ++x) {
-        if (row[x] == Zero.PRIME) {
-          row[x] = Zero.NONE;
-        }
+      } else if (primeY[y] < 0) {
+        vals[x] -= min;
       }
     }
   }
 }
-function toString(mat2, mask) {
-  const buf = [];
-  const Y = mat2.length;
-  const X = mat2[0].length;
-  let cw = -Infinity;
+function step6Inf(mat, primeY, starX) {
+  const X = starX.length;
+  const Y = primeY.length;
   for (let y = 0; y < Y; ++y) {
+    const vals = mat[y];
     for (let x = 0; x < X; ++x) {
-      cw = Math.max(cw, mat2[y][x]);
-    }
-  }
-  cw = `${cw}`.length + 1;
-  for (let y = 0; y < Y; ++y) {
-    for (let x = 0; x < X; ++x) {
-      let val = `${mat2[y][x]}`;
-      switch (mask[y][x]) {
-        case 1:
-          val += "*";
-        case 2:
-          val += '"';
+      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
+        if (primeY[y] >= 0) {
+          vals[x] += Infinity;
+        }
+      } else if (primeY[y] < 0) {
+        vals[x] = 0;
       }
-      buf.push(val.padEnd(cw, " "));
     }
-    buf.push("\n");
   }
-  return buf.join(" ");
 }
-const mat = [
-  [1, 2, 3],
-  [2, 4, 6],
-  [3, 6, 9]
-];
-const a = new Munkres(mat);
-a.assign();
+function toString(mat, starY, primeY = []) {
+  var _a;
+  const strs = map(mat, (v) => `${v}`);
+  const Y = strs.length;
+  const X = ((_a = strs[0]) == null ? void 0 : _a.length) ?? 0;
+  for (let y = 0; y < Y; ++y) {
+    const row = strs[y];
+    if (starY[y] >= 0) {
+      row[starY[y]] = "*" + row[starY[y]];
+    }
+    if (primeY[y] >= 0) {
+      row[primeY[y]] = '"' + row[primeY[y]];
+    }
+  }
+  let width = 0;
+  for (let y = 0; y < Y; ++y) {
+    for (let x = 0; x < X; ++x) {
+      width = Math.max(width, strs[y][x].length);
+    }
+  }
+  for (let y = 0; y < Y; ++y) {
+    const row = strs[y];
+    for (let x = 0; x < X; ++x) {
+      if (row[x].length < width) {
+        row[x] = row[x].padStart(width, " ");
+      }
+    }
+  }
+  const buf = new Array(Y);
+  for (let y = 0; y < Y; ++y) {
+    buf[y] = `[${strs[y].join(", ")}]`;
+  }
+  return buf.join(",\n");
+}
+function munkres(mat, debug = false) {
+  return Array.from(step4(copy(mat), debug).entries()).filter(
+    ([, x]) => x >= 0
+  );
+}
 export {
-  Munkres,
-  Zero
+  createCostMatrix,
+  getMaxCost,
+  getMinCost,
+  invertCostMatrix,
+  munkres,
+  negateCostMatrix
 };
 //# sourceMappingURL=munkres.mjs.map

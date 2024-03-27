@@ -22,201 +22,246 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
-var v = Object.defineProperty;
-var m = (h, t, s) => t in h ? v(h, t, { enumerable: !0, configurable: !0, writable: !0, value: s }) : h[t] = s;
-var a = (h, t, s) => (m(h, typeof t != "symbol" ? t + "" : t, s), s);
-function u(h) {
-  const t = h.length;
-  if (t <= 0)
+function y(n) {
+  const e = n.length;
+  if (e <= 0)
     return;
-  let s = h[0];
-  for (let o = 1; o < t; ++o)
-    s = s >= h[o] ? s : h[o];
-  return s;
+  let l = n[0];
+  for (let t = 1; t < e; ++t)
+    l > n[t] && (l = n[t]);
+  return l;
 }
-const f = {
-  NONE: 0,
-  STAR: 1,
-  PRIME: 2
-};
-class g {
-  constructor(t) {
-    a(this, "covY");
-    a(this, "covX");
-    a(this, "mask");
-    this.mat = t;
-    const s = t.length, o = t[0].length, n = new Array(s);
-    for (let i = 0; i < s; ++i)
-      n[i] = new Array(o).fill(0);
-    this.covY = new Array(o).fill(!1), this.covX = new Array(s).fill(!1), this.mask = n;
+function w(n) {
+  const e = n.length, l = new Array(e);
+  for (let t = 0; t < e; ++t)
+    l[t] = Array.from(n[t]);
+  return l;
+}
+function x(n, e) {
+  const l = n.length;
+  if (l <= 0 || e < 0 || e >= n[0].length)
+    return;
+  let t = n[0][e];
+  for (let o = 1; o < l; ++o)
+    t > n[o][e] && (t = n[o][e]);
+  return t;
+}
+function v(n, e) {
+  const l = n.length, t = new Array(l);
+  for (let o = 0; o < l; ++o) {
+    const r = n[o], f = r.length, s = new Array(f);
+    for (let c = 0; c < f; ++c)
+      s[c] = e(r[c], o, c, n);
+    t[o] = s;
   }
-  assign() {
-    this._step1(), this._step2();
-    let t = 3;
-    do
-      switch (t) {
-        case 3:
-          t = this._step3();
-          break;
-        case 4:
-          t = this._step4();
-          break;
-        case 6:
-          t = this._step6();
-          break;
-        default:
-          throw new Error(`Invalid state ${t}`);
+  return t;
+}
+function j(n, e, l) {
+  const t = e.length, o = n.length, r = new Array(o);
+  for (let f = 0; f < o; ++f) {
+    const s = new Array(t);
+    for (let c = 0; c < t; ++c)
+      s[c] = l(n[f], e[c]);
+    r[f] = s;
+  }
+  return r;
+}
+function A(n) {
+  var o;
+  const e = n.length, l = ((o = n[0]) == null ? void 0 : o.length) ?? 0;
+  if (e <= 0 || l <= 0)
+    return;
+  let t = n[0][0];
+  for (let r = 0; r < e; ++r) {
+    const f = n[r];
+    for (let s = 0; s < l; ++s)
+      t < f[s] && (t = f[s]);
+  }
+  return t;
+}
+function k(n) {
+  var o;
+  const e = n.length, l = ((o = n[0]) == null ? void 0 : o.length) ?? 0;
+  if (e <= 0 || l <= 0)
+    return;
+  let t = n[0][0];
+  for (let r = 0; r < e; ++r) {
+    const f = n[r];
+    for (let s = 0; s < l; ++s)
+      t > f[s] && (t = f[s]);
+  }
+  return t;
+}
+function p(n, e) {
+  var o;
+  const l = n.length, t = ((o = n[0]) == null ? void 0 : o.length) ?? 0;
+  if (!(l <= 0 || t <= 0)) {
+    e = e ?? A(n);
+    for (let r = 0; r < l; ++r) {
+      const f = n[r];
+      for (let s = 0; s < t; ++s)
+        f[s] = e - f[s];
+    }
+  }
+}
+function E(n) {
+  var t;
+  const e = n.length, l = ((t = n[0]) == null ? void 0 : t.length) ?? 0;
+  for (let o = 0; o < e; ++o) {
+    const r = n[o];
+    for (let f = 0; f < l; ++f)
+      r[f] = -r[f];
+  }
+}
+function M(n) {
+  var t;
+  const e = n.length, l = ((t = n[0]) == null ? void 0 : t.length) ?? 0;
+  for (let o = 0; o < l; ++o) {
+    const r = x(n, o);
+    if (isFinite(r))
+      for (let f = 0; f < e; ++f)
+        n[f][o] -= r;
+    else
+      for (let f = 0; f < e; ++f)
+        n[f][o] = n[f][o] == r ? 0 : 1 / 0;
+  }
+}
+function d(n) {
+  var t;
+  const e = n.length, l = ((t = n[0]) == null ? void 0 : t.length) ?? 0;
+  for (let o = 0; o < e; ++o) {
+    const r = n[o], f = y(r);
+    if (isFinite(f))
+      for (let s = 0; s < l; ++s)
+        r[s] -= f;
+    else
+      for (let s = 0; s < l; ++s)
+        r[s] = r[s] == f ? 0 : 1 / 0;
+  }
+}
+function C(n, e, l) {
+  const t = l.length, o = e.length;
+  let r = -1, f = -1, s;
+  for (let c = 0; c < o; ++c) {
+    if (e[c] >= 0)
+      continue;
+    const i = n[c];
+    for (let u = 0; u < t; ++u)
+      if (!(l[u] >= 0 && e[l[u]] < 0)) {
+        if (i[u] == 0)
+          return [c, u];
+        s <= i[u] || (s = i[u], r = u, f = c);
       }
-    while (t != 7);
-    console.log(_(this.mat, this.mask));
   }
-  _step1() {
-    const t = this.mat, s = t.length, o = t[0].length;
-    for (let n = 0; n < s; ++n) {
-      const i = t[n], e = u(i);
-      for (let c = 0; c < o; ++c)
-        i[c] -= e;
-    }
+  return [f, r];
+}
+function I(n) {
+  d(n), M(n);
+}
+function X(n, e, l) {
+  const t = e.length, o = l.length;
+  let r = 0;
+  for (let f = 0; f < o; ++f) {
+    const s = n[f];
+    for (let c = 0; c < t; ++c)
+      if (s[c] == 0 && e[c] < 0) {
+        e[c] = f, l[f] = c, ++r;
+        break;
+      }
   }
-  _step2() {
-    const t = this.mat, s = t.length, o = t[0].length, n = this.covY, i = this.covX, e = this.mask;
-    for (let c = 0; c < s; ++c) {
-      if (n[c])
-        continue;
-      const r = t[c];
-      for (let l = 0; l < o; ++l)
-        !i[l] && r[l] == 0 && (i[l] = !0, n[c] = !0, e[c][l] = f.STAR);
-    }
-    this._resetCoverage();
+  return r;
+}
+function F(n, e = !1) {
+  var s;
+  const l = new Array(((s = n[0]) == null ? void 0 : s.length) ?? 0).fill(-1), t = new Array(n.length).fill(-1), o = new Array(n.length).fill(-1);
+  e && console.log(`0:
+
+%s
+`, h(n, t, o)), I(n), e && console.log(`1:
+
+%s
+`, h(n, t, o));
+  let r = X(n, l, t);
+  e && console.log(`2&3:
+
+%s
+`, h(n, t, o));
+  const f = Math.min(l.length, t.length);
+  for (; r < f; ) {
+    const [c, i] = C(n, o, l);
+    n[c][i] != 0 && (Y(n[c][i], n, o, l), e && console.log(`6:
+
+%s
+`, h(n, t, o))), o[c] = i, e && console.log(`4:
+
+%s
+`, h(n, t, o)), t[c] < 0 && (S(c, o, l, t), ++r, e && console.log(`5:
+
+%s
+`, h(n, t, o)));
   }
-  _step3() {
-    const t = this.mat, s = t.length, o = t[0].length, n = this.covX, i = this.mask;
-    let e = 0;
+  return t;
+}
+function S(n, e, l, t) {
+  if (e[n] < 0)
+    throw new Error("Input must be prime.");
+  let o = n;
+  for (; o >= 0; ) {
+    const r = e[o];
+    n = o, o = l[r], e[n] = -1, l[r] = n, t[n] = r;
+  }
+}
+function Y(n, e, l, t) {
+  const o = t.length, r = l.length;
+  if (!isFinite(n))
+    return $(e, l, t);
+  for (let f = 0; f < r; ++f) {
+    const s = e[f];
     for (let c = 0; c < o; ++c)
-      for (let r = 0; r < s; ++r)
-        if (i[r][c] == f.STAR) {
-          n[c] = !0, ++e;
-          break;
-        }
-    return e < o ? 4 : 7;
-  }
-  _step4() {
-    const t = this.covY, s = this.covX, o = this.mask;
-    for (; ; ) {
-      let [n, i] = this._findUncoveredZero();
-      if (n < 0)
-        return 6;
-      o[n][i] = f.PRIME;
-      const e = this._findStarInRow(n);
-      if (e < 0)
-        return this._step5(n, i), 3;
-      t[n] = !0, s[e] = !1;
-    }
-  }
-  _step5(t, s) {
-    const o = [t, s];
-    for (; t = this._findStarInCol(s), !(t < 0); )
-      o.push(t, this._findPrimeInRow(t));
-    const n = this.mask, i = o.length;
-    for (let e = 1; e < i; ++e)
-      t = o[e - (e & 1)], s = o[e - (e ^ 1)], n[t][s] = n[t][s] == f.STAR ? f.NONE : f.STAR;
-    this._resetCoverage(), this._resetPrimes();
-  }
-  _step6() {
-    const t = this.covY, s = this.covX, o = this.mat, n = t.length, i = s.length, e = this._findMinUncovered();
-    for (let c = 0; c < n; ++c)
-      for (let r = 0; r < i; ++r)
-        t[c] && (o[c][r] += e), s[r] || (o[c][r] -= e);
-    return 4;
-  }
-  _findMinUncovered() {
-    const t = this.covY, s = this.covX, o = this.mat, n = t.length, i = s.length;
-    let e = 1 / 0;
-    for (let c = 0; c < n; ++c) {
-      if (t[c])
-        continue;
-      const r = o[c];
-      for (let l = 0; l < i; ++l)
-        !s[l] && r[l] < e && (e = r[l]);
-    }
-    return e;
-  }
-  _findPrimeInRow(t) {
-    const s = this.mask[t], o = s.length;
-    for (let n = 0; n < o; ++n)
-      if (s[n] == f.PRIME)
-        return n;
-    return -1;
-  }
-  _findStarInCol(t) {
-    const s = this.mask, o = s.length;
-    for (let n = 0; n < o; ++n)
-      if (s[n][t] == f.STAR)
-        return o;
-    return -1;
-  }
-  _findStarInRow(t) {
-    const s = this.mask[t], o = s.length;
-    for (let n = 0; n < o; ++n)
-      if (s[n] == f.STAR)
-        return n;
-    return -1;
-  }
-  _findUncoveredZero() {
-    const t = this.mat, s = t.length, o = t[0].length, n = this.covY, i = this.covX;
-    for (let e = 0; e < s; ++e) {
-      if (n[e])
-        continue;
-      const c = t[e];
-      for (let r = 0; r < o; ++r)
-        if (!i[r] && c[r] == 0)
-          return [e, r];
-    }
-    return [-1, -1];
-  }
-  _resetCoverage() {
-    this.covX.fill(!1), this.covY.fill(!1);
-  }
-  _resetPrimes() {
-    const t = this.mask, s = t.length, o = t[0].length;
-    for (let n = 0; n < s; ++n) {
-      const i = t[n];
-      for (let e = 0; e < o; ++e)
-        i[e] == f.PRIME && (i[e] = f.NONE);
-    }
+      t[c] >= 0 && l[t[c]] < 0 ? l[f] >= 0 && (s[c] += n) : l[f] < 0 && (s[c] -= n);
   }
 }
-function _(h, t) {
-  const s = [], o = h.length, n = h[0].length;
-  let i = -1 / 0;
-  for (let e = 0; e < o; ++e)
-    for (let c = 0; c < n; ++c)
-      i = Math.max(i, h[e][c]);
-  i = `${i}`.length + 1;
-  for (let e = 0; e < o; ++e) {
-    for (let c = 0; c < n; ++c) {
-      let r = `${h[e][c]}`;
-      switch (t[e][c]) {
-        case 1:
-          r += "*";
-        case 2:
-          r += '"';
-      }
-      s.push(r.padEnd(i, " "));
-    }
-    s.push(`
+function $(n, e, l) {
+  const t = l.length, o = e.length;
+  for (let r = 0; r < o; ++r) {
+    const f = n[r];
+    for (let s = 0; s < t; ++s)
+      l[s] >= 0 && e[l[s]] < 0 ? e[r] >= 0 && (f[s] += 1 / 0) : e[r] < 0 && (f[s] = 0);
+  }
+}
+function h(n, e, l = []) {
+  var c;
+  const t = v(n, (i) => `${i}`), o = t.length, r = ((c = t[0]) == null ? void 0 : c.length) ?? 0;
+  for (let i = 0; i < o; ++i) {
+    const u = t[i];
+    e[i] >= 0 && (u[e[i]] = "*" + u[e[i]]), l[i] >= 0 && (u[l[i]] = '"' + u[l[i]]);
+  }
+  let f = 0;
+  for (let i = 0; i < o; ++i)
+    for (let u = 0; u < r; ++u)
+      f = Math.max(f, t[i][u].length);
+  for (let i = 0; i < o; ++i) {
+    const u = t[i];
+    for (let g = 0; g < r; ++g)
+      u[g].length < f && (u[g] = u[g].padStart(f, " "));
+  }
+  const s = new Array(o);
+  for (let i = 0; i < o; ++i)
+    s[i] = `[${t[i].join(", ")}]`;
+  return s.join(`,
 `);
-  }
-  return s.join(" ");
 }
-const X = [
-  [1, 2, 3],
-  [2, 4, 6],
-  [3, 6, 9]
-], k = new g(X);
-k.assign();
+function N(n, e = !1) {
+  return Array.from(F(w(n), e).entries()).filter(
+    ([, l]) => l >= 0
+  );
+}
 export {
-  g as Munkres,
-  f as Zero
+  j as createCostMatrix,
+  A as getMaxCost,
+  k as getMinCost,
+  p as invertCostMatrix,
+  N as munkres,
+  E as negateCostMatrix
 };
 //# sourceMappingURL=munkres.min.mjs.map
