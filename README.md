@@ -9,6 +9,7 @@ A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm
 ![npm bundle size](https://img.shields.io/bundlephobia/minzip/munkres)
 
 ## Features
+
 - Supports `-Infinity` and `Infinity`.
 - Supports square and rectangular matrices.
 - [Helpers](#helpers) included for creating and manipulating cost matrices.

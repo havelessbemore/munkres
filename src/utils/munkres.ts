@@ -45,18 +45,23 @@ export function findUncoveredZeroOrMin(
   let minY = -1;
   let minV = undefined as unknown as number;
 
+  // For each cell
   for (let y = 0; y < Y; ++y) {
+    // Skip if the row is covered
     if (primeY[y] >= 0) {
       continue;
     }
     const vals = mat[y];
     for (let x = 0; x < X; ++x) {
+      // Skip if the column is covered
       if (starX[x] >= 0 && primeY[starX[x]] < 0) {
         continue;
       }
+      // Return immediately if a zero is found
       if (vals[x] == 0) {
         return [y, x];
       }
+      // Track the smallest uncovered value
       if (!(minV <= vals[x])) {
         minV = vals[x];
         minX = x;
@@ -65,6 +70,7 @@ export function findUncoveredZeroOrMin(
     }
   }
 
+  // Return the smallest value's coordinates
   return [minY, minX];
 }
 
@@ -237,18 +243,22 @@ export function step6(
   const X = starX.length;
   const Y = primeY.length;
 
+  // If min is Infinity
   if (!isFinite(min)) {
     return step6Inf(mat, primeY, starX);
   }
 
+  // For each cell
   for (let y = 0; y < Y; ++y) {
     const vals = mat[y];
     for (let x = 0; x < X; ++x) {
       if (starX[x] >= 0 && primeY[starX[x]] < 0) {
         if (primeY[y] >= 0) {
+          // The cell's column and row are covered
           vals[x] += min;
         }
       } else if (primeY[y] < 0) {
+        // The cell's column and row are uncovered
         vals[x] -= min;
       }
     }
@@ -281,14 +291,17 @@ export function step6Inf(
   const X = starX.length;
   const Y = primeY.length;
 
+  // For each cell
   for (let y = 0; y < Y; ++y) {
     const vals = mat[y];
     for (let x = 0; x < X; ++x) {
       if (starX[x] >= 0 && primeY[starX[x]] < 0) {
         if (primeY[y] >= 0) {
+          // The cell's column and row are covered
           vals[x] += Infinity;
         }
       } else if (primeY[y] < 0) {
+        // The cell's column and row are uncovered
         vals[x] = 0;
       }
     }
