@@ -279,6 +279,21 @@ describe(`${munkres.name}()`, () => {
     expect(res).toEqual(sol);
   });
 
+  test("handles a 3x9 matrix", () => {
+    const costs = [
+      [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      [2, 4, 6, 8, 10, 12, 14, 16, 18],
+      [3, 6, 9, 12, 15, 18, 21, 24, 27],
+    ];
+    const res = munkres(costs);
+    const sol = [
+      [0, 2],
+      [1, 1],
+      [2, 0],
+    ];
+    expect(res).toEqual(sol);
+  });
+
   test("test 1", () => {
     const costs: CostMatrix = [
       [8, 4, 7],

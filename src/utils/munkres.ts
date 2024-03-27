@@ -175,6 +175,7 @@ export function step4(mat: CostMatrix): number[] {
     // Step 5: If no star in the prime's row, turn primes into stars
     if (starY[y] < 0) {
       step5(y, primeY, starX, starY);
+      primeY.fill(-1);
       ++stars;
     }
   }
@@ -215,7 +216,6 @@ export function step5(
     sy = starX[x];
 
     // Mark prime as a star
-    primeY[y] = -1;
     starX[x] = y;
     starY[y] = x;
   }
