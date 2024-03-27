@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { copy, getColMin, map } from "./matrix";
+import { copy, getColMin, getMax, getMin, map } from "./matrix";
 
 describe(`${copy.name}()`, () => {
   it("returns an empty matrix when copying an empty matrix", () => {
@@ -123,6 +123,104 @@ describe(`${getColMin.name}()`, () => {
       [3, 1, 2],
     ];
     expect(getColMin(matrix, 0)).toBe(3);
+  });
+});
+
+describe(`${getMax.name}()`, () => {
+  it("returns undefined for an empty matrix", () => {
+    const matrix = [];
+    expect(getMax(matrix)).toBeUndefined();
+  });
+
+  it("handles matrix with a single row correctly", () => {
+    const matrix = [[2, 9, 4]];
+    expect(getMax(matrix)).toBe(9);
+  });
+
+  it("handles matrix with a single column correctly", () => {
+    const matrix = [[2], [9], [4]];
+    expect(getMax(matrix)).toBe(9);
+  });
+
+  it("handles matrix with a single element correctly", () => {
+    const matrix = [[9]];
+    expect(getMax(matrix)).toBe(9);
+  });
+
+  it("finds the maximum value in a matrix of numbers", () => {
+    const matrix = [
+      [1, 3, 2],
+      [4, 0, 6],
+      [7, 5, 8],
+    ];
+    expect(getMax(matrix)).toBe(8);
+  });
+
+  it("finds the maximum value in a matrix of bigints", () => {
+    const matrix = [
+      [1n, 3n, 2n],
+      [4n, 0n, 6n],
+      [7n, 5n, 8n],
+    ];
+    expect(getMax(matrix)).toBe(8n);
+  });
+
+  it("finds the maximum value in a matrix of strings", () => {
+    const matrix = [
+      ["b", "d", "c"],
+      ["e", "a", "g"],
+      ["h", "f", "i"],
+    ];
+    expect(getMax(matrix)).toBe("i");
+  });
+});
+
+describe(`${getMin.name}()`, () => {
+  it("returns undefined for an empty matrix", () => {
+    const matrix = [];
+    expect(getMin(matrix)).toBeUndefined();
+  });
+
+  it("handles matrix with a single row correctly", () => {
+    const matrix = [[2, 9, 4]];
+    expect(getMin(matrix)).toBe(2);
+  });
+
+  it("handles matrix with a single column correctly", () => {
+    const matrix = [[2], [9], [4]];
+    expect(getMin(matrix)).toBe(2);
+  });
+
+  it("handles matrix with a single element correctly", () => {
+    const matrix = [[9]];
+    expect(getMin(matrix)).toBe(9);
+  });
+
+  it("finds the minimum value in a matrix of numbers", () => {
+    const matrix = [
+      [1, 3, 2],
+      [4, 0, 6],
+      [7, 5, 8],
+    ];
+    expect(getMin(matrix)).toBe(0);
+  });
+
+  it("finds the minimum value in a matrix of bigints", () => {
+    const matrix = [
+      [1n, 3n, 2n],
+      [4n, 0n, 6n],
+      [7n, 5n, 8n],
+    ];
+    expect(getMin(matrix)).toBe(0n);
+  });
+
+  it("finds the minimum value in a matrix of strings", () => {
+    const matrix = [
+      ["b", "d", "c"],
+      ["e", "a", "g"],
+      ["h", "f", "i"],
+    ];
+    expect(getMin(matrix)).toBe("a");
   });
 });
 
