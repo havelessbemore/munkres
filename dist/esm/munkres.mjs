@@ -56,6 +56,38 @@ function getColMin(matrix, x) {
   }
   return min;
 }
+function isSquare(matrix) {
+  var _a;
+  return matrix.length == (((_a = matrix[0]) == null ? void 0 : _a.length) ?? 0);
+}
+function pad(matrix, height, width, fillValue) {
+  padHeight(matrix, height, fillValue);
+  padWidth(matrix, width, fillValue);
+}
+function padHeight(matrix, height, fillValue) {
+  var _a;
+  const Y = matrix.length;
+  if (Y >= height) {
+    return;
+  }
+  matrix.length = height;
+  const X = ((_a = matrix[0]) == null ? void 0 : _a.length) ?? 0;
+  for (let y = Y; y < height; ++y) {
+    matrix[y] = new Array(X).fill(fillValue);
+  }
+}
+function padWidth(matrix, width, fillValue) {
+  var _a;
+  const X = ((_a = matrix[0]) == null ? void 0 : _a.length) ?? 0;
+  if (X >= width) {
+    return;
+  }
+  const Y = matrix.length;
+  for (let y = 0; y < Y; ++y) {
+    matrix[y].length = width;
+    matrix[y].fill(fillValue, X, width);
+  }
+}
 function createCostMatrix(workers, jobs, costFn) {
   const X = jobs.length;
   const Y = workers.length;
@@ -216,6 +248,9 @@ function steps2To3(mat, starX, starY) {
 }
 function step4(mat) {
   var _a;
+  if (!isSquare(mat)) {
+    throw new Error("matrix must be NxN");
+  }
   const starX = new Array(((_a = mat[0]) == null ? void 0 : _a.length) ?? 0).fill(-1);
   const starY = new Array(mat.length).fill(-1);
   const primeY = new Array(mat.length).fill(-1);
@@ -285,9 +320,22 @@ function step6Inf(mat, primeY, starX) {
   }
 }
 function munkres(costMatrix) {
-  return Array.from(step4(copy(costMatrix)).entries()).filter(
-    ([, x]) => x >= 0
-  );
+  var _a;
+  const Y = costMatrix.length;
+  const X = ((_a = costMatrix[0]) == null ? void 0 : _a.length) ?? 0;
+  if (X <= 0) {
+    return [];
+  }
+  costMatrix = copy(costMatrix);
+  pad(costMatrix, X, Y, 0);
+  const y2x = step4(costMatrix);
+  const pairs = new Array(Math.min(Y, X));
+  for (let y = 0, i = 0; y < Y; ++y) {
+    if (y2x[y] < X) {
+      pairs[i++] = [y, y2x[y]];
+    }
+  }
+  return pairs;
 }
 export {
   createCostMatrix,
