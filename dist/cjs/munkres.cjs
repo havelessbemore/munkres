@@ -249,17 +249,16 @@ function steps2To3(mat, starX, starY) {
   return stars;
 }
 function step4(mat) {
-  var _a;
   if (!isSquare(mat)) {
     throw new Error("matrix must be NxN");
   }
-  const starX = new Array(((_a = mat[0]) == null ? void 0 : _a.length) ?? 0).fill(-1);
-  const starY = new Array(mat.length).fill(-1);
-  const primeY = new Array(mat.length).fill(-1);
+  const N = mat.length;
+  const starX = new Array(N).fill(-1);
+  const starY = new Array(N).fill(-1);
+  const primeY = new Array(N).fill(-1);
   step1(mat);
   let stars = steps2To3(mat, starX, starY);
-  const S = Math.min(starX.length, starY.length);
-  while (stars < S) {
+  while (stars < N) {
     const [y, x] = findUncoveredZeroOrMin(mat, primeY, starX);
     if (mat[y][x] != 0) {
       step6(mat[y][x], mat, primeY, starX);
@@ -267,6 +266,7 @@ function step4(mat) {
     primeY[y] = x;
     if (starY[y] < 0) {
       step5(y, primeY, starX, starY);
+      primeY.fill(-1);
       ++stars;
     }
   }
@@ -281,7 +281,6 @@ function step5(y, primeY, starX, starY) {
     const x = primeY[sy];
     y = sy;
     sy = starX[x];
-    primeY[y] = -1;
     starX[x] = y;
     starY[y] = x;
   }

@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[types/costFn.d.ts:1](https://github.com/havelessbemore/munkres/blob/8bd5653/src/types/costFn.d.ts#L1)
+[types/costFn.d.ts:1](https://github.com/havelessbemore/munkres/blob/2c9953f/src/types/costFn.d.ts#L1)
 
 ___
 
@@ -59,7 +59,7 @@ ___
 
 #### Defined in
 
-[types/costMatrix.d.ts:3](https://github.com/havelessbemore/munkres/blob/8bd5653/src/types/costMatrix.d.ts#L3)
+[types/costMatrix.d.ts:3](https://github.com/havelessbemore/munkres/blob/2c9953f/src/types/costMatrix.d.ts#L3)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-[types/matrix.d.ts:1](https://github.com/havelessbemore/munkres/blob/8bd5653/src/types/matrix.d.ts#L1)
+[types/matrix.d.ts:1](https://github.com/havelessbemore/munkres/blob/2c9953f/src/types/matrix.d.ts#L1)
 
 ## Functions
 
@@ -130,7 +130,7 @@ const matrix = createCostMatrix(workers, jobs, costFn);
 
 #### Defined in
 
-[utils/costMatrix.ts:35](https://github.com/havelessbemore/munkres/blob/8bd5653/src/utils/costMatrix.ts#L35)
+[utils/costMatrix.ts:35](https://github.com/havelessbemore/munkres/blob/2c9953f/src/utils/costMatrix.ts#L35)
 
 ___
 
@@ -154,7 +154,7 @@ The maximum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[utils/costMatrix.ts:60](https://github.com/havelessbemore/munkres/blob/8bd5653/src/utils/costMatrix.ts#L60)
+[utils/costMatrix.ts:60](https://github.com/havelessbemore/munkres/blob/2c9953f/src/utils/costMatrix.ts#L60)
 
 ___
 
@@ -178,7 +178,7 @@ The maximum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[utils/costMatrix.ts:87](https://github.com/havelessbemore/munkres/blob/8bd5653/src/utils/costMatrix.ts#L87)
+[utils/costMatrix.ts:87](https://github.com/havelessbemore/munkres/blob/2c9953f/src/utils/costMatrix.ts#L87)
 
 ___
 
@@ -241,7 +241,7 @@ invertCostMatrix(anotherMatrix, 50);
 
 #### Defined in
 
-[utils/costMatrix.ts:148](https://github.com/havelessbemore/munkres/blob/8bd5653/src/utils/costMatrix.ts#L148)
+[utils/costMatrix.ts:148](https://github.com/havelessbemore/munkres/blob/2c9953f/src/utils/costMatrix.ts#L148)
 
 ___
 
@@ -273,7 +273,7 @@ the [assignment problem](https://en.wikipedia.org/wiki/Assignment_problem).
 
 #### Defined in
 
-[munkres.ts:20](https://github.com/havelessbemore/munkres/blob/8bd5653/src/munkres.ts#L20)
+[munkres.ts:20](https://github.com/havelessbemore/munkres/blob/2c9953f/src/munkres.ts#L20)
 
 ___
 
@@ -318,4 +318,4 @@ negateCostMatrix(costMatrix);
 
 #### Defined in
 
-[utils/costMatrix.ts:192](https://github.com/havelessbemore/munkres/blob/8bd5653/src/utils/costMatrix.ts#L192)
+[utils/costMatrix.ts:192](https://github.com/havelessbemore/munkres/blob/2c9953f/src/utils/costMatrix.ts#L192)
