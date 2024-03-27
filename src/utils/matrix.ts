@@ -197,11 +197,35 @@ export function getMin<T extends number | bigint | string>(
 }
 
 /**
+ * Checks if a given matrix is square. A square matrix has an equal number
+ * of rows and columns.
+ *
+ * @param matrix - The matrix to check.
+ *
+ * @returns `true` if the matrix is square, `false` otherwise.
+ *
+ * @example
+ * console.log(isSquare([
+ *   [1, 2],
+ *   [3, 4]
+ * ])); // Output: true
+ *
+ * @example
+ * console.log(isSquare([
+ *    [1, 2, 3],
+ *    [4, 5, 6]
+ * ])); // Output: false
+ */
+export function isSquare(matrix: Matrix<unknown>): boolean {
+  return matrix.length == (matrix[0]?.length ?? 0);
+}
+
+/**
  * Calls a defined callback function on each element
  * of a matrix, and returns a new matrix of the results.
  *
  * @param matrix - The original matrix.
- * @param callbackfn — A function that accepts up to four arguments.
+ * @param callbackfn - A function that accepts up to four arguments.
  * Will be called once per element in the matrix.
  *
  * @returns The result matrix.
@@ -212,7 +236,7 @@ export function getMin<T extends number | bigint | string>(
  *   [4, 0, 6],
  *   [7, 5, 8]
  * ];
- * console.log(map(matrix, v => v * v));
+ * console.log(map(matrix, v =\> v * v));
  * // Output: [
  * //   [ 1,  9,  4],
  * //   [16,  0, 36],
@@ -235,4 +259,82 @@ export function map<A, B>(
     out[y] = to;
   }
   return out;
+}
+
+/**
+ * Pads a matrix to a specified size with a given fill value.
+ *
+ * The padding is applied from the ends (right) of each row and
+ * the ends (bottom) of each column. If a dimension is already
+ * at or above the desired value, no change is made to it.
+ *
+ * @param matrix - The matrix to pad. Modified in place.
+ * @param height - The desired number of rows in the matrix.
+ * @param width - The desired number of columns in the matrix.
+ * @param fillValue - The value used for padding.
+ */
+export function pad<T>(
+  matrix: Matrix<T>,
+  height: number,
+  width: number,
+  fillValue: T
+): void {
+  padHeight(matrix, height, fillValue);
+  padWidth(matrix, width, fillValue);
+}
+
+/**
+ * Pads the height (number of rows) of a matrix with a given fill value.
+ *
+ * Rows are added to the end (bottom) of the matrix until its height reaches
+ * `height`, with each new row filled with `fillValue`. If the matrix is
+ * already at or above `height`, no change is made.
+ *
+ * @param matrix - The matrix to pad. Modified in place.
+ * @param height - The desired number of rows in the matrix.
+ * @param fillValue - The value to use for filling new rows.
+ */
+export function padHeight<T>(
+  matrix: Matrix<T>,
+  height: number,
+  fillValue: T
+): void {
+  const Y = matrix.length;
+  if (Y >= height) {
+    return;
+  }
+
+  matrix.length = height;
+  const X = matrix[0]?.length ?? 0;
+  for (let y = Y; y < height; ++y) {
+    matrix[y] = new Array<T>(X).fill(fillValue);
+  }
+}
+
+/**
+ * Pads the width (number of columns) of a matrix with a given fill value.
+ *
+ * Columns are added to the right of the matrix until its width reaches
+ * `width`, with each new column filled with `fillValue`. If the matrix is
+ * already at or above `width`, no change is made.
+ *
+ * @param matrix - The matrix to pad. Modified in place.
+ * @param width - The desired number of columns in the matrix.
+ * @param fillValue - The value to use for filling new columns.
+ */
+export function padWidth<T>(
+  matrix: Matrix<T>,
+  width: number,
+  fillValue: T
+): void {
+  const X = matrix[0]?.length ?? 0;
+  if (X >= width) {
+    return;
+  }
+
+  const Y = matrix.length;
+  for (let y = 0; y < Y; ++y) {
+    matrix[y].length = width;
+    matrix[y].fill(fillValue, X, width);
+  }
 }

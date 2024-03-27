@@ -1,6 +1,16 @@
 import { describe, it, expect } from "vitest";
 
-import { copy, getColMin, getMax, getMin, map } from "./matrix";
+import {
+  copy,
+  getColMin,
+  getMax,
+  getMin,
+  isSquare,
+  map,
+  pad,
+  padHeight,
+  padWidth,
+} from "./matrix";
 
 describe(`${copy.name}()`, () => {
   it("returns an empty matrix when copying an empty matrix", () => {
@@ -224,6 +234,52 @@ describe(`${getMin.name}()`, () => {
   });
 });
 
+describe(`${isSquare.name}()`, () => {
+  it("returns true for an empty matrix", () => {
+    const emptyMatrix = [];
+    expect(isSquare(emptyMatrix)).toBe(true);
+  });
+
+  it("returns true for a 1x1 matrix", () => {
+    const squareMatrix = [[1]];
+    expect(isSquare(squareMatrix)).toBe(true);
+  });
+
+  it("returns true for a 2x2 matrix", () => {
+    const squareMatrix = [
+      [1, 2],
+      [3, 4],
+    ];
+    expect(isSquare(squareMatrix)).toBe(true);
+  });
+
+  it("returns true for a 3x3 matrix", () => {
+    const squareMatrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ];
+    expect(isSquare(squareMatrix)).toBe(true);
+  });
+
+  it("returns false for a 2x3 matrix", () => {
+    const rectangularMatrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+    expect(isSquare(rectangularMatrix)).toBe(false);
+  });
+
+  it("returns false for a 3x2 matrix", () => {
+    const rectangularMatrix = [
+      [1, 2],
+      [3, 4],
+      [5, 6],
+    ];
+    expect(isSquare(rectangularMatrix)).toBe(false);
+  });
+});
+
 describe(`${map.name}()`, () => {
   it("handles an empty matrix", () => {
     const matrix: number[][] = [];
@@ -296,5 +352,172 @@ describe(`${map.name}()`, () => {
     ];
 
     expect(result).toEqual(expected);
+  });
+});
+
+describe(`${pad.name}()`, () => {
+  it("correctly pads a matrix to the specified width and height", () => {
+    const matrix = [
+      [1, 2],
+      [3, 4],
+    ];
+    pad(matrix, 3, 4, 0);
+    const expectedMatrix = [
+      [1, 2, 0, 0],
+      [3, 4, 0, 0],
+      [0, 0, 0, 0],
+    ];
+    expect(matrix).toEqual(expectedMatrix);
+  });
+
+  it("pads width only when height already meets the specified value", () => {
+    const matrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+    pad(matrix, 2, 5, 0);
+    const expectedMatrix = [
+      [1, 2, 3, 0, 0],
+      [4, 5, 6, 0, 0],
+    ];
+    expect(matrix).toEqual(expectedMatrix);
+  });
+
+  it("pads height only when width already meets the specified value", () => {
+    const matrix = [
+      [1, 2, 3, 4],
+      [5, 6, 7, 8],
+    ];
+    pad(matrix, 4, 4, 0);
+    const expectedMatrix = [
+      [1, 2, 3, 4],
+      [5, 6, 7, 8],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ];
+    expect(matrix).toEqual(expectedMatrix);
+  });
+
+  it("does not modify the matrix if it already meets the specified dimensions", () => {
+    const matrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ];
+    pad(matrix, 3, 3, 0);
+    const expectedMatrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ];
+    expect(matrix).toEqual(expectedMatrix);
+  });
+
+  it("handles an empty matrix by padding it to the specified dimensions", () => {
+    const matrix = [];
+    pad(matrix, 2, 3, "c"); // Pad an empty matrix to 2x3 with 'c'
+    const expectedMatrix = [
+      ["c", "c", "c"],
+      ["c", "c", "c"],
+    ];
+    expect(matrix).toEqual(expectedMatrix);
+  });
+});
+
+describe(`${padHeight.name}()`, () => {
+  it("adds rows to meet the specified height with fill value", () => {
+    const matrix = [
+      [1, 2],
+      [3, 4],
+    ];
+    padHeight(matrix, 4, 0);
+    const expectedMatrix = [
+      [1, 2],
+      [3, 4],
+      [0, 0],
+      [0, 0],
+    ];
+    expect(matrix).toEqual(expectedMatrix);
+  });
+
+  it("does not modify matrix if it already meets the specified height", () => {
+    const originalMatrix = [
+      [1, 2],
+      [3, 4],
+      [5, 6],
+    ];
+    padHeight(originalMatrix, 3, 0);
+    expect(originalMatrix).toEqual([
+      [1, 2],
+      [3, 4],
+      [5, 6],
+    ]);
+  });
+
+  it("does not modify matrix if it already exceeds the specified height", () => {
+    const originalMatrix = [
+      [1, 2],
+      [3, 4],
+      [5, 6],
+    ];
+    padHeight(originalMatrix, 1, 0);
+    expect(originalMatrix).toEqual([
+      [1, 2],
+      [3, 4],
+      [5, 6],
+    ]);
+  });
+
+  it("handles empty matrix by filling up to the specified height", () => {
+    const matrix = [];
+    padHeight(matrix, 2, "empty");
+    const expectedMatrix = [[], []];
+    expect(matrix).toEqual(expectedMatrix);
+  });
+});
+
+describe(`${padWidth.name}()`, () => {
+  it("adds columns to meet the specified width with fill value", () => {
+    const matrix = [
+      [1, 2],
+      [3, 4],
+    ];
+    padWidth(matrix, 4, 0);
+    const expectedMatrix = [
+      [1, 2, 0, 0],
+      [3, 4, 0, 0],
+    ];
+    expect(matrix).toEqual(expectedMatrix);
+  });
+
+  it("does not modify matrix if it already meets the specified width", () => {
+    const originalMatrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+    padWidth(originalMatrix, 3, 0);
+    expect(originalMatrix).toEqual([
+      [1, 2, 3],
+      [4, 5, 6],
+    ]);
+  });
+
+  it("does not modify matrix if it already exceeds the specified width", () => {
+    const originalMatrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+    padWidth(originalMatrix, 1, 0);
+    expect(originalMatrix).toEqual([
+      [1, 2, 3],
+      [4, 5, 6],
+    ]);
+  });
+
+  it("does not modify an empty matrix", () => {
+    const matrix = [];
+    padWidth(matrix, 2, "empty");
+    const expectedMatrix = [];
+    expect(matrix).toEqual(expectedMatrix);
   });
 });

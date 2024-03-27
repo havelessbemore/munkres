@@ -1,7 +1,7 @@
 import { Matrix } from "..";
 import { CostMatrix } from "../types/costMatrix";
 import { reduceCols, reduceRows } from "./costMatrix";
-import { map } from "./matrix";
+import { isSquare, map } from "./matrix";
 
 /**
  * Displays the current step of the algorithm and the state of the cost matrix.
@@ -10,7 +10,7 @@ import { map } from "./matrix";
  * @param mat - The cost matrix.
  * @param primeY - An array of prime y coordinates to x coordinates.
  * @param starY - An array of star y coordinates to x coordinates.
- */
+ */ /*
 export function debug(
   step: string,
   mat: CostMatrix,
@@ -19,6 +19,7 @@ export function debug(
 ): void {
   console.log("%s:\n\n%s\n", step, toString(mat, starY, primeY));
 }
+*/
 
 /**
  * Searches for an uncovered zero in the matrix and returns its coordinates.
@@ -130,12 +131,17 @@ export function steps2To3(
  * there are columns in the matrix, at which point optimal assignments
  * have been found.
  *
- * @param mat - The cost matrix. Modified in place.
+ * @param mat - An NxN cost matrix. Modified in place.
  *
  * @privateRemarks
  * Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this outline} and enhanced with custom optimizations.
  */
 export function step4(mat: CostMatrix): number[] {
+  // Check input
+  if (!isSquare(mat)) {
+    throw new Error("matrix must be NxN");
+  }
+
   const starX = new Array<number>(mat[0]?.length ?? 0).fill(-1);
   const starY = new Array<number>(mat.length).fill(-1);
   const primeY = new Array<number>(mat.length).fill(-1);
