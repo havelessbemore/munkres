@@ -42,20 +42,20 @@ export declare function createCostMatrix<W, J>(workers: W[], jobs: J[], costFn: 
 /**
  * Finds the maximum value in a given cost matrix.
  *
- * @param mat - The cost matrix.
+ * @param costMatrix - The cost matrix.
  *
  * @returns The maximum value, or `undefined` if the matrix is empty.
  */
-export declare function getMaxCost(mat: CostMatrix_2): number | undefined;
+export declare function getMaxCost(costMatrix: CostMatrix_2): number | undefined;
 
 /**
  * Finds the maximum value in a given cost matrix.
  *
- * @param mat - The cost matrix.
+ * @param costMatrix - The cost matrix.
  *
  * @returns The maximum value, or `undefined` if the matrix is empty.
  */
-export declare function getMinCost(mat: CostMatrix_2): number | undefined;
+export declare function getMinCost(costMatrix: CostMatrix_2): number | undefined;
 
 /**
  * Inverts the values in a given cost matrix by
@@ -64,7 +64,7 @@ export declare function getMinCost(mat: CostMatrix_2): number | undefined;
  * This is useful for converting a minimized cost matrix
  * into a maximized cost matrix (or vice versa).
  *
- * @param mat - The cost matrix to be inverted. The matrix is modified in place.
+ * @param costMatrix - The cost matrix to be inverted. The matrix is modified in place.
  * @param bigVal - (Optional) A large value used as the basis for inversion.
  * If not provided, the maximum value in the matrix is used.
  *
@@ -98,7 +98,7 @@ export declare function getMinCost(mat: CostMatrix_2): number | undefined;
  * //   [20, 10]
  * // ]
  */
-export declare function invertCostMatrix(mat: CostMatrix_2, bigVal?: number): void;
+export declare function invertCostMatrix(costMatrix: CostMatrix_2, bigVal?: number): void;
 
 export { Matrix }
 
@@ -106,8 +106,8 @@ export { Matrix }
  * Find the optimal assignments of `y` workers to `x` jobs to
  * minimize total cost.
  *
- * @param mat - The cost matrix where `mat[y][x]` represents the cost of
- * assigning worker `y` to job `x`.
+ * @param costMatrix - The cost matrix, where `mat[y][x]` represents the cost
+ * of assigning worker `y` to job `x`.
  *
  * @returns An array of pairs `[y, x]` representing the optimal assignment
  * of workers to jobs. Each pair consists of a worker index `y` and a job
@@ -117,7 +117,7 @@ export { Matrix }
  * Runs the {@link https://en.wikipedia.org/wiki/Hungarian_algorithm | Munkres algorithm (aka Hungarian algorithm)} to solve
  * the {@link https://en.wikipedia.org/wiki/Assignment_problem | assignment problem}.
  */
-export declare function munkres(mat: CostMatrix, debug?: boolean): [number, number][];
+export declare function munkres(costMatrix: CostMatrix): [number, number][];
 
 /**
  * Negates the values in a given cost matrix.
@@ -125,7 +125,7 @@ export declare function munkres(mat: CostMatrix, debug?: boolean): [number, numb
  * This is useful for converting a minimized cost matrix
  * into a maximized cost matrix (or vice versa).
  *
- * @param mat - The cost matrix to be negated. The matrix is modified in place.
+ * @param costMatrix - The cost matrix to be negated. The matrix is modified in place.
  *
  * @example
  * const costMatrix = [
@@ -144,6 +144,6 @@ export declare function munkres(mat: CostMatrix, debug?: boolean): [number, numb
  * //   [-7, -8, -9]
  * // ]
  */
-export declare function negateCostMatrix(mat: CostMatrix_2): void;
+export declare function negateCostMatrix(costMatrix: CostMatrix_2): void;
 
 export { }

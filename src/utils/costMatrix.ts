@@ -53,20 +53,20 @@ export function createCostMatrix<W, J>(
 /**
  * Finds the maximum value in a given cost matrix.
  *
- * @param mat - The cost matrix.
+ * @param costMatrix - The cost matrix.
  *
  * @returns The maximum value, or `undefined` if the matrix is empty.
  */
-export function getMaxCost(mat: CostMatrix): number | undefined {
-  const Y = mat.length;
-  const X = mat[0]?.length ?? 0;
+export function getMaxCost(costMatrix: CostMatrix): number | undefined {
+  const Y = costMatrix.length;
+  const X = costMatrix[0]?.length ?? 0;
   if (Y <= 0 || X <= 0) {
     return undefined;
   }
 
-  let max = mat[0][0];
+  let max = costMatrix[0][0];
   for (let y = 0; y < Y; ++y) {
-    const row = mat[y];
+    const row = costMatrix[y];
     for (let x = 0; x < X; ++x) {
       if (max < row[x]) {
         max = row[x];
@@ -80,20 +80,20 @@ export function getMaxCost(mat: CostMatrix): number | undefined {
 /**
  * Finds the maximum value in a given cost matrix.
  *
- * @param mat - The cost matrix.
+ * @param costMatrix - The cost matrix.
  *
  * @returns The maximum value, or `undefined` if the matrix is empty.
  */
-export function getMinCost(mat: CostMatrix): number | undefined {
-  const Y = mat.length;
-  const X = mat[0]?.length ?? 0;
+export function getMinCost(costMatrix: CostMatrix): number | undefined {
+  const Y = costMatrix.length;
+  const X = costMatrix[0]?.length ?? 0;
   if (Y <= 0 || X <= 0) {
     return undefined;
   }
 
-  let min = mat[0][0];
+  let min = costMatrix[0][0];
   for (let y = 0; y < Y; ++y) {
-    const row = mat[y];
+    const row = costMatrix[y];
     for (let x = 0; x < X; ++x) {
       if (min > row[x]) {
         min = row[x];
@@ -111,7 +111,7 @@ export function getMinCost(mat: CostMatrix): number | undefined {
  * This is useful for converting a minimized cost matrix
  * into a maximized cost matrix (or vice versa).
  *
- * @param mat - The cost matrix to be inverted. The matrix is modified in place.
+ * @param costMatrix - The cost matrix to be inverted. The matrix is modified in place.
  * @param bigVal - (Optional) A large value used as the basis for inversion.
  * If not provided, the maximum value in the matrix is used.
  *
@@ -145,16 +145,19 @@ export function getMinCost(mat: CostMatrix): number | undefined {
  * //   [20, 10]
  * // ]
  */
-export function invertCostMatrix(mat: CostMatrix, bigVal?: number): void {
-  const Y = mat.length;
-  const X = mat[0]?.length ?? 0;
+export function invertCostMatrix(
+  costMatrix: CostMatrix,
+  bigVal?: number
+): void {
+  const Y = costMatrix.length;
+  const X = costMatrix[0]?.length ?? 0;
   if (Y <= 0 || X <= 0) {
     return undefined;
   }
 
-  bigVal = bigVal ?? getMaxCost(mat)!;
+  bigVal = bigVal ?? getMaxCost(costMatrix)!;
   for (let y = 0; y < Y; ++y) {
-    const row = mat[y];
+    const row = costMatrix[y];
     for (let x = 0; x < X; ++x) {
       row[x] = bigVal - row[x];
     }
@@ -167,7 +170,7 @@ export function invertCostMatrix(mat: CostMatrix, bigVal?: number): void {
  * This is useful for converting a minimized cost matrix
  * into a maximized cost matrix (or vice versa).
  *
- * @param mat - The cost matrix to be negated. The matrix is modified in place.
+ * @param costMatrix - The cost matrix to be negated. The matrix is modified in place.
  *
  * @example
  * const costMatrix = [
@@ -186,11 +189,11 @@ export function invertCostMatrix(mat: CostMatrix, bigVal?: number): void {
  * //   [-7, -8, -9]
  * // ]
  */
-export function negateCostMatrix(mat: CostMatrix): void {
-  const Y = mat.length;
-  const X = mat[0]?.length ?? 0;
+export function negateCostMatrix(costMatrix: CostMatrix): void {
+  const Y = costMatrix.length;
+  const X = costMatrix[0]?.length ?? 0;
   for (let y = 0; y < Y; ++y) {
-    const row = mat[y];
+    const row = costMatrix[y];
     for (let x = 0; x < X; ++x) {
       row[x] = -row[x];
     }
@@ -203,7 +206,7 @@ export function negateCostMatrix(mat: CostMatrix): void {
  * Each column of the matrix is reduced by subtracting the minimum value
  * in the column from every value in the column.
  *
- * @param mat - The cost matrix to be reduced. The matrix is modified in place.
+ * @param costMatrix - The cost matrix. The matrix is modified in place.
  *
  * @example
  * const costMatrix = [
@@ -222,19 +225,19 @@ export function negateCostMatrix(mat: CostMatrix): void {
  * //   [1, 2, 0]
  * // ]
  */
-export function reduceCols(mat: CostMatrix): void {
-  const Y = mat.length;
-  const X = mat[0]?.length ?? 0;
+export function reduceCols(costMatrix: CostMatrix): void {
+  const Y = costMatrix.length;
+  const X = costMatrix[0]?.length ?? 0;
 
   for (let x = 0; x < X; ++x) {
-    const min = getColMin(mat, x)!;
+    const min = getColMin(costMatrix, x)!;
     if (isFinite(min)) {
       for (let y = 0; y < Y; ++y) {
-        mat[y][x] -= min;
+        costMatrix[y][x] -= min;
       }
     } else {
       for (let y = 0; y < Y; ++y) {
-        mat[y][x] = mat[y][x] == min ? 0 : Infinity;
+        costMatrix[y][x] = costMatrix[y][x] == min ? 0 : Infinity;
       }
     }
   }
@@ -246,7 +249,7 @@ export function reduceCols(mat: CostMatrix): void {
  * Each row of the matrix is reduced by subtracting the minimum value
  * in the row from every value in the row.
  *
- * @param mat - The cost matrix to be reduced. The matrix is modified in place.
+ * @param costMatrix - The cost matrix. The matrix is modified in place.
  *
  * @example
  * const costMatrix = [
@@ -265,12 +268,12 @@ export function reduceCols(mat: CostMatrix): void {
  * //   [1, 0, 0]
  * // ]
  */
-export function reduceRows(mat: CostMatrix): void {
-  const Y = mat.length;
-  const X = mat[0]?.length ?? 0;
+export function reduceRows(costMatrix: CostMatrix): void {
+  const Y = costMatrix.length;
+  const X = costMatrix[0]?.length ?? 0;
 
   for (let y = 0; y < Y; ++y) {
-    const row = mat[y];
+    const row = costMatrix[y];
     const min = getArrayMin(row)!;
     if (isFinite(min)) {
       for (let x = 0; x < X; ++x) {

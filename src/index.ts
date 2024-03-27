@@ -3,7 +3,7 @@ export type { CostFn } from "./types/costFn";
 export type { CostMatrix } from "./types/costMatrix";
 export type { Matrix } from "./types/matrix";
 
-// Functions
+// Cost Matrix Helpers
 export {
   createCostMatrix,
   getMaxCost,
@@ -11,4 +11,6 @@ export {
   invertCostMatrix,
   negateCostMatrix,
 } from "./utils/costMatrix";
+
+// Algorithm
 export { munkres } from "./munkres";

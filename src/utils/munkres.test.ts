@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { step5, step6, steps2To3, toString } from "./munkres";
+import { step5, step6, step6Inf, steps2To3, toString } from "./munkres";
 import { CostMatrix } from "../types/costMatrix";
 import { copy, map } from "./matrix";
 
@@ -189,6 +189,62 @@ describe(`${step6.name}()`, () => {
 
     step6(val, mat, primeY, starX);
     expect(mat).toEqual(expectedMat);
+  });
+});
+
+describe("step6Inf", () => {
+  it("applies Infinity correctly to marked columns and zeros to unmarked rows", () => {
+    const mat = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ];
+    const primeY = [-1, 0, -1]; // Prime at (1, 0)
+    const starX = [-1, 0, -1]; // Star at (0, 1) but no prime in star's row
+
+    step6Inf(mat, primeY, starX);
+
+    expect(mat).toEqual([
+      [0, 2, 0],
+      [4, Infinity, 6],
+      [0, 8, 0],
+    ]);
+  });
+
+  it("handles matrices with initial Infinity values", () => {
+    const mat = [
+      [Infinity, 2, Infinity],
+      [4, Infinity, 6],
+      [7, 8, 9],
+    ];
+    const primeY = [2, -1, -1]; // Prime at (0, 2)
+    const starX = [-1, 1, -1]; // Star at (1, 1) and no prime in star's row
+
+    step6Inf(mat, primeY, starX);
+
+    expect(mat).toEqual([
+      [Infinity, Infinity, Infinity],
+      [0, Infinity, 0],
+      [0, 8, 0],
+    ]);
+  });
+
+  it("works when all values are initially Infinity", () => {
+    const mat = [
+      [Infinity, Infinity, Infinity],
+      [Infinity, Infinity, Infinity],
+      [Infinity, Infinity, Infinity],
+    ];
+    const primeY = [-1, -1, 0]; // Prime at (2, 0)
+    const starX = [-1, 2, -1]; // Star at (2, 1) and prime in star's row
+
+    step6Inf(mat, primeY, starX);
+
+    expect(mat).toEqual([
+      [0, 0, 0],
+      [0, 0, 0],
+      [Infinity, Infinity, Infinity],
+    ]);
   });
 });
 

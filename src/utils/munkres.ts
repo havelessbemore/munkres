@@ -4,6 +4,23 @@ import { reduceCols, reduceRows } from "./costMatrix";
 import { map } from "./matrix";
 
 /**
+ * Displays the current step of the algorithm and the state of the cost matrix.
+ *
+ * @param step - The current step of the algorithm.
+ * @param mat - The cost matrix.
+ * @param primeY - An array of prime y coordinates to x coordinates.
+ * @param starY - An array of star y coordinates to x coordinates.
+ */
+export function debug(
+  step: string,
+  mat: CostMatrix,
+  primeY: number[],
+  starY: number[]
+): void {
+  console.log("%s:\n\n%s\n", step, toString(mat, starY, primeY));
+}
+
+/**
  * Searches for an uncovered zero in the matrix and returns its coordinates.
  * If not found, the coordinates of the smallest uncovered value are returned
  * instead.
@@ -113,28 +130,21 @@ export function steps2To3(
  * there are columns in the matrix, at which point optimal assignments
  * have been found.
  *
- * @param stars - The initial number of stars found in the matrix.
  * @param mat - The cost matrix. Modified in place.
- * @param starX - An array of star x coordinates to y coordinates.
- * @param starY - An array of star y coordinates to x coordinates.
  *
  * @privateRemarks
  * Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this outline} and enhanced with custom optimizations.
  */
-export function step4(mat: CostMatrix, debug = false): number[] {
+export function step4(mat: CostMatrix): number[] {
   const starX = new Array<number>(mat[0]?.length ?? 0).fill(-1);
   const starY = new Array<number>(mat.length).fill(-1);
   const primeY = new Array<number>(mat.length).fill(-1);
 
-  debug && console.log("0:\n\n%s\n", toString(mat, starY, primeY));
-
   // Step 1: Reduce
   step1(mat);
-  debug && console.log("1:\n\n%s\n", toString(mat, starY, primeY));
 
   // Steps 2 & 3: Find initial stars
   let stars = steps2To3(mat, starX, starY);
-  debug && console.log("2&3:\n\n%s\n", toString(mat, starY, primeY));
 
   // Step 4: Find optimal assignments
   const S = Math.min(starX.length, starY.length);
@@ -145,18 +155,15 @@ export function step4(mat: CostMatrix, debug = false): number[] {
     // Step 6: If no zero found, create a zero(s) from the min
     if (mat[y][x] != 0) {
       step6(mat[y][x], mat, primeY, starX);
-      debug && console.log("6:\n\n%s\n", toString(mat, starY, primeY));
     }
 
     // Prime the zero / cover the row
     primeY[y] = x;
-    debug && console.log("4:\n\n%s\n", toString(mat, starY, primeY));
 
     // Step 5: If no star in the prime's row, turn primes into stars
     if (starY[y] < 0) {
       step5(y, primeY, starX, starY);
       ++stars;
-      debug && console.log("5:\n\n%s\n", toString(mat, starY, primeY));
     }
   }
 
@@ -205,12 +212,12 @@ export function step5(
 /**
  * Adjusts a cost matrix to uncover more zeros.
  *
- * The matrix is modified by adding a given value to each element in a row
- * with a prime, and subtracting the given value to each element not in a
- * column with a star.
+ * The matrix is modified by adding a given value to every element of covered
+ * rows, and subtracting `Infinity` from every element of uncovered columns.
+ * If an element's row is covered and column is uncovered, no change is made.
  *
  * @param min - The value to adjust the matrix by.
- * Should be the smallest uncovered value.
+ * Should be the minimum uncovered value (see {@link step4}).
  * @param mat - The cost matrix. Modified in place.
  * @param primeY - An array of prime y coordinates to x coordinates.
  * @param starX - An array of star x coordinates to y coordinates.
@@ -242,6 +249,24 @@ export function step6(
   }
 }
 
+/**
+ * Adjusts a cost matrix to uncover more zeros, specifically
+ * when adjusting by Infinity.
+ *
+ * The matrix is modified by adding `Infinity` to every element of covered
+ * rows, and subtracting `Infinity` from every element of uncovered columns.
+ * If an element's row is covered and column is uncovered, no change is made.
+ *
+ * @param mat - The cost matrix. Modified in place.
+ * @param primeY - An array of prime y coordinates to x coordinates.
+ * @param starX - An array of star x coordinates to y coordinates.
+ *
+ * @remarks
+ *
+ * This variation of step 6 is used when the minimum uncovered value
+ * (see {@link step4}) is `Infinity`, as normal subtraction of `Infinity`
+ * from `Infinity` equals `NaN`.
+ */
 export function step6Inf(
   mat: CostMatrix,
   primeY: number[],

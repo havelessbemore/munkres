@@ -58,20 +58,6 @@ function getColMin(matrix, x) {
   }
   return min;
 }
-function map(matrix, callbackFn) {
-  const Y = matrix.length;
-  const out = new Array(Y);
-  for (let y = 0; y < Y; ++y) {
-    const from = matrix[y];
-    const X = from.length;
-    const to = new Array(X);
-    for (let x = 0; x < X; ++x) {
-      to[x] = callbackFn(from[x], y, x, matrix);
-    }
-    out[y] = to;
-  }
-  return out;
-}
 function createCostMatrix(workers, jobs, costFn) {
   const X = jobs.length;
   const Y = workers.length;
@@ -85,16 +71,16 @@ function createCostMatrix(workers, jobs, costFn) {
   }
   return mat;
 }
-function getMaxCost(mat) {
+function getMaxCost(costMatrix) {
   var _a;
-  const Y = mat.length;
-  const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
+  const Y = costMatrix.length;
+  const X = ((_a = costMatrix[0]) == null ? void 0 : _a.length) ?? 0;
   if (Y <= 0 || X <= 0) {
     return void 0;
   }
-  let max = mat[0][0];
+  let max = costMatrix[0][0];
   for (let y = 0; y < Y; ++y) {
-    const row = mat[y];
+    const row = costMatrix[y];
     for (let x = 0; x < X; ++x) {
       if (max < row[x]) {
         max = row[x];
@@ -103,16 +89,16 @@ function getMaxCost(mat) {
   }
   return max;
 }
-function getMinCost(mat) {
+function getMinCost(costMatrix) {
   var _a;
-  const Y = mat.length;
-  const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
+  const Y = costMatrix.length;
+  const X = ((_a = costMatrix[0]) == null ? void 0 : _a.length) ?? 0;
   if (Y <= 0 || X <= 0) {
     return void 0;
   }
-  let min = mat[0][0];
+  let min = costMatrix[0][0];
   for (let y = 0; y < Y; ++y) {
-    const row = mat[y];
+    const row = costMatrix[y];
     for (let x = 0; x < X; ++x) {
       if (min > row[x]) {
         min = row[x];
@@ -121,55 +107,55 @@ function getMinCost(mat) {
   }
   return min;
 }
-function invertCostMatrix(mat, bigVal) {
+function invertCostMatrix(costMatrix, bigVal) {
   var _a;
-  const Y = mat.length;
-  const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
+  const Y = costMatrix.length;
+  const X = ((_a = costMatrix[0]) == null ? void 0 : _a.length) ?? 0;
   if (Y <= 0 || X <= 0) {
     return void 0;
   }
-  bigVal = bigVal ?? getMaxCost(mat);
+  bigVal = bigVal ?? getMaxCost(costMatrix);
   for (let y = 0; y < Y; ++y) {
-    const row = mat[y];
+    const row = costMatrix[y];
     for (let x = 0; x < X; ++x) {
       row[x] = bigVal - row[x];
     }
   }
 }
-function negateCostMatrix(mat) {
+function negateCostMatrix(costMatrix) {
   var _a;
-  const Y = mat.length;
-  const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
+  const Y = costMatrix.length;
+  const X = ((_a = costMatrix[0]) == null ? void 0 : _a.length) ?? 0;
   for (let y = 0; y < Y; ++y) {
-    const row = mat[y];
+    const row = costMatrix[y];
     for (let x = 0; x < X; ++x) {
       row[x] = -row[x];
     }
   }
 }
-function reduceCols(mat) {
+function reduceCols(costMatrix) {
   var _a;
-  const Y = mat.length;
-  const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
+  const Y = costMatrix.length;
+  const X = ((_a = costMatrix[0]) == null ? void 0 : _a.length) ?? 0;
   for (let x = 0; x < X; ++x) {
-    const min = getColMin(mat, x);
+    const min = getColMin(costMatrix, x);
     if (isFinite(min)) {
       for (let y = 0; y < Y; ++y) {
-        mat[y][x] -= min;
+        costMatrix[y][x] -= min;
       }
     } else {
       for (let y = 0; y < Y; ++y) {
-        mat[y][x] = mat[y][x] == min ? 0 : Infinity;
+        costMatrix[y][x] = costMatrix[y][x] == min ? 0 : Infinity;
       }
     }
   }
 }
-function reduceRows(mat) {
+function reduceRows(costMatrix) {
   var _a;
-  const Y = mat.length;
-  const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
+  const Y = costMatrix.length;
+  const X = ((_a = costMatrix[0]) == null ? void 0 : _a.length) ?? 0;
   for (let y = 0; y < Y; ++y) {
-    const row = mat[y];
+    const row = costMatrix[y];
     const min = getMin(row);
     if (isFinite(min)) {
       for (let x = 0; x < X; ++x) {
@@ -230,29 +216,23 @@ function steps2To3(mat, starX, starY) {
   }
   return stars;
 }
-function step4(mat, debug = false) {
+function step4(mat) {
   var _a;
   const starX = new Array(((_a = mat[0]) == null ? void 0 : _a.length) ?? 0).fill(-1);
   const starY = new Array(mat.length).fill(-1);
   const primeY = new Array(mat.length).fill(-1);
-  debug && console.log("0:\n\n%s\n", toString(mat, starY, primeY));
   step1(mat);
-  debug && console.log("1:\n\n%s\n", toString(mat, starY, primeY));
   let stars = steps2To3(mat, starX, starY);
-  debug && console.log("2&3:\n\n%s\n", toString(mat, starY, primeY));
   const S = Math.min(starX.length, starY.length);
   while (stars < S) {
     const [y, x] = findUncoveredZeroOrMin(mat, primeY, starX);
     if (mat[y][x] != 0) {
       step6(mat[y][x], mat, primeY, starX);
-      debug && console.log("6:\n\n%s\n", toString(mat, starY, primeY));
     }
     primeY[y] = x;
-    debug && console.log("4:\n\n%s\n", toString(mat, starY, primeY));
     if (starY[y] < 0) {
       step5(y, primeY, starX, starY);
       ++stars;
-      debug && console.log("5:\n\n%s\n", toString(mat, starY, primeY));
     }
   }
   return starY;
@@ -306,42 +286,8 @@ function step6Inf(mat, primeY, starX) {
     }
   }
 }
-function toString(mat, starY, primeY = []) {
-  var _a;
-  const strs = map(mat, (v) => `${v}`);
-  const Y = strs.length;
-  const X = ((_a = strs[0]) == null ? void 0 : _a.length) ?? 0;
-  for (let y = 0; y < Y; ++y) {
-    const row = strs[y];
-    if (starY[y] >= 0) {
-      row[starY[y]] = "*" + row[starY[y]];
-    }
-    if (primeY[y] >= 0) {
-      row[primeY[y]] = '"' + row[primeY[y]];
-    }
-  }
-  let width = 0;
-  for (let y = 0; y < Y; ++y) {
-    for (let x = 0; x < X; ++x) {
-      width = Math.max(width, strs[y][x].length);
-    }
-  }
-  for (let y = 0; y < Y; ++y) {
-    const row = strs[y];
-    for (let x = 0; x < X; ++x) {
-      if (row[x].length < width) {
-        row[x] = row[x].padStart(width, " ");
-      }
-    }
-  }
-  const buf = new Array(Y);
-  for (let y = 0; y < Y; ++y) {
-    buf[y] = `[${strs[y].join(", ")}]`;
-  }
-  return buf.join(",\n");
-}
-function munkres(mat, debug = false) {
-  return Array.from(step4(copy(mat), debug).entries()).filter(
+function munkres(costMatrix) {
+  return Array.from(step4(copy(costMatrix)).entries()).filter(
     ([, x]) => x >= 0
   );
 }
