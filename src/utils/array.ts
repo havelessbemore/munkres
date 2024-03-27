@@ -4,6 +4,18 @@
  * @param array - An array of numbers.
  *
  * @returns The minimum value, or `undefined` if the array is empty.
+ *
+ * @example
+ * const array = [3, 1, 2];
+ * console.log(getMin(array)); // Output: 1
+ *
+ * @example
+ * const array = [3n, 1n, 2n];
+ * console.log(getMin(array)); // Output: 1n
+ *
+ * @example
+ * const array = ['d', 'b', 'c'];
+ * console.log(getMin(array)); // Output: 'b'
  */
 export function getMin(array: number[]): number | undefined;
 export function getMin(array: bigint[]): bigint | undefined;

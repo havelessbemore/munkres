@@ -52,4 +52,22 @@ describe(`${getMin.name}()`, () => {
   it("finds the minimum value in an array of strings", () => {
     expect(getMin(["b", "c", "a"])).toBe("a");
   });
+
+  it("handles number example", () => {
+    const array = [3, 1, 2];
+    const result = getMin(array);
+    expect(result).toBe(1);
+  });
+
+  it("handles bigint example", () => {
+    const array = [3n, 1n, 2n];
+    const result = getMin(array);
+    expect(result).toBe(1n);
+  });
+
+  it("handles string example", () => {
+    const array = ["d", "b", "c"];
+    const result = getMin(array);
+    expect(result).toBe("b");
+  });
 });
