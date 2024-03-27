@@ -45,11 +45,15 @@
     "algorithm",
     "assignment",
     "combinatorial",
+    "cost matrix",
     "hungarian",
+    "linear assignment",
     "kuhn",
     "kuhn-munkres",
+    "munkres",
     "optimization",
-    "munkres"
+    "pairing",
+    "task allocation"
   ],
   "devDependencies": {
     "@types/jsdom": "^21.1.1",
