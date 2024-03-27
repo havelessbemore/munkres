@@ -1,14 +1,17 @@
 # Munkres
 
-A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm) for optimal assignment in square and rectangular matrices.
-
-Utilities are also included for creating and manipulating cost matrices.
+A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm) for optimal assignment.
 
 [![Version](https://img.shields.io/npm/v/munkres.svg)](https://www.npmjs.com/package/munkres)
 [![Maintenance](https://img.shields.io/maintenance/yes/2024.svg)](https://github.com/havelessbemore/munkres/graphs/commit-activity)
 [![License](https://img.shields.io/github/license/havelessbemore/munkres.svg)](https://github.com/havelessbemore/munkres/blob/master/LICENSE)
 [![codecov](https://codecov.io/gh/havelessbemore/munkres/graph/badge.svg?token=F362G7C9U0)](https://codecov.io/gh/havelessbemore/munkres)
 ![npm bundle size](https://img.shields.io/bundlephobia/minzip/munkres)
+
+## Features
+- Supports `-Infinity` and `Infinity`.
+- Supports square and rectangular matrices.
+- [Helpers](#helpers) included for creating and manipulating cost matrices.
 
 ## Getting Started
 

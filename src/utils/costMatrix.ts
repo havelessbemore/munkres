@@ -1,6 +1,6 @@
 import { CostFn } from "../types/costFn";
 import { CostMatrix } from "../types/costMatrix";
-import { getMin as getArrayMin } from "./array";
+import { getMin as getRowMin } from "./array";
 import { getColMin } from "./matrix";
 
 /**
@@ -274,7 +274,7 @@ export function reduceRows(costMatrix: CostMatrix): void {
 
   for (let y = 0; y < Y; ++y) {
     const row = costMatrix[y];
-    const min = getArrayMin(row)!;
+    const min = getRowMin(row)!;
     if (isFinite(min)) {
       for (let x = 0; x < X; ++x) {
         row[x] -= min;

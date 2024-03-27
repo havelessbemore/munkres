@@ -142,9 +142,10 @@ export function step4(mat: CostMatrix): number[] {
     throw new Error("matrix must be NxN");
   }
 
-  const starX = new Array<number>(mat[0]?.length ?? 0).fill(-1);
-  const starY = new Array<number>(mat.length).fill(-1);
-  const primeY = new Array<number>(mat.length).fill(-1);
+  const N = mat.length;
+  const starX = new Array<number>(N).fill(-1);
+  const starY = new Array<number>(N).fill(-1);
+  const primeY = new Array<number>(N).fill(-1);
 
   // Step 1: Reduce
   step1(mat);
@@ -153,8 +154,7 @@ export function step4(mat: CostMatrix): number[] {
   let stars = steps2To3(mat, starX, starY);
 
   // Step 4: Find optimal assignments
-  const S = Math.min(starX.length, starY.length);
-  while (stars < S) {
+  while (stars < N) {
     // Find an uncovered zero or the uncovered min
     const [y, x] = findUncoveredZeroOrMin(mat, primeY, starX);
 
