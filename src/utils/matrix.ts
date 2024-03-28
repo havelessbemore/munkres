@@ -17,6 +17,36 @@ export function copy<T>(matrix: Matrix<T>): Matrix<T> {
 }
 
 /**
+ * Flips a matrix horizontally.
+ *
+ * After the flip, the element at position `[y][x]` moves to `[y][M-x-1]`,
+ * where `M` is the number of columns in the matrix.
+ *
+ * @param matrix - The matrix to be flipped. Modified in place.
+ *
+ * @example
+ * const matrix = [
+ *   [1, 2, 3],
+ *   [4, 5, 6],
+ *   [7, 8, 9]
+ * ];
+ *
+ * flipH(matrix);
+ * // matrix is now:
+ * // [
+ * //   [3, 2, 1],
+ * //   [6, 5, 4],
+ * //   [9, 8, 7]
+ * // ]
+ */
+export function flipH<T>(matrix: Matrix<T>): void {
+  const Y = matrix.length;
+  for (let y = 0; y < Y; ++y) {
+    matrix[y].reverse();
+  }
+}
+
+/**
  * Finds the minimum value in a given column of a matrix.
  *
  * If the matrix is empty, the column is out of bounds, or
