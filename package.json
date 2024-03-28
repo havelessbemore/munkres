@@ -1,6 +1,6 @@
 {
   "name": "munkres",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A lightweight and efficient implementation of the Munkres (Hungarian) algorithm for optimal assignment in square and rectangular matrices.",
   "license": "MIT",
   "author": "Michael Rojas <dev.michael.rojas@gmail.com> (https://github.com/havelessbemore)",
@@ -44,6 +44,7 @@
   "keywords": [
     "algorithm",
     "assignment",
+    "bipartite",
     "combinatorial",
     "cost matrix",
     "hungarian",
