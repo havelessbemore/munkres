@@ -308,6 +308,20 @@ describe(`${munkres.name}()`, () => {
     );
   });
 
+  test("handles example #2 in the README.md", () => {
+    const costs: CostMatrix = [
+      [2, 25, 18],
+      [9, 4, 17],
+    ];
+    const res = munkres(costs);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 1],
+      ])
+    );
+  });
+
   test("test 1", () => {
     const costs: CostMatrix = [
       [8, 4, 7],

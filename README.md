@@ -60,7 +60,7 @@ Example 2: Creating a cost matrix
 import { munkres, createCostMatrix } from "munkres";
 
 // Define your workers and jobs.
-const workers = ["Alice", "Bob", "Charlie"];
+const workers = ["Alice", "Bob"];
 const jobs = ["Job 1", "Job 2", "Job 3"];
 
 // Define a cost function that takes a worker
@@ -75,16 +75,13 @@ const costs = {
   "BobJob 1": 9,
   "BobJob 2": 4,
   "BobJob 3": 17,
-  "CharlieJob 1": 11,
-  "CharlieJob 2": 26,
-  "CharlieJob 3": 1,
 };
 const costFn = (worker, job) => {
   // Your cost calculation goes here.
   return costs[worker + job];
 };
 
-// Create the cost matrix. Each cell [y, x] will be
+// Create the 2x3 cost matrix. Each cell [y, x] will be
 // the cost of assigning the y-th worker to the x-th job.
 const costMatrix = createCostMatrix(workers, jobs, costFn);
 
@@ -94,7 +91,7 @@ const costMatrix = createCostMatrix(workers, jobs, costFn);
 const assignments = munkres(costMatrix);
 
 console.log(assignments);
-// Output: [[0, 0], [1, 1], [2, 2]]
+// Output: [[0, 0], [1, 1]]
 ```
 
 ## API
