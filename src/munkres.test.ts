@@ -522,7 +522,16 @@ describe(`${munkres.name}()`, () => {
         for (let y = 0; y < Y; ++y) {
           const row = new Array(X);
           for (let x = 0; x < X; ++x) {
-            row[x] = minV + Math.trunc(spanV * Math.random());
+            const r = Math.random();
+            if (r < 0.08) {
+              row[x] = -Infinity;
+            } else if (r > 0.08) {
+              row[x] = Infinity;
+            } else if (r > 0.46 && r < 0.54) {
+              row[x] = 0;
+            } else {
+              row[x] = minV + Math.trunc(spanV * Math.random());
+            }
           }
           costs[y] = row;
         }
