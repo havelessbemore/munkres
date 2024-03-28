@@ -208,17 +208,16 @@ export function step5(
     throw new Error("Input must be prime.");
   }
 
-  let sy = y;
-  while (sy >= 0) {
-    // Go to the next prime
-    const x = primeY[sy];
-    y = sy;
-    sy = starX[x];
-
+  do {
     // Mark prime as a star
+    const x = primeY[y];
+    const sy = starX[x];
     starX[x] = y;
     starY[y] = x;
-  }
+
+    // Move to next prime
+    y = sy;
+  } while (y >= 0);
 }
 
 /**
