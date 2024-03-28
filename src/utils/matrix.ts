@@ -338,3 +338,47 @@ export function padWidth<T>(
     matrix[y].fill(fillValue, X, width);
   }
 }
+
+/**
+ * Transpose a given matrix, switching its rows and columns.
+ *
+ * In the transposed matrix, the value originally at position [y][x]
+ * moves to [x][y], effectively turning rows of the original matrix into
+ * columns in the output matrix, and vice versa.
+ * .
+ * @param matrix - The matrix to transpose.
+ *
+ * @returns A new matrix that is the transpose of the input matrix.
+ *
+ * @example
+ * // Transpose a 2x3 matrix to a 3x2 matrix
+ * const original = [
+ *   [1, 2, 3],
+ *   [4, 5, 6]
+ * ];
+ * const transposed = transpose(original);
+ * // transposed is now:
+ * // [
+ * //   [1, 4],
+ * //   [2, 5],
+ * //   [3, 6]
+ * // ]
+ */
+export function transpose<T>(matrix: Matrix<T>): Matrix<T> {
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
+
+  const out: Matrix<T> = new Array(X);
+  for (let x = 0; x < X; ++x) {
+    out[x] = new Array(Y);
+  }
+
+  for (let y = 0; y < Y; ++y) {
+    const row = matrix[y];
+    for (let x = 0; x < X; ++x) {
+      out[x][y] = row[x];
+    }
+  }
+
+  return out;
+}

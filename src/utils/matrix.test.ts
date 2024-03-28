@@ -10,6 +10,7 @@ import {
   pad,
   padHeight,
   padWidth,
+  transpose,
 } from "./matrix";
 
 describe(`${copy.name}()`, () => {
@@ -519,5 +520,69 @@ describe(`${padWidth.name}()`, () => {
     padWidth(matrix, 2, "empty");
     const expectedMatrix = [];
     expect(matrix).toEqual(expectedMatrix);
+  });
+});
+
+describe(`${transpose.name}()`, () => {
+  it("handles an empty matrix", () => {
+    const original = [];
+    const expected = [];
+    expect(transpose(original)).toEqual(expected);
+  });
+
+  it("handles a 1x1 matrix", () => {
+    const original = [[2]];
+    const expected = [[2]];
+    expect(transpose(original)).toEqual(expected);
+  });
+
+  it("handles a matrix with one row", () => {
+    const original = [[1, 2, 3]];
+    const expected = [[1], [2], [3]];
+    expect(transpose(original)).toEqual(expected);
+  });
+
+  it("handles a matrix with one column", () => {
+    const original = [[1], [2], [3]];
+    const expected = [[1, 2, 3]];
+    expect(transpose(original)).toEqual(expected);
+  });
+
+  it("transposes a 2x3 matrix", () => {
+    const original = [
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+    const expected = [
+      [1, 4],
+      [2, 5],
+      [3, 6],
+    ];
+    expect(transpose(original)).toEqual(expected);
+  });
+
+  it("transposes a 3x2 matrix", () => {
+    const original = [
+      [1, 4],
+      [2, 5],
+      [3, 6],
+    ];
+    const expected = [
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+    expect(transpose(original)).toEqual(expected);
+  });
+
+  it("transposes a square matrix", () => {
+    const original = [
+      [1, 2],
+      [3, 4],
+    ];
+    const expected = [
+      [1, 3],
+      [2, 4],
+    ];
+    expect(transpose(original)).toEqual(expected);
   });
 });
