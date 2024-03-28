@@ -58,10 +58,12 @@ describe(`${munkres.name}()`, () => {
       [1, 2],
       [2, 4],
     ]);
-    expect(res).toEqual([
-      [0, 1],
-      [1, 0],
-    ]);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 1],
+        [1, 0],
+      ])
+    );
   });
 
   test("handles a 3x3 cost matrix", () => {
@@ -71,11 +73,13 @@ describe(`${munkres.name}()`, () => {
       [3, 6, 9],
     ];
     const res = munkres(costs);
-    expect(res).toEqual([
-      [0, 2],
-      [1, 1],
-      [2, 0],
-    ]);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 2],
+        [1, 1],
+        [2, 0],
+      ])
+    );
   });
 
   test("handles a 4x4 cost matrix", () => {
@@ -86,12 +90,14 @@ describe(`${munkres.name}()`, () => {
       [3, 4, 5, 11],
     ];
     const res = munkres(costs);
-    expect(res).toEqual([
-      [0, 1],
-      [1, 3],
-      [2, 2],
-      [3, 0],
-    ]);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 1],
+        [1, 3],
+        [2, 2],
+        [3, 0],
+      ])
+    );
   });
 
   test("handles a 5x5 cost matrix", () => {
@@ -104,14 +110,15 @@ describe(`${munkres.name}()`, () => {
     ];
 
     const res = munkres(costs);
-    const sol = [
-      [0, 0],
-      [1, 4],
-      [2, 1],
-      [3, 3],
-      [4, 2],
-    ];
-    expect(res).toEqual(sol);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 4],
+        [2, 1],
+        [3, 3],
+        [4, 2],
+      ])
+    );
   });
 
   test("handles all +Infinity", () => {
@@ -121,12 +128,13 @@ describe(`${munkres.name}()`, () => {
       [Infinity, Infinity, Infinity],
     ];
     const res = munkres(costs);
-    const sol = [
-      [0, 0],
-      [1, 1],
-      [2, 2],
-    ];
-    expect(res).toEqual(sol);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ])
+    );
   });
 
   test("handles all -Infinity", () => {
@@ -136,12 +144,13 @@ describe(`${munkres.name}()`, () => {
       [-Infinity, -Infinity, -Infinity],
     ];
     const res = munkres(costs);
-    const sol = [
-      [0, 0],
-      [1, 1],
-      [2, 2],
-    ];
-    expect(res).toEqual(sol);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ])
+    );
   });
 
   test("handles all +Infinity and -Infinity", () => {
@@ -151,12 +160,13 @@ describe(`${munkres.name}()`, () => {
       [Infinity, -Infinity, -Infinity],
     ];
     const res = munkres(costs);
-    const sol = [
-      [0, 0],
-      [1, 2],
-      [2, 1],
-    ];
-    expect(res).toEqual(sol);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 2],
+        [2, 1],
+      ])
+    );
   });
 
   test("handles columns of +Infinity", () => {
@@ -166,12 +176,13 @@ describe(`${munkres.name}()`, () => {
       [4, Infinity, Infinity],
     ];
     const res = munkres(costs);
-    const sol = [
-      [0, 0],
-      [1, 1],
-      [2, 2],
-    ];
-    expect(res).toEqual(sol);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ])
+    );
   });
 
   test("handles columns of -Infinity", () => {
@@ -181,12 +192,13 @@ describe(`${munkres.name}()`, () => {
       [4, -Infinity, -Infinity],
     ];
     const res = munkres(costs);
-    const sol = [
-      [0, 0],
-      [1, 1],
-      [2, 2],
-    ];
-    expect(res).toEqual(sol);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ])
+    );
   });
 
   test("handles a mix of positives and infinite", () => {
@@ -197,19 +209,13 @@ describe(`${munkres.name}()`, () => {
       [Infinity, Infinity, 5],
     ];
     const res = munkres(costs);
-    const sols = [
-      [
+    expect(new Map(res)).toEqual(
+      new Map([
         [0, 2],
         [1, 1],
         [2, 0],
-      ],
-      [
-        [2, 0],
-        [1, 1],
-        [0, 2],
-      ],
-    ];
-    oneOf(res, sols);
+      ])
+    );
   });
 
   test("handles a mix of finite and infinite", () => {
@@ -220,42 +226,40 @@ describe(`${munkres.name}()`, () => {
     ];
     const res = munkres(costs);
     const sols = [
-      [
+      new Map([
         [0, 1],
         [1, 0],
         [2, 2],
-      ],
-      [
+      ]),
+      new Map([
         [0, 2],
         [1, 0],
         [2, 1],
-      ],
-      [
+      ]),
+      new Map([
         [0, 0],
         [1, 1],
         [2, 2],
-      ],
-      [
+      ]),
+      new Map([
         [0, 0],
         [1, 2],
         [2, 1],
-      ],
+      ]),
     ];
-    oneOf(res, sols);
+    oneOf(new Map(res), sols);
   });
 
   test("handles a 5x1 matrix", () => {
     const costs: CostMatrix = [[3, 2, 1, 4, 5]];
     const res = munkres(costs);
-    const sol = [[0, 2]];
-    expect(res).toEqual(sol);
+    expect(res).toEqual([[0, 2]]);
   });
 
   test("handles a 1x5 matrix", () => {
     const costs: CostMatrix = [[3], [2], [1], [4], [5]];
     const res = munkres(costs);
-    const sol = [[2, 0]];
-    expect(res).toEqual(sol);
+    expect(res).toEqual([[2, 0]]);
   });
 
   test("handles a 4x2 matrix", () => {
@@ -264,11 +268,12 @@ describe(`${munkres.name}()`, () => {
       [7, 8, 9, 2],
     ];
     const res = munkres(costs);
-    const sol = [
-      [0, 0],
-      [1, 3],
-    ];
-    expect(res).toEqual(sol);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 3],
+      ])
+    );
   });
 
   test("handles a 2x4 matrix", () => {
@@ -279,17 +284,12 @@ describe(`${munkres.name}()`, () => {
       [4, 7],
     ];
     const res = munkres(costs);
-    const sols = [
-      [
+    expect(new Map(res)).toEqual(
+      new Map([
         [0, 1],
         [3, 0],
-      ],
-      [
-        [3, 0],
-        [0, 1],
-      ],
-    ];
-    oneOf(res, sols);
+      ])
+    );
   });
 
   test("handles a 3x9 matrix", () => {
@@ -299,12 +299,13 @@ describe(`${munkres.name}()`, () => {
       [3, 6, 9, 12, 15, 18, 21, 24, 27],
     ];
     const res = munkres(costs);
-    const sol = [
-      [0, 2],
-      [1, 1],
-      [2, 0],
-    ];
-    expect(res).toEqual(sol);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 2],
+        [1, 1],
+        [2, 0],
+      ])
+    );
   });
 
   test("test 1", () => {
@@ -314,11 +315,13 @@ describe(`${munkres.name}()`, () => {
       [9, 4, 8],
     ];
     const res = munkres(costs);
-    expect(res).toEqual([
-      [0, 0],
-      [1, 2],
-      [2, 1],
-    ]);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 2],
+        [2, 1],
+      ])
+    );
   });
 
   test("test 2", () => {
@@ -328,11 +331,13 @@ describe(`${munkres.name}()`, () => {
       [11, 26, 1],
     ];
     const res = munkres(costs);
-    expect(res).toEqual([
-      [0, 0],
-      [1, 1],
-      [2, 2],
-    ]);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ])
+    );
   });
 
   test("test 3", () => {
@@ -342,11 +347,13 @@ describe(`${munkres.name}()`, () => {
       [11, 1, 10],
     ];
     const res = munkres(costs);
-    expect(res).toEqual([
-      [0, 0],
-      [1, 1],
-      [2, 2],
-    ]);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ])
+    );
   });
 
   test("test 4", () => {
@@ -356,11 +363,13 @@ describe(`${munkres.name}()`, () => {
       [55, 30, 25],
     ];
     const res = munkres(costs);
-    expect(res).toEqual([
-      [0, 2],
-      [1, 0],
-      [2, 1],
-    ]);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 2],
+        [1, 0],
+        [2, 1],
+      ])
+    );
   });
 
   test("test 5", () => {
@@ -370,11 +379,13 @@ describe(`${munkres.name}()`, () => {
       [6, 14, 3],
     ];
     const res = munkres(costs);
-    expect(res).toEqual([
-      [0, 1],
-      [1, 2],
-      [2, 0],
-    ]);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 1],
+        [1, 2],
+        [2, 0],
+      ])
+    );
   });
 
   test("test 6", () => {
@@ -385,27 +396,27 @@ describe(`${munkres.name}()`, () => {
       [6, 3, 7, 14],
     ];
     const sols = [
-      [
+      new Map([
         [0, 0],
         [1, 1],
         [2, 2],
         [3, 3],
-      ],
-      [
+      ]),
+      new Map([
         [0, 0],
         [1, 1],
         [2, 3],
         [3, 2],
-      ],
-      [
+      ]),
+      new Map([
         [0, 2],
         [1, 1],
         [2, 3],
         [3, 0],
-      ],
+      ]),
     ];
     const res = munkres(costs);
-    oneOf(res, sols);
+    oneOf(new Map(res), sols);
   });
 
   test("test 7", () => {
@@ -416,13 +427,14 @@ describe(`${munkres.name}()`, () => {
       [27, 5, 13, 0],
     ];
     const res = munkres(costs);
-    const sol = [
-      [0, 3],
-      [1, 0],
-      [2, 2],
-      [3, 1],
-    ];
-    expect(res).toEqual(sol);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 3],
+        [1, 0],
+        [2, 2],
+        [3, 1],
+      ])
+    );
   });
 
   test("test 8", () => {
@@ -432,12 +444,13 @@ describe(`${munkres.name}()`, () => {
       [300, 225, 300],
     ];
     const res = munkres(costs);
-    const sol = [
-      [0, 1],
-      [1, 0],
-      [2, 2],
-    ];
-    expect(res).toEqual(sol);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 1],
+        [1, 0],
+        [2, 2],
+      ])
+    );
   });
 
   test("test 9", () => {
@@ -448,13 +461,14 @@ describe(`${munkres.name}()`, () => {
       [0, 3, 6, 9],
     ];
     const res = munkres(costs);
-    const sol = [
-      [0, 3],
-      [1, 2],
-      [2, 1],
-      [3, 0],
-    ];
-    expect(res).toEqual(sol);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 3],
+        [1, 2],
+        [2, 1],
+        [3, 0],
+      ])
+    );
   });
 
   test("test 10", () => {
@@ -464,12 +478,13 @@ describe(`${munkres.name}()`, () => {
       [Infinity, Infinity, 10],
     ];
     const res = munkres(costs);
-    const sol = [
-      [0, 0],
-      [1, 1],
-      [2, 2],
-    ];
-    expect(res).toEqual(sol);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 1],
+        [2, 2],
+      ])
+    );
   });
 
   test("test 11", () => {
@@ -479,19 +494,13 @@ describe(`${munkres.name}()`, () => {
       [-Infinity, -Infinity, 10],
     ];
     const res = munkres(costs);
-    const sols = [
-      [
+    expect(new Map(res)).toEqual(
+      new Map([
         [0, 1],
         [1, 2],
         [2, 0],
-      ],
-      [
-        [0, 2],
-        [1, 1],
-        [2, 0],
-      ],
-    ];
-    oneOf(res, sols);
+      ])
+    );
   });
 
   test("test 12", () => {
@@ -502,23 +511,23 @@ describe(`${munkres.name}()`, () => {
     ];
     const res = munkres(costs);
     const sols = [
-      [
+      new Map([
         [0, 1],
         [1, 0],
         [2, 2],
-      ],
-      [
+      ]),
+      new Map([
         [0, 0],
         [1, 1],
         [2, 2],
-      ],
-      [
+      ]),
+      new Map([
         [0, 0],
         [1, 2],
         [2, 1],
-      ],
+      ]),
     ];
-    oneOf(res, sols);
+    oneOf(new Map(res), sols);
   });
 
   test("verify output properties for various matrix dimensions", () => {
