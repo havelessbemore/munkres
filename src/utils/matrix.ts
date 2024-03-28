@@ -47,6 +47,33 @@ export function flipH<T>(matrix: Matrix<T>): void {
 }
 
 /**
+ * Flips a matrix vertically.
+ *
+ * After the flip, the element at position `[y][x]` moves to `[N-y-1][x]`,
+ * where `N` is the number of rows in the matrix.
+ *
+ * @param matrix - The matrix to be flipped. Modified in place.
+ *
+ * @example
+ * const matrix = [
+ *   [1, 2, 3],
+ *   [4, 5, 6],
+ *   [7, 8, 9]
+ * ];
+ *
+ * flipV(matrix);
+ * // matrix is now:
+ * // [
+ * //   [7, 8, 9],
+ * //   [4, 5, 6],
+ * //   [1, 2, 3]
+ * // ]
+ */
+export function flipV<T>(matrix: Matrix<T>): void {
+  matrix.reverse();
+}
+
+/**
  * Finds the minimum value in a given column of a matrix.
  *
  * If the matrix is empty, the column is out of bounds, or

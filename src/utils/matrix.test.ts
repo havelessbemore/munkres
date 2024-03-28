@@ -3,6 +3,7 @@ import { describe, it, expect } from "vitest";
 import {
   copy,
   flipH,
+  flipV,
   getColMin,
   getMax,
   getMin,
@@ -140,6 +141,64 @@ describe(`${flipH.name}()`, () => {
       [3, 2, 1],
       [6, 5, 4],
       [9, 8, 7],
+    ]);
+  });
+});
+
+describe(`${flipV.name}()`, () => {
+  it("handles an empty matrix", () => {
+    const emptyMatrix = [];
+    flipV(emptyMatrix);
+    expect(emptyMatrix).toEqual([]);
+  });
+
+  it("handles a matrix with empty rows", () => {
+    const matrixWithEmptyRows = [[], [], []];
+    flipV(matrixWithEmptyRows);
+    expect(matrixWithEmptyRows).toEqual([[], [], []]);
+  });
+
+  it("flips a 1x1 matrix", () => {
+    const matrix = [[2]];
+    flipV(matrix);
+    expect(matrix).toEqual([[2]]);
+  });
+
+  it("flips a matrix with a single row", () => {
+    const singleRowMatrix = [[1, 2, 3, 4]];
+    flipV(singleRowMatrix);
+    expect(singleRowMatrix).toEqual([[1, 2, 3, 4]]);
+  });
+
+  it("flips a matrix with a single column", () => {
+    const singleColumnMatrix = [[1], [2], [3]];
+    flipV(singleColumnMatrix);
+    expect(singleColumnMatrix).toEqual([[3], [2], [1]]);
+  });
+
+  it("flips a 2x2 matrix", () => {
+    const matrix = [
+      [1, 2],
+      [3, 4],
+    ];
+    flipV(matrix);
+    expect(matrix).toEqual([
+      [3, 4],
+      [1, 2],
+    ]);
+  });
+
+  it("flips a 3x3 matrix", () => {
+    const matrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ];
+    flipV(matrix);
+    expect(matrix).toEqual([
+      [7, 8, 9],
+      [4, 5, 6],
+      [1, 2, 3],
     ]);
   });
 });
