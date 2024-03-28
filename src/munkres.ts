@@ -27,9 +27,13 @@ export function munkres(costMatrix: CostMatrix): [number, number][] {
     return [];
   }
 
+  // Make a copy
+  costMatrix = copy(costMatrix);
+
   // Transpose if Y > X
-  // Otherwise, make a copy
-  costMatrix = Y > X ? transpose(costMatrix) : copy(costMatrix);
+  if (Y > X) {
+    transpose(costMatrix);
+  }
 
   // Get optimal assignments
   const y2x = step4(costMatrix);

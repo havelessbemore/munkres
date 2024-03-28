@@ -145,7 +145,10 @@ export function steps2To3(
  * there are columns in the matrix, at which point optimal assignments
  * have been found.
  *
- * @param mat - An NxN cost matrix. Modified in place.
+ * @param mat - An NxM cost matrix. Modified in place.
+ *
+ * @throws - {@link RangeError}
+ * Thrown if the given NxM matrix has more columns than rows (N > M).
  *
  * @privateRemarks
  * Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this outline} and enhanced with custom optimizations.
@@ -156,7 +159,7 @@ export function step4(mat: CostMatrix): number[] {
 
   // Check input
   if (Y > X) {
-    throw new Error("invalid NxM matrix: N > M");
+    throw new RangeError("invalid NxM matrix: N > M");
   }
 
   const starX = new Array<number>(X).fill(-1);

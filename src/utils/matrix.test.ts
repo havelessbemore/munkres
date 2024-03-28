@@ -645,25 +645,29 @@ describe(`${transpose.name}()`, () => {
   it("handles an empty matrix", () => {
     const original = [];
     const expected = [];
-    expect(transpose(original)).toEqual(expected);
+    transpose(original);
+    expect(original).toEqual(expected);
   });
 
   it("handles a 1x1 matrix", () => {
     const original = [[2]];
     const expected = [[2]];
-    expect(transpose(original)).toEqual(expected);
+    transpose(original);
+    expect(original).toEqual(expected);
   });
 
   it("handles a matrix with one row", () => {
     const original = [[1, 2, 3]];
     const expected = [[1], [2], [3]];
-    expect(transpose(original)).toEqual(expected);
+    transpose(original);
+    expect(original).toEqual(expected);
   });
 
   it("handles a matrix with one column", () => {
     const original = [[1], [2], [3]];
     const expected = [[1, 2, 3]];
-    expect(transpose(original)).toEqual(expected);
+    transpose(original);
+    expect(original).toEqual(expected);
   });
 
   it("transposes a 2x3 matrix", () => {
@@ -676,7 +680,8 @@ describe(`${transpose.name}()`, () => {
       [2, 5],
       [3, 6],
     ];
-    expect(transpose(original)).toEqual(expected);
+    transpose(original);
+    expect(original).toEqual(expected);
   });
 
   it("transposes a 3x2 matrix", () => {
@@ -689,7 +694,8 @@ describe(`${transpose.name}()`, () => {
       [1, 2, 3],
       [4, 5, 6],
     ];
-    expect(transpose(original)).toEqual(expected);
+    transpose(original);
+    expect(original).toEqual(expected);
   });
 
   it("transposes a square matrix", () => {
@@ -701,6 +707,7 @@ describe(`${transpose.name}()`, () => {
       [1, 3],
       [2, 4],
     ];
-    expect(transpose(original)).toEqual(expected);
+    transpose(original);
+    expect(original).toEqual(expected);
   });
 });
