@@ -508,6 +508,57 @@ describe(`${munkres.name}()`, () => {
     oneOf(res, sols);
   });
 
+  test("verify output properties for various matrix dimensions", () => {
+    const YY = 33;
+    const XX = 33;
+    const minV = -1e9;
+    const maxV = 1e9;
+    const spanV = maxV - minV;
+
+    for (let Y = 1; Y < YY; ++Y) {
+      for (let X = 1; X < XX; ++X) {
+        // Create a Y by X cost matrix
+        const costs: CostMatrix = new Array(Y);
+        for (let y = 0; y < Y; ++y) {
+          const row = new Array(X);
+          for (let x = 0; x < X; ++x) {
+            row[x] = minV + Math.trunc(spanV * Math.random());
+          }
+          costs[y] = row;
+        }
+
+        // Find assignments
+        const pairs = munkres(costs);
+
+        // Check
+        try {
+          const P = Math.min(Y, X);
+          const seenY = new Set<number>();
+          const seenX = new Set<number>();
+          expect(pairs.length).toBe(P);
+          for (let p = 0; p < P; ++p) {
+            const [y, x] = pairs[p];
+
+            // Check y
+            expect(seenY.has(y)).toBe(false);
+            expect(y).toBeGreaterThanOrEqual(p);
+            expect(y).toBeLessThan(Y);
+            seenY.add(y);
+
+            // Check x
+            expect(seenX.has(x)).toBe(false);
+            expect(x).toBeGreaterThanOrEqual(0);
+            expect(x).toBeLessThan(X);
+            seenX.add(x);
+          }
+        } catch (e) {
+          console.log(`${Y} by ${X}, pairs: ${pairs}, cost matrix:\n${costs}`);
+          throw e;
+        }
+      }
+    }
+  });
+
   /*
   test("Does not throw error when given finite 2x2 cost matrix", () => {
     const B = 3;
