@@ -23,7 +23,7 @@ import { getColMin } from "./matrix";
  * // Define workers, jobs, and a simple cost function
  * const workers = ['Alice', 'Bob'];
  * const jobs = ['Job1', 'Job2'];
- * const costFn = (worker: string, job: string) => worker.length + job.length;
+ * const costFn = (worker: string, job: string) =\> worker.length + job.length;
  *
  * // Create the cost matrix
  * const matrix = createCostMatrix(workers, jobs, costFn);
