@@ -1,5 +1,5 @@
 import { CostMatrix } from "./types/costMatrix";
-import { copy, pad } from "./utils/matrix";
+import { copy, flipH, transpose } from "./utils/matrix";
 import { step4 } from "./utils/munkres";
 
 /**
@@ -27,21 +27,23 @@ export function munkres(costMatrix: CostMatrix): [number, number][] {
     return [];
   }
 
-  // Make a copy of the cost matrix
-  costMatrix = copy(costMatrix);
-
-  // Square the matrix with dummy rows / columns
-  pad(costMatrix, X, Y, 0);
+  // Transpose if Y > X
+  // Otherwise, make a copy
+  costMatrix = Y > X ? transpose(costMatrix) : copy(costMatrix);
 
   // Get optimal assignments
   const y2x = step4(costMatrix);
 
-  // Filter out dummy assignments
-  const pairs: [number, number][] = new Array(Math.min(Y, X));
-  for (let y = 0, i = 0; y < Y; ++y) {
-    if (y2x[y] < X) {
-      pairs[i++] = [y, y2x[y]];
-    }
+  // Create pairs
+  const P = y2x.length;
+  const pairs: [number, number][] = new Array(P);
+  for (let y = 0; y < P; ++y) {
+    pairs[y] = [y, y2x[y]];
+  }
+
+  // Transpose if Y > X
+  if (Y > X) {
+    flipH(pairs);
   }
 
   // Return assignments

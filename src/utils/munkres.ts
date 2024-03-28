@@ -1,7 +1,7 @@
 import { Matrix } from "..";
 import { CostMatrix } from "../types/costMatrix";
 import { reduceCols, reduceRows } from "./costMatrix";
-import { isSquare, map } from "./matrix";
+import { map } from "./matrix";
 
 /**
  * Displays the current step of the algorithm and the state of the cost matrix.
@@ -84,8 +84,16 @@ export function findUncoveredZeroOrMin(
  * @param mat - The cost matrix. Modified in place.
  */
 export function step1(mat: CostMatrix): void {
-  reduceRows(mat);
-  reduceCols(mat);
+  const Y = mat.length;
+  const X = mat[0]?.length ?? 0;
+
+  if (Y <= X) {
+    reduceRows(mat);
+  }
+
+  if (Y >= X) {
+    reduceCols(mat);
+  }
 }
 
 /**
@@ -143,15 +151,17 @@ export function steps2To3(
  * Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this outline} and enhanced with custom optimizations.
  */
 export function step4(mat: CostMatrix): number[] {
+  const Y = mat.length;
+  const X = mat[0]?.length ?? 0;
+
   // Check input
-  if (!isSquare(mat)) {
-    throw new Error("matrix must be NxN");
+  if (Y > X) {
+    throw new Error("invalid NxM matrix: N > M");
   }
 
-  const N = mat.length;
-  const starX = new Array<number>(N).fill(-1);
-  const starY = new Array<number>(N).fill(-1);
-  const primeY = new Array<number>(N).fill(-1);
+  const starX = new Array<number>(X).fill(-1);
+  const starY = new Array<number>(Y).fill(-1);
+  const primeY = new Array<number>(Y).fill(-1);
 
   // Step 1: Reduce
   step1(mat);
@@ -160,7 +170,7 @@ export function step4(mat: CostMatrix): number[] {
   let stars = steps2To3(mat, starX, starY);
 
   // Step 4: Find optimal assignments
-  while (stars < N) {
+  while (stars < Y) {
     // Find an uncovered zero or the uncovered min
     const [y, x] = findUncoveredZeroOrMin(mat, primeY, starX);
 

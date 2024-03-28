@@ -197,12 +197,19 @@ describe(`${munkres.name}()`, () => {
       [Infinity, Infinity, 5],
     ];
     const res = munkres(costs);
-    const sol = [
-      [0, 2],
-      [1, 1],
-      [2, 0],
+    const sols = [
+      [
+        [0, 2],
+        [1, 1],
+        [2, 0],
+      ],
+      [
+        [2, 0],
+        [1, 1],
+        [0, 2],
+      ],
     ];
-    expect(res).toEqual(sol);
+    oneOf(res, sols);
   });
 
   test("handles a mix of finite and infinite", () => {
@@ -272,11 +279,17 @@ describe(`${munkres.name}()`, () => {
       [4, 7],
     ];
     const res = munkres(costs);
-    const sol = [
-      [0, 1],
-      [3, 0],
+    const sols = [
+      [
+        [0, 1],
+        [3, 0],
+      ],
+      [
+        [3, 0],
+        [0, 1],
+      ],
     ];
-    expect(res).toEqual(sol);
+    oneOf(res, sols);
   });
 
   test("handles a 3x9 matrix", () => {
@@ -525,7 +538,7 @@ describe(`${munkres.name}()`, () => {
             const r = Math.random();
             if (r < 0.08) {
               row[x] = -Infinity;
-            } else if (r > 0.08) {
+            } else if (r > 0.92) {
               row[x] = Infinity;
             } else if (r > 0.46 && r < 0.54) {
               row[x] = 0;
@@ -550,7 +563,7 @@ describe(`${munkres.name}()`, () => {
 
             // Check y
             expect(seenY.has(y)).toBe(false);
-            expect(y).toBeGreaterThanOrEqual(p);
+            expect(y).toBeGreaterThanOrEqual(0);
             expect(y).toBeLessThan(Y);
             seenY.add(y);
 
