@@ -22,6 +22,9 @@ export function getMin(array: bigint[]): bigint | undefined;
 export function getMin(array: string[]): string | undefined;
 export function getMin<T extends number | bigint | string>(
   array: T[]
+): T | undefined;
+export function getMin<T extends number | bigint | string>(
+  array: T[]
 ): T | undefined {
   const N = array.length;
   if (N <= 0) {
