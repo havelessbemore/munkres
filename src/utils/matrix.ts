@@ -125,6 +125,10 @@ export function getColMin(
 export function getColMin<T extends number | bigint | string>(
   matrix: Matrix<T>,
   x: number
+): T | undefined;
+export function getColMin<T extends number | bigint | string>(
+  matrix: Matrix<T>,
+  x: number
 ): T | undefined {
   const Y = matrix.length;
   if (Y <= 0 || x < 0 || x >= matrix[0].length) {
