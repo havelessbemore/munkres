@@ -153,7 +153,7 @@ To run the code linter:
 npm run lint
 ```
 
-To automatically fix linting issue, run:
+To automatically fix linting issues, run:
 
 ```bash
 npm run format
