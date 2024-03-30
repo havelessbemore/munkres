@@ -1,6 +1,6 @@
 import { Matrix } from "..";
 import { CostMatrix } from "../types/costMatrix";
-import { reduceCols, reduceRows } from "./costMatrix";
+import { reduceCols, reduceRows } from "./matrix";
 import { map } from "./matrix";
 
 /**

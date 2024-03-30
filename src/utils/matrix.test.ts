@@ -12,6 +12,8 @@ import {
   pad,
   padHeight,
   padWidth,
+  reduceCols,
+  reduceRows,
   rot90,
   rotNeg90,
   transpose,
@@ -640,6 +642,422 @@ describe(`${padWidth.name}()`, () => {
     padWidth(matrix, 2, "empty");
     const expectedMatrix = [];
     expect(matrix).toEqual(expectedMatrix);
+  });
+});
+
+describe(`${reduceCols.name}()`, () => {
+  it("handles an empty matrix", () => {
+    const mat: number[][] = [];
+    const expected: number[][] = [];
+    reduceCols(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("correctly reduces a single element matrix", () => {
+    const mat = [[3]];
+    const expected = [[0]];
+    reduceCols(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("correctly reduces columns of a matrix with a single row", () => {
+    const mat = [[3, 1, 4]];
+    const expected = [[0, 0, 0]];
+    reduceCols(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("correctly reduces columns of a matrix with a single column", () => {
+    const mat = [[3], [1], [4]];
+    const expected = [[2], [0], [3]];
+    reduceCols(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("correctly reduces columns of a non-empty matrix", () => {
+    const mat = [
+      [3, 1, 4],
+      [1, 5, 9],
+      [2, 6, 5],
+    ];
+    const expected = [
+      [2, 0, 0],
+      [0, 4, 5],
+      [1, 5, 1],
+    ];
+    reduceCols(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("leaves a matrix of zeroes unchanged", () => {
+    const mat = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    const expected = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    reduceCols(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with negative values", () => {
+    const mat = [
+      [-3, -1, -4],
+      [-1, -5, -9],
+      [-2, -6, -5],
+    ];
+    const expected = [
+      [0, 5, 5],
+      [2, 1, 0],
+      [1, 0, 4],
+    ];
+    reduceCols(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with all the same values", () => {
+    const mat = [
+      [2, 2, 2],
+      [2, 2, 2],
+      [2, 2, 2],
+    ];
+    const expected = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    reduceCols(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with all Infinity", () => {
+    const mat = [
+      [Infinity, Infinity, Infinity],
+      [Infinity, Infinity, Infinity],
+      [Infinity, Infinity, Infinity],
+    ];
+    const expected = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    reduceCols(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with all -Infinity", () => {
+    const mat = [
+      [-Infinity, -Infinity, -Infinity],
+      [-Infinity, -Infinity, -Infinity],
+      [-Infinity, -Infinity, -Infinity],
+    ];
+    const expected = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    reduceCols(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with all Infinity and -Infinity", () => {
+    const mat = [
+      [Infinity, Infinity, -Infinity],
+      [-Infinity, Infinity, -Infinity],
+      [Infinity, Infinity, Infinity],
+    ];
+    const expected = [
+      [Infinity, 0, 0],
+      [0, 0, 0],
+      [Infinity, 0, Infinity],
+    ];
+    reduceCols(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles columns with Infinity correctly", () => {
+    const mat = [
+      [Infinity, 1, 2],
+      [Infinity, 3, 1],
+      [Infinity, 2, Infinity],
+    ];
+    reduceCols(mat);
+    expect(mat).toEqual([
+      [0, 0, 1],
+      [0, 2, 0],
+      [0, 1, Infinity],
+    ]);
+  });
+
+  it("handles columns with -Infinity correctly", () => {
+    const mat = [
+      [-Infinity, 1, Infinity],
+      [0, 3, 1],
+      [5, 2, -Infinity],
+    ];
+    reduceCols(mat);
+    expect(mat).toEqual([
+      [0, 0, Infinity],
+      [Infinity, 2, Infinity],
+      [Infinity, 1, 0],
+    ]);
+  });
+
+  it("performs column-wise reduction on a bigint matrix", () => {
+    const costMatrix: bigint[][] = [
+      [4n, 1n, 3n],
+      [2n, 0n, 5n],
+      [3n, 2n, 2n],
+    ];
+    reduceCols(costMatrix);
+    expect(costMatrix).toEqual([
+      [2n, 1n, 1n],
+      [0n, 0n, 3n],
+      [1n, 2n, 0n],
+    ]);
+  });
+
+  it("handles a column with equal values correctly", () => {
+    const costMatrix: bigint[][] = [
+      [1n, 2n],
+      [1n, 3n],
+      [1n, 4n],
+    ];
+    reduceCols(costMatrix);
+    expect(costMatrix).toEqual([
+      [0n, 0n],
+      [0n, 1n],
+      [0n, 2n],
+    ]);
+  });
+
+  it("deals with a matrix having a single column", () => {
+    const costMatrix: bigint[][] = [[5n], [3n], [4n]];
+    reduceCols(costMatrix);
+    expect(costMatrix).toEqual([[2n], [0n], [1n]]);
+  });
+
+  it("handles an empty matrix without error", () => {
+    const costMatrix: bigint[][] = [];
+    reduceCols(costMatrix);
+    expect(costMatrix).toEqual([]);
+  });
+
+  it("processes a matrix with a single row", () => {
+    const costMatrix: bigint[][] = [[3n, 1n, 4n]];
+    reduceCols(costMatrix);
+    expect(costMatrix).toEqual([[0n, 0n, 0n]]);
+  });
+});
+
+describe(`${reduceRows.name}()`, () => {
+  it("handles an empty matrix", () => {
+    const mat: number[][] = [];
+    const expected: number[][] = [];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("correctly reduces a single element matrix", () => {
+    const mat = [[3]];
+    const expected = [[0]];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("correctly reduces columns of a matrix with a single row", () => {
+    const mat = [[3, 1, 4]];
+    const expected = [[2, 0, 3]];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("correctly reduces columns of a matrix with a single column", () => {
+    const mat = [[3], [1], [4]];
+    const expected = [[0], [0], [0]];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("correctly reduces columns of a non-empty matrix", () => {
+    const mat = [
+      [3, 1, 4],
+      [1, 5, 9],
+      [2, 6, 5],
+    ];
+    const expected = [
+      [2, 0, 3],
+      [0, 4, 8],
+      [0, 4, 3],
+    ];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("leaves a matrix of zeroes unchanged", () => {
+    const mat = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    const expected = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with negative values", () => {
+    const mat = [
+      [-3, -1, -4],
+      [-1, -5, -9],
+      [-2, -6, -5],
+    ];
+    const expected = [
+      [1, 3, 0],
+      [8, 4, 0],
+      [4, 0, 1],
+    ];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with all the same values", () => {
+    const mat = [
+      [2, 2, 2],
+      [2, 2, 2],
+      [2, 2, 2],
+    ];
+    const expected = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with all Infinity", () => {
+    const mat = [
+      [Infinity, Infinity, Infinity],
+      [Infinity, Infinity, Infinity],
+      [Infinity, Infinity, Infinity],
+    ];
+    const expected = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with all -Infinity", () => {
+    const mat = [
+      [-Infinity, -Infinity, -Infinity],
+      [-Infinity, -Infinity, -Infinity],
+      [-Infinity, -Infinity, -Infinity],
+    ];
+    const expected = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0],
+    ];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with all Infinity and -Infinity", () => {
+    const mat = [
+      [Infinity, Infinity, -Infinity],
+      [-Infinity, Infinity, -Infinity],
+      [Infinity, Infinity, Infinity],
+    ];
+    const expected = [
+      [Infinity, Infinity, 0],
+      [0, Infinity, 0],
+      [0, 0, 0],
+    ];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles rows with Infinity correctly", () => {
+    const mat = [
+      [1, 3, 2],
+      [Infinity, Infinity, Infinity],
+      [2, Infinity, 3],
+    ];
+    reduceRows(mat);
+    expect(mat).toEqual([
+      [0, 2, 1],
+      [0, 0, 0],
+      [0, Infinity, 1],
+    ]);
+  });
+
+  it("handles rows with -Infinity correctly", () => {
+    const mat = [
+      [5, 0, -Infinity],
+      [2, 3, 1],
+      [-Infinity, 1, Infinity],
+    ];
+    reduceRows(mat);
+    expect(mat).toEqual([
+      [Infinity, Infinity, 0],
+      [1, 2, 0],
+      [0, Infinity, Infinity],
+    ]);
+  });
+
+  it("performs row-wise reduction on a bigint matrix", () => {
+    const costMatrix: bigint[][] = [
+      [4n, 1n, 3n],
+      [2n, 0n, 5n],
+      [3n, 2n, 2n],
+    ];
+    reduceRows(costMatrix);
+    expect(costMatrix).toEqual([
+      [3n, 0n, 2n],
+      [2n, 0n, 5n],
+      [1n, 0n, 0n],
+    ]);
+  });
+
+  it("handles a row with equal values correctly", () => {
+    const costMatrix: bigint[][] = [
+      [1n, 1n, 1n],
+      [2n, 3n, 4n],
+    ];
+    reduceRows(costMatrix);
+    expect(costMatrix).toEqual([
+      [0n, 0n, 0n],
+      [0n, 1n, 2n],
+    ]);
+  });
+
+  it("deals with a matrix having a single row", () => {
+    const costMatrix: bigint[][] = [[5n, 3n, 4n]];
+    reduceRows(costMatrix);
+    expect(costMatrix).toEqual([[2n, 0n, 1n]]);
+  });
+
+  it("handles an empty matrix without error", () => {
+    const costMatrix: bigint[][] = [];
+    reduceRows(costMatrix);
+    expect(costMatrix).toEqual([]);
+  });
+
+  it("processes a matrix with a single column", () => {
+    const costMatrix: bigint[][] = [[3n], [1n], [4n]];
+    reduceRows(costMatrix);
+    expect(costMatrix).toEqual([[0n], [0n], [0n]]);
   });
 });
 

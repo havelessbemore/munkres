@@ -1,5 +1,8 @@
 import { Matrix } from "../types/matrix";
 
+import { getMin as getRowMin } from "./array";
+import { isBigInt } from "./is";
+
 /**
  * Creates a copy of a given matrix.
  *
@@ -397,6 +400,111 @@ export function padWidth<T>(
   for (let y = 0; y < Y; ++y) {
     matrix[y].length = width;
     matrix[y].fill(fillValue, X, width);
+  }
+}
+
+/**
+ * Performs column-wise reduction on a given matrix.
+ *
+ * Each column of the matrix is reduced by subtracting the minimum value
+ * in the column from every value in the column.
+ *
+ * @param matrix - The matrix. Modified in place.
+ *
+ * @example
+ * const matrix = [
+ *   [4, 1, 3],
+ *   [2, 0, 5],
+ *   [3, 2, 2]
+ * ];
+ *
+ * reduceCols(matrix);
+ * // matrix now:
+ * // [
+ * //   [2, 1, 1],
+ * //   [0, 0, 3],
+ * //   [1, 2, 0]
+ * // ]
+ */
+export function reduceCols(matrix: number[][]): void;
+export function reduceCols(matrix: bigint[][]): void;
+export function reduceCols<T extends number | bigint>(matrix: T[][]): void;
+export function reduceCols<T extends number | bigint>(matrix: T[][]): void {
+  // If matrix is empty
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
+  if (X <= 0) {
+    return;
+  }
+
+  // For each column
+  for (let x = 0; x < X; ++x) {
+    // Find the min
+    const min = getColMin(matrix, x)!;
+
+    // Subtract the min
+    if (isBigInt(min) || isFinite(min)) {
+      for (let y = 0; y < Y; ++y) {
+        matrix[y][x] = (matrix[y][x] - min) as T;
+      }
+    } else {
+      for (let y = 0; y < Y; ++y) {
+        matrix[y][x] = (matrix[y][x] == min ? 0 : Infinity) as T;
+      }
+    }
+  }
+}
+
+/**
+ * Performs row-wise reduction on a given matrix.
+ *
+ * Each row of the matrix is reduced by subtracting the minimum value
+ * in the row from every value in the row.
+ *
+ * @param matrix - The matrix. Modified in place.
+ *
+ * @example
+ * const matrix = [
+ *   [4, 1, 3],
+ *   [2, 0, 5],
+ *   [3, 2, 2]
+ * ];
+ *
+ * reduceRows(matrix);
+ * // matrix is now:
+ * // [
+ * //   [3, 0, 2],
+ * //   [2, 0, 5],
+ * //   [1, 0, 0]
+ * // ]
+ */
+export function reduceRows(matrix: number[][]): void;
+export function reduceRows(matrix: bigint[][]): void;
+export function reduceRows<T extends number | bigint>(matrix: T[][]): void;
+export function reduceRows<T extends number | bigint>(matrix: T[][]): void {
+  // For each row
+  const Y = matrix.length;
+  for (let y = 0; y < Y; ++y) {
+    // Find the min
+    const row = matrix[y];
+    const min = getRowMin(row);
+
+    // If row is empty
+    if (min == null) {
+      continue;
+    }
+
+    // Subtract the min
+    const X = row.length;
+    if (isBigInt(min) || isFinite(min)) {
+      for (let x = 0; x < X; ++x) {
+        row[x] = (row[x] - min) as T;
+      }
+    } else {
+      for (let x = 0; x < X; ++x) {
+        row[x] = (row[x] == min ? 0 : Infinity) as T;
+      }
+    }
   }
 }
 

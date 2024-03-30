@@ -1,7 +1,5 @@
 import { CostFn } from "../types/costFn";
 import { CostMatrix } from "../types/costMatrix";
-import { getMin as getRowMin } from "./array";
-import { getColMin } from "./matrix";
 
 /**
  * Constructs a cost matrix for a set of
@@ -196,93 +194,6 @@ export function negateCostMatrix(costMatrix: CostMatrix): void {
     const row = costMatrix[y];
     for (let x = 0; x < X; ++x) {
       row[x] = -row[x];
-    }
-  }
-}
-
-/**
- * Performs column-wise reduction on a given cost matrix.
- *
- * Each column of the matrix is reduced by subtracting the minimum value
- * in the column from every value in the column.
- *
- * @param costMatrix - The cost matrix. The matrix is modified in place.
- *
- * @example
- * const costMatrix = [
- *   [4, 1, 3],
- *   [2, 0, 5],
- *   [3, 2, 2]
- * ];
- *
- * // Perform reduction
- * reduceCols(costMatrix);
- *
- * // costMatrix now:
- * // [
- * //   [2, 1, 1],
- * //   [0, 0, 3],
- * //   [1, 2, 0]
- * // ]
- */
-export function reduceCols(costMatrix: CostMatrix): void {
-  const Y = costMatrix.length;
-  const X = costMatrix[0]?.length ?? 0;
-
-  for (let x = 0; x < X; ++x) {
-    const min = getColMin(costMatrix, x)!;
-    if (isFinite(min)) {
-      for (let y = 0; y < Y; ++y) {
-        costMatrix[y][x] -= min;
-      }
-    } else {
-      for (let y = 0; y < Y; ++y) {
-        costMatrix[y][x] = costMatrix[y][x] == min ? 0 : Infinity;
-      }
-    }
-  }
-}
-
-/**
- * Performs row-wise reduction on a given cost matrix.
- *
- * Each row of the matrix is reduced by subtracting the minimum value
- * in the row from every value in the row.
- *
- * @param costMatrix - The cost matrix. The matrix is modified in place.
- *
- * @example
- * const costMatrix = [
- *   [4, 1, 3],
- *   [2, 0, 5],
- *   [3, 2, 2]
- * ];
- *
- * // Perform reduction
- * reduceRows(costMatrix);
- *
- * // costMatrix is now:
- * // [
- * //   [3, 0, 2],
- * //   [2, 0, 5],
- * //   [1, 0, 0]
- * // ]
- */
-export function reduceRows(costMatrix: CostMatrix): void {
-  const Y = costMatrix.length;
-  const X = costMatrix[0]?.length ?? 0;
-
-  for (let y = 0; y < Y; ++y) {
-    const row = costMatrix[y];
-    const min = getRowMin(row)!;
-    if (isFinite(min)) {
-      for (let x = 0; x < X; ++x) {
-        row[x] -= min;
-      }
-    } else {
-      for (let x = 0; x < X; ++x) {
-        row[x] = row[x] == min ? 0 : Infinity;
-      }
     }
   }
 }
