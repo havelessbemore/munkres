@@ -12,6 +12,8 @@ import {
   pad,
   padHeight,
   padWidth,
+  rot90,
+  rotNeg90,
   transpose,
 } from "./matrix";
 
@@ -638,6 +640,162 @@ describe(`${padWidth.name}()`, () => {
     padWidth(matrix, 2, "empty");
     const expectedMatrix = [];
     expect(matrix).toEqual(expectedMatrix);
+  });
+});
+
+describe(`${rot90.name}()`, () => {
+  it("handles an empty matrix", () => {
+    const matrix = [];
+    rot90(matrix);
+    expect(matrix).toEqual([]);
+  });
+
+  it("handles a 1x1 matrix", () => {
+    const matrix = [[2]];
+    rot90(matrix);
+    expect(matrix).toEqual([[2]]);
+  });
+
+  it("rotates a 2x2 matrix by 90 degrees clockwise", () => {
+    const matrix = [
+      [1, 2],
+      [3, 4],
+    ];
+    rot90(matrix);
+    expect(matrix).toEqual([
+      [3, 1],
+      [4, 2],
+    ]);
+  });
+
+  it("rotates a 2x3 matrix by 90 degrees clockwise", () => {
+    const matrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+    rot90(matrix);
+    expect(matrix).toEqual([
+      [4, 1],
+      [5, 2],
+      [6, 3],
+    ]);
+  });
+
+  it("rotates a 3x2 matrix by 90 degrees clockwise", () => {
+    const matrix = [
+      [1, 2],
+      [3, 4],
+      [5, 6],
+    ];
+    rot90(matrix);
+    expect(matrix).toEqual([
+      [5, 3, 1],
+      [6, 4, 2],
+    ]);
+  });
+
+  it("rotates a 3x3 matrix by 90 degrees clockwise", () => {
+    const matrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ];
+    rot90(matrix);
+    expect(matrix).toEqual([
+      [7, 4, 1],
+      [8, 5, 2],
+      [9, 6, 3],
+    ]);
+  });
+
+  it("correctly rotates a 4x1 matrix by 90 degrees clockwise", () => {
+    const matrix = [[1], [2], [3], [4]];
+    rot90(matrix);
+    expect(matrix).toEqual([[4, 3, 2, 1]]);
+  });
+
+  it("correctly rotates a 1x4 matrix by 90 degrees clockwise", () => {
+    const matrix = [[1, 2, 3, 4]];
+    rot90(matrix);
+    expect(matrix).toEqual([[1], [2], [3], [4]]);
+  });
+});
+
+describe(`${rotNeg90.name}()`, () => {
+  it("handles an empty matrix", () => {
+    const matrix = [];
+    rotNeg90(matrix);
+    expect(matrix).toEqual([]);
+  });
+
+  it("handles a 1x1 matrix", () => {
+    const matrix = [[2]];
+    rotNeg90(matrix);
+    expect(matrix).toEqual([[2]]);
+  });
+
+  it("rotates a 2x2 matrix by 90 degrees counterclockwise", () => {
+    const matrix = [
+      [1, 2],
+      [3, 4],
+    ];
+    rotNeg90(matrix);
+    expect(matrix).toEqual([
+      [2, 4],
+      [1, 3],
+    ]);
+  });
+
+  it("rotates a 2x3 matrix by 90 degrees counterclockwise", () => {
+    const matrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+    rotNeg90(matrix);
+    expect(matrix).toEqual([
+      [3, 6],
+      [2, 5],
+      [1, 4],
+    ]);
+  });
+
+  it("rotates a 3x2 matrix by 90 degrees counterclockwise", () => {
+    const matrix = [
+      [1, 2],
+      [3, 4],
+      [5, 6],
+    ];
+    rotNeg90(matrix);
+    expect(matrix).toEqual([
+      [2, 4, 6],
+      [1, 3, 5],
+    ]);
+  });
+
+  it("rotates a 3x3 matrix by 90 degrees counterclockwise", () => {
+    const matrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ];
+    rotNeg90(matrix);
+    expect(matrix).toEqual([
+      [3, 6, 9],
+      [2, 5, 8],
+      [1, 4, 7],
+    ]);
+  });
+
+  it("rotates a 1x4 matrix by 90 degrees counterclockwise", () => {
+    const matrix = [[1, 2, 3, 4]];
+    rotNeg90(matrix);
+    expect(matrix).toEqual([[4], [3], [2], [1]]);
+  });
+
+  it("rotates a 4x1 matrix by 90 degrees counterclockwise", () => {
+    const matrix = [[1], [2], [3], [4]];
+    rotNeg90(matrix);
+    expect(matrix).toEqual([[1, 2, 3, 4]]);
   });
 });
 

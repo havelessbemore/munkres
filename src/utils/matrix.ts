@@ -277,7 +277,7 @@ export function getMin<T extends number | bigint | string>(
  *    [4, 5, 6]
  * ])); // Output: false
  */
-export function isSquare(matrix: Matrix<unknown>): boolean {
+export function isSquare<T>(matrix: Matrix<T>): boolean {
   return matrix.length == (matrix[0]?.length ?? 0);
 }
 
@@ -398,6 +398,80 @@ export function padWidth<T>(
     matrix[y].length = width;
     matrix[y].fill(fillValue, X, width);
   }
+}
+
+/**
+ * Rotates a matrix by 90 degrees clockwise.
+ *
+ * @param matrix - The matrix to be rotated. Modified in place.
+ *
+ * @example
+ * const matrix = [
+ *   [1, 2],
+ *   [3, 4]
+ * ];
+ *
+ * rot90(matrix);
+ * // matrix is now:
+ * // [
+ * //   [3, 1],
+ * //   [4, 2]
+ * // ]
+ *
+ * @example
+ * const matrix = [
+ *   [1, 2, 3],
+ *   [4, 5, 6]
+ * ];
+ *
+ * rot90(matrix);
+ * // matrix is now:
+ * // [
+ * //   [4, 1],
+ * //   [5, 2],
+ * //   [6, 3]
+ * // ]
+ */
+export function rot90<T>(matrix: Matrix<T>): void {
+  flipV(matrix);
+  transpose(matrix);
+}
+
+/**
+ * Rotates a matrix by 90 degrees counterclockwise.
+ *
+ * @param matrix - The matrix to be rotated. Modified in place.
+ *
+ * @example
+ * const matrix = [
+ *   [1, 2],
+ *   [3, 4]
+ * ];
+ *
+ * rot90(matrix);
+ * // matrix is now:
+ * // [
+ * //   [2, 4],
+ * //   [1, 3]
+ * // ]
+ *
+ * @example
+ * const matrix = [
+ *   [1, 2, 3],
+ *   [4, 5, 6]
+ * ];
+ *
+ * rot90(matrix);
+ * // matrix is now:
+ * // [
+ * //   [3, 6],
+ * //   [2, 5],
+ * //   [1, 4]
+ * // ]
+ */
+export function rotNeg90<T>(matrix: Matrix<T>): void {
+  transpose(matrix);
+  flipV(matrix);
 }
 
 /**
