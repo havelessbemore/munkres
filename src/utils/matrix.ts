@@ -583,6 +583,42 @@ export function rotNeg90<T>(matrix: Matrix<T>): void {
 }
 
 /**
+ * Generates a string representation of a matrix.
+ *
+ * @param mat - The matrix.
+ *
+ * @returns A string representation of the matrix.
+ */
+export function toString<T>(mat: Matrix<T>): string {
+  const strs: Matrix<string> = map(mat, v => `${v}`);
+  const Y = strs.length;
+  const X = strs[0]?.length ?? 0;
+
+  // For each column
+  for (let x = 0; x < X; ++x) {
+    // Get width
+    let width = 0;
+    for (let y = 0; y < Y; ++y) {
+      width = Math.max(width, strs[y][x].length);
+    }
+
+    // Adjust width
+    for (let y = 0; y < Y; ++y) {
+      strs[y][x] = strs[y][x].padStart(width, " ");
+    }
+  }
+
+  // Create output
+  const buf: string[] = new Array(Y);
+  for (let y = 0; y < Y; ++y) {
+    buf[y] = `[${strs[y].join(", ")}]`;
+  }
+
+  // Return output
+  return buf.join(",\n");
+}
+
+/**
  * Transpose a given matrix, switching its rows and columns.
  *
  * In the transposed matrix, the value originally at position [y][x]

@@ -151,7 +151,8 @@ export function steps2To3(
  * Thrown if the given NxM matrix has more columns than rows (N > M).
  *
  * @privateRemarks
- * Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this outline} and enhanced with custom optimizations.
+ * Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this outline}
+ * and enhanced with custom optimizations.
  */
 export function step4(mat: CostMatrix): number[] {
   const Y = mat.length;

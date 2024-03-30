@@ -16,6 +16,7 @@ import {
   reduceRows,
   rot90,
   rotNeg90,
+  toString,
   transpose,
 } from "./matrix";
 
@@ -1214,6 +1215,62 @@ describe(`${rotNeg90.name}()`, () => {
     const matrix = [[1], [2], [3], [4]];
     rotNeg90(matrix);
     expect(matrix).toEqual([[1, 2, 3, 4]]);
+  });
+});
+
+describe(`${toString.name}()`, () => {
+  it("handles an empty matrix", () => {
+    const matrix = [];
+    const expectedString = "";
+    expect(toString(matrix)).toEqual(expectedString);
+  });
+
+  it("handles a 1x1 matrix", () => {
+    const matrix = [[2]];
+    const expectedString = "[2]";
+    expect(toString(matrix)).toEqual(expectedString);
+  });
+
+  it("processes a single row matrix", () => {
+    const matrix = [[1, 2, 3]];
+    const expectedString = "[1, 2, 3]";
+    expect(toString(matrix)).toEqual(expectedString);
+  });
+
+  it("processes a single column matrix", () => {
+    const matrix = [[1], [2], [3]];
+    const expectedString = "[1],\n" + "[2],\n" + "[3]";
+    expect(toString(matrix)).toEqual(expectedString);
+  });
+
+  it("converts a numeric matrix to a string representation", () => {
+    const matrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+    const expectedString = "[1, 2, 3],\n[4, 5, 6]";
+    expect(toString(matrix)).toEqual(expectedString);
+  });
+
+  it("converts a matrix with mixed types to a string representation", () => {
+    const matrix = [
+      ["a", 2, true],
+      [null, undefined, 5],
+    ];
+    const expectedString =
+      "[   a,         2, true],\n" + "[null, undefined,    5]";
+    expect(toString(matrix)).toEqual(expectedString);
+  });
+
+  it("aligns values properly in columns when converting to string", () => {
+    const matrix = [
+      [1, 100, 1000],
+      [20, 200, 20000],
+      [300, 3000, 300],
+    ];
+    const expectedString =
+      "[  1,  100,  1000],\n" + "[ 20,  200, 20000],\n" + "[300, 3000,   300]";
+    expect(toString(matrix)).toEqual(expectedString);
   });
 });
 
