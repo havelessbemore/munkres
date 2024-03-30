@@ -128,10 +128,6 @@ export function getColMin(
 export function getColMin<T extends number | bigint | string>(
   matrix: Matrix<T>,
   x: number
-): T | undefined;
-export function getColMin<T extends number | bigint | string>(
-  matrix: Matrix<T>,
-  x: number
 ): T | undefined {
   const Y = matrix.length;
   if (Y <= 0 || x < 0 || x >= matrix[0].length) {
@@ -261,6 +257,61 @@ export function getMin<T extends number | bigint | string>(
 }
 
 /**
+ * Inverts the values in a given matrix by
+ * subtracting each element from a given large value.
+ *
+ * @param matrix - The matrix to be inverted. Modified in place.
+ * @param bigVal - (Optional) A large value used as the basis for inversion.
+ * If not provided, uses the maximum value in the matrix.
+ *
+ * @example
+ * const matrix = [
+ *   [1, 2, 3],
+ *   [4, 5, 6]
+ * ];
+ *
+ * invert(matrix);
+ * // matrix is now:
+ * // [
+ * //   [5, 4, 3],
+ * //   [2, 1, 0]
+ * // ]
+ *
+ * @example
+ * const matrix = [
+ *   [10, 20],
+ *   [30, 40]
+ * ];
+ *
+ * invert(matrix, 50);
+ * // matrix is now:
+ * // [
+ * //   [40, 30],
+ * //   [20, 10]
+ * // ]
+ */
+export function invert(matrix: Matrix<number>, bigVal?: number): void;
+export function invert(matrix: Matrix<bigint>, bigVal?: bigint): void;
+export function invert<T extends number | bigint>(
+  matrix: Matrix<T>,
+  bigVal?: T
+): void {
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
+  if (Y <= 0 || X <= 0) {
+    return undefined;
+  }
+
+  bigVal = bigVal ?? (getMax(matrix as Matrix<number>)! as T);
+  for (let y = 0; y < Y; ++y) {
+    const row = matrix[y];
+    for (let x = 0; x < X; ++x) {
+      row[x] = (bigVal - row[x]) as T;
+    }
+  }
+}
+
+/**
  * Checks if a given matrix is square. A square matrix has an equal number
  * of rows and columns.
  *
@@ -323,6 +374,39 @@ export function map<A, B>(
     out[y] = to;
   }
   return out;
+}
+
+/**
+ * Negates the values in a given matrix.
+ *
+ * @param matrix - The matrix to be negated. Modified in place.
+ *
+ * @example
+ * const matrix = [
+ *   [1,  2, 3],
+ *   [4, -5, 6],
+ *   [7,  8, 9]
+ * ];
+ *
+ * negate(matrix);
+ * // matrix is now:
+ * // [
+ * //   [-1, -2, -3],
+ * //   [-4,  5, -6],
+ * //   [-7, -8, -9]
+ * // ]
+ */
+export function negate(matrix: Matrix<number>): void;
+export function negate(matrix: Matrix<bigint>): void;
+export function negate<T extends number | bigint>(matrix: Matrix<T>): void {
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
+  for (let y = 0; y < Y; ++y) {
+    const row = matrix[y];
+    for (let x = 0; x < X; ++x) {
+      row[x] = -row[x] as T;
+    }
+  }
 }
 
 /**
@@ -426,10 +510,10 @@ export function padWidth<T>(
  * //   [1, 2, 0]
  * // ]
  */
-export function reduceCols(matrix: number[][]): void;
-export function reduceCols(matrix: bigint[][]): void;
-export function reduceCols<T extends number | bigint>(matrix: T[][]): void;
-export function reduceCols<T extends number | bigint>(matrix: T[][]): void {
+export function reduceCols(matrix: Matrix<number>): void;
+export function reduceCols(matrix: Matrix<bigint>): void;
+export function reduceCols(matrix: Matrix<number> | Matrix<bigint>): void;
+export function reduceCols<T extends number | bigint>(matrix: Matrix<T>): void {
   // If matrix is empty
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
@@ -440,7 +524,7 @@ export function reduceCols<T extends number | bigint>(matrix: T[][]): void {
   // For each column
   for (let x = 0; x < X; ++x) {
     // Find the min
-    const min = getColMin(matrix, x)!;
+    const min = getColMin(matrix as Matrix<number>, x)! as T;
 
     // Subtract the min
     if (isBigInt(min) || isFinite(min)) {
@@ -478,10 +562,10 @@ export function reduceCols<T extends number | bigint>(matrix: T[][]): void {
  * //   [1, 0, 0]
  * // ]
  */
-export function reduceRows(matrix: number[][]): void;
-export function reduceRows(matrix: bigint[][]): void;
-export function reduceRows<T extends number | bigint>(matrix: T[][]): void;
-export function reduceRows<T extends number | bigint>(matrix: T[][]): void {
+export function reduceRows(matrix: Matrix<number>): void;
+export function reduceRows(matrix: Matrix<bigint>): void;
+export function reduceRows(matrix: Matrix<number> | Matrix<bigint>): void;
+export function reduceRows<T extends number | bigint>(matrix: Matrix<T>): void {
   // For each row
   const Y = matrix.length;
   for (let y = 0; y < Y; ++y) {

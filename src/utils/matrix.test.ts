@@ -7,8 +7,10 @@ import {
   getColMin,
   getMax,
   getMin,
+  invert,
   isSquare,
   map,
+  negate,
   pad,
   padHeight,
   padWidth,
@@ -266,28 +268,55 @@ describe(`${getMax.name}()`, () => {
     expect(getMax(matrix)).toBeUndefined();
   });
 
+  it("returns undefined for a matrix with empty rows", () => {
+    const mat = [[], []];
+    expect(getMax(mat)).toBeUndefined();
+  });
+
+  it("handles a matrix with a single element", () => {
+    const mat = [[42]];
+    expect(getMax(mat)).toBe(42);
+  });
+
   it("handles matrix with a single row correctly", () => {
     const matrix = [[2, 9, 4]];
     expect(getMax(matrix)).toBe(9);
   });
 
-  it("handles matrix with a single column correctly", () => {
-    const matrix = [[2], [9], [4]];
-    expect(getMax(matrix)).toBe(9);
+  it("handles a matrix with a single row", () => {
+    const mat = [[1, 2, 5, 3, 4]];
+    expect(getMax(mat)).toBe(5);
   });
 
-  it("handles matrix with a single element correctly", () => {
-    const matrix = [[9]];
-    expect(getMax(matrix)).toBe(9);
+  it("finds the maximum value in a matrix with a single column", () => {
+    const mat = [[1], [5], [2], [3], [4]];
+    expect(getMax(mat)).toBe(5);
   });
 
-  it("finds the maximum value in a matrix of numbers", () => {
+  it("finds the maximum value in a matrix of positive numbers", () => {
     const matrix = [
       [1, 3, 2],
       [4, 0, 6],
       [7, 5, 8],
     ];
     expect(getMax(matrix)).toBe(8);
+  });
+
+  it("finds the maximum value in a matrix with negative numbers", () => {
+    const mat = [
+      [-1, -2, -3],
+      [-4, -5, -6],
+      [-7, -8, -9],
+    ];
+    expect(getMax(mat)).toBe(-1);
+  });
+
+  it("finds the maximum value in a matrix of positive and negative numbers", () => {
+    const mat = [
+      [-11, 22],
+      [33, -44],
+    ];
+    expect(getMax(mat)).toBe(33);
   });
 
   it("finds the maximum value in a matrix of bigints", () => {
@@ -315,31 +344,53 @@ describe(`${getMin.name}()`, () => {
     expect(getMin(matrix)).toBeUndefined();
   });
 
-  it("handles matrix with a single row correctly", () => {
-    const matrix = [[2, 9, 4]];
-    expect(getMin(matrix)).toBe(2);
+  it("returns undefined for a matrix with empty rows", () => {
+    const mat = [[], []];
+    expect(getMin(mat)).toBeUndefined();
   });
 
-  it("handles matrix with a single column correctly", () => {
-    const matrix = [[2], [9], [4]];
-    expect(getMin(matrix)).toBe(2);
+  it("handles a matrix with a single element", () => {
+    const mat = [[42]];
+    expect(getMin(mat)).toBe(42);
   });
 
-  it("handles matrix with a single element correctly", () => {
-    const matrix = [[9]];
-    expect(getMin(matrix)).toBe(9);
+  it("handles a matrix with a single row", () => {
+    const mat = [[3, 2, 1, 4, 5]];
+    expect(getMin(mat)).toBe(1);
   });
 
-  it("finds the minimum value in a matrix of numbers", () => {
-    const matrix = [
-      [1, 3, 2],
-      [4, 0, 6],
-      [7, 5, 8],
+  it("handles a matrix with a single column", () => {
+    const mat = [[2], [3], [1], [4], [5]];
+    expect(getMin(mat)).toBe(1);
+  });
+
+  it("handles a matrix of positive numbers", () => {
+    const mat = [
+      [5, 2, 3],
+      [4, 1, 6],
+      [7, 8, 9],
     ];
-    expect(getMin(matrix)).toBe(0);
+    expect(getMin(mat)).toBe(1);
   });
 
-  it("finds the minimum value in a matrix of bigints", () => {
+  it("handles a matrix with negative numbers", () => {
+    const mat = [
+      [-1, -2, -3],
+      [-4, -5, -6],
+      [-7, -8, -9],
+    ];
+    expect(getMin(mat)).toBe(-9);
+  });
+
+  it("handles a matrix of positive and negative numbers", () => {
+    const mat = [
+      [-11, 22],
+      [33, -44],
+    ];
+    expect(getMin(mat)).toBe(-44);
+  });
+
+  it("handles a matrix of bigints", () => {
     const matrix = [
       [1n, 3n, 2n],
       [4n, 0n, 6n],
@@ -348,13 +399,104 @@ describe(`${getMin.name}()`, () => {
     expect(getMin(matrix)).toBe(0n);
   });
 
-  it("finds the minimum value in a matrix of strings", () => {
+  it("handles a matrix of strings", () => {
     const matrix = [
       ["b", "d", "c"],
       ["e", "a", "g"],
       ["h", "f", "i"],
     ];
     expect(getMin(matrix)).toBe("a");
+  });
+});
+
+describe(`${invert.name}()`, () => {
+  it("handles an empty matrix", () => {
+    const mat = [];
+    invert(mat);
+    expect(mat).toEqual([]);
+  });
+
+  it("handles a matrix with a single element", () => {
+    const mat = [[42]];
+    invert(mat);
+    expect(mat).toEqual([[0]]);
+  });
+
+  it("handles a matrix with a single row", () => {
+    const mat = [[3, 2, 1, 4, 5]];
+    invert(mat);
+    expect(mat).toEqual([[2, 3, 4, 1, 0]]);
+  });
+
+  it("handles a matrix with a single column", () => {
+    const mat = [[2], [3], [1], [4], [5]];
+    invert(mat);
+    expect(mat).toEqual([[3], [2], [4], [1], [0]]);
+  });
+
+  it("inverts a matrix correctly using the maximum value in the matrix by default", () => {
+    const mat = [
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+    const maxVal = getMax(mat)!;
+    invert(mat);
+    expect(mat).toEqual([
+      [maxVal - 1, maxVal - 2, maxVal - 3],
+      [maxVal - 4, maxVal - 5, maxVal - 6],
+    ]);
+  });
+
+  it("inverts a matrix correctly with a specified bigVal", () => {
+    const mat = [
+      [10, 20],
+      [30, 40],
+    ];
+    const bigVal = 50;
+    invert(mat, bigVal);
+    expect(mat).toEqual([
+      [40, 30],
+      [20, 10],
+    ]);
+  });
+
+  it("handles matrices with negative values, using the default maximum value for inversion", () => {
+    const mat = [
+      [-1, -2, -3],
+      [-4, -5, -6],
+    ];
+    const maxVal = getMax(mat)!;
+    invert(mat);
+    expect(mat).toEqual([
+      [maxVal + 1, maxVal + 2, maxVal + 3],
+      [maxVal + 4, maxVal + 5, maxVal + 6],
+    ]);
+  });
+
+  it("correctly inverts a matrix with all elements being the same value", () => {
+    const mat = [
+      [5, 5],
+      [5, 5],
+    ];
+    const bigVal = 10;
+    invert(mat, bigVal);
+    expect(mat).toEqual([
+      [5, 5],
+      [5, 5],
+    ]);
+  });
+
+  it("correctly inverts a matrix when bigVal is less than the maximum value in the matrix", () => {
+    const mat = [
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+    const bigVal = 4;
+    invert(mat, bigVal);
+    expect(mat).toEqual([
+      [3, 2, 1],
+      [0, -1, -2],
+    ]);
   });
 });
 
@@ -476,6 +618,81 @@ describe(`${map.name}()`, () => {
     ];
 
     expect(result).toEqual(expected);
+  });
+});
+
+describe(`${negate.name}()`, () => {
+  it("does nothing to an empty matrix", () => {
+    const mat: number[][] = [];
+    const expected: number[][] = [];
+    negate(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("correctly negates a matrix with a single element", () => {
+    const mat = [[1]];
+    const expected = [[-1]];
+    negate(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("correctly negates a matrix with a single row", () => {
+    const mat = [[1, -2, 3]];
+    const expected = [[-1, 2, -3]];
+    negate(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("correctly negates a matrix with a single column", () => {
+    const mat = [[1], [-2], [3]];
+    const expected = [[-1], [2], [-3]];
+    negate(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("negates all elements in a matrix of positive numbers", () => {
+    const mat = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ];
+    const expected = [
+      [-1, -2, -3],
+      [-4, -5, -6],
+      [-7, -8, -9],
+    ];
+    negate(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("negates all elements in a matrix of negative numbers", () => {
+    const mat = [
+      [-1, -2, -3],
+      [-4, -5, -6],
+      [-7, -8, -9],
+    ];
+    const expected = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ];
+    negate(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles matrices with zero values correctly", () => {
+    const mat = [
+      [0, -2, 3],
+      [-4, -0, 6],
+      [7, -8, 0],
+    ];
+    const expected = [
+      [-0, 2, -3],
+      [4, 0, -6],
+      [-7, 8, -0],
+    ];
+    negate(mat);
+    expect(mat).toEqual(expected);
   });
 });
 
@@ -809,13 +1026,13 @@ describe(`${reduceCols.name}()`, () => {
   });
 
   it("performs column-wise reduction on a bigint matrix", () => {
-    const costMatrix: bigint[][] = [
+    const matrix = [
       [4n, 1n, 3n],
       [2n, 0n, 5n],
       [3n, 2n, 2n],
     ];
-    reduceCols(costMatrix);
-    expect(costMatrix).toEqual([
+    reduceCols(matrix);
+    expect(matrix).toEqual([
       [2n, 1n, 1n],
       [0n, 0n, 3n],
       [1n, 2n, 0n],
@@ -823,13 +1040,13 @@ describe(`${reduceCols.name}()`, () => {
   });
 
   it("handles a column with equal values correctly", () => {
-    const costMatrix: bigint[][] = [
+    const matrix = [
       [1n, 2n],
       [1n, 3n],
       [1n, 4n],
     ];
-    reduceCols(costMatrix);
-    expect(costMatrix).toEqual([
+    reduceCols(matrix);
+    expect(matrix).toEqual([
       [0n, 0n],
       [0n, 1n],
       [0n, 2n],
@@ -837,21 +1054,21 @@ describe(`${reduceCols.name}()`, () => {
   });
 
   it("deals with a matrix having a single column", () => {
-    const costMatrix: bigint[][] = [[5n], [3n], [4n]];
-    reduceCols(costMatrix);
-    expect(costMatrix).toEqual([[2n], [0n], [1n]]);
+    const matrix = [[5n], [3n], [4n]];
+    reduceCols(matrix);
+    expect(matrix).toEqual([[2n], [0n], [1n]]);
   });
 
   it("handles an empty matrix without error", () => {
-    const costMatrix: bigint[][] = [];
-    reduceCols(costMatrix);
-    expect(costMatrix).toEqual([]);
+    const matrix = [];
+    reduceCols(matrix);
+    expect(matrix).toEqual([]);
   });
 
   it("processes a matrix with a single row", () => {
-    const costMatrix: bigint[][] = [[3n, 1n, 4n]];
-    reduceCols(costMatrix);
-    expect(costMatrix).toEqual([[0n, 0n, 0n]]);
+    const matrix = [[3n, 1n, 4n]];
+    reduceCols(matrix);
+    expect(matrix).toEqual([[0n, 0n, 0n]]);
   });
 });
 
@@ -859,6 +1076,13 @@ describe(`${reduceRows.name}()`, () => {
   it("handles an empty matrix", () => {
     const mat: number[][] = [];
     const expected: number[][] = [];
+    reduceRows(mat);
+    expect(mat).toEqual(expected);
+  });
+
+  it("handles a matrix with empty rows", () => {
+    const mat: number[][] = [[], [], []];
+    const expected: number[][] = [[], [], []];
     reduceRows(mat);
     expect(mat).toEqual(expected);
   });
@@ -1018,13 +1242,13 @@ describe(`${reduceRows.name}()`, () => {
   });
 
   it("performs row-wise reduction on a bigint matrix", () => {
-    const costMatrix: bigint[][] = [
+    const matrix = [
       [4n, 1n, 3n],
       [2n, 0n, 5n],
       [3n, 2n, 2n],
     ];
-    reduceRows(costMatrix);
-    expect(costMatrix).toEqual([
+    reduceRows(matrix);
+    expect(matrix).toEqual([
       [3n, 0n, 2n],
       [2n, 0n, 5n],
       [1n, 0n, 0n],
@@ -1032,33 +1256,33 @@ describe(`${reduceRows.name}()`, () => {
   });
 
   it("handles a row with equal values correctly", () => {
-    const costMatrix: bigint[][] = [
+    const matrix = [
       [1n, 1n, 1n],
       [2n, 3n, 4n],
     ];
-    reduceRows(costMatrix);
-    expect(costMatrix).toEqual([
+    reduceRows(matrix);
+    expect(matrix).toEqual([
       [0n, 0n, 0n],
       [0n, 1n, 2n],
     ]);
   });
 
   it("deals with a matrix having a single row", () => {
-    const costMatrix: bigint[][] = [[5n, 3n, 4n]];
-    reduceRows(costMatrix);
-    expect(costMatrix).toEqual([[2n, 0n, 1n]]);
+    const matrix = [[5n, 3n, 4n]];
+    reduceRows(matrix);
+    expect(matrix).toEqual([[2n, 0n, 1n]]);
   });
 
   it("handles an empty matrix without error", () => {
-    const costMatrix: bigint[][] = [];
-    reduceRows(costMatrix);
-    expect(costMatrix).toEqual([]);
+    const matrix = [];
+    reduceRows(matrix);
+    expect(matrix).toEqual([]);
   });
 
   it("processes a matrix with a single column", () => {
-    const costMatrix: bigint[][] = [[3n], [1n], [4n]];
-    reduceRows(costMatrix);
-    expect(costMatrix).toEqual([[0n], [0n], [0n]]);
+    const matrix = [[3n], [1n], [4n]];
+    reduceRows(matrix);
+    expect(matrix).toEqual([[0n], [0n], [0n]]);
   });
 });
 
