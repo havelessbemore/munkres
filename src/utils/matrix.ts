@@ -20,6 +20,50 @@ export function copy<T>(matrix: Matrix<T>): Matrix<T> {
 }
 
 /**
+ * Creates a matrix with specified rows and columns.
+ *
+ * The callback function is called for every combination of elements from the
+ * `rows` and `columns` arrays, receiving the current row and column elements
+ * as arguments, and its return value is used to populate the matrix.
+ *
+ * @param rows - An array of row elements.
+ * @param columns - An array of column elements.
+ * @param callbackFn - A function that produces values for the new matrix,
+ *                     taking a row element and a column element as arguments.
+ *
+ * @returns A matrix populated by the results of the `callbackFn` function.
+ *
+ * @example
+ * const rows = [1, 2];
+ * const cols = ['a', 'b', 'c'];
+ * const callbackFn = (row, col) => `${row}${col}`;
+ *
+ * const matrix = create(rows, cols, callbackFn);
+ * // matrix is:
+ * // [
+ * //   ['1a', '1b', '1c'],
+ * //   ['2a', '2b', '2c']
+ * // ]
+ */
+export function create<R, C, T>(
+  rows: R[],
+  columns: C[],
+  callbackFn: (row: R, col: C) => T
+): Matrix<T> {
+  const Y = rows.length;
+  const X = columns.length;
+  const mat = new Array<T[]>(Y);
+  for (let y = 0; y < Y; ++y) {
+    const row = new Array<T>(X);
+    for (let x = 0; x < X; ++x) {
+      row[x] = callbackFn(rows[y], columns[x]);
+    }
+    mat[y] = row;
+  }
+  return mat;
+}
+
+/**
  * Flips a matrix horizontally.
  *
  * After the flip, the element at position `[y][x]` moves to `[y][M-x-1]`,

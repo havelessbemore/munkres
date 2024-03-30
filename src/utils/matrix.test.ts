@@ -1,7 +1,8 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
 import {
   copy,
+  create,
   flipH,
   flipV,
   getColMin,
@@ -91,6 +92,98 @@ describe(`${copy.name}()`, () => {
     // Modifying the duplicate does not affect the original
     duplicate[1][2] = 99;
     expect(original[1][2]).toBeNull();
+  });
+});
+
+describe(`${create.name}()`, () => {
+  it("handles empty rows and columns", () => {
+    const rows = [];
+    const cols = [];
+    const callbackFn = vi.fn();
+    const expectedMatrix = [];
+
+    expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);
+    expect(callbackFn).not.toHaveBeenCalled();
+  });
+
+  it("handles empty rows", () => {
+    const rows = [];
+    const cols = ["a", "b", "c"];
+    const callbackFn = vi.fn();
+    const expectedMatrix = [];
+
+    expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);
+    expect(callbackFn).not.toHaveBeenCalled();
+  });
+
+  it("handles empty columns", () => {
+    const rows = [1, 2];
+    const cols = [];
+    const callbackFn = vi.fn();
+    const expectedMatrix = [[], []];
+
+    expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);
+    expect(callbackFn).not.toHaveBeenCalled();
+  });
+
+  it("creates a matrix with specified rows and columns", () => {
+    const rows = [1, 2];
+    const cols = ["a", "b", "c"];
+    const callbackFn = (row, col) => `${row}${col}`;
+    const expectedMatrix = [
+      ["1a", "1b", "1c"],
+      ["2a", "2b", "2c"],
+    ];
+
+    expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);
+  });
+
+  it("populates matrix based on callback logic", () => {
+    const rows = [1, 2];
+    const cols = [10, 20];
+    const callbackFn = (row, col) => row * col;
+    const expectedMatrix = [
+      [10, 20],
+      [20, 40],
+    ];
+
+    expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);
+  });
+
+  it("populates matrix based on callback logic 2", () => {
+    const rows = ["Alice", "Bob"];
+    const cols = ["Job1", "Job2"];
+    const callbackFn = (row, col) => row.length + col.length;
+    const expectedMatrix = [
+      [9, 9],
+      [7, 7],
+    ];
+
+    expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);
+  });
+
+  it("supports complex data types for rows and columns", () => {
+    const rows = [{ id: 1 }, { id: 2 }];
+    const cols = ["status", "value"];
+    const callbackFn = (row, col) => `${col}:${row.id}`;
+    const expectedMatrix = [
+      ["status:1", "value:1"],
+      ["status:2", "value:2"],
+    ];
+
+    expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);
+  });
+
+  it("creates a matrix with boolean values", () => {
+    const rows = [true, false];
+    const cols = [1, 0];
+    const callbackFn = (row, col) => row && col > 0;
+    const expectedMatrix = [
+      [true, false],
+      [false, false],
+    ];
+
+    expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);
   });
 });
 

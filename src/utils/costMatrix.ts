@@ -1,6 +1,6 @@
 import { CostFn } from "../types/costFn";
 import { CostMatrix } from "../types/costMatrix";
-import { getMax, getMin, invert, negate } from "./matrix";
+import { create, getMax, getMin, invert, negate } from "./matrix";
 
 /**
  * Constructs a cost matrix for a set of
@@ -36,17 +36,7 @@ export function createCostMatrix<W, J>(
   jobs: J[],
   costFn: CostFn<W, J>
 ): CostMatrix {
-  const X = jobs.length;
-  const Y = workers.length;
-  const mat = new Array<number[]>(Y);
-  for (let y = 0; y < Y; ++y) {
-    const row = new Array<number>(X);
-    for (let x = 0; x < X; ++x) {
-      row[x] = costFn(workers[y], jobs[x]);
-    }
-    mat[y] = row;
-  }
-  return mat;
+  return create(workers, jobs, costFn);
 }
 
 /**
