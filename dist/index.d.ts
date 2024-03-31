@@ -117,9 +117,11 @@ export { Matrix }
  * Runs the {@link https://en.wikipedia.org/wiki/Hungarian_algorithm | Munkres algorithm (aka Hungarian algorithm)} to solve
  * the {@link https://en.wikipedia.org/wiki/Assignment_problem | assignment problem}.
  */
-export declare function munkres(costMatrix: Matrix<number>): [number, number][];
+declare function munkres(costMatrix: Matrix<number>): [number, number][];
 
-export declare function munkres(costMatrix: Matrix<bigint>): [number, number][];
+declare function munkres(costMatrix: Matrix<bigint>): [number, number][];
+export default munkres;
+export { munkres }
 
 /**
  * Negates the values in a given cost matrix.

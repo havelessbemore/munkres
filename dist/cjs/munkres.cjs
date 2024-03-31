@@ -23,7 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 "use strict";
-Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
+Object.defineProperties(exports, { __esModule: { value: true }, [Symbol.toStringTag]: { value: "Module" } });
 function getMin$1(array) {
   const N = array.length;
   if (N <= 0) {
@@ -468,6 +468,7 @@ function munkres(costMatrix) {
   return pairs;
 }
 exports.createCostMatrix = createCostMatrix;
+exports.default = munkres;
 exports.getMaxCost = getMaxCost;
 exports.getMinCost = getMinCost;
 exports.invertCostMatrix = invertCostMatrix;

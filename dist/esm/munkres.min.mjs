@@ -320,6 +320,7 @@ function q(n) {
 }
 export {
   B as createCostMatrix,
+  q as default,
   H as getMaxCost,
   P as getMinCost,
   $ as invertCostMatrix,

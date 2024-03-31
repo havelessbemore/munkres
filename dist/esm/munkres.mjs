@@ -467,6 +467,7 @@ function munkres(costMatrix) {
 }
 export {
   createCostMatrix,
+  munkres as default,
   getMaxCost,
   getMinCost,
   invertCostMatrix,
