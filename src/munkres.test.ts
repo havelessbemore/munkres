@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import { munkres } from "./munkres";
 import { CostMatrix } from "./types/costMatrix";
+import { Matrix } from "./types/matrix";
 
 function oneOf<T>(actual: T, expecteds: Iterable<T>): void {
   let error: Error | undefined = undefined;
@@ -19,28 +20,6 @@ function oneOf<T>(actual: T, expecteds: Iterable<T>): void {
     throw error;
   }
 }
-
-/*
-function maskToCostMatrix(
-  num: number,
-  base: number,
-  Y: number,
-  X: number,
-  callbackFn: (bit: number) => number
-): CostMatrix {
-  const costs: CostMatrix = new Array(Y);
-  for (let y = 0; y < Y; ++y) {
-    const row = new Array<number>(X);
-    for (let x = 0; x < X; ++x) {
-      const mod = num % base;
-      num = (num - mod) / base;
-      row[x] = callbackFn(mod);
-    }
-    costs[y] = row;
-  }
-  return costs;
-}
-*/
 
 describe(`${munkres.name}()`, () => {
   test("handles an empty cost matrix", () => {
@@ -117,6 +96,64 @@ describe(`${munkres.name}()`, () => {
         [2, 1],
         [3, 3],
         [4, 2],
+      ])
+    );
+  });
+
+  test("handles a 5x1 matrix", () => {
+    const costs: CostMatrix = [[3, 2, 1, 4, 5]];
+    const res = munkres(costs);
+    expect(res).toEqual([[0, 2]]);
+  });
+
+  test("handles a 1x5 matrix", () => {
+    const costs: CostMatrix = [[3], [2], [1], [4], [5]];
+    const res = munkres(costs);
+    expect(res).toEqual([[2, 0]]);
+  });
+
+  test("handles a 4x2 matrix", () => {
+    const costs = [
+      [4, 5, 6, 1],
+      [7, 8, 9, 2],
+    ];
+    const res = munkres(costs);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 3],
+      ])
+    );
+  });
+
+  test("handles a 2x4 matrix", () => {
+    const costs = [
+      [1, 2],
+      [6, 9],
+      [5, 8],
+      [4, 7],
+    ];
+    const res = munkres(costs);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 1],
+        [3, 0],
+      ])
+    );
+  });
+
+  test("handles a 3x9 matrix", () => {
+    const costs = [
+      [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      [2, 4, 6, 8, 10, 12, 14, 16, 18],
+      [3, 6, 9, 12, 15, 18, 21, 24, 27],
+    ];
+    const res = munkres(costs);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 2],
+        [1, 1],
+        [2, 0],
       ])
     );
   });
@@ -248,64 +285,6 @@ describe(`${munkres.name}()`, () => {
       ]),
     ];
     oneOf(new Map(res), sols);
-  });
-
-  test("handles a 5x1 matrix", () => {
-    const costs: CostMatrix = [[3, 2, 1, 4, 5]];
-    const res = munkres(costs);
-    expect(res).toEqual([[0, 2]]);
-  });
-
-  test("handles a 1x5 matrix", () => {
-    const costs: CostMatrix = [[3], [2], [1], [4], [5]];
-    const res = munkres(costs);
-    expect(res).toEqual([[2, 0]]);
-  });
-
-  test("handles a 4x2 matrix", () => {
-    const costs = [
-      [4, 5, 6, 1],
-      [7, 8, 9, 2],
-    ];
-    const res = munkres(costs);
-    expect(new Map(res)).toEqual(
-      new Map([
-        [0, 0],
-        [1, 3],
-      ])
-    );
-  });
-
-  test("handles a 2x4 matrix", () => {
-    const costs = [
-      [1, 2],
-      [6, 9],
-      [5, 8],
-      [4, 7],
-    ];
-    const res = munkres(costs);
-    expect(new Map(res)).toEqual(
-      new Map([
-        [0, 1],
-        [3, 0],
-      ])
-    );
-  });
-
-  test("handles a 3x9 matrix", () => {
-    const costs = [
-      [1, 2, 3, 4, 5, 6, 7, 8, 9],
-      [2, 4, 6, 8, 10, 12, 14, 16, 18],
-      [3, 6, 9, 12, 15, 18, 21, 24, 27],
-    ];
-    const res = munkres(costs);
-    expect(new Map(res)).toEqual(
-      new Map([
-        [0, 2],
-        [1, 1],
-        [2, 0],
-      ])
-    );
   });
 
   test("handles example #2 in the README.md", () => {
@@ -567,6 +546,193 @@ describe(`${munkres.name}()`, () => {
               row[x] = 0;
             } else {
               row[x] = minV + Math.trunc(spanV * Math.random());
+            }
+          }
+          costs[y] = row;
+        }
+
+        // Find assignments
+        const pairs = munkres(costs);
+
+        // Check
+        try {
+          const P = Math.min(Y, X);
+          const seenY = new Set<number>();
+          const seenX = new Set<number>();
+          expect(pairs.length).toBe(P);
+          for (let p = 0; p < P; ++p) {
+            const [y, x] = pairs[p];
+
+            // Check y
+            expect(seenY.has(y)).toBe(false);
+            expect(y).toBeGreaterThanOrEqual(0);
+            expect(y).toBeLessThan(Y);
+            seenY.add(y);
+
+            // Check x
+            expect(seenX.has(x)).toBe(false);
+            expect(x).toBeGreaterThanOrEqual(0);
+            expect(x).toBeLessThan(X);
+            seenX.add(x);
+          }
+        } catch (e) {
+          console.log(`${Y} by ${X}, pairs: ${pairs}, cost matrix:\n${costs}`);
+          throw e;
+        }
+      }
+    }
+  });
+
+  test("handles a 1x1 bigint cost matrix", () => {
+    const res = munkres([[5n]]);
+    expect(res).toEqual([[0, 0]]);
+  });
+
+  test("handles a 2x2 bigint cost matrix", () => {
+    const res = munkres([
+      [1, 2],
+      [2, 4],
+    ]);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 1],
+        [1, 0],
+      ])
+    );
+  });
+
+  test("handles a 3x3 bigint cost matrix", () => {
+    const costs: CostMatrix = [
+      [1, 2, 3],
+      [2, 4, 6],
+      [3, 6, 9],
+    ];
+    const res = munkres(costs);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 2],
+        [1, 1],
+        [2, 0],
+      ])
+    );
+  });
+
+  test("handles a 4x4 bigint cost matrix", () => {
+    const costs: Matrix<bigint> = [
+      [16n, 2n, 3n, 7n],
+      [5n, 13n, 7n, 5n],
+      [8n, 6n, 5n, 9n],
+      [3n, 4n, 5n, 11n],
+    ];
+    const res = munkres(costs);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 1],
+        [1, 3],
+        [2, 2],
+        [3, 0],
+      ])
+    );
+  });
+
+  test("handles a 5x5 bigint cost matrix", () => {
+    const costs: Matrix<bigint> = [
+      [38n, 53n, 61n, 36n, 66n],
+      [100n, 60n, 9n, 79n, 34n],
+      [30n, 37n, 36n, 72n, 24n],
+      [61n, 95n, 21n, 14n, 64n],
+      [89n, 90n, 4n, 5n, 79n],
+    ];
+
+    const res = munkres(costs);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 4],
+        [2, 1],
+        [3, 3],
+        [4, 2],
+      ])
+    );
+  });
+
+  test("handles a 5x1 bigint matrix", () => {
+    const costs: Matrix<bigint> = [[3n, 2n, 1n, 4n, 5n]];
+    const res = munkres(costs);
+    expect(res).toEqual([[0, 2]]);
+  });
+
+  test("handles a 1x5 bigint matrix", () => {
+    const costs: Matrix<bigint> = [[3n], [2n], [1n], [4n], [5n]];
+    const res = munkres(costs);
+    expect(res).toEqual([[2, 0]]);
+  });
+
+  test("handles a 4x2 bigint matrix", () => {
+    const costs = [
+      [4n, 5n, 6n, 1n],
+      [7n, 8n, 9n, 2n],
+    ];
+    const res = munkres(costs);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 0],
+        [1, 3],
+      ])
+    );
+  });
+
+  test("handles a 2x4 bigint matrix", () => {
+    const costs = [
+      [1n, 2n],
+      [6n, 9n],
+      [5n, 8n],
+      [4n, 7n],
+    ];
+    const res = munkres(costs);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 1],
+        [3, 0],
+      ])
+    );
+  });
+
+  test("handles a 3x9 bigint matrix", () => {
+    const costs = [
+      [1n, 2n, 3n, 4n, 5n, 6n, 7n, 8n, 9n],
+      [2n, 4n, 6n, 8n, 10n, 12n, 14n, 16n, 18n],
+      [3n, 6n, 9n, 12n, 15n, 18n, 21n, 24n, 27n],
+    ];
+    const res = munkres(costs);
+    expect(new Map(res)).toEqual(
+      new Map([
+        [0, 2],
+        [1, 1],
+        [2, 0],
+      ])
+    );
+  });
+
+  test("verify output properties for various bigint matrix dimensions", () => {
+    const YY = 33;
+    const XX = 33;
+    const minV = -1e9;
+    const maxV = 1e9;
+    const spanV = maxV - minV;
+
+    for (let Y = 1; Y < YY; ++Y) {
+      for (let X = 1; X < XX; ++X) {
+        // Create a Y by X cost matrix
+        const costs: Matrix<bigint> = new Array(Y);
+        for (let y = 0; y < Y; ++y) {
+          const row = new Array(X);
+          for (let x = 0; x < X; ++x) {
+            const r = Math.random();
+            if (r > 0.46 && r < 0.54) {
+              row[x] = 0n;
+            } else {
+              row[x] = BigInt(minV + Math.trunc(spanV * Math.random()));
             }
           }
           costs[y] = row;

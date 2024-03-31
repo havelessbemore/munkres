@@ -1,4 +1,6 @@
-import { CostMatrix } from "./types/costMatrix";
+import { Matrix } from ".";
+import { bigStep4 } from "./utils/bigMunkres";
+import { isBigInt } from "./utils/is";
 import { copy, flipH, transpose } from "./utils/matrix";
 import { step4 } from "./utils/munkres";
 
@@ -17,7 +19,11 @@ import { step4 } from "./utils/munkres";
  * Runs the {@link https://en.wikipedia.org/wiki/Hungarian_algorithm | Munkres algorithm (aka Hungarian algorithm)} to solve
  * the {@link https://en.wikipedia.org/wiki/Assignment_problem | assignment problem}.
  */
-export function munkres(costMatrix: CostMatrix): [number, number][] {
+export function munkres(costMatrix: Matrix<number>): [number, number][];
+export function munkres(costMatrix: Matrix<bigint>): [number, number][];
+export function munkres<T extends number | bigint>(
+  costMatrix: Matrix<T>
+): [number, number][] {
   // Get dimensions
   const Y = costMatrix.length;
   const X = costMatrix[0]?.length ?? 0;
@@ -36,7 +42,9 @@ export function munkres(costMatrix: CostMatrix): [number, number][] {
   }
 
   // Get optimal assignments
-  const y2x = step4(costMatrix);
+  const y2x = isBigInt(costMatrix[0][0])
+    ? bigStep4(costMatrix as Matrix<bigint>)
+    : step4(costMatrix as Matrix<number>);
 
   // Create pairs
   const P = y2x.length;
