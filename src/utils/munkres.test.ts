@@ -1,6 +1,14 @@
 import { describe, it, expect } from "vitest";
 
-import { step1, step5, step6, step6Inf, steps2To3, toString } from "./munkres";
+import {
+  step1,
+  step4,
+  step5,
+  step6,
+  step6Inf,
+  steps2To3,
+  toString,
+} from "./munkres";
 import { CostMatrix } from "../types/costMatrix";
 import { copy, map, reduceCols, reduceRows } from "./matrix";
 import { Matrix } from "../types/matrix";
@@ -164,6 +172,22 @@ describe(`${steps2To3.name}()`, () => {
     expect(starsMade).toBe(2);
     expect(starX).toEqual([0, 1]);
     expect(starY).toEqual([0, 1]);
+  });
+});
+
+describe(`${step4.name}()`, () => {
+  it("handles an empty matrix without error", () => {
+    expect(step4([])).toEqual([]);
+  });
+
+  it("throws an error if M > N in an MxN matrix", () => {
+    expect(() =>
+      step4([
+        [1, 2],
+        [3, 4],
+        [5, 6],
+      ])
+    ).toThrow(RangeError);
   });
 });
 
