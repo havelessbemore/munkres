@@ -442,6 +442,7 @@ export function map<A, B>(
  */
 export function negate(matrix: Matrix<number>): void;
 export function negate(matrix: Matrix<bigint>): void;
+export function negate(matrix: Matrix<number | bigint>): void;
 export function negate<T extends number | bigint>(matrix: Matrix<T>): void {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;

@@ -10,8 +10,9 @@ A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm
 
 ## Features
 
-- Supports `-Infinity` and `Infinity`.
-- Supports square and rectangular matrices.
+- Supports square (NxN) and rectangular (MxN) cost matrices.
+- Supports `number[][]` and `bigint[][]` cost matrices.
+- Supports `-Infinity` and `Infinity` in `number[][]` cost matrices.
 - [Helpers](#helpers) included for creating and manipulating cost matrices.
 
 ## Getting Started
@@ -102,9 +103,7 @@ console.log(assignments);
 
 The package exports the following TypeScript types:
 
-- `CostFn`: A function type that computes the cost of assigning a worker to a job.
-- `CostMatrix`: Represents a matrix where each element corresponds to the numeric cost of an assignment.
-- `Matrix<T>`: A generic matrix type.
+- `Matrix<T>`: A generic matrix type representing a two-dimensional matrix (i.e. `T[][]`).
 
 ### Helpers
 

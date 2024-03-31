@@ -1,5 +1,4 @@
-import { CostFn } from "../types/costFn";
-import { CostMatrix } from "../types/costMatrix";
+import { Matrix } from "..";
 import { create, getMax, getMin, invert, negate } from "./matrix";
 
 /**
@@ -15,7 +14,7 @@ import { create, getMax, getMin, invert, negate } from "./matrix";
  * @param costFn - Given a worker and a job, returns the
  * numeric cost of assigning that worker to that job.
  *
- * @returns A {@link CostMatrix} where the values at position `[y][x]`
+ * @returns A cost matrix where the values at position `[y][x]`
  * represent the cost of assigning the `y`-th worker to the `x`-th job.
  *
  * @example
@@ -34,8 +33,18 @@ import { create, getMax, getMin, invert, negate } from "./matrix";
 export function createCostMatrix<W, J>(
   workers: W[],
   jobs: J[],
-  costFn: CostFn<W, J>
-): CostMatrix {
+  costFn: (worker: W, job: J) => number
+): Matrix<number>;
+export function createCostMatrix<W, J>(
+  workers: W[],
+  jobs: J[],
+  costFn: (worker: W, job: J) => bigint
+): Matrix<bigint>;
+export function createCostMatrix<W, J, T extends number | bigint>(
+  workers: W[],
+  jobs: J[],
+  costFn: (worker: W, job: J) => T
+): Matrix<T> {
   return create(workers, jobs, costFn);
 }
 
@@ -46,8 +55,12 @@ export function createCostMatrix<W, J>(
  *
  * @returns The maximum value, or `undefined` if the matrix is empty.
  */
-export function getMaxCost(costMatrix: CostMatrix): number | undefined {
-  return getMax(costMatrix);
+export function getMaxCost(costMatrix: Matrix<number>): number | undefined;
+export function getMaxCost(costMatrix: Matrix<bigint>): bigint | undefined;
+export function getMaxCost<T extends number | bigint>(
+  costMatrix: Matrix<T>
+): T | undefined {
+  return getMax(costMatrix as Matrix<number>) as T | undefined;
 }
 
 /**
@@ -57,8 +70,12 @@ export function getMaxCost(costMatrix: CostMatrix): number | undefined {
  *
  * @returns The maximum value, or `undefined` if the matrix is empty.
  */
-export function getMinCost(costMatrix: CostMatrix): number | undefined {
-  return getMin(costMatrix);
+export function getMinCost(costMatrix: Matrix<number>): number | undefined;
+export function getMinCost(costMatrix: Matrix<bigint>): bigint | undefined;
+export function getMinCost<T extends number | bigint>(
+  costMatrix: Matrix<T>
+): T | undefined {
+  return getMin(costMatrix as Matrix<number>) as T | undefined;
 }
 
 /**
@@ -103,10 +120,18 @@ export function getMinCost(costMatrix: CostMatrix): number | undefined {
  * // ]
  */
 export function invertCostMatrix(
-  costMatrix: CostMatrix,
+  costMatrix: Matrix<number>,
   bigVal?: number
+): void;
+export function invertCostMatrix(
+  costMatrix: Matrix<bigint>,
+  bigVal?: bigint
+): void;
+export function invertCostMatrix<T extends number | bigint>(
+  costMatrix: Matrix<T>,
+  bigVal?: T
 ): void {
-  invert(costMatrix, bigVal);
+  invert(costMatrix as Matrix<number>, bigVal as number);
 }
 
 /**
@@ -134,6 +159,10 @@ export function invertCostMatrix(
  * //   [-7, -8, -9]
  * // ]
  */
-export function negateCostMatrix(costMatrix: CostMatrix): void {
+export function negateCostMatrix(costMatrix: Matrix<number>): void;
+export function negateCostMatrix(costMatrix: Matrix<bigint>): void;
+export function negateCostMatrix<T extends number | bigint>(
+  costMatrix: Matrix<T>
+): void {
   negate(costMatrix);
 }

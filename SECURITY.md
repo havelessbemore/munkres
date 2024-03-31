@@ -6,6 +6,7 @@ We strive to keep Munkres secure for everyone. We welcome your help in disclosin
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 1.x.x   | :white_check_mark: |
 | 0.0.x   | :white_check_mark: |
 
 ## Reporting a Vulnerability
