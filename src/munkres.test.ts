@@ -1,7 +1,6 @@
 import { describe, expect, test } from "vitest";
 
 import { munkres } from "./munkres";
-import { CostMatrix } from "./types/costMatrix";
 import { Matrix } from "./types/matrix";
 
 function oneOf<T>(actual: T, expecteds: Iterable<T>): void {
@@ -46,7 +45,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("handles a 3x3 cost matrix", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [1, 2, 3],
       [2, 4, 6],
       [3, 6, 9],
@@ -62,7 +61,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("handles a 4x4 cost matrix", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [16, 2, 3, 7],
       [5, 13, 7, 5],
       [8, 6, 5, 9],
@@ -80,7 +79,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("handles a 5x5 cost matrix", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [38, 53, 61, 36, 66],
       [100, 60, 9, 79, 34],
       [30, 37, 36, 72, 24],
@@ -101,13 +100,13 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("handles a 5x1 matrix", () => {
-    const costs: CostMatrix = [[3, 2, 1, 4, 5]];
+    const costs: Matrix<number> = [[3, 2, 1, 4, 5]];
     const res = munkres(costs);
     expect(res).toEqual([[0, 2]]);
   });
 
   test("handles a 1x5 matrix", () => {
-    const costs: CostMatrix = [[3], [2], [1], [4], [5]];
+    const costs: Matrix<number> = [[3], [2], [1], [4], [5]];
     const res = munkres(costs);
     expect(res).toEqual([[2, 0]]);
   });
@@ -159,7 +158,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("handles all +Infinity", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [Infinity, Infinity, Infinity],
       [Infinity, Infinity, Infinity],
       [Infinity, Infinity, Infinity],
@@ -175,7 +174,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("handles all -Infinity", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [-Infinity, -Infinity, -Infinity],
       [-Infinity, -Infinity, -Infinity],
       [-Infinity, -Infinity, -Infinity],
@@ -191,7 +190,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("handles all +Infinity and -Infinity", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [Infinity, Infinity, Infinity],
       [Infinity, Infinity, -Infinity],
       [Infinity, -Infinity, -Infinity],
@@ -207,7 +206,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("handles columns of +Infinity", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [5, Infinity, Infinity],
       [6, Infinity, Infinity],
       [4, Infinity, Infinity],
@@ -223,7 +222,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("handles columns of -Infinity", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [5, -Infinity, -Infinity],
       [6, -Infinity, -Infinity],
       [4, -Infinity, -Infinity],
@@ -239,7 +238,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("handles a mix of positives and infinite", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [5, Infinity, 3],
       [Infinity, -Infinity, -Infinity],
       [1, Infinity, Infinity],
@@ -256,7 +255,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("handles a mix of finite and infinite", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [40766, Infinity, Infinity],
       [8506, Infinity, Infinity],
       [Infinity, 84591, -46968],
@@ -288,7 +287,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("handles example #2 in the README.md", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [2, 25, 18],
       [9, 4, 17],
     ];
@@ -302,7 +301,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("test 1", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [8, 4, 7],
       [5, 2, 3],
       [9, 4, 8],
@@ -318,7 +317,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("test 2", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [2, 25, 18],
       [9, 4, 17],
       [11, 26, 1],
@@ -334,7 +333,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("test 3", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [2, 25, 10],
       [9, 4, 17],
       [11, 1, 10],
@@ -350,7 +349,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("test 4", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [40, 60, 15],
       [25, 30, 45],
       [55, 30, 25],
@@ -366,7 +365,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("test 5", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [10, 15, 9],
       [9, 18, 5],
       [6, 14, 3],
@@ -382,7 +381,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("test 6", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [4, 2, 5, 7],
       [8, 3, 10, 8],
       [12, 5, 4, 5],
@@ -413,7 +412,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("test 7", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [22, 26, 18, 0],
       [1, 20, 18, 0],
       [15, 9, 12, 0],
@@ -431,7 +430,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("test 8", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [400, 150, 400],
       [400, 450, 600],
       [300, 225, 300],
@@ -447,7 +446,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("test 9", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [0, 0, 0, 0],
       [0, 1, 2, 3],
       [0, 2, 4, 6],
@@ -465,7 +464,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("test 10", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [5, Infinity, Infinity],
       [6, Infinity, Infinity],
       [Infinity, Infinity, 10],
@@ -481,7 +480,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("test 11", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [5, -Infinity, -Infinity],
       [6, -Infinity, -Infinity],
       [-Infinity, -Infinity, 10],
@@ -497,7 +496,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("test 12", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [-58784, Infinity, Infinity],
       [-25064, Infinity, Infinity],
       [22114, -6870, 73655],
@@ -533,7 +532,7 @@ describe(`${munkres.name}()`, () => {
     for (let Y = 1; Y < YY; ++Y) {
       for (let X = 1; X < XX; ++X) {
         // Create a Y by X cost matrix
-        const costs: CostMatrix = new Array(Y);
+        const costs: Matrix<number> = new Array(Y);
         for (let y = 0; y < Y; ++y) {
           const row = new Array(X);
           for (let x = 0; x < X; ++x) {
@@ -602,7 +601,7 @@ describe(`${munkres.name}()`, () => {
   });
 
   test("handles a 3x3 bigint cost matrix", () => {
-    const costs: CostMatrix = [
+    const costs: Matrix<number> = [
       [1, 2, 3],
       [2, 4, 6],
       [3, 6, 9],

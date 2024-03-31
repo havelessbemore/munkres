@@ -9,7 +9,6 @@ import {
   steps2To3,
   toString,
 } from "./munkres";
-import { CostMatrix } from "../types/costMatrix";
 import { copy, map, reduceCols, reduceRows } from "./matrix";
 import { Matrix } from "../types/matrix";
 
@@ -349,7 +348,7 @@ describe(`${step6Inf.name}()`, () => {
 
 describe(`${toString.name}()`, () => {
   it("handles an empty matrix", () => {
-    const mat: CostMatrix = [];
+    const mat: Matrix<number> = [];
     const primeY: number[] = [];
     const starY: number[] = [];
     const expectedOutput = "";
