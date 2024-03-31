@@ -6,8 +6,6 @@
 
 ### Type Aliases
 
-- [CostFn](modules.md#costfn)
-- [CostMatrix](modules.md#costmatrix)
 - [Matrix](modules.md#matrix)
 
 ### Functions
@@ -21,51 +19,56 @@
 
 ## Type Aliases
 
-### CostFn
-
-Ƭ **CostFn**\<`A`, `B`\>: (`a`: `A`, `b`: `B`) => `number`
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `A` | `A` |
-| `B` | `A` |
-
-#### Type declaration
-
-▸ (`a`, `b`): `number`
-
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `a` | `A` |
-| `b` | `B` |
-
-##### Returns
-
-`number`
-
-#### Defined in
-
-[types/costFn.d.ts:1](https://github.com/havelessbemore/munkres/blob/2c9953f/src/types/costFn.d.ts#L1)
-
-___
-
-### CostMatrix
-
-Ƭ **CostMatrix**: [`Matrix`](modules.md#matrix)\<`number`\>
-
-#### Defined in
-
-[types/costMatrix.d.ts:3](https://github.com/havelessbemore/munkres/blob/2c9953f/src/types/costMatrix.d.ts#L3)
-
-___
-
 ### Matrix
 
 Ƭ **Matrix**\<`T`\>: `T`[][]
+
+Defines a two-dimensional matrix with elements of type `T`.
+
+The matrix is represented as a double array. The outer array represents
+the rows of the matrix, and each inner array represents the columns in a
+row. This type is generic and can be used to create matrices of any
+given type, including `number`, `string`, `boolean`, `bigint`, etc.
+
+**`Example`**
+
+```ts
+const numberMatrix: Matrix<number> = [
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9]
+];
+```
+
+**`Example`**
+
+```ts
+const bigintMatrix: Matrix<bigint> = [
+  [1n, 2n, 3n],
+  [4n, 5n, 6n],
+  [7n, 8n, 9n]
+];
+```
+
+**`Example`**
+
+```ts
+const stringMatrix: Matrix<string> = [
+  ['a', 'b', 'c'],
+  ['d', 'e', 'f'],
+  ['g', 'h', 'i']
+];
+```
+
+**`Example`**
+
+```ts
+const booleanMatrix: Matrix<boolean> = [
+  [true, false, true],
+  [false, true, false],
+  [true, true, false]
+];
+```
 
 #### Type parameters
 
@@ -75,13 +78,13 @@ ___
 
 #### Defined in
 
-[types/matrix.d.ts:1](https://github.com/havelessbemore/munkres/blob/2c9953f/src/types/matrix.d.ts#L1)
+[types/matrix.d.ts:37](https://github.com/havelessbemore/munkres/blob/c7ee0aa/src/types/matrix.d.ts#L37)
 
 ## Functions
 
 ### createCostMatrix
 
-▸ **createCostMatrix**\<`W`, `J`\>(`workers`, `jobs`, `costFn`): [`CostMatrix`](modules.md#costmatrix)
+▸ **createCostMatrix**\<`W`, `J`\>(`workers`, `jobs`, `costFn`): [`Matrix`](modules.md#matrix)\<`number`\>
 
 Constructs a cost matrix for a set of
 workers and jobs using a provided cost function.
@@ -103,13 +106,13 @@ which computes the cost based on a worker-job pair.
 | :------ | :------ | :------ |
 | `workers` | `W`[] | An array of workers. |
 | `jobs` | `J`[] | An array of jobs. |
-| `costFn` | [`CostFn`](modules.md#costfn)\<`W`, `J`\> | Given a worker and a job, returns the numeric cost of assigning that worker to that job. |
+| `costFn` | (`worker`: `W`, `job`: `J`) => `number` | Given a worker and a job, returns the numeric cost of assigning that worker to that job. |
 
 #### Returns
 
-[`CostMatrix`](modules.md#costmatrix)
+[`Matrix`](modules.md#matrix)\<`number`\>
 
-A [CostMatrix](modules.md#costmatrix) where the values at position `[y][x]`
+A cost matrix where the values at position `[y][x]`
 represent the cost of assigning the `y`-th worker to the `x`-th job.
 
 **`Example`**
@@ -118,7 +121,7 @@ represent the cost of assigning the `y`-th worker to the `x`-th job.
 // Define workers, jobs, and a simple cost function
 const workers = ['Alice', 'Bob'];
 const jobs = ['Job1', 'Job2'];
-const costFn = (worker: string, job: string) => worker.length + job.length;
+const costFn = (worker: string, job: string) =\> worker.length + job.length;
 
 // Create the cost matrix
 const matrix = createCostMatrix(workers, jobs, costFn);
@@ -130,7 +133,32 @@ const matrix = createCostMatrix(workers, jobs, costFn);
 
 #### Defined in
 
-[utils/costMatrix.ts:35](https://github.com/havelessbemore/munkres/blob/2c9953f/src/utils/costMatrix.ts#L35)
+[utils/costMatrix.ts:33](https://github.com/havelessbemore/munkres/blob/c7ee0aa/src/utils/costMatrix.ts#L33)
+
+▸ **createCostMatrix**\<`W`, `J`\>(`workers`, `jobs`, `costFn`): [`Matrix`](modules.md#matrix)\<`bigint`\>
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `W` |
+| `J` |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `workers` | `W`[] |
+| `jobs` | `J`[] |
+| `costFn` | (`worker`: `W`, `job`: `J`) => `bigint` |
+
+#### Returns
+
+[`Matrix`](modules.md#matrix)\<`bigint`\>
+
+#### Defined in
+
+[utils/costMatrix.ts:38](https://github.com/havelessbemore/munkres/blob/c7ee0aa/src/utils/costMatrix.ts#L38)
 
 ___
 
@@ -144,7 +172,7 @@ Finds the maximum value in a given cost matrix.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `costMatrix` | [`CostMatrix`](modules.md#costmatrix) | The cost matrix. |
+| `costMatrix` | [`Matrix`](modules.md#matrix)\<`number`\> | The cost matrix. |
 
 #### Returns
 
@@ -154,7 +182,23 @@ The maximum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[utils/costMatrix.ts:60](https://github.com/havelessbemore/munkres/blob/2c9953f/src/utils/costMatrix.ts#L60)
+[utils/costMatrix.ts:58](https://github.com/havelessbemore/munkres/blob/c7ee0aa/src/utils/costMatrix.ts#L58)
+
+▸ **getMaxCost**(`costMatrix`): `bigint` \| `undefined`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `costMatrix` | [`Matrix`](modules.md#matrix)\<`bigint`\> |
+
+#### Returns
+
+`bigint` \| `undefined`
+
+#### Defined in
+
+[utils/costMatrix.ts:59](https://github.com/havelessbemore/munkres/blob/c7ee0aa/src/utils/costMatrix.ts#L59)
 
 ___
 
@@ -168,7 +212,7 @@ Finds the maximum value in a given cost matrix.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `costMatrix` | [`CostMatrix`](modules.md#costmatrix) | The cost matrix. |
+| `costMatrix` | [`Matrix`](modules.md#matrix)\<`number`\> | The cost matrix. |
 
 #### Returns
 
@@ -178,7 +222,23 @@ The maximum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[utils/costMatrix.ts:87](https://github.com/havelessbemore/munkres/blob/2c9953f/src/utils/costMatrix.ts#L87)
+[utils/costMatrix.ts:73](https://github.com/havelessbemore/munkres/blob/c7ee0aa/src/utils/costMatrix.ts#L73)
+
+▸ **getMinCost**(`costMatrix`): `bigint` \| `undefined`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `costMatrix` | [`Matrix`](modules.md#matrix)\<`bigint`\> |
+
+#### Returns
+
+`bigint` \| `undefined`
+
+#### Defined in
+
+[utils/costMatrix.ts:74](https://github.com/havelessbemore/munkres/blob/c7ee0aa/src/utils/costMatrix.ts#L74)
 
 ___
 
@@ -196,7 +256,7 @@ into a maximized cost matrix (or vice versa).
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `costMatrix` | [`CostMatrix`](modules.md#costmatrix) | The cost matrix to be inverted. The matrix is modified in place. |
+| `costMatrix` | [`Matrix`](modules.md#matrix)\<`number`\> | The cost matrix to be inverted. Modified in place. |
 | `bigVal?` | `number` | (Optional) A large value used as the basis for inversion. If not provided, the maximum value in the matrix is used. |
 
 #### Returns
@@ -241,7 +301,24 @@ invertCostMatrix(anotherMatrix, 50);
 
 #### Defined in
 
-[utils/costMatrix.ts:148](https://github.com/havelessbemore/munkres/blob/2c9953f/src/utils/costMatrix.ts#L148)
+[utils/costMatrix.ts:122](https://github.com/havelessbemore/munkres/blob/c7ee0aa/src/utils/costMatrix.ts#L122)
+
+▸ **invertCostMatrix**(`costMatrix`, `bigVal?`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `costMatrix` | [`Matrix`](modules.md#matrix)\<`bigint`\> |
+| `bigVal?` | `bigint` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[utils/costMatrix.ts:126](https://github.com/havelessbemore/munkres/blob/c7ee0aa/src/utils/costMatrix.ts#L126)
 
 ___
 
@@ -256,7 +333,7 @@ minimize total cost.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `costMatrix` | [`CostMatrix`](modules.md#costmatrix) | The cost matrix, where `mat[y][x]` represents the cost of assigning worker `y` to job `x`. |
+| `costMatrix` | [`Matrix`](modules.md#matrix)\<`number`\> | The cost matrix, where `mat[y][x]` represents the cost of assigning worker `y` to job `x`. |
 
 #### Returns
 
@@ -273,7 +350,23 @@ the [assignment problem](https://en.wikipedia.org/wiki/Assignment_problem).
 
 #### Defined in
 
-[munkres.ts:20](https://github.com/havelessbemore/munkres/blob/2c9953f/src/munkres.ts#L20)
+[munkres.ts:22](https://github.com/havelessbemore/munkres/blob/c7ee0aa/src/munkres.ts#L22)
+
+▸ **munkres**(`costMatrix`): [`number`, `number`][]
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `costMatrix` | [`Matrix`](modules.md#matrix)\<`bigint`\> |
+
+#### Returns
+
+[`number`, `number`][]
+
+#### Defined in
+
+[munkres.ts:23](https://github.com/havelessbemore/munkres/blob/c7ee0aa/src/munkres.ts#L23)
 
 ___
 
@@ -290,7 +383,7 @@ into a maximized cost matrix (or vice versa).
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `costMatrix` | [`CostMatrix`](modules.md#costmatrix) | The cost matrix to be negated. The matrix is modified in place. |
+| `costMatrix` | [`Matrix`](modules.md#matrix)\<`number`\> | The cost matrix to be negated. Modified in place. |
 
 #### Returns
 
@@ -318,4 +411,20 @@ negateCostMatrix(costMatrix);
 
 #### Defined in
 
-[utils/costMatrix.ts:192](https://github.com/havelessbemore/munkres/blob/2c9953f/src/utils/costMatrix.ts#L192)
+[utils/costMatrix.ts:162](https://github.com/havelessbemore/munkres/blob/c7ee0aa/src/utils/costMatrix.ts#L162)
+
+▸ **negateCostMatrix**(`costMatrix`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `costMatrix` | [`Matrix`](modules.md#matrix)\<`bigint`\> |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[utils/costMatrix.ts:163](https://github.com/havelessbemore/munkres/blob/c7ee0aa/src/utils/costMatrix.ts#L163)

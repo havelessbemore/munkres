@@ -12,8 +12,9 @@ A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm
 
 ## Features
 
-- Supports `-Infinity` and `Infinity`.
-- Supports square and rectangular matrices.
+- Supports square (NxN) and rectangular (MxN) cost matrices.
+- Supports `number[][]` and `bigint[][]` cost matrices.
+- Supports `-Infinity` and `Infinity` in `number[][]` cost matrices.
 - [Helpers](#helpers) included for creating and manipulating cost matrices.
 
 ## Getting Started
@@ -62,7 +63,7 @@ Example 2: Creating a cost matrix
 import { munkres, createCostMatrix } from "munkres";
 
 // Define your workers and jobs.
-const workers = ["Alice", "Bob", "Charlie"];
+const workers = ["Alice", "Bob"];
 const jobs = ["Job 1", "Job 2", "Job 3"];
 
 // Define a cost function that takes a worker
@@ -77,16 +78,13 @@ const costs = {
   "BobJob 1": 9,
   "BobJob 2": 4,
   "BobJob 3": 17,
-  "CharlieJob 1": 11,
-  "CharlieJob 2": 26,
-  "CharlieJob 3": 1,
 };
 const costFn = (worker, job) => {
   // Your cost calculation goes here.
   return costs[worker + job];
 };
 
-// Create the cost matrix. Each cell [y, x] will be
+// Create the 2x3 cost matrix. Each cell [y, x] will be
 // the cost of assigning the y-th worker to the x-th job.
 const costMatrix = createCostMatrix(workers, jobs, costFn);
 
@@ -96,7 +94,7 @@ const costMatrix = createCostMatrix(workers, jobs, costFn);
 const assignments = munkres(costMatrix);
 
 console.log(assignments);
-// Output: [[0, 0], [1, 1], [2, 2]]
+// Output: [[0, 0], [1, 1]]
 ```
 
 ## API
@@ -107,9 +105,7 @@ console.log(assignments);
 
 The package exports the following TypeScript types:
 
-- `CostFn`: A function type that computes the cost of assigning a worker to a job.
-- `CostMatrix`: Represents a matrix where each element corresponds to the numeric cost of an assignment.
-- `Matrix<T>`: A generic matrix type.
+- `Matrix<T>`: A generic matrix type representing a two-dimensional matrix (i.e. `T[][]`).
 
 ### Helpers
 
@@ -158,7 +154,7 @@ To run the code linter:
 npm run lint
 ```
 
-To automatically fix linting issue, run:
+To automatically fix linting issues, run:
 
 ```bash
 npm run format

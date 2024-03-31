@@ -1,12 +1,4 @@
-import { CostFn } from './types/costFn';
-import { CostFn as CostFn_2 } from '../types/costFn';
-import { CostMatrix } from './types/costMatrix';
-import { CostMatrix as CostMatrix_2 } from '../types/costMatrix';
 import { Matrix } from './types/matrix';
-
-export { CostFn }
-
-export { CostMatrix }
 
 /**
  * Constructs a cost matrix for a set of
@@ -21,14 +13,14 @@ export { CostMatrix }
  * @param costFn - Given a worker and a job, returns the
  * numeric cost of assigning that worker to that job.
  *
- * @returns A {@link CostMatrix} where the values at position `[y][x]`
+ * @returns A cost matrix where the values at position `[y][x]`
  * represent the cost of assigning the `y`-th worker to the `x`-th job.
  *
  * @example
  * // Define workers, jobs, and a simple cost function
  * const workers = ['Alice', 'Bob'];
  * const jobs = ['Job1', 'Job2'];
- * const costFn = (worker: string, job: string) => worker.length + job.length;
+ * const costFn = (worker: string, job: string) =\> worker.length + job.length;
  *
  * // Create the cost matrix
  * const matrix = createCostMatrix(workers, jobs, costFn);
@@ -37,7 +29,9 @@ export { CostMatrix }
  * //   [7, 7]  // [  'Bob' + 'Job1',   'Bob' + 'Job2']
  * // ]
  */
-export declare function createCostMatrix<W, J>(workers: W[], jobs: J[], costFn: CostFn_2<W, J>): CostMatrix_2;
+export declare function createCostMatrix<W, J>(workers: W[], jobs: J[], costFn: (worker: W, job: J) => number): Matrix<number>;
+
+export declare function createCostMatrix<W, J>(workers: W[], jobs: J[], costFn: (worker: W, job: J) => bigint): Matrix<bigint>;
 
 /**
  * Finds the maximum value in a given cost matrix.
@@ -46,7 +40,9 @@ export declare function createCostMatrix<W, J>(workers: W[], jobs: J[], costFn: 
  *
  * @returns The maximum value, or `undefined` if the matrix is empty.
  */
-export declare function getMaxCost(costMatrix: CostMatrix_2): number | undefined;
+export declare function getMaxCost(costMatrix: Matrix<number>): number | undefined;
+
+export declare function getMaxCost(costMatrix: Matrix<bigint>): bigint | undefined;
 
 /**
  * Finds the maximum value in a given cost matrix.
@@ -55,7 +51,9 @@ export declare function getMaxCost(costMatrix: CostMatrix_2): number | undefined
  *
  * @returns The maximum value, or `undefined` if the matrix is empty.
  */
-export declare function getMinCost(costMatrix: CostMatrix_2): number | undefined;
+export declare function getMinCost(costMatrix: Matrix<number>): number | undefined;
+
+export declare function getMinCost(costMatrix: Matrix<bigint>): bigint | undefined;
 
 /**
  * Inverts the values in a given cost matrix by
@@ -64,7 +62,7 @@ export declare function getMinCost(costMatrix: CostMatrix_2): number | undefined
  * This is useful for converting a minimized cost matrix
  * into a maximized cost matrix (or vice versa).
  *
- * @param costMatrix - The cost matrix to be inverted. The matrix is modified in place.
+ * @param costMatrix - The cost matrix to be inverted. Modified in place.
  * @param bigVal - (Optional) A large value used as the basis for inversion.
  * If not provided, the maximum value in the matrix is used.
  *
@@ -98,7 +96,9 @@ export declare function getMinCost(costMatrix: CostMatrix_2): number | undefined
  * //   [20, 10]
  * // ]
  */
-export declare function invertCostMatrix(costMatrix: CostMatrix_2, bigVal?: number): void;
+export declare function invertCostMatrix(costMatrix: Matrix<number>, bigVal?: number): void;
+
+export declare function invertCostMatrix(costMatrix: Matrix<bigint>, bigVal?: bigint): void;
 
 export { Matrix }
 
@@ -117,7 +117,9 @@ export { Matrix }
  * Runs the {@link https://en.wikipedia.org/wiki/Hungarian_algorithm | Munkres algorithm (aka Hungarian algorithm)} to solve
  * the {@link https://en.wikipedia.org/wiki/Assignment_problem | assignment problem}.
  */
-export declare function munkres(costMatrix: CostMatrix): [number, number][];
+export declare function munkres(costMatrix: Matrix<number>): [number, number][];
+
+export declare function munkres(costMatrix: Matrix<bigint>): [number, number][];
 
 /**
  * Negates the values in a given cost matrix.
@@ -125,7 +127,7 @@ export declare function munkres(costMatrix: CostMatrix): [number, number][];
  * This is useful for converting a minimized cost matrix
  * into a maximized cost matrix (or vice versa).
  *
- * @param costMatrix - The cost matrix to be negated. The matrix is modified in place.
+ * @param costMatrix - The cost matrix to be negated. Modified in place.
  *
  * @example
  * const costMatrix = [
@@ -144,6 +146,8 @@ export declare function munkres(costMatrix: CostMatrix): [number, number][];
  * //   [-7, -8, -9]
  * // ]
  */
-export declare function negateCostMatrix(costMatrix: CostMatrix_2): void;
+export declare function negateCostMatrix(costMatrix: Matrix<number>): void;
+
+export declare function negateCostMatrix(costMatrix: Matrix<bigint>): void;
 
 export { }
