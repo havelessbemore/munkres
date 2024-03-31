@@ -83,7 +83,7 @@ export function findUncoveredZeroOrMin(
  *
  * @param mat - The cost matrix. Modified in place.
  */
-export function step1(mat: CostMatrix): void {
+export function step1(mat: Matrix<number> | Matrix<bigint>): void {
   const Y = mat.length;
   const X = mat[0]?.length ?? 0;
 

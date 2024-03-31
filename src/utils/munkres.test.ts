@@ -1,8 +1,83 @@
 import { describe, it, expect } from "vitest";
 
-import { step5, step6, step6Inf, steps2To3, toString } from "./munkres";
+import { step1, step5, step6, step6Inf, steps2To3, toString } from "./munkres";
 import { CostMatrix } from "../types/costMatrix";
-import { copy, map } from "./matrix";
+import { copy, map, reduceCols, reduceRows } from "./matrix";
+import { Matrix } from "../types/matrix";
+
+describe(`${step1.name}()`, () => {
+  it("handles an empty matrix without error", () => {
+    const mat = [];
+    step1(mat);
+    expect(mat).toEqual([]);
+  });
+
+  it("performs row reduction on a 1x5 matrix", () => {
+    const mat = [[1, 2, 3, 4, 5]];
+    step1(mat);
+    expect(mat).toEqual([[0, 1, 2, 3, 4]]);
+  });
+
+  it("performs column reduction on a 5x1 matrix", () => {
+    const mat = [[1], [2], [3], [4], [5]];
+    step1(mat);
+    expect(mat).toEqual([[0], [1], [2], [3], [4]]);
+  });
+
+  it("performs column-wise reduction on a matrix where rows > columns", () => {
+    const mat = [
+      [4, 1, 3],
+      [2, 0, 5],
+      [3, 2, 2],
+      [10, 5, 6],
+    ];
+    const dupe = copy(mat);
+
+    step1(mat);
+    reduceCols(dupe);
+    expect(mat).toEqual(dupe);
+  });
+
+  it("performs row-wise reduction on a matrix where rows < columns", () => {
+    const mat = [
+      [4, 1, 3, 7],
+      [2, 0, 5, 8],
+      [3, 2, 2, 6],
+    ];
+    const dupe = copy(mat);
+
+    step1(mat);
+    reduceRows(dupe);
+    expect(mat).toEqual(dupe);
+  });
+
+  it("performs both row-wise and column-wise reduction on a square matrix", () => {
+    const mat = [
+      [4, 1, 3],
+      [2, 0, 5],
+      [3, 2, 2],
+    ];
+    const dupe = copy(mat);
+
+    step1(mat);
+    reduceRows(dupe);
+    reduceCols(dupe);
+    expect(mat).toEqual(dupe);
+  });
+
+  it("handles a matrix of bigints correctly", () => {
+    const mat: Matrix<bigint> = [
+      [4n, 1n, 3n, 7n],
+      [2n, 0n, 5n, 8n],
+      [3n, 2n, 2n, 6n],
+    ];
+    const dupe = copy(mat);
+
+    step1(mat);
+    reduceRows(dupe);
+    expect(mat).toEqual(dupe);
+  });
+});
 
 describe(`${steps2To3.name}()`, () => {
   it("handles an empty matrix", () => {
@@ -192,7 +267,7 @@ describe(`${step6.name}()`, () => {
   });
 });
 
-describe("step6Inf", () => {
+describe(`${step6Inf.name}()`, () => {
   it("applies Infinity correctly to marked columns and zeros to unmarked rows", () => {
     const mat = [
       [1, 2, 3],
