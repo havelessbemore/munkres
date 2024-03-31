@@ -103,10 +103,10 @@ export function bigSteps2To3(
  * there are columns in the matrix, at which point optimal assignments
  * have been found.
  *
- * @param mat - An NxM cost matrix. Modified in place.
+ * @param mat - An MxN cost matrix. Modified in place.
  *
  * @throws - {@link RangeError}
- * Thrown if the given NxM matrix has more columns than rows (N > M).
+ * Thrown if the given MxN matrix has more rows than columns (M \> N).
  *
  * @privateRemarks
  * Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this outline}
@@ -118,7 +118,7 @@ export function bigStep4(mat: Matrix<bigint>): number[] {
 
   // Check input
   if (Y > X) {
-    throw new RangeError("invalid NxM matrix: N > M");
+    throw new RangeError("invalid MxN matrix: M > N");
   }
 
   const starX = new Array<number>(X).fill(-1);

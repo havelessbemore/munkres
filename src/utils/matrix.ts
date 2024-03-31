@@ -36,7 +36,7 @@ export function copy<T>(matrix: Matrix<T>): Matrix<T> {
  * @example
  * const rows = [1, 2];
  * const cols = ['a', 'b', 'c'];
- * const callbackFn = (row, col) => `${row}${col}`;
+ * const callbackFn = (row, col) =\> `${row}${col}`;
  *
  * const matrix = create(rows, cols, callbackFn);
  * // matrix is:
