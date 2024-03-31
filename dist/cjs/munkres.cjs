@@ -291,7 +291,7 @@ function step4(mat) {
   const Y = mat.length;
   const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
   if (Y > X) {
-    throw new RangeError("invalid NxM matrix: N > M");
+    throw new RangeError("invalid MxN matrix: M > N");
   }
   const starX = new Array(X).fill(-1);
   const starY = new Array(Y).fill(-1);
@@ -408,7 +408,7 @@ function bigStep4(mat) {
   const Y = mat.length;
   const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
   if (Y > X) {
-    throw new RangeError("invalid NxM matrix: N > M");
+    throw new RangeError("invalid MxN matrix: M > N");
   }
   const starX = new Array(X).fill(-1);
   const starY = new Array(Y).fill(-1);

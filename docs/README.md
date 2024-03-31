@@ -162,25 +162,49 @@ npm run format
 
 ## Test
 
-1. Install dependencies
-
-```bash
-npm install
-```
-
-2. Execute tests
+To run tests:
 
 ```bash
 npm test
 ```
 
-Test coverage can be measured via:
+To run tests with a coverage report:
 
 ```bash
 npm run test:coverage
 ```
 
 A coverage report is generated at `./coverage/index.html`.
+
+## Benchmark
+
+To run benchmarks:
+
+```bash
+npm run bench
+```
+
+For example, the `munkres()` [benchmark](src/munkres.bench.ts) for `number` matrices:
+
+| Dimensions | Ops / Sec  | Min (ms) | Max (ms) | Avg (ms) |
+| ---------- | ---------- | -------- | -------- | -------- |
+| 8x8        | 934,582.19 | 0.0010   | 0.1763   | 0.0011   |
+| 16x16      | 63,499.71  | 0.0150   | 0.2197   | 0.0157   |
+| 32x32      | 9,295.73   | 0.1030   | 1.6487   | 0.1076   |
+| 64x64      | 1,933.60   | 0.4986   | 0.6842   | 0.5172   |
+| 128x128    | 1,444.79   | 0.6705   | 0.8880   | 0.6921   |
+| 256x256    | 428.40     | 2.3079   | 2.4936   | 2.3343   |
+| 512x512    | 153.93     | 6.4032   | 6.6689   | 6.4964   |
+| 1024x1024  | 51.0982    | 19.4089  | 19.7999  | 19.5702  |
+| 2048x2048  | 10.6961    | 87.6427  | 96.5724  | 93.4923  |
+| 4096x4096  | 2.0010     | 476.38   | 583.18   | 499.74   |
+
+Testing with:
+
+- Package version: v1.0.1
+- OS: M2 Macbook Air, Mac OS v14.4.1
+- Runtime: NodeJS v20.12.0
+- Benchmarking Tool: Vitest v1.2.2
 
 ---
 

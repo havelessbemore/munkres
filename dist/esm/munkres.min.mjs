@@ -220,7 +220,7 @@ function E(n) {
   var i;
   const e = n.length, o = ((i = n[0]) == null ? void 0 : i.length) ?? 0;
   if (e > o)
-    throw new RangeError("invalid NxM matrix: N > M");
+    throw new RangeError("invalid MxN matrix: M > N");
   const f = new Array(o).fill(-1), c = new Array(e).fill(-1), l = new Array(e).fill(-1);
   y(n);
   let t = k(n, f, c);
@@ -289,7 +289,7 @@ function U(n) {
   var i;
   const e = n.length, o = ((i = n[0]) == null ? void 0 : i.length) ?? 0;
   if (e > o)
-    throw new RangeError("invalid NxM matrix: N > M");
+    throw new RangeError("invalid MxN matrix: M > N");
   const f = new Array(o).fill(-1), c = new Array(e).fill(-1), l = new Array(e).fill(-1);
   y(n);
   let t = T(n, f, c);
