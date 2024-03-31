@@ -1,5 +1,4 @@
 import { Matrix } from "..";
-import { CostMatrix } from "../types/costMatrix";
 import { reduceCols, reduceRows } from "./matrix";
 import { map } from "./matrix";
 
@@ -13,7 +12,7 @@ import { map } from "./matrix";
  */ /*
 export function debug(
   step: string,
-  mat: CostMatrix,
+  mat: Matrix<number>,
   primeY: number[],
   starY: number[]
 ): void {
@@ -34,7 +33,7 @@ export function debug(
  * Otherwise, the coordinates to the smallest uncovered value.
  */
 export function findUncoveredZeroOrMin(
-  mat: CostMatrix,
+  mat: Matrix<number>,
   primeY: number[],
   starX: number[]
 ): [number, number] {
@@ -110,7 +109,7 @@ export function step1(mat: Matrix<number> | Matrix<bigint>): void {
  * @returns The number of stars made.
  */
 export function steps2To3(
-  mat: CostMatrix,
+  mat: Matrix<number>,
   starX: number[],
   starY: number[]
 ): number {
@@ -154,7 +153,7 @@ export function steps2To3(
  * Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this outline}
  * and enhanced with custom optimizations.
  */
-export function step4(mat: CostMatrix): number[] {
+export function step4(mat: Matrix<number>): number[] {
   const Y = mat.length;
   const X = mat[0]?.length ?? 0;
 
@@ -249,7 +248,7 @@ export function step5(
  */
 export function step6(
   min: number,
-  mat: CostMatrix,
+  mat: Matrix<number>,
   primeY: number[],
   starX: number[]
 ): void {
@@ -297,7 +296,7 @@ export function step6(
  * from `Infinity` equals `NaN`.
  */
 export function step6Inf(
-  mat: CostMatrix,
+  mat: Matrix<number>,
   primeY: number[],
   starX: number[]
 ): void {
@@ -337,7 +336,7 @@ export function step6Inf(
  * @returns A string visualization of the matrix with stars and primes.
  */
 export function toString(
-  mat: CostMatrix,
+  mat: Matrix<number>,
   starY: number[],
   primeY: number[] = []
 ): string {
