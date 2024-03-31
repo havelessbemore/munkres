@@ -36,7 +36,7 @@ yarn add munkres
 Example 1: Using a cost matrix
 
 ```javascript
-import { munkres } from "munkres";
+import munkres from "munkres";
 
 // Create a cost matrix. Cell [y, x] is the cost
 // of assigning the y-th worker to the x-th job.

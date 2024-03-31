@@ -12,3 +12,7 @@ export {
 
 // Algorithm
 export { munkres } from "./munkres";
+
+// Default
+import { munkres } from "./munkres";
+export default munkres;
