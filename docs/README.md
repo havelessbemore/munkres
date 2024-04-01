@@ -201,7 +201,7 @@ For example, the `munkres()` [benchmark](src/munkres.bench.ts) for `number` matr
 
 Testing with:
 
-- Package version: v1.0.1
+- Package version: v1.0.2
 - OS: M2 Macbook Air, Mac OS v14.4.1
 - Runtime: NodeJS v20.12.0
 - Benchmarking Tool: Vitest v1.2.2
