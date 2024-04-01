@@ -29,49 +29,19 @@ function genMatrix(Y: number, X: number): Matrix<number> {
 }
 
 describe("munkres", () => {
-  const mats: Matrix<number>[] = [];
-  for (let i = 0; i <= 12; ++i) {
+  let mat: Matrix<number>;
+  for (let i = 3; i < 14; ++i) {
     const N = 1 << i;
-    mats[i] = genMatrix(N, N);
+    bench(
+      `${N}x${N}`,
+      () => {
+        munkres(mat);
+      },
+      {
+        setup: () => {
+          mat = genMatrix(N, N);
+        },
+      }
+    );
   }
-
-  bench("8x8", () => {
-    munkres(mats[3]);
-  });
-
-  bench("16x16", () => {
-    munkres(mats[4]);
-  });
-
-  bench("32x32", () => {
-    munkres(mats[5]);
-  });
-
-  bench("64x64", () => {
-    munkres(mats[6]);
-  });
-
-  bench("128x128", () => {
-    munkres(mats[7]);
-  });
-
-  bench("256x256", () => {
-    munkres(mats[8]);
-  });
-
-  bench("512x512", () => {
-    munkres(mats[9]);
-  });
-
-  bench("1024x1024", () => {
-    munkres(mats[10]);
-  });
-
-  bench("2048x2048", () => {
-    munkres(mats[11]);
-  });
-
-  bench("4096x4096", () => {
-    munkres(mats[12]);
-  });
 });

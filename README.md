@@ -97,13 +97,13 @@ console.log(assignments);
 
 ## API
 
-- `munkres(costMatrix)`: Executes the Munkres algorithm on the given cost matrix and returns the optimal assignment of workers to jobs.
+- `munkres(costMatrix)`: Executes the Munkres algorithm on the given cost matrix and returns an optimal assignment set of workers to jobs. Even if there are multiple optimal assignment sets, only one is returned.
 
 ### Types
 
 The package exports the following TypeScript types:
 
-- `Matrix<T>`: A generic matrix type representing a two-dimensional matrix (i.e. `T[][]`).
+- `Matrix<T>`: A generic two-dimensional matrix type (i.e. `T[][]`).
 
 ### Helpers
 
@@ -112,7 +112,7 @@ A set of utility functions are provided to help create and manipulate cost matri
 - `createCostMatrix(workers, jobs, costFn)`: Generates a cost matrix based on the given workers, jobs, and cost function.
 - `getMaxCost(costMatrix)`: Finds the maximum cost in a given cost matrix.
 - `getMinCost(costMatrix)`: Finds the minimum cost in a given cost matrix.
-- `invertCostMatrix(costMatrix, bigVal?)`: Inverts the costs in the given matrix, useful for converting between minimizing and maximizing problems.
+- `invertCostMatrix(costMatrix, bigVal?)`: Inverts the costs in the given matrix, useful for converting between minimizing and maximizing problems. If `bigVal` is not given, the matrix's max cost is used instead.
 - `negateCostMatrix(costMatrix)`: Negates all costs in the given matrix, also useful for converting between minimizing and maximizing problems.
 
 ## Community and Support
@@ -196,6 +196,7 @@ For example, the `munkres()` [benchmark](src/munkres.bench.ts) for `number` matr
 | 1024x1024  | 51.0982    | 19.4089  | 19.7999  | 19.5702  |
 | 2048x2048  | 10.6961    | 87.6427  | 96.5724  | 93.4923  |
 | 4096x4096  | 2.0010     | 476.38   | 583.18   | 499.74   |
+| 8192x8192  | 0.5705     | 1,675.11 | 1,814.71 | 1,752.85 |
 
 Testing with:
 
