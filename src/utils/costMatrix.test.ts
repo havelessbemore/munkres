@@ -7,6 +7,7 @@ import {
   invertCostMatrix,
   negateCostMatrix,
 } from "./costMatrix";
+import { Matrix } from "..";
 
 describe(`${createCostMatrix.name}()`, () => {
   it("handles empty arrays of workers and jobs", () => {
@@ -70,7 +71,7 @@ describe(`${createCostMatrix.name}()`, () => {
 
 describe(`${getMaxCost.name}()`, () => {
   it("returns undefined for an empty matrix", () => {
-    const mat = [];
+    const mat: Matrix<number> = [];
     expect(getMaxCost(mat)).toBeUndefined();
   });
 
@@ -123,7 +124,7 @@ describe(`${getMaxCost.name}()`, () => {
 
 describe(`${getMinCost.name}()`, () => {
   it("returns undefined for an empty matrix", () => {
-    const mat = [];
+    const mat: Matrix<number> = [];
     expect(getMinCost(mat)).toBeUndefined();
   });
 
@@ -176,7 +177,7 @@ describe(`${getMinCost.name}()`, () => {
 
 describe(`${invertCostMatrix.name}()`, () => {
   it("handles an empty matrix", () => {
-    const mat = [];
+    const mat: Matrix<number> = [];
     invertCostMatrix(mat);
     expect(mat).toEqual([]);
   });

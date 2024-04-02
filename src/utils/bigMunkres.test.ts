@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 
 import { bigStep4, bigStep6, bigSteps2To3 } from "./bigMunkres";
 import { copy, map } from "./matrix";
+import { Matrix } from "..";
 
 describe(`${bigSteps2To3.name}()`, () => {
   it("handles an empty matrix", () => {
@@ -109,7 +110,7 @@ describe(`${bigStep4.name}()`, () => {
 
 describe(`${bigStep6.name}()`, () => {
   it("handles an empty matrix", () => {
-    const mat = [];
+    const mat: Matrix<bigint> = [];
     bigStep6(5n, mat, [], []);
     expect(mat).toEqual([]);
   });

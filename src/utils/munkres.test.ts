@@ -14,7 +14,7 @@ import { Matrix } from "../types/matrix";
 
 describe(`${step1.name}()`, () => {
   it("handles an empty matrix without error", () => {
-    const mat = [];
+    const mat: Matrix<number> = [];
     step1(mat);
     expect(mat).toEqual([]);
   });
@@ -225,7 +225,7 @@ describe(`${step5.name}()`, () => {
 
 describe(`${step6.name}()`, () => {
   it("handles an empty matrix", () => {
-    const mat = [];
+    const mat: Matrix<number> = [];
     step6(5, mat, [], []);
     expect(mat).toEqual([]);
   });

@@ -11,7 +11,7 @@ function oneOf<T>(actual: T, expecteds: Iterable<T>): void {
       error = undefined;
       break;
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
   }
 
