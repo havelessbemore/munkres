@@ -1,6 +1,7 @@
-import { Matrix } from "..";
-import { reduceCols, reduceRows } from "./matrix";
-import { map } from "./matrix";
+import { Matrix } from "../types/matrix";
+import { Tuple } from "../types/tuple";
+
+import { map, reduceCols, reduceRows } from "./matrix";
 
 /**
  * Displays the current step of the algorithm and the state of the cost matrix.
@@ -36,7 +37,7 @@ export function findUncoveredZeroOrMin(
   mat: Matrix<number>,
   primeY: number[],
   starX: number[]
-): [number, number] {
+): Tuple<number> {
   const X = starX.length;
   const Y = primeY.length;
 

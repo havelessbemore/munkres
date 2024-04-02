@@ -1,4 +1,6 @@
-import { Matrix } from "..";
+import { Matrix } from "../types/matrix";
+import { Tuple } from "../types/tuple";
+
 import { step1, step5 } from "./munkres";
 
 /**
@@ -17,7 +19,7 @@ export function bigFindUncoveredZeroOrMin(
   mat: Matrix<bigint>,
   primeY: number[],
   starX: number[]
-): [number, number] {
+): Tuple<number> {
   const X = starX.length;
   const Y = primeY.length;
 

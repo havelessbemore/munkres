@@ -1,5 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 
+import { Matrix } from "../types/matrix";
+import { Tuple } from "../types/tuple";
+
 import {
   copy,
   create,
@@ -22,7 +25,6 @@ import {
   toString,
   transpose,
 } from "./matrix";
-import { Matrix } from "..";
 
 describe(`${copy.name}()`, () => {
   it("returns an empty matrix when copying an empty matrix", () => {
@@ -671,7 +673,7 @@ describe(`${map.name}()`, () => {
       ["a", "b"],
       ["c", "d"],
     ];
-    const coords: [number, number][] = [];
+    const coords: Tuple<number>[] = [];
     map(matrix, (value, y, x) => {
       coords.push([y, x]);
       return value.toUpperCase();

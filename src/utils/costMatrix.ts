@@ -1,4 +1,5 @@
-import { Matrix } from "..";
+import { Matrix } from "../types/matrix";
+
 import { create, getMax, getMin, invert, negate } from "./matrix";
 
 /**

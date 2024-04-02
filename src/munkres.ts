@@ -1,4 +1,6 @@
-import { Matrix } from ".";
+import { Matrix } from "./types/matrix";
+import { Tuple } from "./types/tuple";
+
 import { bigStep4 } from "./utils/bigMunkres";
 import { isBigInt } from "./utils/is";
 import { copy, flipH, transpose } from "./utils/matrix";
@@ -19,11 +21,11 @@ import { step4 } from "./utils/munkres";
  * Runs the {@link https://en.wikipedia.org/wiki/Hungarian_algorithm | Munkres algorithm (aka Hungarian algorithm)} to solve
  * the {@link https://en.wikipedia.org/wiki/Assignment_problem | assignment problem}.
  */
-export function munkres(costMatrix: Matrix<number>): [number, number][];
-export function munkres(costMatrix: Matrix<bigint>): [number, number][];
+export function munkres(costMatrix: Matrix<number>): Tuple<number>[];
+export function munkres(costMatrix: Matrix<bigint>): Tuple<number>[];
 export function munkres<T extends number | bigint>(
   costMatrix: Matrix<T>
-): [number, number][] {
+): Tuple<number>[] {
   // Get dimensions
   const Y = costMatrix.length;
   const X = costMatrix[0]?.length ?? 0;
@@ -48,7 +50,7 @@ export function munkres<T extends number | bigint>(
 
   // Create pairs
   const P = y2x.length;
-  const pairs: [number, number][] = new Array(P);
+  const pairs: Tuple<number>[] = new Array(P);
   for (let y = 0; y < P; ++y) {
     pairs[y] = [y, y2x[y]];
   }
