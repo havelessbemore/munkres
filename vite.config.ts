@@ -39,6 +39,11 @@ const config = defineConfig({
       formats,
       name: pkgNameCamel,
     },
+    rollupOptions: {
+      output: {
+        exports: "named",
+      },
+    },
     sourcemap: true,
   },
   plugins: [
