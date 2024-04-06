@@ -1,7 +1,7 @@
 import { Matrix } from "../types/matrix";
 import { Tuple } from "../types/tuple";
 
-import { map, reduceCols, reduceRows } from "./matrix";
+import { reduceCols, reduceRows, toString as _toString } from "./matrix";
 
 /**
  * Displays the current step of the algorithm and the state of the cost matrix.
@@ -341,71 +341,15 @@ export function toString(
   starY: number[],
   primeY: number[] = []
 ): string {
-  const strs: Matrix<string> = map(mat, v => `${v}`);
-  const Y = strs.length;
-  const X = strs[0]?.length ?? 0;
-
   // Mark values as stars or primes
-  for (let y = 0; y < Y; ++y) {
-    const row = strs[y];
-    if (starY[y] >= 0) {
-      row[starY[y]] = "*" + row[starY[y]];
+  return _toString(mat, (v, y, x): string => {
+    let str = `${v}`;
+    if (x == starY[y]) {
+      str = "*" + str;
     }
-    if (primeY[y] >= 0) {
-      row[primeY[y]] = '"' + row[primeY[y]];
+    if (x == primeY[y]) {
+      str = '"' + str;
     }
-  }
-
-  // Get column width
-  let width = 0;
-  for (let y = 0; y < Y; ++y) {
-    for (let x = 0; x < X; ++x) {
-      width = Math.max(width, strs[y][x].length);
-    }
-  }
-
-  // Adjust widths
-  for (let y = 0; y < Y; ++y) {
-    const row = strs[y];
-    for (let x = 0; x < X; ++x) {
-      if (row[x].length < width) {
-        row[x] = row[x].padStart(width, " ");
-      }
-    }
-  }
-
-  /*
-
-  // Create starX
-  const starX: number[] = new Array(X).fill(-1);
-  for (let y = 0; y < Y; ++y) {
-    if (starY[y] >= 0) {
-      starX[starY[y]] = y;
-    }
-  }
-  
-  // Mark values as covered
-  for (let y = 0; y < Y; ++y) {
-    for (let x = 0; x < X; ++x) {
-      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
-        if (primeY[y] >= 0) {
-          strs[y][x] = `⫢${strs[y][x]}⫤`;
-        } else {
-          strs[y][x] = `|${strs[y][x]}|`;
-        }
-      } else if (primeY[y] >= 0) {
-        strs[y][x] = `=${strs[y][x]}=`;
-      } else {
-        strs[y][x] = ` ${strs[y][x]} `;
-      }
-    }
-  }
-  */
-
-  // Create output
-  const buf: string[] = new Array(Y);
-  for (let y = 0; y < Y; ++y) {
-    buf[y] = `[${strs[y].join(", ")}]`;
-  }
-  return buf.join(",\n");
+    return str;
+  });
 }

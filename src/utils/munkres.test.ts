@@ -370,14 +370,14 @@ describe(`${toString.name}()`, () => {
     expect(result).toBe(expectedOutput);
   });
 
-  it("formats matrix entries to have uniform width", () => {
+  it("formats matrix columns to have uniform width", () => {
     const mat = [
       [1, 10],
       [100, 2],
     ];
     const primeY = [-1, -1]; // No primes
     const starY = [-1, 0]; // Star at (1, 0)
-    const expectedOutput = "[   1,   10],\n" + "[*100,    2]";
+    const expectedOutput = "[   1, 10],\n" + "[*100,  2]";
 
     const result = toString(mat, starY, primeY);
     expect(result).toBe(expectedOutput);
