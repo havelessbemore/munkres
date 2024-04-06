@@ -1,4 +1,4 @@
-import { Matrix } from "../types/matrix";
+import { Matrix, MatrixMapFn } from "../types/matrix";
 
 import { getMin as getRowMin } from "./array";
 import { isBigInt } from "./is";
@@ -710,16 +710,20 @@ export function rotNeg90<T>(matrix: Matrix<T>): void {
   transpose(matrix);
   flipV(matrix);
 }
-
 /**
  * Generates a string representation of a matrix.
  *
  * @param mat - The matrix.
+ * @param callbackFn - (Optional) A callback function to convert each element
+ * to a string. Defaults to using each elements `toString` method.
  *
  * @returns A string representation of the matrix.
  */
-export function toString<T>(mat: Matrix<T>): string {
-  const strs: Matrix<string> = map(mat, v => `${v}`);
+export function toString<T>(
+  mat: Matrix<T>,
+  callbackFn: MatrixMapFn<T, string> = v => `${v}`
+): string {
+  const strs: Matrix<string> = map(mat, callbackFn);
   const Y = strs.length;
   const X = strs[0]?.length ?? 0;
 
