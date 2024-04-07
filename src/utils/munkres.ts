@@ -336,8 +336,8 @@ export function step6Inf(
  *
  * @returns A string visualization of the matrix with stars and primes.
  */
-export function toString(
-  mat: Matrix<number>,
+export function toString<T>(
+  mat: Matrix<T>,
   starY: number[],
   primeY: number[] = []
 ): string {
