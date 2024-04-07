@@ -121,6 +121,49 @@ export function flipV<T>(matrix: Matrix<T>): void {
 }
 
 /**
+ * Generates a matrix with specified rows and columns.
+ *
+ * The callback function is called with every combination of row and column indices,
+ * and its return value is used to populate the matrix.
+ *
+ * @param rows - The number of rows.
+ * @param columns - The number of columns.
+ * @param callbackFn - A function that produces values for the new matrix,
+ *                     taking a row and column index as arguments.
+ *
+ * @returns A matrix populated by the results of the `callbackFn` function.
+ *
+ * @example
+ * const rows = 2;
+ * const cols = 3;
+ * const callbackFn = (row, col) =\> `(${row},${col})`;
+ *
+ * const matrix = create(rows, cols, callbackFn);
+ * // matrix is:
+ * // [
+ * //   ['(0,0)', '(0,1)', '(0,2)'],
+ * //   ['(1,0)', '(1,1)', '(1,2)']
+ * // ]
+ */
+export function gen<T>(
+  rows: number,
+  cols: number,
+  callbackFn: (row: number, col: number) => T
+): Matrix<T> {
+  const matrix: Matrix<T> = new Array(rows);
+
+  for (let r = 0; r < rows; ++r) {
+    const row = new Array(cols);
+    for (let c = 0; c < cols; ++c) {
+      row[c] = callbackFn(r, c);
+    }
+    matrix[r] = row;
+  }
+
+  return matrix;
+}
+
+/**
  * Finds the minimum value in a given column of a matrix.
  *
  * If the matrix is empty, the column is out of bounds, or

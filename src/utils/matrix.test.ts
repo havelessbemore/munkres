@@ -8,6 +8,7 @@ import {
   create,
   flipH,
   flipV,
+  gen,
   getColMin,
   getMax,
   getMin,
@@ -306,6 +307,70 @@ describe(`${flipV.name}()`, () => {
       [4, 5, 6],
       [1, 2, 3],
     ]);
+  });
+});
+
+describe(`${gen.name}()`, () => {
+  it("should generate an empty matrix when rows and columns are 0", () => {
+    const result = gen(0, 0, () => 0);
+    expect(result).toEqual([]);
+  });
+
+  it("should generate a matrix with the correct dimensions", () => {
+    const rows = 2;
+    const cols = 3;
+    const result = gen(rows, cols, () => 0);
+    expect(result.length).toBe(rows);
+    result.forEach(row => {
+      expect(row.length).toBe(cols);
+    });
+  });
+
+  it("should populate the matrix according to the callback function", () => {
+    const rows = 2;
+    const cols = 3;
+    const callbackFn = (row: number, col: number) => `(${row},${col})`;
+    const expectedMatrix = [
+      ["(0,0)", "(0,1)", "(0,2)"],
+      ["(1,0)", "(1,1)", "(1,2)"],
+    ];
+    const result = gen(rows, cols, callbackFn);
+    expect(result).toEqual(expectedMatrix);
+  });
+
+  it("should handle generating a matrix with non-string types", () => {
+    const rows = 3;
+    const cols = 1;
+    const callbackFn = (row: number, col: number) => row + col;
+    const expectedMatrix = [[0], [1], [2]];
+    const result = gen(rows, cols, callbackFn);
+    expect(result).toEqual(expectedMatrix);
+  });
+
+  it("should correctly apply complex operations in the callback", () => {
+    const rows = 2;
+    const cols = 2;
+    const callbackFn = (row: number, col: number) => row * col;
+    const expectedMatrix = [
+      [0, 0],
+      [0, 1],
+    ];
+    const result = gen(rows, cols, callbackFn);
+    expect(result).toEqual(expectedMatrix);
+  });
+
+  it("should support generating a matrix with custom objects", () => {
+    const rows = 1;
+    const cols = 2;
+    const callbackFn = (row: number, col: number) => ({ row, col });
+    const expectedMatrix = [
+      [
+        { row: 0, col: 0 },
+        { row: 0, col: 1 },
+      ],
+    ];
+    const result = gen(rows, cols, callbackFn);
+    expect(result).toEqual(expectedMatrix);
   });
 });
 
