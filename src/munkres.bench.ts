@@ -2,9 +2,11 @@ import { bench, describe } from "vitest";
 
 import { Matrix } from "./types/matrix";
 
-import { genMatrix } from "./utils/munkres.bench";
-
 import { munkres } from "./munkres";
+import { gen } from "./utils/matrix";
+
+const VAL_MIN = -1e9;
+const VAL_MAX = 1e9;
 
 describe("munkres", () => {
   let mat: Matrix<number>;
@@ -17,7 +19,10 @@ describe("munkres", () => {
       },
       {
         setup: () => {
-          mat = genMatrix(N, N, -1e9, 1e9);
+          mat = gen(N, N, () => {
+            const span = VAL_MAX - VAL_MIN;
+            return VAL_MIN + Math.trunc(span * Math.random());
+          });
         },
       }
     );
