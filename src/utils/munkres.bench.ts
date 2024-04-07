@@ -1,42 +1,25 @@
 import { bench, describe } from "vitest";
 
-import { Matrix } from "../types/matrix";
-
 import { step4 } from "./munkres";
+import { copy, gen } from "./matrix";
 
-export function genMatrix(
-  Y: number,
-  X: number,
-  minVal: number,
-  maxVal: number
-): Matrix<number> {
-  const costs: Matrix<number> = new Array(Y);
-  const spanV = maxVal - minVal;
+const VAL_MIN = -1e9;
+const VAL_MAX = 1e9;
 
-  for (let y = 0; y < Y; ++y) {
-    const row = new Array(X);
-    for (let x = 0; x < X; ++x) {
-      row[x] = minVal + Math.trunc(spanV * Math.random());
-    }
-    costs[y] = row;
-  }
-  return costs;
+for (let i = 1; i < 9; ++i) {
+  const N = 1 << i;
+  const mat = gen(N, N, () => {
+    const span = VAL_MAX - VAL_MIN;
+    return VAL_MIN + Math.trunc(span * Math.random());
+  });
+
+  describe(`munkres - ${N}x${N}`, () => {
+    bench(`munkres`, () => {
+      step4(copy(mat));
+    });
+
+    bench(`dualMunkres`, () => {
+      step4(mat);
+    });
+  });
 }
-
-describe("munkres", () => {
-  let mat: Matrix<number>;
-  for (let i = 1; i < 10; ++i) {
-    const N = 1 << i;
-    bench(
-      `${N}x${N}`,
-      () => {
-        step4(mat);
-      },
-      {
-        setup: () => {
-          mat = genMatrix(N, N, -1e9, 1e9);
-        },
-      }
-    );
-  }
-});
