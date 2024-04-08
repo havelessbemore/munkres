@@ -155,39 +155,6 @@ describe(`${step4.name}()`, () => {
     expect(res).toEqual([1, 2, 0]);
   });
 
-  /*
-  it("test 6", () => {
-    const costs: Matrix<number> = [
-      [4, 2, 5, 7],
-      [8, 3, 10, 8],
-      [12, 5, 4, 5],
-      [6, 3, 7, 14],
-    ];
-    const sols = [
-      new Set([
-        [0, 0],
-        [1, 1],
-        [2, 2],
-        [3, 3],
-      ]),
-      new Set([
-        [0, 0],
-        [1, 1],
-        [2, 3],
-        [3, 2],
-      ]),
-      new Set([
-        [0, 2],
-        [1, 1],
-        [2, 3],
-        [3, 0],
-      ]),
-    ];
-    const res = step4(costs);
-    oneOf(new Set(res), sols);
-  });
-  */
-
   it("test 7", () => {
     const costs: Matrix<number> = [
       [22, 26, 18, 0],
