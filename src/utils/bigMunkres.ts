@@ -1,89 +1,189 @@
 import { Matrix } from "../types/matrix";
-import { Tuple } from "../types/tuple";
+import { getMin } from "../utils/array";
+import { step5 } from "./dualMunkres";
 
-import { step1, step5 } from "./munkres";
+export function findUncoveredMin(
+  coveredX: number[],
+  slackV: bigint[],
+  slackX: number[]
+): [number, number] {
+  const X = slackV.length;
 
-/**
- * Searches for an uncovered zero in the matrix and returns its coordinates.
- * If not found, the coordinates of the smallest uncovered value are returned
- * instead.
- *
- * @param mat - The cost matrix.
- * @param primeY - An array of prime y coordinates to x coordinates.
- * @param starX - An array of star x coordinates to y coordinates.
- *
- * @returns The coordinates of an uncovered zero, if found.
- * Otherwise, the coordinates to the smallest uncovered value.
- */
-export function bigFindUncoveredZeroOrMin(
-  mat: Matrix<bigint>,
-  primeY: number[],
-  starX: number[]
-): Tuple<number> {
-  const X = starX.length;
-  const Y = primeY.length;
-
-  let minX = -1;
   let minY = -1;
+  let minX = -1;
   let minV = undefined as unknown as bigint;
-
-  // For each cell
-  for (let y = 0; y < Y; ++y) {
-    // Skip if the row is covered
-    if (primeY[y] >= 0) {
-      continue;
-    }
-    const vals = mat[y];
-    for (let x = 0; x < X; ++x) {
-      // Skip if the column is covered
-      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
-        continue;
-      }
-      // Return immediately if a zero is found
-      if (vals[x] == 0n) {
-        return [y, x];
-      }
-      // Track the smallest uncovered value
-      if (!(minV <= vals[x])) {
-        minV = vals[x];
-        minX = x;
-        minY = y;
+  for (let x = 0; x < X; ++x) {
+    if (!(minV <= slackV[x]) && coveredX[x] === -1) {
+      minV = slackV[x];
+      minY = slackX[x];
+      minX = x;
+      if (minV === 0n) {
+        break;
       }
     }
   }
 
-  // Return the smallest value's coordinates
   return [minY, minX];
 }
 
-/**
- * Performs the initial steps of searching for zeros in the cost matrix to
- * "star", then returns the number of stars made.
- *
- * A star indicates a potential part of the optimal solution. Each star is
- * the only one in its row and column.
- *
- * @param mat - The cost matrix.
- * @param starX - An array tracking the star status of columns.
- * @param starY - An array tracking the star status of rows.
- *
- * @returns The number of stars made.
- */
+export function initSlack(
+  y: number,
+  mat: Matrix<bigint>,
+  dualX: bigint[],
+  dualY: bigint[],
+  slackV: bigint[],
+  slackX: number[]
+): void {
+  const X = slackV.length;
+  const row = mat[y];
+
+  slackX.fill(y);
+  for (let x = 0; x < X; ++x) {
+    slackV[x] = row[x] - dualY[y] - dualX[x];
+  }
+}
+
+export function updateSlack(
+  y: number,
+  mat: Matrix<bigint>,
+  coveredX: number[],
+  dualX: bigint[],
+  dualY: bigint[],
+  slackV: bigint[],
+  slackX: number[]
+): void {
+  const X = slackV.length;
+  const row = mat[y];
+
+  for (let x = 0; x < X; ++x) {
+    if (coveredX[x] !== -1) {
+      continue;
+    }
+    const slack = row[x] - dualY[y] - dualX[x];
+    if (slack < slackV[x]) {
+      slackV[x] = slack;
+      slackX[x] = y;
+    }
+  }
+}
+
+export function initStage(
+  y: number,
+  mat: Matrix<bigint>,
+  coveredX: number[],
+  coveredY: boolean[],
+  dualX: bigint[],
+  dualY: bigint[],
+  slackV: bigint[],
+  slackX: number[]
+): void {
+  // Initialize cover
+  coveredX.fill(-1);
+  coveredY.fill(false);
+  coveredY[y] = true;
+
+  // Initialize slack
+  initSlack(y, mat, dualX, dualY, slackV, slackX);
+}
+
+export function stage(
+  mat: Matrix<bigint>,
+  coveredX: number[],
+  coveredY: boolean[],
+  dualX: bigint[],
+  dualY: bigint[],
+  slackV: bigint[],
+  slackX: number[],
+  starsX: number[],
+  starsY: number[]
+): void {
+  initStage(
+    starsY.indexOf(-1),
+    mat,
+    coveredX,
+    coveredY,
+    dualX,
+    dualY,
+    slackV,
+    slackX
+  );
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    // Find an uncovered min
+    const [y, x] = findUncoveredMin(coveredX, slackV, slackX);
+
+    // Step 6: If not zero, zero the min
+    if (slackV[x] > 0n) {
+      bigStep6(slackV[x], coveredX, coveredY, dualX, dualY, slackV);
+    }
+
+    // Cover the column
+    coveredX[x] = y;
+
+    // Step 5: If no star in the column, turn primes into stars
+    if (starsX[x] === -1) {
+      step5(x, coveredX, starsX, starsY);
+      break;
+    }
+
+    // Cover the star's row and update slack
+    const sy = starsX[x];
+    coveredY[sy] = true;
+    updateSlack(sy, mat, coveredX, dualX, dualY, slackV, slackX);
+  }
+}
+
+export function step1(
+  mat: Matrix<bigint>,
+  dualX: bigint[],
+  dualY: bigint[]
+): void {
+  const Y = mat.length;
+  const X = mat[0]?.length ?? 0;
+
+  // Reduce rows
+  if (Y <= X) {
+    for (let y = 0; y < Y; ++y) {
+      dualY[y] = getMin(mat[y])!;
+    }
+  }
+
+  // Reduce columns
+  if (Y >= X) {
+    for (let x = 0; x < X; ++x) {
+      dualX[x] = mat[0][x] - dualY[0];
+    }
+    for (let y = 1; y < Y; ++y) {
+      const row = mat[y];
+      const dy = dualY[y];
+      for (let x = 0; x < X; ++x) {
+        if (row[x] - dy < dualX[x]) {
+          dualX[x] = row[x] - dy;
+        }
+      }
+    }
+  }
+}
+
 export function bigSteps2To3(
   mat: Matrix<bigint>,
-  starX: number[],
-  starY: number[]
+  dualX: bigint[],
+  dualY: bigint[],
+  starsX: number[],
+  starsY: number[]
 ): number {
-  const X = starX.length;
-  const Y = starY.length;
+  const X = dualX.length;
+  const Y = dualY.length;
 
   let stars = 0;
   for (let y = 0; y < Y; ++y) {
-    const vals = mat[y];
+    const row = mat[y];
+    const dy = dualY[y];
     for (let x = 0; x < X; ++x) {
-      if (vals[x] == 0n && starX[x] < 0) {
-        starX[x] = y;
-        starY[y] = x;
+      if (starsX[x] === -1 && row[x] === dualX[x] + dy) {
+        starsX[x] = y;
+        starsY[y] = x;
         ++stars;
         break;
       }
@@ -93,27 +193,6 @@ export function bigSteps2To3(
   return stars;
 }
 
-/**
- * Find and augment assignments until an optimal set is found.
- *
- * It attempts to either find an uncovered zero to star or adjusts
- * the matrix to create more zeros if none found. If an uncovered zero is
- * found but cannot be starred due to conflicts (i.e., another star in the
- * same row or column), it primes the zero and possibly adjusts existing
- * stars to resolve the conflict, thereby augmenting the current set of
- * assignments. This process is repeated until there are as many stars as
- * there are columns in the matrix, at which point optimal assignments
- * have been found.
- *
- * @param mat - An MxN cost matrix. Modified in place.
- *
- * @throws - {@link RangeError}
- * Thrown if the given MxN matrix has more rows than columns (M \> N).
- *
- * @privateRemarks
- * Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this outline}
- * and enhanced with custom optimizations.
- */
 export function bigStep4(mat: Matrix<bigint>): number[] {
   const Y = mat.length;
   const X = mat[0]?.length ?? 0;
@@ -123,76 +202,63 @@ export function bigStep4(mat: Matrix<bigint>): number[] {
     throw new RangeError("invalid MxN matrix: M > N");
   }
 
-  const starX = new Array<number>(X).fill(-1);
-  const starY = new Array<number>(Y).fill(-1);
-  const primeY = new Array<number>(Y).fill(-1);
+  const coveredX: number[] = new Array(X);
+  const coveredY: boolean[] = new Array(Y);
+  const dualX: bigint[] = new Array(X).fill(0n);
+  const dualY: bigint[] = new Array(Y).fill(0n);
+  const slackV: bigint[] = new Array(X);
+  const slackX: number[] = new Array(X);
+  const starsX: number[] = new Array(X).fill(-1);
+  const starsY: number[] = new Array(Y).fill(-1);
 
   // Step 1: Reduce
-  step1(mat);
+  step1(mat, dualX, dualY);
 
-  // Steps 2 & 3: Find initial stars
-  let stars = bigSteps2To3(mat, starX, starY);
+  // Steps 2 & 3: Find initial matching
+  let stars = bigSteps2To3(mat, dualX, dualY, starsX, starsY);
 
-  // Step 4: Find optimal assignments
+  // Step 4: Find complete matching
   while (stars < Y) {
-    // Find an uncovered zero or the uncovered min
-    const [y, x] = bigFindUncoveredZeroOrMin(mat, primeY, starX);
-
-    // Step 6: If no zero found, create a zero(s) from the min
-    if (mat[y][x] != 0n) {
-      bigStep6(mat[y][x], mat, primeY, starX);
-    }
-
-    // Prime the zero / cover the row
-    primeY[y] = x;
-
-    // Step 5: If no star in the prime's row, turn primes into stars
-    if (starY[y] < 0) {
-      step5(y, primeY, starX, starY);
-      primeY.fill(-1);
-      ++stars;
-    }
+    stage(
+      mat,
+      coveredX,
+      coveredY,
+      dualX,
+      dualY,
+      slackV,
+      slackX,
+      starsX,
+      starsY
+    );
+    ++stars;
   }
 
   // Return assignments ([y] -> x)
-  return starY;
+  return starsY;
 }
 
-/**
- * Adjusts a cost matrix to uncover more zeros.
- *
- * The matrix is modified by adding a given value to every element of covered
- * rows, and subtracting `Infinity` from every element of uncovered columns.
- * If an element's row is covered and column is uncovered, no change is made.
- *
- * @param min - The value to adjust the matrix by.
- * Should be the minimum uncovered value (see {@link step4}).
- * @param mat - The cost matrix. Modified in place.
- * @param primeY - An array of prime y coordinates to x coordinates.
- * @param starX - An array of star x coordinates to y coordinates.
- */
 export function bigStep6(
   min: bigint,
-  mat: Matrix<bigint>,
-  primeY: number[],
-  starX: number[]
+  coveredX: number[],
+  coveredY: boolean[],
+  dualX: bigint[],
+  dualY: bigint[],
+  slackV: bigint[]
 ): void {
-  const X = starX.length;
-  const Y = primeY.length;
+  const X = dualX.length;
+  const Y = dualY.length;
 
-  // For each cell
   for (let y = 0; y < Y; ++y) {
-    const vals = mat[y];
-    for (let x = 0; x < X; ++x) {
-      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
-        if (primeY[y] >= 0) {
-          // The cell's column and row are covered
-          vals[x] += min;
-        }
-      } else if (primeY[y] < 0) {
-        // The cell's column and row are uncovered
-        vals[x] -= min;
-      }
+    if (coveredY[y]) {
+      dualY[y] += min;
+    }
+  }
+
+  for (let x = 0; x < X; ++x) {
+    if (coveredX[x] === -1) {
+      slackV[x] -= min;
+    } else {
+      dualX[x] -= min;
     }
   }
 }
