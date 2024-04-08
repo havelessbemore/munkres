@@ -14,7 +14,7 @@ export function copy<T>(matrix: Matrix<T>): Matrix<T> {
   const Y = matrix.length;
   const dupe: Matrix<T> = new Array(Y);
   for (let y = 0; y < Y; ++y) {
-    dupe[y] = Array.from(matrix[y]);
+    dupe[y] = matrix[y].slice(0);
   }
   return dupe;
 }
