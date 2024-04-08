@@ -166,7 +166,7 @@ export function step4(mat: Matrix<number>): number[] {
     throw new RangeError("invalid MxN matrix: M > N");
   }
 
-  const coveredY = new Array<number>(Y).fill(-1);
+  const coveredY = new Array<number>(Y);
   const dualX = new Array<number>(X).fill(0);
   const dualY = new Array<number>(Y).fill(0);
   const starX = new Array<number>(X).fill(-1);
@@ -196,6 +196,9 @@ export function stage(
   starX: number[],
   starY: number[]
 ): void {
+  // Initialize stage
+  coveredY.fill(-1);
+
   // eslint-disable-next-line no-constant-condition
   while (true) {
     // Find the uncovered min
@@ -212,7 +215,6 @@ export function stage(
     // Step 5: If no star in the prime's row, turn primes into stars
     if (starY[y] < 0) {
       step5(y, coveredY, starX, starY);
-      coveredY.fill(-1);
       break;
     }
   }
