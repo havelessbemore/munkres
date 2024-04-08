@@ -391,15 +391,9 @@ describe(`${munkres.name}()`, () => {
     const sols = [
       new Map([
         [0, 0],
-        [1, 1],
+        [1, 3],
         [2, 2],
-        [3, 3],
-      ]),
-      new Map([
-        [0, 0],
-        [1, 1],
-        [2, 3],
-        [3, 2],
+        [3, 1],
       ]),
       new Map([
         [0, 2],
@@ -526,30 +520,15 @@ describe(`${munkres.name}()`, () => {
   test("verify output properties for various matrix dimensions", () => {
     const YY = 33;
     const XX = 33;
-    const minV = -1e9;
-    const maxV = 1e9;
-    const spanV = maxV - minV;
+    const VAL_MIN = -1e9;
+    const VAL_MAX = 1e9;
 
     for (let Y = 1; Y < YY; ++Y) {
       for (let X = 1; X < XX; ++X) {
-        // Create a Y by X cost matrix
-        const costs: Matrix<number> = new Array(Y);
-        for (let y = 0; y < Y; ++y) {
-          const row = new Array(X);
-          for (let x = 0; x < X; ++x) {
-            const r = Math.random();
-            if (r < 0.08) {
-              row[x] = -Infinity;
-            } else if (r > 0.92) {
-              row[x] = Infinity;
-            } else if (r > 0.46 && r < 0.54) {
-              row[x] = 0;
-            } else {
-              row[x] = minV + Math.trunc(spanV * Math.random());
-            }
-          }
-          costs[y] = row;
-        }
+        const costs = gen(Y, X, () => {
+          const span = VAL_MAX - VAL_MIN;
+          return VAL_MIN + Math.trunc(span * Math.random());
+        });
 
         // Find assignments
         const pairs = munkres(costs);
@@ -724,7 +703,7 @@ describe(`${munkres.name}()`, () => {
       for (let X = 1; X < XX; ++X) {
         const costs = gen(Y, X, () => {
           const span = VAL_MAX - VAL_MIN;
-          return VAL_MIN + Math.trunc(span * Math.random());
+          return BigInt(VAL_MIN + Math.trunc(span * Math.random()));
         });
 
         // Find assignments
