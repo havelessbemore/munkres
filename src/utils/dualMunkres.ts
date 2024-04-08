@@ -1,7 +1,6 @@
 import { Matrix } from "../types/matrix";
 import { Tuple } from "../types/tuple";
-
-import { getColMin } from "./matrix";
+import { getMin } from "./array";
 
 /**
  * Searches for an uncovered zero in the matrix and returns its coordinates.
@@ -109,24 +108,26 @@ export function step1(
   const Y = mat.length;
   const X = mat[0]?.length ?? 0;
 
-  // Reduce columns
-  if (Y >= X) {
-    for (let x = 0; x < X; ++x) {
-      dualX[x] = getColMin(mat, x)!;
-    }
-  }
-
   // Reduce rows
   if (Y <= X) {
     for (let y = 0; y < Y; ++y) {
+      dualY[y] = getMin(mat[y])!;
+    }
+  }
+
+  // Reduce columns
+  if (Y >= X) {
+    for (let x = 0; x < X; ++x) {
+      dualX[x] = mat[0][x] - dualY[0];
+    }
+    for (let y = 1; y < Y; ++y) {
       const row = mat[y];
-      let min = row[0] - dualX[0];
-      for (let x = 1; x < X; ++x) {
-        if (min > row[x] - dualX[x]) {
-          min = row[x] - dualX[x];
+      const dy = dualY[y];
+      for (let x = 0; x < X; ++x) {
+        if (row[x] - dy < dualX[x]) {
+          dualX[x] = row[x] - dy;
         }
       }
-      dualY[y] = min;
     }
   }
 }
