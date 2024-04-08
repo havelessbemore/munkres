@@ -5,15 +5,13 @@ import { getColMin } from "./matrix";
 
 /**
  * Searches for an uncovered zero in the matrix and returns its coordinates.
- * If not found, the coordinates of the smallest uncovered value are returned
- * instead.
  *
  * @param mat - The cost matrix.
  * @param primeY - An array of prime y coordinates to x coordinates.
  * @param starX - An array of star x coordinates to y coordinates.
  *
  * @returns The coordinates of an uncovered zero, if found.
- * Otherwise, the coordinates to the smallest uncovered value.
+ * Otherwise, returns `[-1, -1]`;
  */
 export function findUncoveredZero(
   mat: Matrix<number>,
@@ -32,13 +30,9 @@ export function findUncoveredZero(
       continue;
     }
     const row = mat[y];
+    const dy = dualY[y];
     for (let x = 0; x < X; ++x) {
-      // Skip if the column is covered
-      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
-        continue;
-      }
-      // Return immediately if a zero is found
-      if (row[x] == dualX[x] + dualY[y]) {
+      if (row[x] == dualX[x] + dy && (starX[x] < 0 || primeY[starX[x]] >= 0)) {
         return [y, x];
       }
     }
@@ -47,6 +41,16 @@ export function findUncoveredZero(
   return [-1, -1];
 }
 
+/**
+ * Searches for the smallest uncovered value
+ * in the matrix and returns its coordinates.
+ *
+ * @param mat - The cost matrix.
+ * @param primeY - An array of prime y coordinates to x coordinates.
+ * @param starX - An array of star x coordinates to y coordinates.
+ *
+ * @returns The coordinates to the smallest uncovered value.
+ */
 export function findUncoveredMin(
   mat: Matrix<number>,
   dualX: number[],
@@ -68,13 +72,14 @@ export function findUncoveredMin(
       continue;
     }
     const row = mat[y];
+    const dy = dualY[y];
     for (let x = 0; x < X; ++x) {
       // Skip if the column is covered
       if (starX[x] >= 0 && primeY[starX[x]] < 0) {
         continue;
       }
       // Track the smallest uncovered value
-      const val = row[x] - dualX[x] - dualY[y];
+      const val = row[x] - dualX[x] - dy;
       if (!(minV <= val)) {
         minV = val;
         minX = x;
@@ -209,10 +214,10 @@ export function step4(mat: Matrix<number>): number[] {
 
   // Step 4: Find optimal assignments
   while (stars < Y) {
-    // Find an uncovered zero or the uncovered min
+    // Find an uncovered zero
     let [y, x] = findUncoveredZero(mat, dualX, dualY, primeY, starX);
 
-    // Step 6: If no zero found, create a zero(s) from the min
+    // Step 6: If no zero found, find and zero the min
     if (y < 0) {
       [y, x] = findUncoveredMin(mat, dualX, dualY, primeY, starX);
       step6(mat[y][x] - dualX[x] - dualY[y], dualX, dualY, primeY, starX);
