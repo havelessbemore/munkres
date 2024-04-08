@@ -6,20 +6,20 @@ import { getMin } from "./array";
  * in the matrix and returns its coordinates.
  *
  * @param mat - The cost matrix.
- * @param primeY - An array of prime y coordinates to x coordinates.
+ * @param coveredY - An array of prime y coordinates to x coordinates.
  * @param starX - An array of star x coordinates to y coordinates.
  *
  * @returns The coordinates to the smallest uncovered value.
  */
 export function findUncoveredMin(
   mat: Matrix<number>,
+  coveredY: number[],
   dualX: number[],
   dualY: number[],
-  primeY: number[],
   starX: number[]
 ): [number, number, number] {
   const X = starX.length;
-  const Y = primeY.length;
+  const Y = coveredY.length;
 
   let minX = -1;
   let minY = -1;
@@ -28,14 +28,14 @@ export function findUncoveredMin(
   // For each cell
   for (let y = 0; y < Y; ++y) {
     // Skip if the row is covered
-    if (primeY[y] >= 0) {
+    if (coveredY[y] >= 0) {
       continue;
     }
     const row = mat[y];
     const dy = dualY[y];
     for (let x = 0; x < X; ++x) {
       // Skip if the column is covered
-      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
+      if (starX[x] >= 0 && coveredY[starX[x]] < 0) {
         continue;
       }
       // Track the smallest uncovered value
@@ -166,9 +166,9 @@ export function step4(mat: Matrix<number>): number[] {
     throw new RangeError("invalid MxN matrix: M > N");
   }
 
+  const coveredY = new Array<number>(Y).fill(-1);
   const dualX = new Array<number>(X).fill(0);
   const dualY = new Array<number>(Y).fill(0);
-  const primeY = new Array<number>(Y).fill(-1);
   const starX = new Array<number>(X).fill(-1);
   const starY = new Array<number>(Y).fill(-1);
 
@@ -180,7 +180,7 @@ export function step4(mat: Matrix<number>): number[] {
 
   // Step 4: Find optimal assignments
   while (stars < Y) {
-    stage(mat, primeY, dualX, dualY, starX, starY);
+    stage(mat, coveredY, dualX, dualY, starX, starY);
     ++stars;
   }
 
@@ -190,7 +190,7 @@ export function step4(mat: Matrix<number>): number[] {
 
 export function stage(
   mat: Matrix<number>,
-  primeY: number[],
+  coveredY: number[],
   dualX: number[],
   dualY: number[],
   starX: number[],
@@ -199,20 +199,20 @@ export function stage(
   // eslint-disable-next-line no-constant-condition
   while (true) {
     // Find the uncovered min
-    const [y, x, min] = findUncoveredMin(mat, dualX, dualY, primeY, starX);
+    const [y, x, min] = findUncoveredMin(mat, coveredY, dualX, dualY, starX);
 
     // Step 6: If not zero, zero the min
     if (min > 0) {
-      step6(min, dualX, dualY, primeY, starX);
+      step6(min, coveredY, dualX, dualY, starX);
     }
 
     // Prime the zero / cover the row
-    primeY[y] = x;
+    coveredY[y] = x;
 
     // Step 5: If no star in the prime's row, turn primes into stars
     if (starY[y] < 0) {
-      step5(y, primeY, starX, starY);
-      primeY.fill(-1);
+      step5(y, coveredY, starX, starY);
+      coveredY.fill(-1);
       break;
     }
   }
@@ -227,24 +227,24 @@ export function stage(
  * in the matrix, bringing the algorithm closer to an optimal assignment.
  *
  * @param y - The starting prime's y coordinate.
- * @param primeY - An array of prime y coordinates to x coordinates.
+ * @param coveredY - An array of prime y coordinates to x coordinates.
  * @param starX - An array of star x coordinates to y coordinates.
  * @param starY - An array of star y coordinates to x coordinates.
  */
 export function step5(
   y: number,
-  primeY: number[],
+  coveredY: number[],
   starX: number[],
   starY: number[]
 ): void {
   // Sanity check
-  if (primeY[y] < 0) {
+  if (coveredY[y] < 0) {
     throw new Error("Input must be prime.");
   }
 
   do {
     // Mark prime as a star
-    const x = primeY[y];
+    const x = coveredY[y];
     const sy = starX[x];
     starX[x] = y;
     starY[y] = x;
@@ -264,27 +264,27 @@ export function step5(
  * @param min - The value to adjust the matrix by.
  * Should be the minimum uncovered value (see {@link step4}).
  * @param mat - The cost matrix. Modified in place.
- * @param primeY - An array of prime y coordinates to x coordinates.
+ * @param coveredY - An array of prime y coordinates to x coordinates.
  * @param starX - An array of star x coordinates to y coordinates.
  */
 export function step6(
   min: number,
+  coveredY: number[],
   dualX: number[],
   dualY: number[],
-  primeY: number[],
   starX: number[]
 ): void {
   const X = starX.length;
-  const Y = primeY.length;
+  const Y = coveredY.length;
 
   for (let y = 0; y < Y; ++y) {
-    if (primeY[y] >= 0) {
+    if (coveredY[y] >= 0) {
       dualY[y] -= min;
     }
   }
 
   for (let x = 0; x < X; ++x) {
-    if (!(starX[x] >= 0 && primeY[starX[x]] < 0)) {
+    if (!(starX[x] >= 0 && coveredY[starX[x]] < 0)) {
       dualX[x] += min;
     }
   }
