@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 
 import { munkres } from "./munkres";
 import { Matrix } from "./types/matrix";
+import { gen } from "./utils/matrix";
 
 function oneOf<T>(actual: T, expecteds: Iterable<T>): void {
   let error: Error | undefined = undefined;
@@ -716,26 +717,15 @@ describe(`${munkres.name}()`, () => {
   test("verify output properties for various bigint matrix dimensions", () => {
     const YY = 33;
     const XX = 33;
-    const minV = -1e9;
-    const maxV = 1e9;
-    const spanV = maxV - minV;
+    const VAL_MIN = -1e9;
+    const VAL_MAX = 1e9;
 
     for (let Y = 1; Y < YY; ++Y) {
       for (let X = 1; X < XX; ++X) {
-        // Create a Y by X cost matrix
-        const costs: Matrix<bigint> = new Array(Y);
-        for (let y = 0; y < Y; ++y) {
-          const row = new Array(X);
-          for (let x = 0; x < X; ++x) {
-            const r = Math.random();
-            if (r > 0.46 && r < 0.54) {
-              row[x] = 0n;
-            } else {
-              row[x] = BigInt(minV + Math.trunc(spanV * Math.random()));
-            }
-          }
-          costs[y] = row;
-        }
+        const costs = gen(Y, X, () => {
+          const span = VAL_MAX - VAL_MIN;
+          return VAL_MIN + Math.trunc(span * Math.random());
+        });
 
         // Find assignments
         const pairs = munkres(costs);
