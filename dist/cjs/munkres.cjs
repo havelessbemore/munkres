@@ -44,7 +44,7 @@ function copy(matrix) {
   const Y = matrix.length;
   const dupe = new Array(Y);
   for (let y = 0; y < Y; ++y) {
-    dupe[y] = Array.from(matrix[y]);
+    dupe[y] = matrix[y].slice(0);
   }
   return dupe;
 }
@@ -231,7 +231,189 @@ function invertCostMatrix(costMatrix, bigVal) {
 function negateCostMatrix(costMatrix) {
   negate(costMatrix);
 }
-function findUncoveredZeroOrMin(mat, primeY, starX) {
+function step1$1(matrix, dualX, dualY) {
+  var _a;
+  const Y = matrix.length;
+  const X = ((_a = matrix[0]) == null ? void 0 : _a.length) ?? 0;
+  if (Y <= X) {
+    for (let y = 0; y < Y; ++y) {
+      dualY[y] = getMin$1(matrix[y]);
+    }
+  }
+  if (Y >= X) {
+    for (let x = 0; x < X; ++x) {
+      dualX[x] = matrix[0][x] - dualY[0];
+    }
+    for (let y = 1; y < Y; ++y) {
+      const row = matrix[y];
+      const dy = dualY[y];
+      for (let x = 0; x < X; ++x) {
+        if (row[x] - dy < dualX[x]) {
+          dualX[x] = row[x] - dy;
+        }
+      }
+    }
+  }
+}
+function steps2To3$1(matrix, dualX, dualY, starsX, starsY) {
+  const X = dualX.length;
+  const Y = dualY.length;
+  let stars = 0;
+  for (let y = 0; y < Y; ++y) {
+    const row = matrix[y];
+    const dy = dualY[y];
+    for (let x = 0; x < X; ++x) {
+      if (starsX[x] === -1 && row[x] === dualX[x] + dy) {
+        starsX[x] = y;
+        starsY[y] = x;
+        ++stars;
+        break;
+      }
+    }
+  }
+  return stars;
+}
+function bigStep4(matrix) {
+  var _a;
+  const Y = matrix.length;
+  const X = ((_a = matrix[0]) == null ? void 0 : _a.length) ?? 0;
+  if (Y > X) {
+    throw new RangeError("invalid MxN matrix: M > N");
+  }
+  const dualX = new Array(X).fill(0n);
+  const dualY = new Array(Y).fill(0n);
+  step1$1(matrix, dualX, dualY);
+  const starsX = new Array(X).fill(-1);
+  const starsY = new Array(Y).fill(-1);
+  let stars = steps2To3$1(matrix, dualX, dualY, starsX, starsY);
+  if (stars >= Y) {
+    return starsY;
+  }
+  const coveredX = new Array(X);
+  const coveredY = new Array(Y).fill(-1);
+  const slackV = new Array(X);
+  const slackX = new Array(X);
+  const exposedX = new Array(X);
+  for (let rootY = 0; stars < Y; ++rootY) {
+    if (starsY[rootY] !== -1) {
+      continue;
+    }
+    coveredX.fill(-1);
+    coveredY[rootY] = rootY;
+    clearCover(exposedX);
+    initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
+    while (true) {
+      const [y, x] = findUncoveredMin$1(exposedX, slackV, slackX);
+      if (slackV[x] > 0n) {
+        step6$1(slackV[x], rootY, coveredX, coveredY, dualX, dualY, slackV);
+      }
+      coveredX[x] = y;
+      cover(exposedX, x);
+      if (starsX[x] === -1) {
+        step5$1(x, coveredX, starsX, starsY);
+        ++stars;
+        break;
+      }
+      const sy = starsX[x];
+      coveredY[sy] = rootY;
+      updateSlack(sy, matrix, dualX, dualY, exposedX, slackV, slackX);
+    }
+  }
+  return starsY;
+}
+function step5$1(x, coveredX, starX, starY) {
+  do {
+    const y = coveredX[x];
+    const sx = starY[y];
+    starX[x] = y;
+    starY[y] = x;
+    x = sx;
+  } while (x !== -1);
+}
+function step6$1(min, rootY, coveredX, coveredY, dualX, dualY, slackV) {
+  const X = dualX.length;
+  const Y = dualY.length;
+  for (let y = 0; y < Y; ++y) {
+    if (coveredY[y] === rootY) {
+      dualY[y] += min;
+    }
+  }
+  for (let x = 0; x < X; ++x) {
+    if (coveredX[x] === -1) {
+      slackV[x] -= min;
+    } else {
+      dualX[x] -= min;
+    }
+  }
+}
+function clearCover(cover2) {
+  const N = cover2.length;
+  for (let i = 0; i < N; ++i) {
+    cover2[i] = i;
+  }
+}
+function cover(cover2, i) {
+  const N = cover2.length;
+  const next = i + 1 < N ? cover2[i + 1] : N;
+  for (let j = i; j >= 0 && cover2[j] === i; --j) {
+    cover2[j] = next;
+  }
+}
+function findUncoveredMin$1(exposedX, slackV, slackX) {
+  const X = slackV.length;
+  let minX = exposedX[0];
+  let minV = slackV[minX];
+  for (let x = minX + 1; x < X && exposedX[x] < X; ++x) {
+    x = exposedX[x];
+    if (minV > slackV[x]) {
+      minV = slackV[x];
+      minX = x;
+      if (minV === 0n) {
+        break;
+      }
+    }
+  }
+  return [slackX[minX], minX];
+}
+function initSlack(y, matrix, dualX, dualY, slackV, slackX) {
+  const X = slackV.length;
+  const row = matrix[y];
+  const dy = dualY[y];
+  slackX.fill(y);
+  for (let x = 0; x < X; ++x) {
+    slackV[x] = row[x] - dualX[x] - dy;
+  }
+}
+function updateSlack(y, matrix, dualX, dualY, exposedX, slackV, slackX) {
+  const X = slackV.length;
+  const row = matrix[y];
+  const dy = dualY[y];
+  for (let x = 0; x < X && exposedX[x] < X; ++x) {
+    x = exposedX[x];
+    const slack = row[x] - dualX[x] - dy;
+    if (slack < slackV[x]) {
+      slackV[x] = slack;
+      slackX[x] = y;
+    }
+  }
+}
+function findUncoveredZero(mat, primeY, starX) {
+  const X = starX.length;
+  const Y = primeY.length;
+  for (let y = 0; y < Y; ++y) {
+    if (primeY[y] >= 0) {
+      continue;
+    }
+    const vals = mat[y];
+    for (let x = 0; x < X; ++x) {
+      if (vals[x] == 0 && (starX[x] < 0 || primeY[starX[x]] >= 0)) {
+        return [y, x];
+      }
+    }
+  }
+  return [-1, -1];
+}
+function findUncoveredMin(mat, primeY, starX) {
   const X = starX.length;
   const Y = primeY.length;
   let minX = -1;
@@ -243,13 +425,7 @@ function findUncoveredZeroOrMin(mat, primeY, starX) {
     }
     const vals = mat[y];
     for (let x = 0; x < X; ++x) {
-      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
-        continue;
-      }
-      if (vals[x] == 0) {
-        return [y, x];
-      }
-      if (!(minV <= vals[x])) {
+      if (!(minV <= vals[x]) && (starX[x] < 0 || primeY[starX[x]] >= 0)) {
         minV = vals[x];
         minX = x;
         minY = y;
@@ -299,8 +475,9 @@ function step4(mat) {
   step1(mat);
   let stars = steps2To3(mat, starX, starY);
   while (stars < Y) {
-    const [y, x] = findUncoveredZeroOrMin(mat, primeY, starX);
-    if (mat[y][x] != 0) {
+    let [y, x] = findUncoveredZero(mat, primeY, starX);
+    if (y < 0) {
+      [y, x] = findUncoveredMin(mat, primeY, starX);
       step6(mat[y][x], mat, primeY, starX);
     }
     primeY[y] = x;
@@ -355,92 +532,6 @@ function step6Inf(mat, primeY, starX) {
         }
       } else if (primeY[y] < 0) {
         vals[x] = 0;
-      }
-    }
-  }
-}
-function bigFindUncoveredZeroOrMin(mat, primeY, starX) {
-  const X = starX.length;
-  const Y = primeY.length;
-  let minX = -1;
-  let minY = -1;
-  let minV = void 0;
-  for (let y = 0; y < Y; ++y) {
-    if (primeY[y] >= 0) {
-      continue;
-    }
-    const vals = mat[y];
-    for (let x = 0; x < X; ++x) {
-      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
-        continue;
-      }
-      if (vals[x] == 0n) {
-        return [y, x];
-      }
-      if (!(minV <= vals[x])) {
-        minV = vals[x];
-        minX = x;
-        minY = y;
-      }
-    }
-  }
-  return [minY, minX];
-}
-function bigSteps2To3(mat, starX, starY) {
-  const X = starX.length;
-  const Y = starY.length;
-  let stars = 0;
-  for (let y = 0; y < Y; ++y) {
-    const vals = mat[y];
-    for (let x = 0; x < X; ++x) {
-      if (vals[x] == 0n && starX[x] < 0) {
-        starX[x] = y;
-        starY[y] = x;
-        ++stars;
-        break;
-      }
-    }
-  }
-  return stars;
-}
-function bigStep4(mat) {
-  var _a;
-  const Y = mat.length;
-  const X = ((_a = mat[0]) == null ? void 0 : _a.length) ?? 0;
-  if (Y > X) {
-    throw new RangeError("invalid MxN matrix: M > N");
-  }
-  const starX = new Array(X).fill(-1);
-  const starY = new Array(Y).fill(-1);
-  const primeY = new Array(Y).fill(-1);
-  step1(mat);
-  let stars = bigSteps2To3(mat, starX, starY);
-  while (stars < Y) {
-    const [y, x] = bigFindUncoveredZeroOrMin(mat, primeY, starX);
-    if (mat[y][x] != 0n) {
-      bigStep6(mat[y][x], mat, primeY, starX);
-    }
-    primeY[y] = x;
-    if (starY[y] < 0) {
-      step5(y, primeY, starX, starY);
-      primeY.fill(-1);
-      ++stars;
-    }
-  }
-  return starY;
-}
-function bigStep6(min, mat, primeY, starX) {
-  const X = starX.length;
-  const Y = primeY.length;
-  for (let y = 0; y < Y; ++y) {
-    const vals = mat[y];
-    for (let x = 0; x < X; ++x) {
-      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
-        if (primeY[y] >= 0) {
-          vals[x] += min;
-        }
-      } else if (primeY[y] < 0) {
-        vals[x] -= min;
       }
     }
   }

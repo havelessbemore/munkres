@@ -1,4 +1,6 @@
 import { Matrix } from './types/matrix';
+import { Matrix as Matrix_2 } from '../types/matrix';
+import { Tuple } from './types/tuple';
 
 /**
  * Constructs a cost matrix for a set of
@@ -29,20 +31,9 @@ import { Matrix } from './types/matrix';
  * //   [7, 7]  // [  'Bob' + 'Job1',   'Bob' + 'Job2']
  * // ]
  */
-export declare function createCostMatrix<W, J>(workers: W[], jobs: J[], costFn: (worker: W, job: J) => number): Matrix<number>;
+export declare function createCostMatrix<W, J>(workers: W[], jobs: J[], costFn: (worker: W, job: J) => number): Matrix_2<number>;
 
-export declare function createCostMatrix<W, J>(workers: W[], jobs: J[], costFn: (worker: W, job: J) => bigint): Matrix<bigint>;
-
-/**
- * Finds the maximum value in a given cost matrix.
- *
- * @param costMatrix - The cost matrix.
- *
- * @returns The maximum value, or `undefined` if the matrix is empty.
- */
-export declare function getMaxCost(costMatrix: Matrix<number>): number | undefined;
-
-export declare function getMaxCost(costMatrix: Matrix<bigint>): bigint | undefined;
+export declare function createCostMatrix<W, J>(workers: W[], jobs: J[], costFn: (worker: W, job: J) => bigint): Matrix_2<bigint>;
 
 /**
  * Finds the maximum value in a given cost matrix.
@@ -51,9 +42,20 @@ export declare function getMaxCost(costMatrix: Matrix<bigint>): bigint | undefin
  *
  * @returns The maximum value, or `undefined` if the matrix is empty.
  */
-export declare function getMinCost(costMatrix: Matrix<number>): number | undefined;
+export declare function getMaxCost(costMatrix: Matrix_2<number>): number | undefined;
 
-export declare function getMinCost(costMatrix: Matrix<bigint>): bigint | undefined;
+export declare function getMaxCost(costMatrix: Matrix_2<bigint>): bigint | undefined;
+
+/**
+ * Finds the maximum value in a given cost matrix.
+ *
+ * @param costMatrix - The cost matrix.
+ *
+ * @returns The maximum value, or `undefined` if the matrix is empty.
+ */
+export declare function getMinCost(costMatrix: Matrix_2<number>): number | undefined;
+
+export declare function getMinCost(costMatrix: Matrix_2<bigint>): bigint | undefined;
 
 /**
  * Inverts the values in a given cost matrix by
@@ -96,9 +98,9 @@ export declare function getMinCost(costMatrix: Matrix<bigint>): bigint | undefin
  * //   [20, 10]
  * // ]
  */
-export declare function invertCostMatrix(costMatrix: Matrix<number>, bigVal?: number): void;
+export declare function invertCostMatrix(costMatrix: Matrix_2<number>, bigVal?: number): void;
 
-export declare function invertCostMatrix(costMatrix: Matrix<bigint>, bigVal?: bigint): void;
+export declare function invertCostMatrix(costMatrix: Matrix_2<bigint>, bigVal?: bigint): void;
 
 export { Matrix }
 
@@ -117,9 +119,9 @@ export { Matrix }
  * Runs the {@link https://en.wikipedia.org/wiki/Hungarian_algorithm | Munkres algorithm (aka Hungarian algorithm)} to solve
  * the {@link https://en.wikipedia.org/wiki/Assignment_problem | assignment problem}.
  */
-declare function munkres(costMatrix: Matrix<number>): [number, number][];
+declare function munkres(costMatrix: Matrix<number>): Tuple<number>[];
 
-declare function munkres(costMatrix: Matrix<bigint>): [number, number][];
+declare function munkres(costMatrix: Matrix<bigint>): Tuple<number>[];
 export default munkres;
 export { munkres }
 
@@ -148,8 +150,10 @@ export { munkres }
  * //   [-7, -8, -9]
  * // ]
  */
-export declare function negateCostMatrix(costMatrix: Matrix<number>): void;
+export declare function negateCostMatrix(costMatrix: Matrix_2<number>): void;
 
-export declare function negateCostMatrix(costMatrix: Matrix<bigint>): void;
+export declare function negateCostMatrix(costMatrix: Matrix_2<bigint>): void;
+
+export { Tuple }
 
 export { }

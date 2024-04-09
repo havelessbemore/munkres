@@ -11,6 +11,7 @@
 ### Type Aliases
 
 - [Matrix](modules.md#matrix)
+- [Tuple](modules.md#tuple)
 
 ### Functions
 
@@ -88,7 +89,24 @@ const booleanMatrix: Matrix<boolean> = [
 
 #### Defined in
 
-[types/matrix.d.ts:37](https://github.com/havelessbemore/munkres/blob/83f9dd4/src/types/matrix.d.ts#L37)
+[types/matrix.d.ts:37](https://github.com/havelessbemore/munkres/blob/a9def966f3aba9669c62c2965d92b08fe8073bea/src/types/matrix.d.ts#L37)
+
+___
+
+### Tuple
+
+Ƭ **Tuple**\<`A`, `B`\>: [`A`, `B`]
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `A` | `A` |
+| `B` | `A` |
+
+#### Defined in
+
+[types/tuple.d.ts:1](https://github.com/havelessbemore/munkres/blob/a9def966f3aba9669c62c2965d92b08fe8073bea/src/types/tuple.d.ts#L1)
 
 ## Functions
 
@@ -143,7 +161,7 @@ const matrix = createCostMatrix(workers, jobs, costFn);
 
 #### Defined in
 
-[utils/costMatrix.ts:33](https://github.com/havelessbemore/munkres/blob/83f9dd4/src/utils/costMatrix.ts#L33)
+[utils/costMatrix.ts:34](https://github.com/havelessbemore/munkres/blob/a9def966f3aba9669c62c2965d92b08fe8073bea/src/utils/costMatrix.ts#L34)
 
 ▸ **createCostMatrix**\<`W`, `J`\>(`workers`, `jobs`, `costFn`): [`Matrix`](modules.md#matrix)\<`bigint`\>
 
@@ -168,7 +186,7 @@ const matrix = createCostMatrix(workers, jobs, costFn);
 
 #### Defined in
 
-[utils/costMatrix.ts:38](https://github.com/havelessbemore/munkres/blob/83f9dd4/src/utils/costMatrix.ts#L38)
+[utils/costMatrix.ts:39](https://github.com/havelessbemore/munkres/blob/a9def966f3aba9669c62c2965d92b08fe8073bea/src/utils/costMatrix.ts#L39)
 
 ___
 
@@ -192,7 +210,7 @@ The maximum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[utils/costMatrix.ts:58](https://github.com/havelessbemore/munkres/blob/83f9dd4/src/utils/costMatrix.ts#L58)
+[utils/costMatrix.ts:59](https://github.com/havelessbemore/munkres/blob/a9def966f3aba9669c62c2965d92b08fe8073bea/src/utils/costMatrix.ts#L59)
 
 ▸ **getMaxCost**(`costMatrix`): `bigint` \| `undefined`
 
@@ -208,7 +226,7 @@ The maximum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[utils/costMatrix.ts:59](https://github.com/havelessbemore/munkres/blob/83f9dd4/src/utils/costMatrix.ts#L59)
+[utils/costMatrix.ts:60](https://github.com/havelessbemore/munkres/blob/a9def966f3aba9669c62c2965d92b08fe8073bea/src/utils/costMatrix.ts#L60)
 
 ___
 
@@ -232,7 +250,7 @@ The maximum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[utils/costMatrix.ts:73](https://github.com/havelessbemore/munkres/blob/83f9dd4/src/utils/costMatrix.ts#L73)
+[utils/costMatrix.ts:74](https://github.com/havelessbemore/munkres/blob/a9def966f3aba9669c62c2965d92b08fe8073bea/src/utils/costMatrix.ts#L74)
 
 ▸ **getMinCost**(`costMatrix`): `bigint` \| `undefined`
 
@@ -248,7 +266,7 @@ The maximum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[utils/costMatrix.ts:74](https://github.com/havelessbemore/munkres/blob/83f9dd4/src/utils/costMatrix.ts#L74)
+[utils/costMatrix.ts:75](https://github.com/havelessbemore/munkres/blob/a9def966f3aba9669c62c2965d92b08fe8073bea/src/utils/costMatrix.ts#L75)
 
 ___
 
@@ -311,7 +329,7 @@ invertCostMatrix(anotherMatrix, 50);
 
 #### Defined in
 
-[utils/costMatrix.ts:122](https://github.com/havelessbemore/munkres/blob/83f9dd4/src/utils/costMatrix.ts#L122)
+[utils/costMatrix.ts:123](https://github.com/havelessbemore/munkres/blob/a9def966f3aba9669c62c2965d92b08fe8073bea/src/utils/costMatrix.ts#L123)
 
 ▸ **invertCostMatrix**(`costMatrix`, `bigVal?`): `void`
 
@@ -328,13 +346,13 @@ invertCostMatrix(anotherMatrix, 50);
 
 #### Defined in
 
-[utils/costMatrix.ts:126](https://github.com/havelessbemore/munkres/blob/83f9dd4/src/utils/costMatrix.ts#L126)
+[utils/costMatrix.ts:127](https://github.com/havelessbemore/munkres/blob/a9def966f3aba9669c62c2965d92b08fe8073bea/src/utils/costMatrix.ts#L127)
 
 ___
 
 ### munkres
 
-▸ **munkres**(`costMatrix`): [`number`, `number`][]
+▸ **munkres**(`costMatrix`): [`Tuple`](modules.md#tuple)\<`number`\>[]
 
 Find the optimal assignments of `y` workers to `x` jobs to
 minimize total cost.
@@ -347,7 +365,7 @@ minimize total cost.
 
 #### Returns
 
-[`number`, `number`][]
+[`Tuple`](modules.md#tuple)\<`number`\>[]
 
 An array of pairs `[y, x]` representing the optimal assignment
 of workers to jobs. Each pair consists of a worker index `y` and a job
@@ -360,9 +378,9 @@ the [assignment problem](https://en.wikipedia.org/wiki/Assignment_problem).
 
 #### Defined in
 
-[munkres.ts:22](https://github.com/havelessbemore/munkres/blob/83f9dd4/src/munkres.ts#L22)
+[munkres.ts:24](https://github.com/havelessbemore/munkres/blob/a9def966f3aba9669c62c2965d92b08fe8073bea/src/munkres.ts#L24)
 
-▸ **munkres**(`costMatrix`): [`number`, `number`][]
+▸ **munkres**(`costMatrix`): [`Tuple`](modules.md#tuple)\<`number`\>[]
 
 #### Parameters
 
@@ -372,11 +390,11 @@ the [assignment problem](https://en.wikipedia.org/wiki/Assignment_problem).
 
 #### Returns
 
-[`number`, `number`][]
+[`Tuple`](modules.md#tuple)\<`number`\>[]
 
 #### Defined in
 
-[munkres.ts:23](https://github.com/havelessbemore/munkres/blob/83f9dd4/src/munkres.ts#L23)
+[munkres.ts:25](https://github.com/havelessbemore/munkres/blob/a9def966f3aba9669c62c2965d92b08fe8073bea/src/munkres.ts#L25)
 
 ___
 
@@ -421,7 +439,7 @@ negateCostMatrix(costMatrix);
 
 #### Defined in
 
-[utils/costMatrix.ts:162](https://github.com/havelessbemore/munkres/blob/83f9dd4/src/utils/costMatrix.ts#L162)
+[utils/costMatrix.ts:163](https://github.com/havelessbemore/munkres/blob/a9def966f3aba9669c62c2965d92b08fe8073bea/src/utils/costMatrix.ts#L163)
 
 ▸ **negateCostMatrix**(`costMatrix`): `void`
 
@@ -437,4 +455,4 @@ negateCostMatrix(costMatrix);
 
 #### Defined in
 
-[utils/costMatrix.ts:163](https://github.com/havelessbemore/munkres/blob/83f9dd4/src/utils/costMatrix.ts#L163)
+[utils/costMatrix.ts:164](https://github.com/havelessbemore/munkres/blob/a9def966f3aba9669c62c2965d92b08fe8073bea/src/utils/costMatrix.ts#L164)
