@@ -104,6 +104,7 @@ console.log(assignments);
 The package exports the following TypeScript types:
 
 - `Matrix<T>`: A generic two-dimensional matrix type (i.e. `T[][]`).
+- `Tuple<A, B = A>`: A generic tuple type (i.e. `[A, B]`).
 
 ### Helpers
 
