@@ -335,14 +335,12 @@ export function findUncoveredMin(
 ): [number, number] {
   const X = slackV.length;
 
-  let minY = -1;
-  let minX = -1;
-  let minV = Infinity;
-  for (let x = 0; x < X && exposedX[x] < X; ++x) {
+  let minX = exposedX[0];
+  let minV = slackV[minX];
+  for (let x = minX + 1; x < X && exposedX[x] < X; ++x) {
     x = exposedX[x];
     if (minV > slackV[x]) {
       minV = slackV[x];
-      minY = slackX[x];
       minX = x;
       if (minV === 0) {
         break;
@@ -350,7 +348,7 @@ export function findUncoveredMin(
     }
   }
 
-  return [minY, minX];
+  return [slackX[minX], minX];
 }
 
 export function initSlack(
