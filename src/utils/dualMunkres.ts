@@ -149,102 +149,78 @@ export function steps2To3(
  *     - Used to implement primal-dual variables and dynamic updates.
  */
 export function step4(matrix: Matrix<number>): number[] {
+  // Check input
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
-
-  // Check input
   if (Y > X) {
     throw new RangeError("invalid MxN matrix: M > N");
   }
 
-  const coveredX = new Array<number>(X);
-  const coveredY = new Array<boolean>(Y);
+  // Step 1: Reduce
   const dualX = new Array<number>(X).fill(0);
   const dualY = new Array<number>(Y).fill(0);
-  const slackV = new Array<number>(X);
-  const slackX = new Array<number>(X);
-  const starsX = new Array<number>(X).fill(-1);
-  const starsY = new Array<number>(Y).fill(-1);
-  const exposedX = new Array<number>(X);
-
-  // Step 1: Reduce
   step1(matrix, dualX, dualY);
 
   // Steps 2 & 3: Find initial matching
+  const starsX = new Array<number>(X).fill(-1);
+  const starsY = new Array<number>(Y).fill(-1);
   let stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
 
+  // Check if complete matching
+  if (stars >= Y) {
+    return starsY;
+  }
+
   // Step 4: Find complete matching
+  const coveredX = new Array<number>(X);
+  const coveredY = new Array<number>(Y).fill(-1);
+  const slackV = new Array<number>(X);
+  const slackX = new Array<number>(X);
+  const exposedX = new Array<number>(X);
+
   for (let rootY = 0; stars < Y; ++rootY) {
     if (starsY[rootY] !== -1) {
       continue;
     }
-    stage(
-      rootY,
-      matrix,
-      coveredX,
-      coveredY,
-      dualX,
-      dualY,
-      exposedX,
-      slackV,
-      slackX,
-      starsX,
-      starsY
-    );
-    ++stars;
+
+    // Initialize stage
+    coveredX.fill(-1);
+    coveredY[rootY] = rootY;
+    clearCover(exposedX);
+
+    // Initialize slack
+    initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      // Find an uncovered min
+      const [y, x] = findUncoveredMin(exposedX, slackV, slackX);
+
+      // Step 6: If not zero, zero the min
+      if (slackV[x] > 0) {
+        step6(slackV[x], rootY, coveredX, coveredY, dualX, dualY, slackV);
+      }
+
+      // Prime the zero / cover the column
+      coveredX[x] = y;
+      cover(exposedX, x);
+
+      // Step 5: If no star in the column, turn primes into stars
+      if (starsX[x] === -1) {
+        step5(x, coveredX, starsX, starsY);
+        ++stars;
+        break;
+      }
+
+      // Cover the star's row and update slack
+      const sy = starsX[x];
+      coveredY[sy] = rootY;
+      updateSlack(sy, matrix, dualX, dualY, exposedX, slackV, slackX);
+    }
   }
 
   // Return assignments ([y] -> x)
   return starsY;
-}
-
-export function stage(
-  rootY: number,
-  matrix: Matrix<number>,
-  coveredX: number[],
-  coveredY: boolean[],
-  dualX: number[],
-  dualY: number[],
-  exposedX: number[],
-  slackV: number[],
-  slackX: number[],
-  starsX: number[],
-  starsY: number[]
-): void {
-  // Initialize stage
-  coveredX.fill(-1);
-  coveredY.fill(false);
-  coveredY[rootY] = true;
-  clearCover(exposedX);
-
-  // Initialize slack
-  initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
-
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    // Find an uncovered min
-    const [y, x] = findUncoveredMin(exposedX, slackV, slackX);
-
-    // Step 6: If not zero, zero the min
-    if (slackV[x] > 0) {
-      step6(slackV[x], coveredX, coveredY, dualX, dualY, slackV);
-    }
-
-    // Prime the zero / cover the column
-    coveredX[x] = y;
-    cover(exposedX, x);
-
-    // Step 5: If no star in the column, turn primes into stars
-    if (starsX[x] === -1) {
-      step5(x, coveredX, starsX, starsY);
-      break;
-    }
-
-    // Cover the star's row and update slack
-    const sy = starsX[x];
-    coveredY[sy] = true;
-    updateSlack(sy, matrix, dualX, dualY, exposedX, slackV, slackX);
-  }
 }
 
 /**
@@ -289,8 +265,9 @@ export function step5(
  */
 export function step6(
   min: number,
+  rootY: number,
   coveredX: number[],
-  coveredY: boolean[],
+  coveredY: number[],
   dualX: number[],
   dualY: number[],
   slackV: number[]
@@ -299,7 +276,7 @@ export function step6(
   const Y = dualY.length;
 
   for (let y = 0; y < Y; ++y) {
-    if (coveredY[y]) {
+    if (coveredY[y] === rootY) {
       dualY[y] += min;
     }
   }
