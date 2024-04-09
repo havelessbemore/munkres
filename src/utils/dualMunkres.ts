@@ -46,28 +46,40 @@ export function munkres<T extends number | bigint>(
   return pairs;
 }
 
+/**
+ * Initializes the dual variables for the Munkres algorithm.
+ *
+ * This is a preprocessing step that effectively performs
+ * row-wise and column-wise reductions on the cost matrix. This
+ * helps find an initial matching and improves the efficiency
+ * of subsequent steps.
+ *
+ * @param matrix - The cost matrix.
+ * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
+ * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ */
 export function step1(
-  mat: Matrix<number>,
+  matrix: Matrix<number>,
   dualX: number[],
   dualY: number[]
 ): void {
-  const Y = mat.length;
-  const X = mat[0]?.length ?? 0;
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
 
   // Reduce rows
   if (Y <= X) {
     for (let y = 0; y < Y; ++y) {
-      dualY[y] = getMin(mat[y])!;
+      dualY[y] = getMin(matrix[y])!;
     }
   }
 
   // Reduce columns
   if (Y >= X) {
     for (let x = 0; x < X; ++x) {
-      dualX[x] = mat[0][x] - dualY[0];
+      dualX[x] = matrix[0][x] - dualY[0];
     }
     for (let y = 1; y < Y; ++y) {
-      const row = mat[y];
+      const row = matrix[y];
       const dy = dualY[y];
       for (let x = 0; x < X; ++x) {
         if (row[x] - dy < dualX[x]) {
@@ -78,8 +90,17 @@ export function step1(
   }
 }
 
+/**
+ * Finds an initial matching for the munkres algorithm.
+ *
+ * @param matrix - The cost matrix.
+ * @param starX - An array mapping star columns to row. Modified in place.
+ * @param starY - An array mapping star rows to columns. Modified in place.
+ *
+ * @returns The number of matches (stars) found.
+ */
 export function steps2To3(
-  mat: Matrix<number>,
+  matrix: Matrix<number>,
   dualX: number[],
   dualY: number[],
   starsX: number[],
@@ -90,7 +111,7 @@ export function steps2To3(
 
   let stars = 0;
   for (let y = 0; y < Y; ++y) {
-    const row = mat[y];
+    const row = matrix[y];
     const dy = dualY[y];
     for (let x = 0; x < X; ++x) {
       if (starsX[x] === -1 && row[x] === dualX[x] + dy) {
@@ -106,18 +127,16 @@ export function steps2To3(
 }
 
 /**
- * Find and augment assignments until an optimal set is found.
+ * Finds a complete matching of jobs to workers at minimum cost.
  *
- * It attempts to either find an uncovered zero to star or adjusts
- * the matrix to create more zeros if none found. If an uncovered zero is
- * found but cannot be starred due to conflicts (i.e., another star in the
- * same row or column), it primes the zero and possibly adjusts existing
- * stars to resolve the conflict, thereby augmenting the current set of
- * assignments. This process is repeated until there are as many stars as
- * there are columns in the matrix, at which point optimal assignments
- * have been found.
+ * This step iteratively improves upon an initial matching until a complete
+ * matching is found. This involves updating dual variables and managing
+ * slack values to uncover new opportunities for optimal assignments.
  *
- * @param mat - An MxN cost matrix. Modified in place.
+ * @param mat - An MxN cost matrix.
+ *
+ * @returns An array representing optimal assignments. Each index / value
+ * represents a row / column (respectively) assignment.
  *
  * @throws - {@link RangeError}
  * Thrown if the given MxN matrix has more rows than columns (M \> N).
@@ -129,9 +148,9 @@ export function steps2To3(
  * 1. {@link https://www.ri.cmu.edu/pub_files/pub4/mills_tettey_g_ayorkor_2007_3/mills_tettey_g_ayorkor_2007_3.pdf | Mills-Tettey, Ayorkor & Stent, Anthony & Dias, M.. (2007). The Dynamic Hungarian Algorithm for the Assignment Problem with Changing Costs.}
  *     - Used to implement primal-dual variables and dynamic updates.
  */
-export function step4(mat: Matrix<number>): number[] {
-  const Y = mat.length;
-  const X = mat[0]?.length ?? 0;
+export function step4(matrix: Matrix<number>): number[] {
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
 
   // Check input
   if (Y > X) {
@@ -148,15 +167,15 @@ export function step4(mat: Matrix<number>): number[] {
   const starsY = new Array(Y).fill(-1);
 
   // Step 1: Reduce
-  step1(mat, dualX, dualY);
+  step1(matrix, dualX, dualY);
 
   // Steps 2 & 3: Find initial matching
-  let stars = steps2To3(mat, dualX, dualY, starsX, starsY);
+  let stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
 
   // Step 4: Find complete matching
   while (stars < Y) {
     stage(
-      mat,
+      matrix,
       coveredX,
       coveredY,
       dualX,
@@ -174,7 +193,7 @@ export function step4(mat: Matrix<number>): number[] {
 }
 
 export function stage(
-  mat: Matrix<number>,
+  matrix: Matrix<number>,
   coveredX: number[],
   coveredY: boolean[],
   dualX: number[],
@@ -191,7 +210,7 @@ export function stage(
   coveredY[ry] = true;
 
   // Initialize slack
-  initSlack(ry, mat, dualX, dualY, slackV, slackX);
+  initSlack(ry, matrix, dualX, dualY, slackV, slackX);
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -215,10 +234,25 @@ export function stage(
     // Cover the star's row and update slack
     const sy = starsX[x];
     coveredY[sy] = true;
-    updateSlack(sy, mat, coveredX, dualX, dualY, slackV, slackX);
+    updateSlack(sy, matrix, coveredX, dualX, dualY, slackV, slackX);
   }
 }
 
+/**
+ * Augments the current matching.
+ *
+ * This step effectively increases the number of matches (stars)
+ * by 1, bringing the algorithm closer to an optimal assignment.
+ *
+ * Augmentation is performed by flipping matched and unmatched edges along
+ * an augmenting path, starting from an unmatched node / edge and
+ * continuing until no matched edge can be found.
+ *
+ * @param x - The starting node's column.
+ * @param coveredX - An array mapping covered columns to rows.
+ * @param starX - An array mapping star columns to row. Modified in place.
+ * @param starY - An array mapping star rows to columns. Modified in place.
+ */
 export function step5(
   x: number,
   coveredX: number[],
@@ -234,6 +268,16 @@ export function step5(
   } while (x !== -1);
 }
 
+/**
+ * Adjusts dual variables and slack to uncover more admissible edges.
+ *
+ * @param min - The value to adjust by.
+ * @param coveredX - An array mapping covered columns to rows.
+ * @param coveredY - An array indicating whether a row is covered.
+ * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
+ * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ * @param slackV - The slack values for each column. Modified in place.
+ */
 export function step6(
   min: number,
   coveredX: number[],
@@ -286,14 +330,14 @@ export function findUncoveredMin(
 
 export function initSlack(
   y: number,
-  mat: Matrix<number>,
+  matrix: Matrix<number>,
   dualX: number[],
   dualY: number[],
   slackV: number[],
   slackX: number[]
 ): void {
   const X = slackV.length;
-  const row = mat[y];
+  const row = matrix[y];
   const dy = dualY[y];
 
   slackX.fill(y);
@@ -304,7 +348,7 @@ export function initSlack(
 
 export function updateSlack(
   y: number,
-  mat: Matrix<number>,
+  matrix: Matrix<number>,
   coveredX: number[],
   dualX: number[],
   dualY: number[],
@@ -312,7 +356,7 @@ export function updateSlack(
   slackX: number[]
 ): void {
   const X = slackV.length;
-  const row = mat[y];
+  const row = matrix[y];
   const dy = dualY[y];
 
   for (let x = 0; x < X; ++x) {
