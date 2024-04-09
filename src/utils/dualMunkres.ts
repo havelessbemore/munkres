@@ -80,10 +80,11 @@ export function initSlack(
 ): void {
   const X = slackV.length;
   const row = mat[y];
+  const dy = dualY[y];
 
   slackX.fill(y);
   for (let x = 0; x < X; ++x) {
-    slackV[x] = row[x] - dualY[y] - dualX[x];
+    slackV[x] = row[x] - dualX[x] - dy;
   }
 }
 
@@ -98,36 +99,18 @@ export function updateSlack(
 ): void {
   const X = slackV.length;
   const row = mat[y];
+  const dy = dualY[y];
 
   for (let x = 0; x < X; ++x) {
     if (coveredX[x] !== -1) {
       continue;
     }
-    const slack = row[x] - dualY[y] - dualX[x];
+    const slack = row[x] - dualX[x] - dy;
     if (slack < slackV[x]) {
       slackV[x] = slack;
       slackX[x] = y;
     }
   }
-}
-
-export function initStage(
-  y: number,
-  mat: Matrix<number>,
-  coveredX: number[],
-  coveredY: boolean[],
-  dualX: number[],
-  dualY: number[],
-  slackV: number[],
-  slackX: number[]
-): void {
-  // Initialize cover
-  coveredX.fill(-1);
-  coveredY.fill(false);
-  coveredY[y] = true;
-
-  // Initialize slack
-  initSlack(y, mat, dualX, dualY, slackV, slackX);
 }
 
 export function stage(
@@ -141,16 +124,14 @@ export function stage(
   starsX: number[],
   starsY: number[]
 ): void {
-  initStage(
-    starsY.indexOf(-1),
-    mat,
-    coveredX,
-    coveredY,
-    dualX,
-    dualY,
-    slackV,
-    slackX
-  );
+  // Initialize cover
+  const ry = starsY.indexOf(-1);
+  coveredX.fill(-1);
+  coveredY.fill(false);
+  coveredY[ry] = true;
+
+  // Initialize slack
+  initSlack(ry, mat, dualX, dualY, slackV, slackX);
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -162,7 +143,7 @@ export function stage(
       step6(slackV[x], coveredX, coveredY, dualX, dualY, slackV);
     }
 
-    // Cover the column
+    // Prime the zero / cover the column
     coveredX[x] = y;
 
     // Step 5: If no star in the column, turn primes into stars

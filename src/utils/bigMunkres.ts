@@ -67,25 +67,6 @@ export function updateSlack(
   }
 }
 
-export function initStage(
-  y: number,
-  mat: Matrix<bigint>,
-  coveredX: number[],
-  coveredY: boolean[],
-  dualX: bigint[],
-  dualY: bigint[],
-  slackV: bigint[],
-  slackX: number[]
-): void {
-  // Initialize cover
-  coveredX.fill(-1);
-  coveredY.fill(false);
-  coveredY[y] = true;
-
-  // Initialize slack
-  initSlack(y, mat, dualX, dualY, slackV, slackX);
-}
-
 export function stage(
   mat: Matrix<bigint>,
   coveredX: number[],
@@ -97,16 +78,14 @@ export function stage(
   starsX: number[],
   starsY: number[]
 ): void {
-  initStage(
-    starsY.indexOf(-1),
-    mat,
-    coveredX,
-    coveredY,
-    dualX,
-    dualY,
-    slackV,
-    slackX
-  );
+  // Initialize cover
+  const ry = starsY.indexOf(-1);
+  coveredX.fill(-1);
+  coveredY.fill(false);
+  coveredY[ry] = true;
+
+  // Initialize slack
+  initSlack(ry, mat, dualX, dualY, slackV, slackX);
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
