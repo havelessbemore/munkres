@@ -165,6 +165,7 @@ export function step4(matrix: Matrix<number>): number[] {
   const slackX = new Array(X);
   const starsX = new Array(X).fill(-1);
   const starsY = new Array(Y).fill(-1);
+  const exposedX = new Array(X);
 
   // Step 1: Reduce
   step1(matrix, dualX, dualY);
@@ -183,7 +184,8 @@ export function step4(matrix: Matrix<number>): number[] {
       slackV,
       slackX,
       starsX,
-      starsY
+      starsY,
+      exposedX
     );
     ++stars;
   }
@@ -201,13 +203,15 @@ export function stage(
   slackV: number[],
   slackX: number[],
   starsX: number[],
-  starsY: number[]
+  starsY: number[],
+  exposedX: number[]
 ): void {
-  // Initialize cover
+  // Initialize stage
   const ry = starsY.indexOf(-1);
   coveredX.fill(-1);
   coveredY.fill(false);
   coveredY[ry] = true;
+  clearCover(exposedX);
 
   // Initialize slack
   initSlack(ry, matrix, dualX, dualY, slackV, slackX);
@@ -215,7 +219,7 @@ export function stage(
   // eslint-disable-next-line no-constant-condition
   while (true) {
     // Find an uncovered min
-    const [y, x] = findUncoveredMin(coveredX, slackV, slackX);
+    const [y, x] = findUncoveredMin(exposedX, slackV, slackX);
 
     // Step 6: If not zero, zero the min
     if (slackV[x] > 0) {
@@ -224,6 +228,7 @@ export function stage(
 
     // Prime the zero / cover the column
     coveredX[x] = y;
+    cover(exposedX, x);
 
     // Step 5: If no star in the column, turn primes into stars
     if (starsX[x] === -1) {
@@ -234,7 +239,7 @@ export function stage(
     // Cover the star's row and update slack
     const sy = starsX[x];
     coveredY[sy] = true;
-    updateSlack(sy, matrix, coveredX, dualX, dualY, slackV, slackX);
+    updateSlack(sy, matrix, dualX, dualY, exposedX, slackV, slackX);
   }
 }
 
@@ -304,8 +309,23 @@ export function step6(
   }
 }
 
+export function clearCover(cover: number[]): void {
+  const N = cover.length;
+  for (let i = 0; i < N; ++i) {
+    cover[i] = i;
+  }
+}
+
+export function cover(cover: number[], i: number): void {
+  const N = cover.length;
+  const next = i + 1 < N ? cover[i + 1] : N;
+  for (let j = i; j >= 0 && cover[j] === i; --j) {
+    cover[j] = next;
+  }
+}
+
 export function findUncoveredMin(
-  coveredX: number[],
+  exposedX: number[],
   slackV: number[],
   slackX: number[]
 ): [number, number] {
@@ -314,8 +334,9 @@ export function findUncoveredMin(
   let minY = -1;
   let minX = -1;
   let minV = Infinity;
-  for (let x = 0; x < X; ++x) {
-    if (minV > slackV[x] && coveredX[x] === -1) {
+  for (let x = 0; x < X && exposedX[x] < X; ++x) {
+    x = exposedX[x];
+    if (minV > slackV[x]) {
       minV = slackV[x];
       minY = slackX[x];
       minX = x;
@@ -349,9 +370,9 @@ export function initSlack(
 export function updateSlack(
   y: number,
   matrix: Matrix<number>,
-  coveredX: number[],
   dualX: number[],
   dualY: number[],
+  exposedX: number[],
   slackV: number[],
   slackX: number[]
 ): void {
@@ -359,10 +380,8 @@ export function updateSlack(
   const row = matrix[y];
   const dy = dualY[y];
 
-  for (let x = 0; x < X; ++x) {
-    if (coveredX[x] !== -1) {
-      continue;
-    }
+  for (let x = 0; x < X && exposedX[x] < X; ++x) {
+    x = exposedX[x];
     const slack = row[x] - dualX[x] - dy;
     if (slack < slackV[x]) {
       slackV[x] = slack;

@@ -15,13 +15,12 @@ describe(`munkres`, () => {
       return VAL_MIN + Math.trunc(span * Math.random());
     });
 
-    const bigMat = map(mat, v => BigInt(v));
-
-    bench(`${N}x${N}`, () => {
+    bench(`${N}x${N} | number`, () => {
       dualMunkres(mat);
     });
 
-    bench(`${N}x${N} (big)`, () => {
+    const bigMat = map(mat, v => BigInt(v));
+    bench(`${N}x${N} | bigint`, () => {
       dualMunkres(bigMat);
     });
   }
