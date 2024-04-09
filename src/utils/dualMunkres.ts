@@ -157,15 +157,15 @@ export function step4(matrix: Matrix<number>): number[] {
     throw new RangeError("invalid MxN matrix: M > N");
   }
 
-  const coveredX = new Array(X);
-  const coveredY = new Array(Y);
-  const dualX = new Array(X).fill(0);
-  const dualY = new Array(Y).fill(0);
-  const slackV = new Array(X);
-  const slackX = new Array(X);
-  const starsX = new Array(X).fill(-1);
-  const starsY = new Array(Y).fill(-1);
-  const exposedX = new Array(X);
+  const coveredX = new Array<number>(X);
+  const coveredY = new Array<boolean>(Y);
+  const dualX = new Array<number>(X).fill(0);
+  const dualY = new Array<number>(Y).fill(0);
+  const slackV = new Array<number>(X);
+  const slackX = new Array<number>(X);
+  const starsX = new Array<number>(X).fill(-1);
+  const starsY = new Array<number>(Y).fill(-1);
+  const exposedX = new Array<number>(X);
 
   // Step 1: Reduce
   step1(matrix, dualX, dualY);
