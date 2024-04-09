@@ -3,6 +3,7 @@
 ## [1.1.1] (WIP)
 
 ### Updates
+
 - TODO: Improve performance when using `number[][]` cost matrices.
 
 ## [1.1.0](https://github.com/havelessbemore/munkres/compare/v1.0.2...v1.1.0) (2024-04-09)

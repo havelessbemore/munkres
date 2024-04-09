@@ -100,8 +100,12 @@ export function steps2To3(
  * Citations:
  * 1. {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | Munkres' Assignment Algorithm, Modified for Rectangular Matrices}
  *     - Used as the foundation and enhanced with custom optimizations.
+ *
  * 1. {@link https://www.ri.cmu.edu/pub_files/pub4/mills_tettey_g_ayorkor_2007_3/mills_tettey_g_ayorkor_2007_3.pdf | Mills-Tettey, Ayorkor & Stent, Anthony & Dias, M.. (2007). The Dynamic Hungarian Algorithm for the Assignment Problem with Changing Costs.}
  *     - Used to implement primal-dual variables and dynamic updates.
+ *
+ * 1. {@link https://public.websites.umich.edu/~murty/612/612slides4.pdf | Murty, K. G.. Primal-Dual Algorithms. [IOE 612, Lecture slides 4]. Department of Industrial and Operations Engineering, University of Michigan.}
+ *     - Used to implement primal-dual and slack variables.
  */
 export function bigStep4(matrix: Matrix<bigint>): number[] {
   // Check input
