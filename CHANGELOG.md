@@ -1,11 +1,22 @@
 # Change Log
 
-## [1.0.3] (Pre-release)
+## [1.1.1] (WIP)
+
+### Updates
+- TODO: Improve performance when using `number[][]` cost matrices.
+
+## [1.1.0](https://github.com/havelessbemore/munkres/compare/v1.0.2...v1.1.0) (2024-04-09)
+
+### Fixes
+
+- Update benchmarks; `Infinity` and zeros were unintentionally reflecting unrealistic runtimes
 
 ### Updates
 
 - Add [CHANGELOG.md](./CHANGELOG.md)
 - Add [Tuple](./src/types/tuple.d.ts) type
+- Improve internal performance when [copying](src/utils/matrix.ts) a matrix
+- Improve performance by 60-70x when using `bigint[][]` cost matrices.
 
 ## [1.0.2](https://github.com/havelessbemore/munkres/compare/v1.0.1...v1.0.2) (2024-03-31)
 
