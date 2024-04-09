@@ -1,7 +1,7 @@
 import { Tuple } from "..";
 import { Matrix } from "../types/matrix";
-import { getMin } from "../utils/array";
-import { copy, flipH, transpose } from "../utils/matrix";
+import { getMin } from "./array";
+import { copy, flipH, transpose } from "./matrix";
 import { bigStep4 } from "./bigMunkres";
 import { isBigInt } from "./is";
 
@@ -174,18 +174,22 @@ export function step4(matrix: Matrix<number>): number[] {
   let stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
 
   // Step 4: Find complete matching
-  while (stars < Y) {
+  for (let rootY = 0; stars < Y; ++rootY) {
+    if (starsY[rootY] !== -1) {
+      continue;
+    }
     stage(
+      rootY,
       matrix,
       coveredX,
       coveredY,
       dualX,
       dualY,
+      exposedX,
       slackV,
       slackX,
       starsX,
-      starsY,
-      exposedX
+      starsY
     );
     ++stars;
   }
@@ -195,26 +199,26 @@ export function step4(matrix: Matrix<number>): number[] {
 }
 
 export function stage(
+  rootY: number,
   matrix: Matrix<number>,
   coveredX: number[],
   coveredY: boolean[],
   dualX: number[],
   dualY: number[],
+  exposedX: number[],
   slackV: number[],
   slackX: number[],
   starsX: number[],
-  starsY: number[],
-  exposedX: number[]
+  starsY: number[]
 ): void {
   // Initialize stage
-  const ry = starsY.indexOf(-1);
   coveredX.fill(-1);
   coveredY.fill(false);
-  coveredY[ry] = true;
+  coveredY[rootY] = true;
   clearCover(exposedX);
 
   // Initialize slack
-  initSlack(ry, matrix, dualX, dualY, slackV, slackX);
+  initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
 
   // eslint-disable-next-line no-constant-condition
   while (true) {

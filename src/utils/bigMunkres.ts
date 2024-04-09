@@ -1,5 +1,5 @@
 import { Matrix } from "../types/matrix";
-import { getMin } from "../utils/array";
+import { getMin } from "./array";
 
 /**
  * Initializes the dual variables for the Munkres algorithm.
@@ -112,15 +112,15 @@ export function bigStep4(matrix: Matrix<bigint>): number[] {
     throw new RangeError("invalid MxN matrix: M > N");
   }
 
-  const coveredX = new Array(X);
-  const coveredY = new Array(Y);
-  const dualX = new Array(X).fill(0n);
-  const dualY = new Array(Y).fill(0n);
-  const slackV = new Array(X);
-  const slackX = new Array(X);
-  const starsX = new Array(X).fill(-1);
-  const starsY = new Array(Y).fill(-1);
-  const exposedX = new Array(X);
+  const coveredX = new Array<number>(X);
+  const coveredY = new Array<boolean>(Y);
+  const dualX = new Array<bigint>(X).fill(0n);
+  const dualY = new Array<bigint>(Y).fill(0n);
+  const slackV = new Array<bigint>(X);
+  const slackX = new Array<number>(X);
+  const starsX = new Array<number>(X).fill(-1);
+  const starsY = new Array<number>(Y).fill(-1);
+  const exposedX = new Array<number>(X);
 
   // Step 1: Reduce
   step1(matrix, dualX, dualY);
@@ -129,18 +129,22 @@ export function bigStep4(matrix: Matrix<bigint>): number[] {
   let stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
 
   // Step 4: Find complete matching
-  while (stars < Y) {
+  for (let rootY = 0; stars < Y; ++rootY) {
+    if (starsY[rootY] !== -1) {
+      continue;
+    }
     stage(
+      rootY,
       matrix,
       coveredX,
       coveredY,
       dualX,
       dualY,
+      exposedX,
       slackV,
       slackX,
       starsX,
-      starsY,
-      exposedX
+      starsY
     );
     ++stars;
   }
@@ -150,26 +154,26 @@ export function bigStep4(matrix: Matrix<bigint>): number[] {
 }
 
 export function stage(
+  rootY: number,
   matrix: Matrix<bigint>,
   coveredX: number[],
   coveredY: boolean[],
   dualX: bigint[],
   dualY: bigint[],
+  exposedX: number[],
   slackV: bigint[],
   slackX: number[],
   starsX: number[],
-  starsY: number[],
-  exposedX: number[]
+  starsY: number[]
 ): void {
   // Initialize stage
-  const ry = starsY.indexOf(-1);
   coveredX.fill(-1);
   coveredY.fill(false);
-  coveredY[ry] = true;
+  coveredY[rootY] = true;
   clearCover(exposedX);
 
   // Initialize slack
-  initSlack(ry, matrix, dualX, dualY, slackV, slackX);
+  initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
