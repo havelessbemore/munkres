@@ -1,8 +1,5 @@
 import { Matrix, MatrixMapFn } from "../types/matrix";
 
-import { getMin as getRowMin } from "./array";
-import { isBigInt } from "./is";
-
 /**
  * Creates a copy of a given matrix.
  *
@@ -161,74 +158,6 @@ export function gen<T>(
   }
 
   return matrix;
-}
-
-/**
- * Finds the minimum value in a given column of a matrix.
- *
- * If the matrix is empty, the column is out of bounds, or
- * the function otherwise cannot determine a minimum value,
- * then `undefined` is returned.
- *
- * @param matrix - The matrix to search.
- * @param col - The zero-based column index for the matrix.
- *
- * @returns The minimum value in the given matrix column,
- * or `undefined` if a minimum could not be found.
- *
- * @example
- * const matrix = [
- *   [1, 3, 2],
- *   [4, 0, 6],
- *   [7, 5, 8]
- * ];
- * console.log(getColMin(matrix, 1)); // Output: 0
- *
- * @example
- * const matrix = [
- *   [1n, 3n, 2n],
- *   [4n, 0n, 6n],
- *   [7n, 5n, 8n]
- * ];
- * console.log(getColMin(matrix, 2)); // Output: 2n
- *
- * @example
- * const matrix = [
- *   ['b', 'd', 'c'],
- *   ['e', 'a', 'g'],
- *   ['h', 'f', 'i']
- * ];
- * console.log(getColMin(matrix, 0)); // Output: 'b'
- */
-export function getColMin(
-  matrix: Matrix<number>,
-  col: number
-): number | undefined;
-export function getColMin(
-  matrix: Matrix<bigint>,
-  col: number
-): bigint | undefined;
-export function getColMin(
-  matrix: Matrix<string>,
-  col: number
-): string | undefined;
-export function getColMin<T extends number | bigint | string>(
-  matrix: Matrix<T>,
-  x: number
-): T | undefined {
-  const Y = matrix.length;
-  if (Y <= 0 || x < 0 || x >= matrix[0].length) {
-    return undefined;
-  }
-
-  let min = matrix[0][x];
-  for (let y = 1; y < Y; ++y) {
-    if (min > matrix[y][x]) {
-      min = matrix[y][x];
-    }
-  }
-
-  return min;
 }
 
 /**
@@ -399,30 +328,6 @@ export function invert<T extends number | bigint>(
 }
 
 /**
- * Checks if a given matrix is square. A square matrix has an equal number
- * of rows and columns.
- *
- * @param matrix - The matrix to check.
- *
- * @returns `true` if the matrix is square, `false` otherwise.
- *
- * @example
- * console.log(isSquare([
- *   [1, 2],
- *   [3, 4]
- * ])); // Output: true
- *
- * @example
- * console.log(isSquare([
- *    [1, 2, 3],
- *    [4, 5, 6]
- * ])); // Output: false
- */
-export function isSquare<T>(matrix: Matrix<T>): boolean {
-  return matrix.length == (matrix[0]?.length ?? 0);
-}
-
-/**
  * Calls a defined callback function on each element
  * of a matrix, and returns a new matrix of the results.
  *
@@ -572,111 +477,6 @@ export function padWidth<T>(
   for (let y = 0; y < Y; ++y) {
     matrix[y].length = width;
     matrix[y].fill(fillValue, X, width);
-  }
-}
-
-/**
- * Performs column-wise reduction on a given matrix.
- *
- * Each column of the matrix is reduced by subtracting the minimum value
- * in the column from every value in the column.
- *
- * @param matrix - The matrix. Modified in place.
- *
- * @example
- * const matrix = [
- *   [4, 1, 3],
- *   [2, 0, 5],
- *   [3, 2, 2]
- * ];
- *
- * reduceCols(matrix);
- * // matrix now:
- * // [
- * //   [2, 1, 1],
- * //   [0, 0, 3],
- * //   [1, 2, 0]
- * // ]
- */
-export function reduceCols(matrix: Matrix<number>): void;
-export function reduceCols(matrix: Matrix<bigint>): void;
-export function reduceCols(matrix: Matrix<number> | Matrix<bigint>): void;
-export function reduceCols<T extends number | bigint>(matrix: Matrix<T>): void {
-  // If matrix is empty
-  const Y = matrix.length;
-  const X = matrix[0]?.length ?? 0;
-  if (X <= 0) {
-    return;
-  }
-
-  // For each column
-  for (let x = 0; x < X; ++x) {
-    // Find the min
-    const min = getColMin(matrix as Matrix<number>, x)! as T;
-
-    // Subtract the min
-    if (isBigInt(min) || isFinite(min)) {
-      for (let y = 0; y < Y; ++y) {
-        matrix[y][x] = (matrix[y][x] - min) as T;
-      }
-    } else {
-      for (let y = 0; y < Y; ++y) {
-        matrix[y][x] = (matrix[y][x] == min ? 0 : Infinity) as T;
-      }
-    }
-  }
-}
-
-/**
- * Performs row-wise reduction on a given matrix.
- *
- * Each row of the matrix is reduced by subtracting the minimum value
- * in the row from every value in the row.
- *
- * @param matrix - The matrix. Modified in place.
- *
- * @example
- * const matrix = [
- *   [4, 1, 3],
- *   [2, 0, 5],
- *   [3, 2, 2]
- * ];
- *
- * reduceRows(matrix);
- * // matrix is now:
- * // [
- * //   [3, 0, 2],
- * //   [2, 0, 5],
- * //   [1, 0, 0]
- * // ]
- */
-export function reduceRows(matrix: Matrix<number>): void;
-export function reduceRows(matrix: Matrix<bigint>): void;
-export function reduceRows(matrix: Matrix<number> | Matrix<bigint>): void;
-export function reduceRows<T extends number | bigint>(matrix: Matrix<T>): void {
-  // For each row
-  const Y = matrix.length;
-  for (let y = 0; y < Y; ++y) {
-    // Find the min
-    const row = matrix[y];
-    const min = getRowMin(row);
-
-    // If row is empty
-    if (min == null) {
-      continue;
-    }
-
-    // Subtract the min
-    const X = row.length;
-    if (isBigInt(min) || isFinite(min)) {
-      for (let x = 0; x < X; ++x) {
-        row[x] = (row[x] - min) as T;
-      }
-    } else {
-      for (let x = 0; x < X; ++x) {
-        row[x] = (row[x] == min ? 0 : Infinity) as T;
-      }
-    }
   }
 }
 
