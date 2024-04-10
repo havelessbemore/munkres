@@ -22,364 +22,326 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
-function Y(n) {
-  const e = n.length;
-  if (e <= 0)
-    return;
-  let o = n[0];
-  for (let l = 1; l < e; ++l)
-    o > n[l] && (o = n[l]);
-  return o;
-}
 function d(n) {
-  return typeof n == "bigint";
+  const o = n.length, e = new Array(o);
+  for (let c = 0; c < o; ++c)
+    e[c] = n[c].slice(0);
+  return e;
 }
-function M(n) {
-  const e = n.length, o = new Array(e);
-  for (let l = 0; l < e; ++l)
-    o[l] = n[l].slice(0);
-  return o;
-}
-function C(n, e, o) {
-  const l = n.length, c = e.length, f = new Array(l);
-  for (let t = 0; t < l; ++t) {
-    const s = new Array(c);
-    for (let r = 0; r < c; ++r)
-      s[r] = o(n[t], e[r]);
+function k(n, o, e) {
+  const c = n.length, r = o.length, f = new Array(c);
+  for (let t = 0; t < c; ++t) {
+    const s = new Array(r);
+    for (let i = 0; i < r; ++i)
+      s[i] = e(n[t], o[i]);
     f[t] = s;
   }
   return f;
 }
-function N(n) {
-  const e = n.length;
-  for (let o = 0; o < e; ++o)
-    n[o].reverse();
-}
-function I(n, e) {
+function C(n) {
   const o = n.length;
-  if (o <= 0 || e < 0 || e >= n[0].length)
-    return;
-  let l = n[0][e];
-  for (let c = 1; c < o; ++c)
-    l > n[c][e] && (l = n[c][e]);
-  return l;
+  for (let e = 0; e < o; ++e)
+    n[e].reverse();
 }
-function X(n) {
-  var c;
-  const e = n.length, o = ((c = n[0]) == null ? void 0 : c.length) ?? 0;
-  if (e <= 0 || o <= 0)
+function Y(n) {
+  var r;
+  const o = n.length, e = ((r = n[0]) == null ? void 0 : r.length) ?? 0;
+  if (o <= 0 || e <= 0)
     return;
-  let l = n[0][0];
-  for (let f = 0; f < e; ++f) {
+  let c = n[0][0];
+  for (let f = 0; f < o; ++f) {
     const t = n[f];
-    for (let s = 0; s < o; ++s)
-      l < t[s] && (l = t[s]);
+    for (let s = 0; s < e; ++s)
+      c < t[s] && (c = t[s]);
   }
-  return l;
+  return c;
 }
-function $(n) {
-  var c;
-  const e = n.length, o = ((c = n[0]) == null ? void 0 : c.length) ?? 0;
-  if (e <= 0 || o <= 0)
+function S(n) {
+  var r;
+  const o = n.length, e = ((r = n[0]) == null ? void 0 : r.length) ?? 0;
+  if (o <= 0 || e <= 0)
     return;
-  let l = n[0][0];
-  for (let f = 0; f < e; ++f) {
+  let c = n[0][0];
+  for (let f = 0; f < o; ++f) {
     const t = n[f];
-    for (let s = 0; s < o; ++s)
-      l > t[s] && (l = t[s]);
+    for (let s = 0; s < e; ++s)
+      c > t[s] && (c = t[s]);
   }
-  return l;
+  return c;
 }
-function b(n, e) {
-  var c;
-  const o = n.length, l = ((c = n[0]) == null ? void 0 : c.length) ?? 0;
-  if (!(o <= 0 || l <= 0)) {
-    e = e ?? X(n);
-    for (let f = 0; f < o; ++f) {
+function E(n, o) {
+  var r;
+  const e = n.length, c = ((r = n[0]) == null ? void 0 : r.length) ?? 0;
+  if (!(e <= 0 || c <= 0)) {
+    o = o ?? Y(n);
+    for (let f = 0; f < e; ++f) {
       const t = n[f];
-      for (let s = 0; s < l; ++s)
-        t[s] = e - t[s];
+      for (let s = 0; s < c; ++s)
+        t[s] = o - t[s];
     }
-  }
-}
-function k(n) {
-  var l;
-  const e = n.length, o = ((l = n[0]) == null ? void 0 : l.length) ?? 0;
-  for (let c = 0; c < e; ++c) {
-    const f = n[c];
-    for (let t = 0; t < o; ++t)
-      f[t] = -f[t];
-  }
-}
-function E(n) {
-  var l;
-  const e = n.length, o = ((l = n[0]) == null ? void 0 : l.length) ?? 0;
-  if (!(o <= 0))
-    for (let c = 0; c < o; ++c) {
-      const f = I(n, c);
-      if (d(f) || isFinite(f))
-        for (let t = 0; t < e; ++t)
-          n[t][c] = n[t][c] - f;
-      else
-        for (let t = 0; t < e; ++t)
-          n[t][c] = n[t][c] == f ? 0 : 1 / 0;
-    }
-}
-function F(n) {
-  const e = n.length;
-  for (let o = 0; o < e; ++o) {
-    const l = n[o], c = Y(l);
-    if (c == null)
-      continue;
-    const f = l.length;
-    if (d(c) || isFinite(c))
-      for (let t = 0; t < f; ++t)
-        l[t] = l[t] - c;
-    else
-      for (let t = 0; t < f; ++t)
-        l[t] = l[t] == c ? 0 : 1 / 0;
   }
 }
 function R(n) {
   var c;
-  const e = n.length, o = ((c = n[0]) == null ? void 0 : c.length) ?? 0, l = Math.min(e, o);
-  for (let f = 1; f < l; ++f)
+  const o = n.length, e = ((c = n[0]) == null ? void 0 : c.length) ?? 0;
+  for (let r = 0; r < o; ++r) {
+    const f = n[r];
+    for (let t = 0; t < e; ++t)
+      f[t] = -f[t];
+  }
+}
+function T(n) {
+  var r;
+  const o = n.length, e = ((r = n[0]) == null ? void 0 : r.length) ?? 0, c = Math.min(o, e);
+  for (let f = 1; f < c; ++f)
     for (let t = 0; t < f; ++t) {
       const s = n[f][t];
       n[f][t] = n[t][f], n[t][f] = s;
     }
-  if (e > o) {
-    for (let f = 0; f < o; ++f) {
-      n[f].length = e;
-      for (let t = o; t < e; ++t)
+  if (o > e) {
+    for (let f = 0; f < e; ++f) {
+      n[f].length = o;
+      for (let t = e; t < o; ++t)
         n[f][t] = n[t][f];
     }
-    n.length = o;
+    n.length = e;
   }
-  if (e < o) {
-    n.length = o;
-    for (let f = e; f < o; ++f) {
-      n[f] = new Array(e);
-      for (let t = 0; t < e; ++t)
+  if (o < e) {
+    n.length = e;
+    for (let f = o; f < e; ++f) {
+      n[f] = new Array(o);
+      for (let t = 0; t < o; ++t)
         n[f][t] = n[t][f];
     }
-    for (let f = 0; f < e; ++f)
-      n[f].length = e;
+    for (let f = 0; f < o; ++f)
+      n[f].length = o;
   }
 }
-function _(n, e, o) {
-  return C(n, e, o);
+function L(n, o, e) {
+  return k(n, o, e);
 }
-function V(n) {
-  return X(n);
+function O(n) {
+  return Y(n);
 }
-function x(n) {
-  return $(n);
+function Q(n) {
+  return S(n);
 }
-function a(n, e) {
-  b(n, e);
+function W(n, o) {
+  E(n, o);
 }
-function m(n) {
-  k(n);
+function Z(n) {
+  R(n);
 }
-function S(n, e, o) {
+function X(n) {
+  const o = n.length;
+  if (o <= 0)
+    return;
+  let e = n[0];
+  for (let c = 1; c < o; ++c)
+    e > n[c] && (e = n[c]);
+  return e;
+}
+function j(n, o, e) {
   var f;
-  const l = n.length, c = ((f = n[0]) == null ? void 0 : f.length) ?? 0;
-  if (l <= c)
-    for (let t = 0; t < l; ++t)
-      o[t] = Y(n[t]);
-  if (l >= c) {
+  const c = n.length, r = ((f = n[0]) == null ? void 0 : f.length) ?? 0;
+  if (c <= r)
     for (let t = 0; t < c; ++t)
-      e[t] = n[0][t] - o[0];
-    for (let t = 1; t < l; ++t) {
-      const s = n[t], r = o[t];
-      for (let i = 0; i < c; ++i)
-        s[i] - r < e[i] && (e[i] = s[i] - r);
+      e[t] = X(n[t]);
+  if (c >= r) {
+    let t = e[0], s = n[0];
+    for (let i = 0; i < r; ++i)
+      o[i] = s[i] === t ? 0 : s[i] - t;
+    for (let i = 1; i < c; ++i) {
+      t = e[i], s = n[i];
+      for (let l = 0; l < r; ++l) {
+        const g = s[l] === t ? 0 : s[l] - t;
+        g < o[l] && (o[l] = g);
+      }
     }
   }
 }
-function U(n, e, o, l, c) {
-  const f = e.length, t = o.length;
+function B(n, o, e, c, r) {
+  const f = o.length, t = e.length;
   let s = 0;
-  for (let r = 0; r < t; ++r) {
-    const i = n[r], u = o[r];
-    for (let g = 0; g < f; ++g)
-      if (l[g] === -1 && i[g] === e[g] + u) {
-        l[g] = r, c[r] = g, ++s;
+  for (let i = 0; i < t; ++i) {
+    const l = -e[i], g = n[i];
+    for (let h = 0; h < f; ++h) {
+      const w = o[h] === l ? 0 : o[h] - l;
+      if (c[h] === -1 && g[h] === w) {
+        c[h] = i, r[i] = h, ++s;
+        break;
+      }
+    }
+  }
+  return s;
+}
+function H(n) {
+  var A;
+  const o = n.length, e = ((A = n[0]) == null ? void 0 : A.length) ?? 0;
+  if (o > e)
+    throw new RangeError("invalid MxN matrix: M > N");
+  const c = new Array(e).fill(0), r = new Array(o).fill(0);
+  j(n, c, r);
+  const f = new Array(e).fill(-1), t = new Array(o).fill(-1);
+  let s = B(n, c, r, f, t);
+  if (s >= o)
+    return t;
+  const i = new Array(e), l = new Array(o).fill(-1), g = new Array(e), h = new Array(e), w = new Array(e);
+  for (let y = 0; s < o; ++y)
+    if (t[y] === -1)
+      for (i.fill(-1), l[y] = y, M(w), P(y, n, c, r, g, h); ; ) {
+        const [p, u] = b(w, g, h);
+        if (g[u] > 0 && I(g[u], y, i, l, c, r, g), i[u] = p, $(w, u), f[u] === -1) {
+          N(u, i, f, t), ++s;
+          break;
+        }
+        const v = f[u];
+        l[v] = y, U(v, n, c, r, w, g, h);
+      }
+  return t;
+}
+function N(n, o, e, c) {
+  do {
+    const r = o[n], f = c[r];
+    e[n] = r, c[r] = n, n = f;
+  } while (n !== -1);
+}
+function I(n, o, e, c, r, f, t) {
+  const s = r.length, i = f.length;
+  for (let l = 0; l < i; ++l)
+    c[l] === o && (f[l] = f[l] === -n ? 0 : f[l] + n);
+  for (let l = 0; l < s; ++l)
+    e[l] === -1 ? t[l] = t[l] === n ? 0 : t[l] - n : r[l] = r[l] === n ? 0 : r[l] - n;
+}
+function M(n) {
+  const o = n.length;
+  for (let e = 0; e < o; ++e)
+    n[e] = e;
+}
+function $(n, o) {
+  const e = n.length, c = o + 1 < e ? n[o + 1] : e;
+  for (let r = o; r >= 0 && n[r] === o; --r)
+    n[r] = c;
+}
+function b(n, o, e) {
+  const c = o.length;
+  let r = n[0], f = o[r];
+  for (let t = r + 1; t < c && n[t] < c && (t = n[t], !(o[t] < f && (f = o[t], r = t, f === 0))); ++t)
+    ;
+  return [e[r], r];
+}
+function P(n, o, e, c, r, f) {
+  const t = -c[n], s = o[n], i = f.length;
+  f.fill(n);
+  for (let l = 0; l < i; ++l) {
+    const g = e[l] === t ? 0 : e[l] - t;
+    r[l] = s[l] === g ? 0 : s[l] - g;
+  }
+}
+function U(n, o, e, c, r, f, t) {
+  const s = -c[n], i = o[n], l = t.length;
+  for (let g = 0; g < l && r[g] < l; ++g) {
+    g = r[g];
+    const h = e[g] === s ? 0 : e[g] - s, w = i[g] === h ? 0 : i[g] - h;
+    w < f[g] && (f[g] = w, t[g] = n);
+  }
+}
+function q(n, o, e) {
+  var f;
+  const c = n.length, r = ((f = n[0]) == null ? void 0 : f.length) ?? 0;
+  if (c <= r)
+    for (let t = 0; t < c; ++t)
+      e[t] = X(n[t]);
+  if (c >= r) {
+    for (let t = 0; t < r; ++t)
+      o[t] = n[0][t] - e[0];
+    for (let t = 1; t < c; ++t) {
+      const s = n[t], i = e[t];
+      for (let l = 0; l < r; ++l)
+        s[l] - i < o[l] && (o[l] = s[l] - i);
+    }
+  }
+}
+function z(n, o, e, c, r) {
+  const f = o.length, t = e.length;
+  let s = 0;
+  for (let i = 0; i < t; ++i) {
+    const l = n[i], g = e[i];
+    for (let h = 0; h < f; ++h)
+      if (c[h] === -1 && l[h] === o[h] + g) {
+        c[h] = i, r[i] = h, ++s;
         break;
       }
   }
   return s;
 }
-function T(n) {
-  var v;
-  const e = n.length, o = ((v = n[0]) == null ? void 0 : v.length) ?? 0;
-  if (e > o)
+function D(n) {
+  var A;
+  const o = n.length, e = ((A = n[0]) == null ? void 0 : A.length) ?? 0;
+  if (o > e)
     throw new RangeError("invalid MxN matrix: M > N");
-  const l = new Array(o).fill(0n), c = new Array(e).fill(0n);
-  S(n, l, c);
-  const f = new Array(o).fill(-1), t = new Array(e).fill(-1);
-  let s = U(n, l, c, f, t);
-  if (s >= e)
+  const c = new Array(e).fill(0n), r = new Array(o).fill(0n);
+  q(n, c, r);
+  const f = new Array(e).fill(-1), t = new Array(o).fill(-1);
+  let s = z(n, c, r, f, t);
+  if (s >= o)
     return t;
-  const r = new Array(o), i = new Array(e).fill(-1), u = new Array(o), g = new Array(o), w = new Array(o);
-  for (let h = 0; s < e; ++h)
-    if (t[h] === -1)
-      for (r.fill(-1), i[h] = h, H(w), q(h, n, l, c, u, g); ; ) {
-        const [p, y] = Z(w, u, g);
-        if (u[y] > 0n && B(u[y], h, r, i, l, c, u), r[y] = p, P(w, y), f[y] === -1) {
-          j(y, r, f, t), ++s;
+  const i = new Array(e), l = new Array(o).fill(-1), g = new Array(e), h = new Array(e), w = new Array(e);
+  for (let y = 0; s < o; ++y)
+    if (t[y] === -1)
+      for (i.fill(-1), l[y] = y, M(w), G(y, n, c, r, g, h); ; ) {
+        const [p, u] = b(w, g, h);
+        if (g[u] > 0n && F(g[u], y, i, l, c, r, g), i[u] = p, $(w, u), f[u] === -1) {
+          N(u, i, f, t), ++s;
           break;
         }
-        const A = f[y];
-        i[A] = h, z(A, n, l, c, w, u, g);
+        const v = f[u];
+        l[v] = y, J(v, n, c, r, w, g, h);
       }
   return t;
 }
-function j(n, e, o, l) {
-  do {
-    const c = e[n], f = l[c];
-    o[n] = c, l[c] = n, n = f;
-  } while (n !== -1);
+function F(n, o, e, c, r, f, t) {
+  const s = r.length, i = f.length;
+  for (let l = 0; l < i; ++l)
+    c[l] === o && (f[l] += n);
+  for (let l = 0; l < s; ++l)
+    e[l] === -1 ? t[l] -= n : r[l] -= n;
 }
-function B(n, e, o, l, c, f, t) {
-  const s = c.length, r = f.length;
-  for (let i = 0; i < r; ++i)
-    l[i] === e && (f[i] += n);
-  for (let i = 0; i < s; ++i)
-    o[i] === -1 ? t[i] -= n : c[i] -= n;
-}
-function H(n) {
-  const e = n.length;
-  for (let o = 0; o < e; ++o)
-    n[o] = o;
-}
-function P(n, e) {
-  const o = n.length, l = e + 1 < o ? n[e + 1] : o;
-  for (let c = e; c >= 0 && n[c] === e; --c)
-    n[c] = l;
-}
-function Z(n, e, o) {
-  const l = e.length;
-  let c = n[0], f = e[c];
-  for (let t = c + 1; t < l && n[t] < l && (t = n[t], !(f > e[t] && (f = e[t], c = t, f === 0n))); ++t)
-    ;
-  return [o[c], c];
-}
-function q(n, e, o, l, c, f) {
-  const t = c.length, s = e[n], r = l[n];
+function G(n, o, e, c, r, f) {
+  const t = r.length, s = o[n], i = c[n];
   f.fill(n);
-  for (let i = 0; i < t; ++i)
-    c[i] = s[i] - o[i] - r;
+  for (let l = 0; l < t; ++l)
+    r[l] = s[l] - e[l] - i;
 }
-function z(n, e, o, l, c, f, t) {
-  const s = f.length, r = e[n], i = l[n];
-  for (let u = 0; u < s && c[u] < s; ++u) {
-    u = c[u];
-    const g = r[u] - o[u] - i;
-    g < f[u] && (f[u] = g, t[u] = n);
+function J(n, o, e, c, r, f, t) {
+  const s = f.length, i = o[n], l = c[n];
+  for (let g = 0; g < s && r[g] < s; ++g) {
+    g = r[g];
+    const h = i[g] - e[g] - l;
+    h < f[g] && (f[g] = h, t[g] = n);
   }
 }
-function D(n, e, o) {
-  const l = o.length, c = e.length;
-  for (let f = 0; f < c; ++f) {
-    if (e[f] >= 0)
-      continue;
-    const t = n[f];
-    for (let s = 0; s < l; ++s)
-      if (t[s] == 0 && (o[s] < 0 || e[o[s]] >= 0))
-        return [f, s];
-  }
-  return [-1, -1];
+function K(n) {
+  return typeof n == "bigint";
 }
-function G(n, e, o) {
-  const l = o.length, c = e.length;
-  let f = -1, t = -1, s;
-  for (let r = 0; r < c; ++r) {
-    if (e[r] >= 0)
-      continue;
-    const i = n[r];
-    for (let u = 0; u < l; ++u)
-      !(s <= i[u]) && (o[u] < 0 || e[o[u]] >= 0) && (s = i[u], f = u, t = r);
-  }
-  return [t, f];
-}
-function J(n) {
-  var l;
-  const e = n.length, o = ((l = n[0]) == null ? void 0 : l.length) ?? 0;
-  e <= o && F(n), e >= o && E(n);
-}
-function K(n, e, o) {
-  const l = e.length, c = o.length;
-  let f = 0;
-  for (let t = 0; t < c; ++t) {
-    const s = n[t];
-    for (let r = 0; r < l; ++r)
-      if (s[r] == 0 && e[r] < 0) {
-        e[r] = t, o[t] = r, ++f;
-        break;
-      }
-  }
-  return f;
-}
-function L(n) {
-  var s;
-  const e = n.length, o = ((s = n[0]) == null ? void 0 : s.length) ?? 0;
-  if (e > o)
-    throw new RangeError("invalid MxN matrix: M > N");
-  const l = new Array(o).fill(-1), c = new Array(e).fill(-1), f = new Array(e).fill(-1);
-  J(n);
-  let t = K(n, l, c);
-  for (; t < e; ) {
-    let [r, i] = D(n, f, l);
-    r < 0 && ([r, i] = G(n, f, l), Q(n[r][i], n, f, l)), f[r] = i, c[r] < 0 && (O(r, f, l, c), f.fill(-1), ++t);
-  }
-  return c;
-}
-function O(n, e, o, l) {
-  if (e[n] < 0)
-    throw new Error("Input must be prime.");
-  do {
-    const c = e[n], f = o[c];
-    o[c] = n, l[n] = c, n = f;
-  } while (n >= 0);
-}
-function Q(n, e, o, l) {
-  const c = l.length, f = o.length;
-  if (!isFinite(n))
-    return W(e, o, l);
-  for (let t = 0; t < f; ++t) {
-    const s = e[t];
-    for (let r = 0; r < c; ++r)
-      l[r] >= 0 && o[l[r]] < 0 ? o[t] >= 0 && (s[r] += n) : o[t] < 0 && (s[r] -= n);
-  }
-}
-function W(n, e, o) {
-  const l = o.length, c = e.length;
-  for (let f = 0; f < c; ++f) {
-    const t = n[f];
-    for (let s = 0; s < l; ++s)
-      o[s] >= 0 && e[o[s]] < 0 ? e[f] >= 0 && (t[s] += 1 / 0) : e[f] < 0 && (t[s] = 0);
-  }
-}
-function nn(n) {
+function _(n) {
   var t;
-  const e = n.length, o = ((t = n[0]) == null ? void 0 : t.length) ?? 0;
-  if (o <= 0)
+  const o = n.length, e = ((t = n[0]) == null ? void 0 : t.length) ?? 0;
+  if (e <= 0)
     return [];
-  n = M(n), e > o && R(n);
-  const l = d(n[0][0]) ? T(n) : L(n), c = l.length, f = new Array(c);
-  for (let s = 0; s < c; ++s)
-    f[s] = [s, l[s]];
-  return e > o && N(f), f;
+  o > e && (n = d(n), T(n));
+  const c = K(n[0][0]) ? D(n) : H(n), r = c.length, f = new Array(r);
+  for (let s = 0; s < r; ++s)
+    f[s] = [s, c[s]];
+  return o > e && C(f), f;
 }
 export {
-  _ as createCostMatrix,
-  nn as default,
-  V as getMaxCost,
-  x as getMinCost,
-  a as invertCostMatrix,
-  nn as munkres,
-  m as negateCostMatrix
+  L as createCostMatrix,
+  _ as default,
+  O as getMaxCost,
+  Q as getMinCost,
+  W as invertCostMatrix,
+  _ as munkres,
+  Z as negateCostMatrix
 };
 //# sourceMappingURL=munkres.min.mjs.map

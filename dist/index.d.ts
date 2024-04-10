@@ -114,10 +114,6 @@ export { Matrix }
  * @returns An array of pairs `[y, x]` representing the optimal assignment
  * of workers to jobs. Each pair consists of a worker index `y` and a job
  * index `x`, indicating that worker `y` is assigned to job `x`.
- *
- * @remarks
- * Runs the {@link https://en.wikipedia.org/wiki/Hungarian_algorithm | Munkres algorithm (aka Hungarian algorithm)} to solve
- * the {@link https://en.wikipedia.org/wiki/Assignment_problem | assignment problem}.
  */
 declare function munkres(costMatrix: Matrix<number>): Tuple<number>[];
 
