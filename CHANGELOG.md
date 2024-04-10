@@ -1,10 +1,10 @@
 # Change Log
 
-## [1.1.1] (WIP)
+## [1.2.0](https://github.com/havelessbemore/munkres/compare/v1.1.0...v1.2.0) (2024-04-10)
 
 ### Updates
 
-- TODO: Improve performance when using `number[][]` cost matrices.
+- Improve performance by 100x when using `number[][]` cost matrices.
 
 ## [1.1.0](https://github.com/havelessbemore/munkres/compare/v1.0.2...v1.1.0) (2024-04-09)
 
