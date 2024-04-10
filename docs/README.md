@@ -12,10 +12,11 @@ A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm
 
 ## Features
 
-- Supports square (NxN) and rectangular (MxN) cost matrices.
+- Supports square and rectangular cost matrices.
 - Supports `number[][]` and `bigint[][]` cost matrices.
-- Supports `-Infinity` and `Infinity` in `number[][]` cost matrices.
-- [Helpers](#helpers) included for creating and manipulating cost matrices.
+- Supports `-Infinity` and `Infinity`.
+- [Helper methods](#helpers) for creating and manipulating cost matrices.
+- Fast ([benchmarks](#benchmarks)).
 
 ## Getting Started
 
@@ -177,7 +178,7 @@ npm run test:coverage
 
 A coverage report is generated at `./coverage/index.html`.
 
-## Benchmark
+## Benchmarks
 
 To run benchmarks:
 
