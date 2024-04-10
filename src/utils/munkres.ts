@@ -1,155 +1,83 @@
 import { Matrix } from "../types/matrix";
-import { Tuple } from "../types/tuple";
 
-import { reduceCols, reduceRows, toString as _toString } from "./matrix";
+import { getMin } from "./array";
+import { toString as _toString } from "./matrix";
 
 /**
- * Displays the current step of the algorithm and the state of the cost matrix.
+ * Initializes the dual variables for the Munkres algorithm.
  *
- * @param step - The current step of the algorithm.
- * @param mat - The cost matrix.
- * @param primeY - An array of prime y coordinates to x coordinates.
- * @param starY - An array of star y coordinates to x coordinates.
- */ /*
-export function debug(
-  step: string,
-  mat: Matrix<number>,
-  primeY: number[],
-  starY: number[]
+ * This is a preprocessing step that effectively performs
+ * row-wise and column-wise reductions on the cost matrix. This
+ * helps find an initial matching and improves the efficiency
+ * of subsequent steps.
+ *
+ * @param matrix - The cost matrix.
+ * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
+ * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ */
+export function step1(
+  matrix: Matrix<number>,
+  dualX: number[],
+  dualY: number[]
 ): void {
-  console.log("%s:\n\n%s\n", step, toString(mat, starY, primeY));
-}
-*/
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
 
-/**
- * Searches for an uncovered zero in the matrix and returns its coordinates.
- *
- * @param mat - The cost matrix.
- * @param primeY - An array of prime y coordinates to x coordinates.
- * @param starX - An array of star x coordinates to y coordinates.
- *
- * @returns The coordinates of an uncovered zero, if found.
- * Otherwise, returns `[-1, -1]`;
- */
-export function findUncoveredZero(
-  mat: Matrix<number>,
-  primeY: number[],
-  starX: number[]
-): Tuple<number> {
-  const X = starX.length;
-  const Y = primeY.length;
-
-  // For each cell
-  for (let y = 0; y < Y; ++y) {
-    // Skip if the row is covered
-    if (primeY[y] >= 0) {
-      continue;
-    }
-    const vals = mat[y];
-    for (let x = 0; x < X; ++x) {
-      // Return immediately if a uncovered zero found
-      if (vals[x] == 0 && (starX[x] < 0 || primeY[starX[x]] >= 0)) {
-        return [y, x];
-      }
-    }
-  }
-
-  return [-1, -1];
-}
-
-/**
- * Searches for the smallest uncovered value
- * in the matrix and returns its coordinates.
- *
- * @param mat - The cost matrix.
- * @param primeY - An array of prime y coordinates to x coordinates.
- * @param starX - An array of star x coordinates to y coordinates.
- *
- * @returns The coordinates to the smallest uncovered value.
- */
-export function findUncoveredMin(
-  mat: Matrix<number>,
-  primeY: number[],
-  starX: number[]
-): Tuple<number> {
-  const X = starX.length;
-  const Y = primeY.length;
-
-  let minX = -1;
-  let minY = -1;
-  let minV = undefined as unknown as number;
-
-  // For each cell
-  for (let y = 0; y < Y; ++y) {
-    // Skip if the row is covered
-    if (primeY[y] >= 0) {
-      continue;
-    }
-    const vals = mat[y];
-    for (let x = 0; x < X; ++x) {
-      // Track the smallest uncovered value
-      if (!(minV <= vals[x]) && (starX[x] < 0 || primeY[starX[x]] >= 0)) {
-        minV = vals[x];
-        minX = x;
-        minY = y;
-      }
-    }
-  }
-
-  // Return the smallest value's coordinates
-  return [minY, minX];
-}
-
-/**
- * Reduces the given cost matrix by performing row-wise and column-wise
- * reductions.
- *
- * This is a preprocessing step to simplify the matrix
- * and improve the efficiency of subsequent steps.
- *
- * @param mat - The cost matrix. Modified in place.
- */
-export function step1(mat: Matrix<number> | Matrix<bigint>): void {
-  const Y = mat.length;
-  const X = mat[0]?.length ?? 0;
-
+  // Reduce rows
   if (Y <= X) {
-    reduceRows(mat);
+    for (let y = 0; y < Y; ++y) {
+      dualY[y] = getMin(matrix[y])!;
+    }
   }
 
+  // Reduce columns
   if (Y >= X) {
-    reduceCols(mat);
+    let dy = dualY[0];
+    let row = matrix[0];
+    for (let x = 0; x < X; ++x) {
+      dualX[x] = row[x] === dy ? 0 : row[x] - dy;
+    }
+    for (let y = 1; y < Y; ++y) {
+      dy = dualY[y];
+      row = matrix[y];
+      for (let x = 0; x < X; ++x) {
+        const dx = row[x] === dy ? 0 : row[x] - dy;
+        if (dx < dualX[x]) {
+          dualX[x] = dx;
+        }
+      }
+    }
   }
 }
 
 /**
- * Performs the initial steps of searching for zeros in the cost matrix to
- * "star", then returns the number of stars made.
+ * Finds an initial matching for the munkres algorithm.
  *
- * A star indicates a potential part of the optimal solution. Each star is
- * the only one in its row and column.
+ * @param matrix - The cost matrix.
+ * @param starX - An array mapping star columns to row. Modified in place.
+ * @param starY - An array mapping star rows to columns. Modified in place.
  *
- * @param mat - The cost matrix.
- * @param starX - An array tracking the star status of columns.
- * @param starY - An array tracking the star status of rows.
- *
- * @returns The number of stars made.
+ * @returns The number of matches (stars) found.
  */
 export function steps2To3(
-  mat: Matrix<number>,
-  starX: number[],
-  starY: number[]
+  matrix: Matrix<number>,
+  dualX: number[],
+  dualY: number[],
+  starsX: number[],
+  starsY: number[]
 ): number {
-  const X = starX.length;
-  const Y = starY.length;
+  const X = dualX.length;
+  const Y = dualY.length;
 
   let stars = 0;
   for (let y = 0; y < Y; ++y) {
-    const vals = mat[y];
+    const dy = -dualY[y];
+    const row = matrix[y];
     for (let x = 0; x < X; ++x) {
-      if (vals[x] == 0 && starX[x] < 0) {
-        starX[x] = y;
-        starY[y] = x;
+      const dual = dualX[x] === dy ? 0 : dualX[x] - dy;
+      if (starsX[x] === -1 && row[x] === dual) {
+        starsX[x] = y;
+        starsY[y] = x;
         ++stars;
         break;
       }
@@ -160,191 +88,223 @@ export function steps2To3(
 }
 
 /**
- * Find and augment assignments until an optimal set is found.
+ * Finds a complete matching of jobs to workers at minimum cost.
  *
- * It attempts to either find an uncovered zero to star or adjusts
- * the matrix to create more zeros if none found. If an uncovered zero is
- * found but cannot be starred due to conflicts (i.e., another star in the
- * same row or column), it primes the zero and possibly adjusts existing
- * stars to resolve the conflict, thereby augmenting the current set of
- * assignments. This process is repeated until there are as many stars as
- * there are columns in the matrix, at which point optimal assignments
- * have been found.
+ * This step iteratively improves upon an initial matching until a complete
+ * matching is found. This involves updating dual variables and managing
+ * slack values to uncover new opportunities for optimal assignments.
  *
- * @param mat - An MxN cost matrix. Modified in place.
+ * @param mat - An MxN cost matrix.
+ *
+ * @returns An array representing optimal assignments. Each index / value
+ * represents a row / column (respectively) assignment.
  *
  * @throws - {@link RangeError}
  * Thrown if the given MxN matrix has more rows than columns (M \> N).
  *
  * @privateRemarks
- * Based on {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | this outline}
- * and enhanced with custom optimizations.
+ * Citations:
+ * 1. {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | Munkres' Assignment Algorithm, Modified for Rectangular Matrices}
+ *     - Used as the foundation and enhanced with custom optimizations.
+ * 1. {@link https://www.ri.cmu.edu/pub_files/pub4/mills_tettey_g_ayorkor_2007_3/mills_tettey_g_ayorkor_2007_3.pdf | Mills-Tettey, Ayorkor & Stent, Anthony & Dias, M.. (2007). The Dynamic Hungarian Algorithm for the Assignment Problem with Changing Costs.}
+ *     - Used to implement primal-dual variables and dynamic updates.
+ * 1. {@link https://public.websites.umich.edu/~murty/612/612slides4.pdf | Murty, K. G.. Primal-Dual Algorithms. [IOE 612, Lecture slides 4]. Department of Industrial and Operations Engineering, University of Michigan.}
+ *     - Used to implement primal-dual and slack variables.
  */
-export function step4(mat: Matrix<number>): number[] {
-  const Y = mat.length;
-  const X = mat[0]?.length ?? 0;
-
+export function step4(matrix: Matrix<number>): number[] {
   // Check input
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
   if (Y > X) {
     throw new RangeError("invalid MxN matrix: M > N");
   }
 
-  const starX = new Array<number>(X).fill(-1);
-  const starY = new Array<number>(Y).fill(-1);
-  const primeY = new Array<number>(Y).fill(-1);
-
   // Step 1: Reduce
-  step1(mat);
+  const dualX = new Array<number>(X).fill(0);
+  const dualY = new Array<number>(Y).fill(0);
+  step1(matrix, dualX, dualY);
 
-  // Steps 2 & 3: Find initial stars
-  let stars = steps2To3(mat, starX, starY);
+  // Steps 2 & 3: Find initial matching
+  const starsX = new Array<number>(X).fill(-1);
+  const starsY = new Array<number>(Y).fill(-1);
+  let stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
 
-  // Step 4: Find optimal assignments
-  while (stars < Y) {
-    // Find an uncovered zero or the uncovered min
-    let [y, x] = findUncoveredZero(mat, primeY, starX);
+  // Check if complete matching
+  if (stars >= Y) {
+    return starsY;
+  }
 
-    // Step 6: If no zero found, create a zero(s) from the min
-    if (y < 0) {
-      [y, x] = findUncoveredMin(mat, primeY, starX);
-      step6(mat[y][x], mat, primeY, starX);
+  // Step 4: Find complete matching
+  const coveredX = new Array<number>(X);
+  const coveredY = new Array<number>(Y).fill(-1);
+  const slackV = new Array<number>(X);
+  const slackX = new Array<number>(X);
+  const exposedX = new Array<number>(X);
+
+  for (let rootY = 0; stars < Y; ++rootY) {
+    if (starsY[rootY] !== -1) {
+      continue;
     }
 
-    // Prime the zero / cover the row
-    primeY[y] = x;
+    // Initialize stage
+    coveredX.fill(-1);
+    coveredY[rootY] = rootY;
+    initExposed(exposedX);
+    initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
 
-    // Step 5: If no star in the prime's row, turn primes into stars
-    if (starY[y] < 0) {
-      step5(y, primeY, starX, starY);
-      primeY.fill(-1);
-      ++stars;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      // Find an uncovered min
+      const [y, x] = findUncoveredMin(exposedX, slackV, slackX);
+
+      // Step 6: If not zero, zero the min
+      if (slackV[x] > 0) {
+        step6(slackV[x], rootY, coveredX, coveredY, dualX, dualY, slackV);
+      }
+
+      // Prime the zero / cover the column
+      coveredX[x] = y;
+      cover(exposedX, x);
+
+      // Step 5: If no star in the column, turn primes into stars
+      if (starsX[x] === -1) {
+        step5(x, coveredX, starsX, starsY);
+        ++stars;
+        break;
+      }
+
+      // Cover the star's row and update slack
+      const sy = starsX[x];
+      coveredY[sy] = rootY;
+      updateSlack(sy, matrix, dualX, dualY, exposedX, slackV, slackX);
     }
   }
 
   // Return assignments ([y] -> x)
-  return starY;
+  return starsY;
 }
 
 /**
- * Given a prime, walks an alternating path to a star in the prime's column
- * and then a prime in the star's row, starring each prime and removing each
- * star along the way. The path continues until a star cannot be found.
+ * Augments the current matching.
  *
- * This step effectively increases the number of independent zeros (stars)
- * in the matrix, bringing the algorithm closer to an optimal assignment.
+ * This step effectively increases the number of matches (stars)
+ * by 1, bringing the algorithm closer to an optimal assignment.
  *
- * @param y - The starting prime's y coordinate.
- * @param primeY - An array of prime y coordinates to x coordinates.
- * @param starX - An array of star x coordinates to y coordinates.
- * @param starY - An array of star y coordinates to x coordinates.
+ * Augmentation is performed by flipping matched and unmatched edges along
+ * an augmenting path, starting from an unmatched node / edge and
+ * continuing until no matched edge can be found.
+ *
+ * @param x - The starting node's column.
+ * @param coveredX - An array mapping covered columns to rows.
+ * @param starX - An array mapping star columns to row. Modified in place.
+ * @param starY - An array mapping star rows to columns. Modified in place.
  */
 export function step5(
-  y: number,
-  primeY: number[],
+  x: number,
+  coveredX: number[],
   starX: number[],
   starY: number[]
 ): void {
-  // Sanity check
-  if (primeY[y] < 0) {
-    throw new Error("Input must be prime.");
-  }
-
   do {
-    // Mark prime as a star
-    const x = primeY[y];
-    const sy = starX[x];
+    const y = coveredX[x];
+    const sx = starY[y];
     starX[x] = y;
     starY[y] = x;
-
-    // Move to next prime
-    y = sy;
-  } while (y >= 0);
+    x = sx;
+  } while (x !== -1);
 }
 
 /**
- * Adjusts a cost matrix to uncover more zeros.
+ * Adjusts dual variables and slack to uncover more admissible edges.
  *
- * The matrix is modified by adding a given value to every element of covered
- * rows, and subtracting `Infinity` from every element of uncovered columns.
- * If an element's row is covered and column is uncovered, no change is made.
- *
- * @param min - The value to adjust the matrix by.
- * Should be the minimum uncovered value (see {@link step4}).
- * @param mat - The cost matrix. Modified in place.
- * @param primeY - An array of prime y coordinates to x coordinates.
- * @param starX - An array of star x coordinates to y coordinates.
+ * @param min - The value to adjust by.
+ * @param coveredX - An array mapping covered columns to rows.
+ * @param coveredY - An array indicating whether a row is covered.
+ * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
+ * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ * @param slackV - The slack values for each column. Modified in place.
  */
 export function step6(
   min: number,
-  mat: Matrix<number>,
-  primeY: number[],
-  starX: number[]
+  rootY: number,
+  coveredX: number[],
+  coveredY: number[],
+  dualX: number[],
+  dualY: number[],
+  slackV: number[]
 ): void {
-  const X = starX.length;
-  const Y = primeY.length;
+  const X = dualX.length;
+  const Y = dualY.length;
 
-  // If min is Infinity
-  if (!isFinite(min)) {
-    return step6Inf(mat, primeY, starX);
+  for (let y = 0; y < Y; ++y) {
+    if (coveredY[y] === rootY) {
+      dualY[y] = dualY[y] === -min ? 0 : dualY[y] + min;
+    }
   }
 
-  // For each cell
-  for (let y = 0; y < Y; ++y) {
-    const vals = mat[y];
-    for (let x = 0; x < X; ++x) {
-      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
-        if (primeY[y] >= 0) {
-          // The cell's column and row are covered
-          vals[x] += min;
-        }
-      } else if (primeY[y] < 0) {
-        // The cell's column and row are uncovered
-        vals[x] -= min;
-      }
+  for (let x = 0; x < X; ++x) {
+    if (coveredX[x] === -1) {
+      slackV[x] = slackV[x] === min ? 0 : slackV[x] - min;
+    } else {
+      dualX[x] = dualX[x] === min ? 0 : dualX[x] - min;
     }
   }
 }
 
-/**
- * Adjusts a cost matrix to uncover more zeros, specifically
- * when adjusting by Infinity.
- *
- * The matrix is modified by adding `Infinity` to every element of covered
- * rows, and subtracting `Infinity` from every element of uncovered columns.
- * If an element's row is covered and column is uncovered, no change is made.
- *
- * @param mat - The cost matrix. Modified in place.
- * @param primeY - An array of prime y coordinates to x coordinates.
- * @param starX - An array of star x coordinates to y coordinates.
- *
- * @remarks
- *
- * This variation of step 6 is used when the minimum uncovered value
- * (see {@link step4}) is `Infinity`, as normal subtraction of `Infinity`
- * from `Infinity` equals `NaN`.
- */
-export function step6Inf(
-  mat: Matrix<number>,
-  primeY: number[],
-  starX: number[]
-): void {
-  const X = starX.length;
-  const Y = primeY.length;
+export function initExposed(exposed: number[]): void {
+  const N = exposed.length;
+  for (let i = 0; i < N; ++i) {
+    exposed[i] = i;
+  }
+}
 
-  // For each cell
-  for (let y = 0; y < Y; ++y) {
-    const vals = mat[y];
-    for (let x = 0; x < X; ++x) {
-      if (starX[x] >= 0 && primeY[starX[x]] < 0) {
-        if (primeY[y] >= 0) {
-          // The cell's column and row are covered
-          vals[x] += Infinity;
-        }
-      } else if (primeY[y] < 0) {
-        // The cell's column and row are uncovered
-        vals[x] = 0;
+export function cover(exposed: number[], i: number): void {
+  const N = exposed.length;
+  const next = i + 1 < N ? exposed[i + 1] : N;
+  for (let j = i; j >= 0 && exposed[j] === i; --j) {
+    exposed[j] = next;
+  }
+}
+
+export function findUncoveredMin(
+  exposedX: number[],
+  slackV: number[],
+  slackX: number[]
+): [number, number] {
+  const X = slackV.length;
+
+  let minX = exposedX[0];
+  let minV = slackV[minX];
+  for (let x = minX + 1; x < X && exposedX[x] < X; ++x) {
+    x = exposedX[x];
+    if (slackV[x] < minV) {
+      minV = slackV[x];
+      minX = x;
+      if (minV === 0) {
+        break;
       }
     }
+  }
+
+  return [slackX[minX], minX];
+}
+
+export function initSlack(
+  y: number,
+  matrix: Matrix<number>,
+  dualX: number[],
+  dualY: number[],
+  slackV: number[],
+  slackX: number[]
+): void {
+  const dy = -dualY[y];
+  const row = matrix[y];
+  const X = slackX.length;
+
+  slackX.fill(y);
+  for (let x = 0; x < X; ++x) {
+    const dual = dualX[x] === dy ? 0 : dualX[x] - dy;
+    slackV[x] = row[x] === dual ? 0 : row[x] - dual;
   }
 }
 
@@ -366,7 +326,7 @@ export function step6Inf(
 export function toString<T>(
   mat: Matrix<T>,
   starY: number[],
-  primeY: number[] = []
+  coveredX: number[]
 ): string {
   // Mark values as stars or primes
   return _toString(mat, (v, y, x): string => {
@@ -374,9 +334,33 @@ export function toString<T>(
     if (x == starY[y]) {
       str = "*" + str;
     }
-    if (x == primeY[y]) {
+    if (y == coveredX[x]) {
       str = '"' + str;
     }
     return str;
   });
+}
+
+export function updateSlack(
+  y: number,
+  matrix: Matrix<number>,
+  dualX: number[],
+  dualY: number[],
+  exposedX: number[],
+  slackV: number[],
+  slackX: number[]
+): void {
+  const dy = -dualY[y];
+  const row = matrix[y];
+  const X = slackX.length;
+
+  for (let x = 0; x < X && exposedX[x] < X; ++x) {
+    x = exposedX[x];
+    const dual = dualX[x] === dy ? 0 : dualX[x] - dy;
+    const slack = row[x] === dual ? 0 : row[x] - dual;
+    if (slack < slackV[x]) {
+      slackV[x] = slack;
+      slackX[x] = y;
+    }
+  }
 }
