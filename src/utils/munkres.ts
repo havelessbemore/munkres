@@ -270,6 +270,16 @@ export function findUncoveredMin(
   exposedX: number[],
   slackV: number[],
   slackX: number[]
+): [number, number];
+export function findUncoveredMin(
+  exposedX: number[],
+  slackV: bigint[],
+  slackX: number[]
+): [number, number];
+export function findUncoveredMin<T extends number | bigint>(
+  exposedX: number[],
+  slackV: T[],
+  slackX: number[]
 ): [number, number] {
   const X = slackV.length;
 

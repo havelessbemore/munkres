@@ -1,5 +1,6 @@
 import { Matrix } from "../types/matrix";
 import { getMin } from "./array";
+import { cover, findUncoveredMin, initExposed, step5 } from "./munkres";
 
 /**
  * Initializes the dual variables for the Munkres algorithm.
@@ -145,7 +146,7 @@ export function bigStep4(matrix: Matrix<bigint>): number[] {
     // Initialize stage
     coveredX.fill(-1);
     coveredY[rootY] = rootY;
-    clearCover(exposedX);
+    initExposed(exposedX);
 
     // Initialize slack
     initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
@@ -183,36 +184,6 @@ export function bigStep4(matrix: Matrix<bigint>): number[] {
 }
 
 /**
- * Augments the current matching.
- *
- * This step effectively increases the number of matches (stars)
- * by 1, bringing the algorithm closer to an optimal assignment.
- *
- * Augmentation is performed by flipping matched and unmatched edges along
- * an augmenting path, starting from an unmatched node / edge and
- * continuing until no matched edge can be found.
- *
- * @param x - The starting node's column.
- * @param coveredX - An array mapping covered columns to rows.
- * @param starX - An array mapping star columns to row. Modified in place.
- * @param starY - An array mapping star rows to columns. Modified in place.
- */
-export function step5(
-  x: number,
-  coveredX: number[],
-  starX: number[],
-  starY: number[]
-): void {
-  do {
-    const y = coveredX[x];
-    const sx = starY[y];
-    starX[x] = y;
-    starY[y] = x;
-    x = sx;
-  } while (x !== -1);
-}
-
-/**
  * Adjusts dual variables and slack to uncover more admissible edges.
  *
  * @param min - The value to adjust by.
@@ -247,44 +218,6 @@ export function step6(
       dualX[x] -= min;
     }
   }
-}
-
-export function clearCover(cover: number[]): void {
-  const N = cover.length;
-  for (let i = 0; i < N; ++i) {
-    cover[i] = i;
-  }
-}
-
-export function cover(cover: number[], i: number): void {
-  const N = cover.length;
-  const next = i + 1 < N ? cover[i + 1] : N;
-  for (let j = i; j >= 0 && cover[j] === i; --j) {
-    cover[j] = next;
-  }
-}
-
-export function findUncoveredMin(
-  exposedX: number[],
-  slackV: bigint[],
-  slackX: number[]
-): [number, number] {
-  const X = slackV.length;
-
-  let minX = exposedX[0];
-  let minV = slackV[minX];
-  for (let x = minX + 1; x < X && exposedX[x] < X; ++x) {
-    x = exposedX[x];
-    if (minV > slackV[x]) {
-      minV = slackV[x];
-      minX = x;
-      if (minV === 0n) {
-        break;
-      }
-    }
-  }
-
-  return [slackX[minX], minX];
 }
 
 export function initSlack(
