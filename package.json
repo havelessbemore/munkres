@@ -75,10 +75,9 @@
     "typedoc": "^0.25.7",
     "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "^5.1.6",
-    "vite": "^5.2.6",
+    "vite": "^5.2.8",
     "vite-plugin-banner": "^0.7.1",
-    "vite-plugin-dts": "^3.7.1",
-    "vitest": "^1.2.2"
-  },
-  "dependencies": {}
+    "vite-plugin-dts": "^3.8.1",
+    "vitest": "^1.4.0"
+  }
 }
