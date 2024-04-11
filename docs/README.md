@@ -191,7 +191,7 @@ npm run bench
 | Dimensions  | Min (ms) | Max (ms) | Avg (ms) | Samples   |
 | ----------- | -------- | -------- | -------- | --------- |
 | 2x2         | 0.000000 | 1.305582 | 0.000126 | 3,948,993 |
-| 4x4         | 0.000082 | 0.988499 | 0.000209 | 2,387,81  |
+| 4x4         | 0.000082 | 0.988499 | 0.000209 | 2,387,816 |
 | 8x8         | 0.000500 | 0.780541 | 0.000677 | 737,917   |
 | 16x16       | 0.002999 | 0.698416 | 0.003194 | 156,498   |
 | 32x32       | 0.012875 | 2.100125 | 0.013341 | 37,478    |
@@ -227,7 +227,7 @@ npm run bench
 
 Benchmarked with:
 
-- Package version: v1.2.1
+- Package version: v1.2.2
 - OS: M2 Macbook Air, Mac OS v14.4.1
 - Runtime: NodeJS v20.12.1
 - Benchmarking Tool: tinybench v2.6.0
