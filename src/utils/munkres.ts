@@ -54,8 +54,8 @@ export function step1(
  * Finds an initial matching for the munkres algorithm.
  *
  * @param matrix - The cost matrix.
- * @param starX - An array mapping star columns to row. Modified in place.
- * @param starY - An array mapping star rows to columns. Modified in place.
+ * @param starsX - An array mapping star columns to row. Modified in place.
+ * @param starsY - An array mapping star rows to columns. Modified in place.
  *
  * @returns The number of matches (stars) found.
  */
@@ -196,20 +196,20 @@ export function step4(matrix: Matrix<number>): number[] {
  *
  * @param x - The starting node's column.
  * @param coveredX - An array mapping covered columns to rows.
- * @param starX - An array mapping star columns to row. Modified in place.
- * @param starY - An array mapping star rows to columns. Modified in place.
+ * @param starsX - An array mapping star columns to row. Modified in place.
+ * @param starsY - An array mapping star rows to columns. Modified in place.
  */
 export function step5(
   x: number,
   coveredX: number[],
-  starX: number[],
-  starY: number[]
+  starsX: number[],
+  starsY: number[]
 ): void {
   do {
     const y = coveredX[x];
-    const sx = starY[y];
-    starX[x] = y;
-    starY[y] = x;
+    const sx = starsY[y];
+    starsX[x] = y;
+    starsY[y] = x;
     x = sx;
   } while (x !== -1);
 }
@@ -327,21 +327,21 @@ export function initSlack(
  * aids in understanding and debugging the matrix's state at various steps of
  * the algorithm.
  *
- * @param mat - The cost matrix.
- * @param starY - An array of star y coordinates to x coordinates.
+ * @param matrix - The cost matrix.
+ * @param starsY - An array of star y coordinates to x coordinates.
  * @param primeY - (Optional) An array of prime y coordinates to x coordinates.
  *
  * @returns A string visualization of the matrix with stars and primes.
  */
 export function toString<T>(
-  mat: Matrix<T>,
-  starY: number[],
+  matrix: Matrix<T>,
+  starsY: number[],
   coveredX: number[]
 ): string {
   // Mark values as stars or primes
-  return _toString(mat, (v, y, x): string => {
+  return _toString(matrix, (v, y, x): string => {
     let str = `${v}`;
-    if (x == starY[y]) {
+    if (x == starsY[y]) {
       str = "*" + str;
     }
     if (y == coveredX[x]) {
