@@ -1,6 +1,46 @@
 import { describe, it, expect } from "vitest";
 
-import { getMin } from "./array";
+import { entries, getMin } from "./array";
+
+describe(`${entries.name}()`, () => {
+  it("should return an empty array for an empty input array", () => {
+    expect(entries([])).toEqual([]);
+  });
+
+  it("should handle a single element array", () => {
+    expect(entries(["foo"])).toEqual([[0, "foo"]]);
+  });
+
+  it("should correctly transform an array of strings to index-value pairs", () => {
+    const input = ["a", "b", "c"];
+    const expectedResult = [
+      [0, "a"],
+      [1, "b"],
+      [2, "c"],
+    ];
+    expect(entries(input)).toEqual(expectedResult);
+  });
+
+  it("should correctly transform an array of numbers to index-value pairs", () => {
+    const input = [10, 20, 30];
+    const expectedResult = [
+      [0, 10],
+      [1, 20],
+      [2, 30],
+    ];
+    expect(entries(input)).toEqual(expectedResult);
+  });
+
+  it("should handle arrays with mixed types", () => {
+    const input = [1, "two", true];
+    const expectedResult = [
+      [0, 1],
+      [1, "two"],
+      [2, true],
+    ];
+    expect(entries(input)).toEqual(expectedResult);
+  });
+});
 
 describe(`${getMin.name}()`, () => {
   it("returns undefined for an empty array", () => {
