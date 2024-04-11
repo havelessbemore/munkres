@@ -1,6 +1,6 @@
 import { Matrix } from "../types/matrix";
 import { getMin } from "./array";
-import { cover, findUncoveredMin, initExposed, step5 } from "./munkres";
+import { findUncoveredMin, initExposed, step5 } from "./munkres";
 
 /**
  * Initializes the dual variables for the Munkres algorithm.
@@ -147,23 +147,24 @@ export function bigStep4(matrix: Matrix<bigint>): number[] {
     coveredX.fill(-1);
     coveredY[rootY] = rootY;
     initExposed(exposedX);
-
-    // Initialize slack
     initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
       // Find an uncovered min
-      const [y, x] = findUncoveredMin(exposedX, slackV, slackX);
+      const [y, x, px] = findUncoveredMin(exposedX, slackV, slackX);
 
       // Step 6: If not zero, zero the min
       if (slackV[x] > 0n) {
         step6(slackV[x], rootY, coveredX, coveredY, dualX, dualY, slackV);
       }
 
-      // Prime the zero / cover the column
+      // Prime the zero
       coveredX[x] = y;
-      cover(exposedX, x);
+
+      // Cover the column
+      exposedX[x] = x + 1 < X ? exposedX[x + 1] : X;
+      exposedX[px] = exposedX[x];
 
       // Step 5: If no star in the column, turn primes into stars
       if (starsX[x] === -1) {

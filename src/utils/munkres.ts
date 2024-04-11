@@ -155,16 +155,19 @@ export function step4(matrix: Matrix<number>): number[] {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       // Find an uncovered min
-      const [y, x] = findUncoveredMin(exposedX, slackV, slackX);
+      const [y, x, px] = findUncoveredMin(exposedX, slackV, slackX);
 
       // Step 6: If not zero, zero the min
       if (slackV[x] > 0) {
         step6(slackV[x], rootY, coveredX, coveredY, dualX, dualY, slackV);
       }
 
-      // Prime the zero / cover the column
+      // Prime the zero
       coveredX[x] = y;
-      cover(exposedX, x);
+
+      // Cover the column
+      exposedX[x] = x + 1 < X ? exposedX[x + 1] : X;
+      exposedX[px] = exposedX[x];
 
       // Step 5: If no star in the column, turn primes into stars
       if (starsX[x] === -1) {
@@ -258,45 +261,39 @@ export function initExposed(exposed: number[]): void {
   }
 }
 
-export function cover(exposed: number[], i: number): void {
-  const N = exposed.length;
-  const next = i + 1 < N ? exposed[i + 1] : N;
-  for (let j = i; j >= 0 && exposed[j] === i; --j) {
-    exposed[j] = next;
-  }
-}
-
 export function findUncoveredMin(
   exposedX: number[],
   slackV: number[],
   slackX: number[]
-): [number, number];
+): [number, number, number];
 export function findUncoveredMin(
   exposedX: number[],
   slackV: bigint[],
   slackX: number[]
-): [number, number];
+): [number, number, number];
 export function findUncoveredMin<T extends number | bigint>(
   exposedX: number[],
   slackV: T[],
   slackX: number[]
-): [number, number] {
+): [number, number, number] {
   const X = slackV.length;
 
-  let minX = exposedX[0];
-  let minV = slackV[minX];
-  for (let x = minX + 1; x < X && exposedX[x] < X; ++x) {
-    x = exposedX[x];
+  let minP = 0;
+  let minV = slackV[exposedX[minP]];
+  for (let px = exposedX[0] + 1; px < X && exposedX[px] < X; ++px) {
+    const x = exposedX[px];
     if (slackV[x] < minV) {
       minV = slackV[x];
-      minX = x;
+      minP = px;
       if (minV === 0) {
         break;
       }
     }
+    px = x;
   }
 
-  return [slackX[minX], minX];
+  const minX = exposedX[minP];
+  return [slackX[minX], minX, minP];
 }
 
 export function initSlack(
