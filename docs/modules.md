@@ -89,7 +89,7 @@ const booleanMatrix: Matrix<boolean> = [
 
 #### Defined in
 
-[types/matrix.d.ts:37](https://github.com/havelessbemore/munkres/blob/324d95fdb361a7ec24ee06cfba00a3249ab382c8/src/types/matrix.d.ts#L37)
+[types/matrix.d.ts:37](https://github.com/havelessbemore/munkres/blob/23bcaf55e3b66d378ff9d655b1acea8b8bb2ea16/src/types/matrix.d.ts#L37)
 
 ___
 
@@ -106,7 +106,7 @@ ___
 
 #### Defined in
 
-[types/tuple.d.ts:1](https://github.com/havelessbemore/munkres/blob/324d95fdb361a7ec24ee06cfba00a3249ab382c8/src/types/tuple.d.ts#L1)
+[types/tuple.d.ts:1](https://github.com/havelessbemore/munkres/blob/23bcaf55e3b66d378ff9d655b1acea8b8bb2ea16/src/types/tuple.d.ts#L1)
 
 ## Functions
 
@@ -161,7 +161,7 @@ const matrix = createCostMatrix(workers, jobs, costFn);
 
 #### Defined in
 
-[utils/costMatrix.ts:34](https://github.com/havelessbemore/munkres/blob/324d95fdb361a7ec24ee06cfba00a3249ab382c8/src/utils/costMatrix.ts#L34)
+[utils/costMatrix.ts:34](https://github.com/havelessbemore/munkres/blob/23bcaf55e3b66d378ff9d655b1acea8b8bb2ea16/src/utils/costMatrix.ts#L34)
 
 ▸ **createCostMatrix**\<`W`, `J`\>(`workers`, `jobs`, `costFn`): [`Matrix`](modules.md#matrix)\<`bigint`\>
 
@@ -186,7 +186,7 @@ const matrix = createCostMatrix(workers, jobs, costFn);
 
 #### Defined in
 
-[utils/costMatrix.ts:39](https://github.com/havelessbemore/munkres/blob/324d95fdb361a7ec24ee06cfba00a3249ab382c8/src/utils/costMatrix.ts#L39)
+[utils/costMatrix.ts:39](https://github.com/havelessbemore/munkres/blob/23bcaf55e3b66d378ff9d655b1acea8b8bb2ea16/src/utils/costMatrix.ts#L39)
 
 ___
 
@@ -210,7 +210,7 @@ The maximum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[utils/costMatrix.ts:59](https://github.com/havelessbemore/munkres/blob/324d95fdb361a7ec24ee06cfba00a3249ab382c8/src/utils/costMatrix.ts#L59)
+[utils/costMatrix.ts:59](https://github.com/havelessbemore/munkres/blob/23bcaf55e3b66d378ff9d655b1acea8b8bb2ea16/src/utils/costMatrix.ts#L59)
 
 ▸ **getMaxCost**(`costMatrix`): `bigint` \| `undefined`
 
@@ -226,7 +226,7 @@ The maximum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[utils/costMatrix.ts:60](https://github.com/havelessbemore/munkres/blob/324d95fdb361a7ec24ee06cfba00a3249ab382c8/src/utils/costMatrix.ts#L60)
+[utils/costMatrix.ts:60](https://github.com/havelessbemore/munkres/blob/23bcaf55e3b66d378ff9d655b1acea8b8bb2ea16/src/utils/costMatrix.ts#L60)
 
 ___
 
@@ -250,7 +250,7 @@ The maximum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[utils/costMatrix.ts:74](https://github.com/havelessbemore/munkres/blob/324d95fdb361a7ec24ee06cfba00a3249ab382c8/src/utils/costMatrix.ts#L74)
+[utils/costMatrix.ts:74](https://github.com/havelessbemore/munkres/blob/23bcaf55e3b66d378ff9d655b1acea8b8bb2ea16/src/utils/costMatrix.ts#L74)
 
 ▸ **getMinCost**(`costMatrix`): `bigint` \| `undefined`
 
@@ -266,7 +266,7 @@ The maximum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[utils/costMatrix.ts:75](https://github.com/havelessbemore/munkres/blob/324d95fdb361a7ec24ee06cfba00a3249ab382c8/src/utils/costMatrix.ts#L75)
+[utils/costMatrix.ts:75](https://github.com/havelessbemore/munkres/blob/23bcaf55e3b66d378ff9d655b1acea8b8bb2ea16/src/utils/costMatrix.ts#L75)
 
 ___
 
@@ -329,7 +329,7 @@ invertCostMatrix(anotherMatrix, 50);
 
 #### Defined in
 
-[utils/costMatrix.ts:123](https://github.com/havelessbemore/munkres/blob/324d95fdb361a7ec24ee06cfba00a3249ab382c8/src/utils/costMatrix.ts#L123)
+[utils/costMatrix.ts:123](https://github.com/havelessbemore/munkres/blob/23bcaf55e3b66d378ff9d655b1acea8b8bb2ea16/src/utils/costMatrix.ts#L123)
 
 ▸ **invertCostMatrix**(`costMatrix`, `bigVal?`): `void`
 
@@ -346,7 +346,7 @@ invertCostMatrix(anotherMatrix, 50);
 
 #### Defined in
 
-[utils/costMatrix.ts:127](https://github.com/havelessbemore/munkres/blob/324d95fdb361a7ec24ee06cfba00a3249ab382c8/src/utils/costMatrix.ts#L127)
+[utils/costMatrix.ts:127](https://github.com/havelessbemore/munkres/blob/23bcaf55e3b66d378ff9d655b1acea8b8bb2ea16/src/utils/costMatrix.ts#L127)
 
 ___
 
@@ -373,7 +373,7 @@ index `x`, indicating that worker `y` is assigned to job `x`.
 
 #### Defined in
 
-[munkres.ts:20](https://github.com/havelessbemore/munkres/blob/324d95fdb361a7ec24ee06cfba00a3249ab382c8/src/munkres.ts#L20)
+[munkres.ts:20](https://github.com/havelessbemore/munkres/blob/23bcaf55e3b66d378ff9d655b1acea8b8bb2ea16/src/munkres.ts#L20)
 
 ▸ **munkres**(`costMatrix`): [`Tuple`](modules.md#tuple)\<`number`\>[]
 
@@ -389,7 +389,7 @@ index `x`, indicating that worker `y` is assigned to job `x`.
 
 #### Defined in
 
-[munkres.ts:21](https://github.com/havelessbemore/munkres/blob/324d95fdb361a7ec24ee06cfba00a3249ab382c8/src/munkres.ts#L21)
+[munkres.ts:21](https://github.com/havelessbemore/munkres/blob/23bcaf55e3b66d378ff9d655b1acea8b8bb2ea16/src/munkres.ts#L21)
 
 ___
 
@@ -434,7 +434,7 @@ negateCostMatrix(costMatrix);
 
 #### Defined in
 
-[utils/costMatrix.ts:163](https://github.com/havelessbemore/munkres/blob/324d95fdb361a7ec24ee06cfba00a3249ab382c8/src/utils/costMatrix.ts#L163)
+[utils/costMatrix.ts:163](https://github.com/havelessbemore/munkres/blob/23bcaf55e3b66d378ff9d655b1acea8b8bb2ea16/src/utils/costMatrix.ts#L163)
 
 ▸ **negateCostMatrix**(`costMatrix`): `void`
 
@@ -450,4 +450,4 @@ negateCostMatrix(costMatrix);
 
 #### Defined in
 
-[utils/costMatrix.ts:164](https://github.com/havelessbemore/munkres/blob/324d95fdb361a7ec24ee06cfba00a3249ab382c8/src/utils/costMatrix.ts#L164)
+[utils/costMatrix.ts:164](https://github.com/havelessbemore/munkres/blob/23bcaf55e3b66d378ff9d655b1acea8b8bb2ea16/src/utils/costMatrix.ts#L164)
