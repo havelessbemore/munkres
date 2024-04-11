@@ -1,7 +1,7 @@
 import { Matrix } from "./types/matrix";
 import { Tuple } from "./types/tuple";
 
-import { bigStep4 } from "./utils/bigMunkres";
+import { step4 as bigStep4 } from "./utils/bigMunkres";
 import { isBigInt } from "./utils/is";
 import { copy, flipH, transpose } from "./utils/matrix";
 import { step4 } from "./utils/munkres";

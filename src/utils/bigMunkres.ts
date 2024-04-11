@@ -108,7 +108,7 @@ export function steps2To3(
  * 1. {@link https://public.websites.umich.edu/~murty/612/612slides4.pdf | Murty, K. G.. Primal-Dual Algorithms. [IOE 612, Lecture slides 4]. Department of Industrial and Operations Engineering, University of Michigan.}
  *     - Used to implement primal-dual and slack variables.
  */
-export function bigStep4(matrix: Matrix<bigint>): number[] {
+export function step4(matrix: Matrix<bigint>): number[] {
   // Check input
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
