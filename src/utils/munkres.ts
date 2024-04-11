@@ -24,27 +24,28 @@ export function step1(
   const X = matrix[0]?.length ?? 0;
 
   // Reduce rows
-  if (Y <= X) {
-    for (let y = 0; y < Y; ++y) {
-      dualY[y] = getMin(matrix[y])!;
-    }
+  for (let y = 0; y < Y; ++y) {
+    dualY[y] = getMin(matrix[y])!;
   }
 
   // Reduce columns
-  if (Y >= X) {
-    let dy = dualY[0];
-    let row = matrix[0];
+  if (Y < X) {
+    dualX.fill(0);
+    return;
+  }
+
+  let dy = dualY[0];
+  let row = matrix[0];
+  for (let x = 0; x < X; ++x) {
+    dualX[x] = row[x] === dy ? 0 : row[x] - dy;
+  }
+  for (let y = 1; y < Y; ++y) {
+    dy = dualY[y];
+    row = matrix[y];
     for (let x = 0; x < X; ++x) {
-      dualX[x] = row[x] === dy ? 0 : row[x] - dy;
-    }
-    for (let y = 1; y < Y; ++y) {
-      dy = dualY[y];
-      row = matrix[y];
-      for (let x = 0; x < X; ++x) {
-        const dx = row[x] === dy ? 0 : row[x] - dy;
-        if (dx < dualX[x]) {
-          dualX[x] = dx;
-        }
+      const dx = row[x] === dy ? 0 : row[x] - dy;
+      if (dx < dualX[x]) {
+        dualX[x] = dx;
       }
     }
   }
@@ -120,8 +121,8 @@ export function step4(matrix: Matrix<number>): number[] {
   }
 
   // Step 1: Reduce
-  const dualX = new Array<number>(X).fill(0);
-  const dualY = new Array<number>(Y).fill(0);
+  const dualX = new Array<number>(X);
+  const dualY = new Array<number>(Y);
   step1(matrix, dualX, dualY);
 
   // Steps 2 & 3: Find initial matching

@@ -23,24 +23,28 @@ export function step1(
   const X = matrix[0]?.length ?? 0;
 
   // Reduce rows
-  if (Y <= X) {
-    for (let y = 0; y < Y; ++y) {
-      dualY[y] = getMin(matrix[y])!;
-    }
+  for (let y = 0; y < Y; ++y) {
+    dualY[y] = getMin(matrix[y])!;
   }
 
   // Reduce columns
-  if (Y >= X) {
+  if (Y < X) {
+    dualX.fill(0n);
+    return;
+  }
+
+  let dy = dualY[0];
+  let row = matrix[0];
+  for (let x = 0; x < X; ++x) {
+    dualX[x] = row[x] - dy;
+  }
+  for (let y = 1; y < Y; ++y) {
+    dy = dualY[y];
+    row = matrix[y];
     for (let x = 0; x < X; ++x) {
-      dualX[x] = matrix[0][x] - dualY[0];
-    }
-    for (let y = 1; y < Y; ++y) {
-      const row = matrix[y];
-      const dy = dualY[y];
-      for (let x = 0; x < X; ++x) {
-        if (row[x] - dy < dualX[x]) {
-          dualX[x] = row[x] - dy;
-        }
+      const dx = row[x] - dy;
+      if (dx < dualX[x]) {
+        dualX[x] = dx;
       }
     }
   }
@@ -50,8 +54,8 @@ export function step1(
  * Finds an initial matching for the munkres algorithm.
  *
  * @param matrix - The cost matrix.
- * @param starX - An array mapping star columns to row. Modified in place.
- * @param starY - An array mapping star rows to columns. Modified in place.
+ * @param starsX - An array mapping star columns to row. Modified in place.
+ * @param starsY - An array mapping star rows to columns. Modified in place.
  *
  * @returns The number of matches (stars) found.
  */
@@ -117,8 +121,8 @@ export function step4(matrix: Matrix<bigint>): number[] {
   }
 
   // Step 1: Reduce
-  const dualX = new Array<bigint>(X).fill(0n);
-  const dualY = new Array<bigint>(Y).fill(0n);
+  const dualX = new Array<bigint>(X);
+  const dualY = new Array<bigint>(Y);
   step1(matrix, dualX, dualY);
 
   // Steps 2 & 3: Find initial matching
