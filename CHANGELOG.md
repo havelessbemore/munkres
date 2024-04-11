@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.2.1](https://github.com/havelessbemore/munkres/compare/v1.2.0...v1.2.1) (2024-04-11)
+
+### Updates
+
+- Slightly improve performance.
+
+
 ## [1.2.0](https://github.com/havelessbemore/munkres/compare/v1.1.0...v1.2.0) (2024-04-10)
 
 ### Updates
