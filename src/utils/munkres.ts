@@ -4,6 +4,56 @@ import { getMin } from "./array";
 import { toString as _toString } from "./matrix";
 
 /**
+ * Finds a complete matching of jobs to workers at minimum cost.
+ *
+ * @param mat - An MxN cost matrix.
+ *
+ * @returns An array representing optimal assignments. Each index / value
+ * represents a row / column (respectively) assignment.
+ *
+ * @throws - {@link RangeError}
+ * Thrown if the given MxN matrix has more rows than columns (M \> N).
+ *
+ * @privateRemarks
+ * Citations:
+ * 1. {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | Munkres' Assignment Algorithm, Modified for Rectangular Matrices}
+ *     - Used as the foundation and enhanced with custom optimizations.
+ * 1. {@link https://www.ri.cmu.edu/pub_files/pub4/mills_tettey_g_ayorkor_2007_3/mills_tettey_g_ayorkor_2007_3.pdf | Mills-Tettey, Ayorkor & Stent, Anthony & Dias, M.. (2007). The Dynamic Hungarian Algorithm for the Assignment Problem with Changing Costs.}
+ *     - Used to implement primal-dual variables and dynamic updates.
+ * 1. {@link https://public.websites.umich.edu/~murty/612/612slides4.pdf | Murty, K. G.. Primal-Dual Algorithms. [IOE 612, Lecture slides 4]. Department of Industrial and Operations Engineering, University of Michigan.}
+ *     - Used to implement primal-dual and slack variables.
+ */
+export function exec(matrix: Matrix<number>): number[] {
+  // Check input
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
+  if (Y > X) {
+    throw new RangeError("invalid MxN matrix: M > N");
+  }
+
+  // Step 1: Reduce
+  const dualX = new Array<number>(X);
+  const dualY = new Array<number>(Y);
+  step1(matrix, dualX, dualY);
+
+  // Steps 2 & 3: Find initial matching
+  const starsX = new Array<number>(X).fill(-1);
+  const starsY = new Array<number>(Y).fill(-1);
+  const stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
+
+  // Check if complete matching
+  if (stars >= Y) {
+    return starsY;
+  }
+
+  // Step 4: Find complete matching
+  step4(Y - stars, matrix, dualX, dualY, starsX, starsY);
+
+  // Return assignments ([y] -> x)
+  return starsY;
+}
+
+/**
  * Initializes the dual variables for the Munkres algorithm.
  *
  * This is a preprocessing step that effectively performs
@@ -89,60 +139,34 @@ export function steps2To3(
 }
 
 /**
- * Finds a complete matching of jobs to workers at minimum cost.
- *
  * This step iteratively improves upon an initial matching until a complete
  * matching is found. This involves updating dual variables and managing
  * slack values to uncover new opportunities for optimal assignments.
  *
+ * @param unmatched - The number of missing matches.
  * @param mat - An MxN cost matrix.
- *
- * @returns An array representing optimal assignments. Each index / value
- * represents a row / column (respectively) assignment.
- *
- * @throws - {@link RangeError}
- * Thrown if the given MxN matrix has more rows than columns (M \> N).
- *
- * @privateRemarks
- * Citations:
- * 1. {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | Munkres' Assignment Algorithm, Modified for Rectangular Matrices}
- *     - Used as the foundation and enhanced with custom optimizations.
- * 1. {@link https://www.ri.cmu.edu/pub_files/pub4/mills_tettey_g_ayorkor_2007_3/mills_tettey_g_ayorkor_2007_3.pdf | Mills-Tettey, Ayorkor & Stent, Anthony & Dias, M.. (2007). The Dynamic Hungarian Algorithm for the Assignment Problem with Changing Costs.}
- *     - Used to implement primal-dual variables and dynamic updates.
- * 1. {@link https://public.websites.umich.edu/~murty/612/612slides4.pdf | Murty, K. G.. Primal-Dual Algorithms. [IOE 612, Lecture slides 4]. Department of Industrial and Operations Engineering, University of Michigan.}
- *     - Used to implement primal-dual and slack variables.
+ * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
+ * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ * @param starsX - An array mapping star columns to row. Modified in place.
+ * @param starsY - An array mapping star rows to columns. Modified in place.
  */
-export function step4(matrix: Matrix<number>): number[] {
-  // Check input
-  const Y = matrix.length;
-  const X = matrix[0]?.length ?? 0;
-  if (Y > X) {
-    throw new RangeError("invalid MxN matrix: M > N");
-  }
-
-  // Step 1: Reduce
-  const dualX = new Array<number>(X);
-  const dualY = new Array<number>(Y);
-  step1(matrix, dualX, dualY);
-
-  // Steps 2 & 3: Find initial matching
-  const starsX = new Array<number>(X).fill(-1);
-  const starsY = new Array<number>(Y).fill(-1);
-  let stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
-
-  // Check if complete matching
-  if (stars >= Y) {
-    return starsY;
-  }
-
-  // Step 4: Find complete matching
+export function step4(
+  unmatched: number,
+  matrix: Matrix<number>,
+  dualX: number[],
+  dualY: number[],
+  starsX: number[],
+  starsY: number[]
+): void {
+  const X = dualX.length;
+  const Y = dualY.length;
   const coveredX = new Array<number>(X);
   const coveredY = new Array<number>(Y).fill(-1);
   const slackV = new Array<number>(X);
   const slackX = new Array<number>(X);
   const exposedX = new Array<number>(X);
 
-  for (let rootY = 0; stars < Y; ++rootY) {
+  for (let rootY = 0; unmatched > 0; ++rootY) {
     if (starsY[rootY] !== -1) {
       continue;
     }
@@ -153,6 +177,7 @@ export function step4(matrix: Matrix<number>): number[] {
     initExposed(exposedX);
     initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
 
+    // Run stage
     // eslint-disable-next-line no-constant-condition
     while (true) {
       // Find an uncovered min
@@ -173,7 +198,7 @@ export function step4(matrix: Matrix<number>): number[] {
       // Step 5: If no star in the column, turn primes into stars
       if (starsX[x] === -1) {
         step5(x, coveredX, starsX, starsY);
-        ++stars;
+        --unmatched;
         break;
       }
 
@@ -183,9 +208,6 @@ export function step4(matrix: Matrix<number>): number[] {
       updateSlack(sy, matrix, dualX, dualY, exposedX, slackV, slackX);
     }
   }
-
-  // Return assignments ([y] -> x)
-  return starsY;
 }
 
 /**

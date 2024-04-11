@@ -2,16 +2,16 @@ import { describe, it, expect } from "vitest";
 
 import { Matrix } from "../types/matrix";
 
-import { step4, toString } from "./munkres";
+import { exec, toString } from "./munkres";
 
-describe(`${step4.name}()`, () => {
+describe(`${exec.name}()`, () => {
   it("handles an empty matrix without error", () => {
-    expect(step4([])).toEqual([]);
+    expect(exec([])).toEqual([]);
   });
 
   it("throws an error if M > N in an MxN matrix", () => {
     expect(() =>
-      step4([
+      exec([
         [1, 2],
         [3, 4],
         [5, 6],

@@ -1,10 +1,10 @@
 import { Matrix } from "./types/matrix";
 import { Tuple } from "./types/tuple";
 
-import { step4 as bigStep4 } from "./utils/bigMunkres";
+import { exec as bigExec } from "./utils/bigMunkres";
 import { isBigInt } from "./utils/is";
 import { copy, flipH, transpose } from "./utils/matrix";
-import { step4 } from "./utils/munkres";
+import { exec } from "./utils/munkres";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -39,8 +39,8 @@ export function munkres<T extends number | bigint>(
 
   // Get optimal assignments
   const y2x = isBigInt(costMatrix[0][0])
-    ? bigStep4(costMatrix as Matrix<bigint>)
-    : step4(costMatrix as Matrix<number>);
+    ? bigExec(costMatrix as Matrix<bigint>)
+    : exec(costMatrix as Matrix<number>);
 
   // Create pairs
   const P = y2x.length;
