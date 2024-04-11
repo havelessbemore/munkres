@@ -31,7 +31,7 @@
     "README.md"
   ],
   "scripts": {
-    "bench": "vitest --run bench",
+    "bench": "tsx ./src/munkres.bench.ts",
     "build": "rimraf dist && tsc && vite build && vite build -c vite.config.misc.ts",
     "build:docs": "typedoc",
     "dev": "vite --host",
@@ -71,7 +71,8 @@
     "lint-staged": "^15.2.2",
     "prettier": "^3.0.1",
     "rimraf": "^5.0.1",
-    "ts-node": "^10.9.1",
+    "tinybench": "^2.6.0",
+    "tsx": "^4.7.2",
     "typedoc": "^0.25.7",
     "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "^5.1.6",
