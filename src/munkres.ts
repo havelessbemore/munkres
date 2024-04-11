@@ -1,5 +1,6 @@
 import { Matrix } from "./types/matrix";
 import { Tuple } from "./types/tuple";
+import { entries } from "./utils/array";
 
 import { exec as bigExec } from "./utils/bigMunkres";
 import { isBigInt } from "./utils/is";
@@ -43,11 +44,7 @@ export function munkres<T extends number | bigint>(
     : exec(costMatrix as Matrix<number>);
 
   // Create pairs
-  const P = y2x.length;
-  const pairs: Tuple<number>[] = new Array(P);
-  for (let y = 0; y < P; ++y) {
-    pairs[y] = [y, y2x[y]];
-  }
+  const pairs = entries(y2x);
 
   // Transpose if Y > X
   if (Y > X) {
