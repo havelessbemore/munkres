@@ -4,7 +4,7 @@ import { exec } from "./bigMunkres";
 
 describe(`${exec.name}()`, () => {
   it("handles an empty matrix without error", () => {
-    expect(exec([])).toEqual([]);
+    expect(() => exec([])).not.toThrow();
   });
 
   it("throws an error if M > N in an MxN matrix", () => {

@@ -1,32 +1,34 @@
-import { Matrix } from "../types/matrix";
+import { Matrix } from "../../types/matrix";
+import { MunkresResult } from "../../types/munkres";
 
-import { getMin } from "./array";
-import { toString as _toString } from "./matrix";
+import { getMin } from "../array";
+import { toString as _toString, copy, transpose } from "../matrix";
 
-/**
- * Finds a complete matching of jobs to workers at minimum cost.
- *
- * @param mat - An MxN cost matrix.
- *
- * @returns An array representing optimal assignments. Each index / value
- * represents a row / column (respectively) assignment.
- *
- * @throws - {@link RangeError}
- * Thrown if the given MxN matrix has more rows than columns (M \> N).
- *
- * @privateRemarks
- * Citations:
- * 1. {@link https://users.cs.duke.edu/~brd/Teaching/Bio/asmb/current/Handouts/munkres.html | Munkres' Assignment Algorithm, Modified for Rectangular Matrices}
- *     - Used as the foundation and enhanced with custom optimizations.
- * 1. {@link https://www.ri.cmu.edu/pub_files/pub4/mills_tettey_g_ayorkor_2007_3/mills_tettey_g_ayorkor_2007_3.pdf | Mills-Tettey, Ayorkor & Stent, Anthony & Dias, M.. (2007). The Dynamic Hungarian Algorithm for the Assignment Problem with Changing Costs.}
- *     - Used to implement primal-dual variables and dynamic updates.
- * 1. {@link https://public.websites.umich.edu/~murty/612/612slides4.pdf | Murty, K. G.. Primal-Dual Algorithms. [IOE 612, Lecture slides 4]. Department of Industrial and Operations Engineering, University of Michigan.}
- *     - Used to implement primal-dual and slack variables.
- */
-export function exec(matrix: Matrix<number>): number[] {
-  // Check input
+export function safeExec(matrix: Matrix<number>): MunkresResult<number> {
+  // Get dimensions
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
+
+  // Transpose if Y > X
+  if (Y > X) {
+    matrix = copy(matrix);
+    transpose(matrix);
+  }
+
+  // Get optimal assignments
+  return exec(matrix);
+}
+
+export function exec(matrix: Matrix<number>): MunkresResult<number> {
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
+
+  // If empty matrix
+  if (X <= 0) {
+    return { dualX: [], dualY: [], starsX: [], starsY: [] };
+  }
+
+  // If invalid matrix
   if (Y > X) {
     throw new RangeError("invalid MxN matrix: M > N");
   }
@@ -42,15 +44,13 @@ export function exec(matrix: Matrix<number>): number[] {
   const stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
 
   // Check if complete matching
-  if (stars >= Y) {
-    return starsY;
+  if (stars < Y) {
+    // Step 4: Find complete matching
+    step4(Y - stars, matrix, dualX, dualY, starsX, starsY);
   }
 
-  // Step 4: Find complete matching
-  step4(Y - stars, matrix, dualX, dualY, starsX, starsY);
-
-  // Return assignments ([y] -> x)
-  return starsY;
+  // Return matching
+  return { dualX, dualY, starsX, starsY };
 }
 
 /**
@@ -162,9 +162,9 @@ export function step4(
   const Y = dualY.length;
   const coveredX = new Array<number>(X);
   const coveredY = new Array<number>(Y).fill(-1);
+  const exposedX = new Array<number>(X);
   const slackV = new Array<number>(X);
   const slackX = new Array<number>(X);
-  const exposedX = new Array<number>(X);
 
   for (let rootY = 0; unmatched > 0; ++rootY) {
     if (starsY[rootY] !== -1) {
@@ -262,17 +262,18 @@ export function step6(
   const X = dualX.length;
   const Y = dualY.length;
 
-  for (let y = 0; y < Y; ++y) {
-    if (coveredY[y] === rootY) {
-      dualY[y] = dualY[y] === -min ? 0 : dualY[y] + min;
-    }
-  }
-
   for (let x = 0; x < X; ++x) {
     if (coveredX[x] === -1) {
       slackV[x] = slackV[x] === min ? 0 : slackV[x] - min;
     } else {
       dualX[x] = dualX[x] === min ? 0 : dualX[x] - min;
+    }
+  }
+
+  min = -min;
+  for (let y = 0; y < Y; ++y) {
+    if (coveredY[y] === rootY) {
+      dualY[y] = dualY[y] === min ? 0 : dualY[y] - min;
     }
   }
 }
@@ -287,16 +288,6 @@ export function initExposed(exposed: number[]): void {
 export function findUncoveredMin(
   exposedX: number[],
   slackV: number[],
-  slackX: number[]
-): [number, number, number];
-export function findUncoveredMin(
-  exposedX: number[],
-  slackV: bigint[],
-  slackX: number[]
-): [number, number, number];
-export function findUncoveredMin<T extends number | bigint>(
-  exposedX: number[],
-  slackV: T[],
   slackX: number[]
 ): [number, number, number] {
   const X = slackV.length;

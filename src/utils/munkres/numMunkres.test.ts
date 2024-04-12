@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
 
-import { Matrix } from "../types/matrix";
+import { Matrix } from "../../types/matrix";
 
-import { exec, toString } from "./munkres";
+import { exec, toString } from "./numMunkres";
 
 describe(`${exec.name}()`, () => {
   it("handles an empty matrix without error", () => {
-    expect(exec([])).toEqual([]);
+    expect(() => exec([])).not.toThrow();
   });
 
   it("throws an error if M > N in an MxN matrix", () => {

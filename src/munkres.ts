@@ -1,11 +1,10 @@
 import { Matrix } from "./types/matrix";
 import { Tuple } from "./types/tuple";
-import { entries } from "./utils/array";
 
-import { exec as bigExec } from "./utils/bigMunkres";
-import { isBigInt } from "./utils/is";
-import { copy, flipH, transpose } from "./utils/matrix";
-import { exec } from "./utils/munkres";
+import { entries } from "./utils/array";
+import { flipH } from "./utils/matrix";
+
+import { safeExec } from "./utils/munkres/munkres";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -23,31 +22,14 @@ export function munkres(costMatrix: Matrix<bigint>): Tuple<number>[];
 export function munkres<T extends number | bigint>(
   costMatrix: Matrix<T>
 ): Tuple<number>[] {
-  // Get dimensions
-  const Y = costMatrix.length;
-  const X = costMatrix[0]?.length ?? 0;
-
-  // If matrix is empty
-  if (X <= 0) {
-    return [];
-  }
-
-  // Transpose if Y > X
-  if (Y > X) {
-    costMatrix = copy(costMatrix);
-    transpose(costMatrix);
-  }
-
   // Get optimal assignments
-  const y2x = isBigInt(costMatrix[0][0])
-    ? bigExec(costMatrix as Matrix<bigint>)
-    : exec(costMatrix as Matrix<number>);
+  const { starsY } = safeExec(costMatrix as Matrix<number>);
 
-  // Create pairs
-  const pairs = entries(y2x);
+  // Create assignment pairs
+  const pairs = entries(starsY);
 
   // Transpose if Y > X
-  if (Y > X) {
+  if (costMatrix.length > (costMatrix[0]?.length ?? 0)) {
     flipH(pairs);
   }
 
