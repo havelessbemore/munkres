@@ -6,7 +6,7 @@ import { Suite } from "./utils/suite";
 import { munkres } from "./munkres";
 
 const minV = 1;
-const maxV = 2e9;
+const maxV = Number.MAX_SAFE_INTEGER;
 const span = maxV - minV;
 
 function genNum(N: number): Matrix<number>;
@@ -21,21 +21,61 @@ function genBig(Y: number, X = Y): Matrix<bigint> {
   return gen(Y, X, () => BigInt(minV + Math.trunc(span * Math.random())));
 }
 
-const suite = new Suite();
+const suite = new Suite({ warmup: false });
 let bench: Bench;
 
 suite.add(`number`, (bench = new Bench()));
 for (let i = 1; i < 13; ++i) {
   const N = 1 << i;
-  const mat = genNum(N);
-  bench.add(`${N}x${N}`, () => munkres(mat));
+  let mat: Matrix<number>;
+  bench.add(`${N}x${N}`, () => munkres(mat), {
+    beforeAll: () => {
+      mat = genNum(N);
+    },
+    afterAll: () => {
+      mat = [];
+    },
+  });
 }
 
 suite.add(`bigint`, (bench = new Bench()));
-for (let i = 1; i < 13; ++i) {
+for (let i = 1; i < 12; ++i) {
   const N = 1 << i;
-  const mat = genBig(N);
-  bench.add(`${N}x${N}`, () => munkres(mat));
+  let mat: Matrix<bigint>;
+  bench.add(`${N}x${N}`, () => munkres(mat), {
+    beforeAll: () => {
+      mat = genBig(N);
+    },
+    afterAll: () => {
+      mat = [];
+    },
+  });
+}
+
+suite.add(`number, extended`, (bench = new Bench()));
+for (const N of [1 << 13, 16000]) {
+  let mat: Matrix<number>;
+  bench.add(`${N}x${N}`, () => munkres(mat), {
+    beforeAll: () => {
+      mat = genNum(N);
+    },
+    afterAll: () => {
+      mat = [];
+    },
+  });
+}
+
+suite.add(`bigint, extended`, (bench = new Bench()));
+for (const N of [1 << 12, 8000]) {
+  let mat: Matrix<bigint>;
+  bench.add(`${N}x${N}`, () => munkres(mat), {
+    beforeAll: () => {
+      mat = genBig(N);
+    },
+    afterAll: () => {
+      mat = [];
+    },
+  });
 }
 
 await suite.run();

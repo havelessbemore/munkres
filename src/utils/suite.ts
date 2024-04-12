@@ -1,10 +1,15 @@
 import Bench, { Task } from "tinybench";
 
+export interface SuiteConfig {
+  warmup?: boolean;
+}
+
 export class Suite {
   protected benches: Map<string, Bench>;
   protected columns: [string, (task: Task) => unknown][];
+  protected warmup: boolean;
 
-  constructor() {
+  constructor(config: SuiteConfig = {}) {
     this.benches = new Map();
     this.columns = [
       ["Name", task => task.name],
@@ -13,6 +18,7 @@ export class Suite {
       ["Avg (ms)", task => task.result?.mean ?? ""],
       ["Samples", task => task.result?.samples?.length ?? ""],
     ];
+    this.warmup = config.warmup === true;
   }
 
   add(name: string, bench: Bench): this {
@@ -23,7 +29,9 @@ export class Suite {
   async run(): Promise<Bench[]> {
     for (const [name, bench] of this.benches) {
       this.setupBench(name, bench);
-      await bench.warmup();
+      if (this.warmup) {
+        await bench.warmup();
+      }
       await bench.run();
       process.stdout.write(`\n`);
     }
