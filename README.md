@@ -223,7 +223,7 @@ npm run bench
 
 Benchmarked with:
 
-- Package version: v1.2.2
+- Package version: v1.2.3
 - OS: M2 Macbook Air, Mac OS v14.4.1
 - Runtime: NodeJS v20.12.1
 - Benchmarking Tool: tinybench v2.6.0
