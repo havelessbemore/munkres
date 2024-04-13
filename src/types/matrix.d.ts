@@ -35,25 +35,3 @@
  * ];
  */
 export type Matrix<T> = T[][];
-
-/**
- * Defines a function type for mapping operations over a matrix.
- *
- * This function is called for each element of the matrix, allowing each
- * element to be transformed based on its value and position within the
- * matrix. The transformation can depend on the element's current value,
- * its row and column indices, and/or the full matrix.
- *
- * @param value - The current element from the matrix being transformed.
- * @param row - The zero-based row index of the current element.
- * @param col - The zero-based column index of the current element.
- * @param matrix - The entire matrix to which the current element belongs.
- *
- * @returns The transformed value of the current element.
- */
-export type MatrixMapFn<T, R> = (
-  value: T,
-  row: number,
-  col: number,
-  matrix: Matrix<T>
-) => R;
