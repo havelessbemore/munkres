@@ -1,4 +1,4 @@
-import { Matrix, MatrixMapFn } from "../types/matrix";
+import { Matrix } from "../types/matrix";
 
 /**
  * Creates a copy of a given matrix.
@@ -115,6 +115,45 @@ export function flipH<T>(matrix: Matrix<T>): void {
  */
 export function flipV<T>(matrix: Matrix<T>): void {
   matrix.reverse();
+}
+
+/**
+ * Performs the specified action for each element in the matrix.
+ *
+ * @param matrix - The matrix.
+ * @param callbackFn — A function that accepts up to four arguments.
+ * It is called one time for each element in the matrix.
+ * @param thisArg — An object to which the `this` keyword refers to
+ * in the `callbackFn` function. If omitted, `undefined` is used.
+ *
+ * @example
+ * const matrix = [
+ *   [1, 2, 3],
+ *   [4, 5, 6],
+ *   [7, 8, 9],
+ * ];
+ *
+ * forEach(matrix, (value, row, col, mat) => {
+ *   console.log(`Value at ${row},${col} is ${value}`);
+ * });
+ */
+export function forEach<T>(
+  matrix: Matrix<T>,
+  callbackFn: (value: T, y: number, x: number, matrix: Matrix<T>) => void,
+  thisArg?: unknown
+): void {
+  [].forEach;
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
+  if (Y <= 0 || X <= 0) {
+    return;
+  }
+  for (let y = 0; y < Y; ++y) {
+    const row = matrix[y];
+    for (let x = 0; x < X; ++x) {
+      callbackFn.call(thisArg, row[x], y, x, matrix);
+    }
+  }
 }
 
 /**
@@ -350,12 +389,12 @@ export function invert<T extends number | bigint>(
  * //   [49, 25, 64]
  * // ]
  */
-export function map<A, B>(
-  matrix: Matrix<A>,
-  callbackFn: (value: A, y: number, x: number, matrix: Matrix<A>) => B
-): Matrix<B> {
+export function map<T, R>(
+  matrix: Matrix<T>,
+  callbackFn: (value: T, y: number, x: number, matrix: Matrix<T>) => R
+): Matrix<R> {
   const Y = matrix.length;
-  const out: Matrix<B> = new Array(Y);
+  const out: Matrix<R> = new Array(Y);
   for (let y = 0; y < Y; ++y) {
     const from = matrix[y];
     const X = from.length;
@@ -564,7 +603,12 @@ export function rotNeg90<T>(matrix: Matrix<T>): void {
  */
 export function toString<T>(
   mat: Matrix<T>,
-  callbackFn: MatrixMapFn<T, string> = v => `${v}`
+  callbackFn: (
+    value: T,
+    row: number,
+    col: number,
+    matrix: Matrix<T>
+  ) => string = v => `${v}`
 ): string {
   const strs: Matrix<string> = map(mat, callbackFn);
   const Y = strs.length;
