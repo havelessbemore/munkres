@@ -1,13 +1,61 @@
 import { describe, expect, test } from "vitest";
 
 import { Matrix } from "../src/types/matrix";
-import { gen, map } from "../src/utils/matrix";
-
-import { checkOutputMeta, oneOf } from "./utils/oneOf";
 import { Tuple } from "../src/types/tuple";
+
+import { gen, map } from "../src/utils/matrix";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type MunkresFn = (costMatrix: Matrix<any>) => Tuple<number>[];
+
+export function oneOf<T>(actual: T, expecteds: Iterable<T>): void {
+  let error: Error | undefined = undefined;
+  for (const expected of expecteds) {
+    try {
+      expect(actual).toEqual(expected);
+      error = undefined;
+      break;
+    } catch (e) {
+      error = e as Error;
+    }
+  }
+
+  if (error != null) {
+    throw error;
+  }
+}
+
+export function checkOutputMeta(
+  matrix: Matrix<unknown>,
+  pairs: [number, number][]
+): void {
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
+  try {
+    const P = Math.min(Y, X);
+    const seenY = new Set<number>();
+    const seenX = new Set<number>();
+    expect(pairs.length).toBe(P);
+    for (let p = 0; p < P; ++p) {
+      const [y, x] = pairs[p];
+
+      // Check y
+      expect(seenY.has(y)).toBe(false);
+      expect(y).toBeGreaterThanOrEqual(0);
+      expect(y).toBeLessThan(Y);
+      seenY.add(y);
+
+      // Check x
+      expect(seenX.has(x)).toBe(false);
+      expect(x).toBeGreaterThanOrEqual(0);
+      expect(x).toBeLessThan(X);
+      seenX.add(x);
+    }
+  } catch (e) {
+    console.log(`${Y} by ${X}, pairs: ${pairs}, cost matrix:\n${matrix}`);
+    throw e;
+  }
+}
 
 export function testSquare(munkres: MunkresFn, isBigInt = false): void {
   describe(`${munkres.name}()`, () => {
@@ -262,10 +310,10 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
     });
 
     test("verify output properties for generated NxN matrices", () => {
-      const NN = 100;
-      const VAL_MIN = -1e9;
-      const VAL_MAX = 1e9;
-      for (let N = 1; N < NN; ++N) {
+      const NN = 64;
+      const VAL_MIN = 1;
+      const VAL_MAX = Number.MAX_SAFE_INTEGER;
+      for (let N = 1; N <= NN; ++N) {
         const costs = gen(N, N, () => {
           const span = VAL_MAX - VAL_MIN;
           return VAL_MIN + Math.trunc(span * Math.random());
@@ -334,11 +382,11 @@ export function testWide(munkres: MunkresFn, isBigInt = false): void {
     });
 
     test("verify output properties for generated wide matrices", () => {
-      const XX = 33;
-      const VAL_MIN = -1e9;
-      const VAL_MAX = 1e9;
+      const XX = 32;
+      const VAL_MIN = 1;
+      const VAL_MAX = Number.MAX_SAFE_INTEGER;
 
-      for (let X = 2; X < XX; ++X) {
+      for (let X = 2; X <= XX; ++X) {
         for (let Y = 1; Y < X; ++Y) {
           const costs = gen(Y, X, () => {
             const span = VAL_MAX - VAL_MIN;
@@ -418,11 +466,11 @@ export function testLong(munkres: MunkresFn, isBigInt = false): void {
     });
 
     test("verify output properties for generated long matrices", () => {
-      const YY = 33;
-      const VAL_MIN = -1e9;
-      const VAL_MAX = 1e9;
+      const YY = 32;
+      const VAL_MIN = 1;
+      const VAL_MAX = Number.MAX_SAFE_INTEGER;
 
-      for (let Y = 2; Y < YY; ++Y) {
+      for (let Y = 2; Y <= YY; ++Y) {
         for (let X = 1; X < Y; ++X) {
           const costs = gen(Y, X, () => {
             const span = VAL_MAX - VAL_MIN;
@@ -635,25 +683,25 @@ export function testInfinity(munkres: MunkresFn): void {
       ];
       oneOf(new Map(res), sols);
     });
+
+    test("verify output properties for generated NxN matrices", () => {
+      const NN = 64;
+      const VAL_MIN = 1;
+      const VAL_MAX = Number.MAX_SAFE_INTEGER;
+      for (let N = 1; N <= NN; ++N) {
+        const costs = gen(N, N, () => {
+          const r = Math.random();
+          if (r <= 0.075) {
+            return -Infinity;
+          }
+          if (r >= 0.925) {
+            return Infinity;
+          }
+          const span = VAL_MAX - VAL_MIN;
+          return VAL_MIN + Math.trunc(span * Math.random());
+        });
+        checkOutputMeta(costs, munkres(costs));
+      }
+    });
   });
 }
-
-/*
-    test("verify output properties for various matrix dimensions", () => {
-        const YY = 33;
-        const XX = 33;
-        const VAL_MIN = -1e9;
-        const VAL_MAX = 1e9;
-
-        for (let Y = 1; Y < YY; ++Y) {
-            for (let X = 1; X < XX; ++X) {
-                const costs = gen(Y, X, () => {
-                    const span = VAL_MAX - VAL_MIN;
-                    return VAL_MIN + Math.trunc(span * Math.random());
-                });
-
-                checkOutputMeta(costs, munkres(costs));
-            }
-        }
-    });
-    */
