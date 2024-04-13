@@ -121,21 +121,22 @@ export function flipV<T>(matrix: Matrix<T>): void {
  * Performs the specified action for each element in the matrix.
  *
  * @param matrix - The matrix.
- * @param callbackFn — A function that accepts up to four arguments.
+ * @param callbackFn - A function that accepts up to four arguments.
  * It is called one time for each element in the matrix.
- * @param thisArg — An object to which the `this` keyword refers to
+ * @param thisArg - An object to which the `this` keyword refers to
  * in the `callbackFn` function. If omitted, `undefined` is used.
  *
  * @example
+ * ```javascript
  * const matrix = [
  *   [1, 2, 3],
  *   [4, 5, 6],
  *   [7, 8, 9],
  * ];
- *
  * forEach(matrix, (value, row, col, mat) => {
  *   console.log(`Value at ${row},${col} is ${value}`);
  * });
+ * ```
  */
 export function forEach<T>(
   matrix: Matrix<T>,
@@ -679,9 +680,10 @@ export function transpose<T>(matrix: Matrix<T>): void {
   // Add columns
   if (Y > X) {
     for (let y = 0; y < X; ++y) {
-      matrix[y].length = Y;
+      const row = matrix[y];
+      row.length = Y;
       for (let x = X; x < Y; ++x) {
-        matrix[y][x] = matrix[x][y];
+        row[x] = matrix[x][y];
       }
     }
     matrix.length = X;
@@ -691,10 +693,11 @@ export function transpose<T>(matrix: Matrix<T>): void {
   if (Y < X) {
     matrix.length = X;
     for (let y = Y; y < X; ++y) {
-      matrix[y] = new Array(Y);
+      const row = new Array(Y);
       for (let x = 0; x < Y; ++x) {
-        matrix[y][x] = matrix[x][y];
+        row[x] = matrix[x][y];
       }
+      matrix[y] = row;
     }
     for (let y = 0; y < Y; ++y) {
       matrix[y].length = Y;
