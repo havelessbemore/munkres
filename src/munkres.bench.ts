@@ -2,7 +2,7 @@ import { Bench } from "tinybench";
 
 import { Matrix } from "./types/matrix";
 import { gen } from "./utils/matrix";
-import { Suite } from "./utils/suite";
+import { Suite } from "../test/suite";
 import { munkres } from "./munkres";
 
 const minV = 1;
@@ -29,11 +29,8 @@ for (let i = 1; i < 13; ++i) {
   const N = 1 << i;
   let mat: Matrix<number>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
-    beforeAll: () => {
+    beforeEach: () => {
       mat = genNum(N);
-    },
-    afterAll: () => {
-      mat = [];
     },
   });
 }
@@ -43,37 +40,28 @@ for (let i = 1; i < 12; ++i) {
   const N = 1 << i;
   let mat: Matrix<bigint>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
-    beforeAll: () => {
+    beforeEach: () => {
       mat = genBig(N);
-    },
-    afterAll: () => {
-      mat = [];
     },
   });
 }
 
 suite.add(`number, extended`, (bench = new Bench()));
-for (const N of [1 << 13, 16000]) {
+for (const N of [8192, 16000]) {
   let mat: Matrix<number>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
-    beforeAll: () => {
+    beforeEach: () => {
       mat = genNum(N);
-    },
-    afterAll: () => {
-      mat = [];
     },
   });
 }
 
 suite.add(`bigint, extended`, (bench = new Bench()));
-for (const N of [1 << 12, 8000]) {
+for (const N of [4096, 8000]) {
   let mat: Matrix<bigint>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
-    beforeAll: () => {
+    beforeEach: () => {
       mat = genBig(N);
-    },
-    afterAll: () => {
-      mat = [];
     },
   });
 }
