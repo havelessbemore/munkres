@@ -1,4 +1,4 @@
-import { testInfinity, testLong, testSquare, testWide } from "../test/munkres";
+import { testInfinity, testLong, testSquare, testWide } from "../tests/munkres";
 
 import { munkres } from "./munkres";
 

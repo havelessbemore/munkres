@@ -2,7 +2,7 @@ import { Bench } from "tinybench";
 
 import { Matrix } from "./types/matrix";
 import { gen } from "./utils/matrix";
-import { Suite } from "../test/suite";
+import { Suite } from "../tests/suite";
 import { munkres } from "./munkres";
 
 const minV = 1;
