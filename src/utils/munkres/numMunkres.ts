@@ -162,7 +162,7 @@ export function step4(
   const Y = dualY.length;
   const coveredY = new Array<number>(Y).fill(-1);
   const exposedX = new Array<number>(X);
-  const primeX = new Array<number>(X);
+  const primeX = new Array<number>(X).fill(-1);
   const slackV = new Array<number>(X);
   const slackX = new Array<number>(X);
 
@@ -172,7 +172,6 @@ export function step4(
     }
 
     // Initialize stage
-    primeX.fill(-1);
     coveredY[rootY] = rootY;
     initExposed(exposedX);
     initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
@@ -246,10 +245,10 @@ export function step5(
  * Adjusts dual variables and slack to uncover more admissible edges.
  *
  * @param min - The value to adjust by.
- * @param coveredX - An array mapping covered columns to rows.
  * @param coveredY - An array indicating whether a row is covered.
  * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
  * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ * @param exposedX - An array indicating uncovered columns.
  * @param slackV - The slack values for each column. Modified in place.
  */
 export function step6(
@@ -342,14 +341,14 @@ export function initSlack(
  *
  * @param matrix - The cost matrix.
  * @param starsY - An array of star y coordinates to x coordinates.
- * @param primeY - (Optional) An array of prime y coordinates to x coordinates.
+ * @param primeX - (Optional) An array of prime x coordinates to y coordinates.
  *
  * @returns A string visualization of the matrix with stars and primes.
  */
 export function toString<T>(
   matrix: Matrix<T>,
   starsY: number[],
-  coveredX: number[]
+  primeX: number[]
 ): string {
   // Mark values as stars or primes
   return _toString(matrix, (v, y, x): string => {
@@ -357,7 +356,7 @@ export function toString<T>(
     if (x == starsY[y]) {
       str = "*" + str;
     }
-    if (y == coveredX[x]) {
+    if (y == primeX[x]) {
       str = '"' + str;
     }
     return str;

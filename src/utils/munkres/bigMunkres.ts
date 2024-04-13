@@ -161,9 +161,9 @@ export function step4(
 ): void {
   const X = dualX.length;
   const Y = dualY.length;
-  const coveredX = new Array<number>(X);
   const coveredY = new Array<number>(Y).fill(-1);
   const exposedX = new Array<number>(X);
+  const primeX = new Array<number>(X).fill(-1);
   const slackV = new Array<bigint>(X);
   const slackX = new Array<number>(X);
 
@@ -173,7 +173,6 @@ export function step4(
     }
 
     // Initialize stage
-    coveredX.fill(-1);
     coveredY[rootY] = rootY;
     initExposed(exposedX);
     initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
@@ -186,26 +185,28 @@ export function step4(
 
       // Step 6: If not zero, zero the min
       if (slackV[x] > 0n) {
-        step6(slackV[x], rootY, coveredX, coveredY, dualX, dualY, slackV);
+        step6(slackV[x], rootY, coveredY, dualX, dualY, exposedX, slackV);
       }
 
       // Prime the zero
-      coveredX[x] = y;
+      primeX[x] = y;
 
-      // Cover the column
+      // Cover the prime's column
       exposedX[x] = x + 1 < X ? exposedX[x + 1] : X;
       exposedX[px] = exposedX[x];
 
       // Step 5: If no star in the column, turn primes into stars
       if (starsX[x] === -1) {
-        step5(x, coveredX, starsX, starsY);
+        step5(x, primeX, starsX, starsY);
         --unmatched;
         break;
       }
 
-      // Cover the star's row and update slack
+      // Cover the star's row
       const sy = starsX[x];
       coveredY[sy] = rootY;
+
+      // Update slack
       updateSlack(sy, matrix, dualX, dualY, exposedX, slackV, slackX);
     }
   }
@@ -215,26 +216,26 @@ export function step4(
  * Adjusts dual variables and slack to uncover more admissible edges.
  *
  * @param min - The value to adjust by.
- * @param coveredX - An array mapping covered columns to rows.
  * @param coveredY - An array indicating whether a row is covered.
  * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
  * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ * @param exposedX - An array indicating uncovered columns.
  * @param slackV - The slack values for each column. Modified in place.
  */
 export function step6(
   min: bigint,
   rootY: number,
-  coveredX: number[],
   coveredY: number[],
   dualX: bigint[],
   dualY: bigint[],
+  exposedX: number[],
   slackV: bigint[]
 ): void {
   const X = dualX.length;
   const Y = dualY.length;
 
   for (let x = 0; x < X; ++x) {
-    if (coveredX[x] === -1) {
+    if (exposedX[x] === x) {
       slackV[x] -= min;
     } else {
       dualX[x] -= min;
