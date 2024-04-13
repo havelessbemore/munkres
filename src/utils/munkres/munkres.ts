@@ -1,8 +1,10 @@
 import { Matrix } from "../../types/matrix";
 import { MunkresResult } from "../../types/munkres";
-import { exec as bigExec, safeExec as bigSafeExec } from "./bigMunkres";
+
 import { isBigInt } from "../is";
-import { exec as numExec, safeExec as numSafeExec } from "./numMunkres";
+
+import { safeExec as bigSafeExec } from "./bigMunkres";
+import { safeExec as numSafeExec } from "./numMunkres";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -35,28 +37,5 @@ export function safeExec<T extends number | bigint>(
     isBigInt((matrix[0] ?? [])[0])
       ? bigSafeExec(matrix as Matrix<bigint>)
       : numSafeExec(matrix as Matrix<number>)
-  ) as MunkresResult<T>;
-}
-
-/**
- * Finds a complete matching of jobs to workers at minimum cost.
- *
- * @param mat - An MxN cost matrix.
- *
- * @returns An array representing optimal assignments. Each index / value
- * represents a row / column (respectively) assignment.
- *
- * @throws - {@link RangeError}
- * Thrown if the given MxN matrix has more rows than columns (M \> N).
- */
-export function exec(matrix: Matrix<number>): MunkresResult<number>;
-export function exec(matrix: Matrix<bigint>): MunkresResult<bigint>;
-export function exec<T extends number | bigint>(
-  matrix: Matrix<T>
-): MunkresResult<T> {
-  return (
-    isBigInt((matrix[0] ?? [])[0])
-      ? bigExec(matrix as Matrix<bigint>)
-      : numExec(matrix as Matrix<number>)
   ) as MunkresResult<T>;
 }

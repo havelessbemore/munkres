@@ -25,7 +25,7 @@ export function exec(matrix: Matrix<bigint>): MunkresResult<bigint> {
   const X = matrix[0]?.length ?? 0;
 
   // If empty matrix
-  if (X <= 0) {
+  if (Y <= 0 || X <= 0) {
     return { dualX: [], dualY: [], starsX: [], starsY: [] };
   }
 
@@ -72,8 +72,8 @@ export function step1(
   dualX: bigint[],
   dualY: bigint[]
 ): void {
-  const Y = matrix.length;
-  const X = matrix[0]?.length ?? 0;
+  const X = dualX.length;
+  const Y = dualY.length;
 
   // Reduce rows
   for (let y = 0; y < Y; ++y) {
