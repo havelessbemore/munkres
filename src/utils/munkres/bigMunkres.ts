@@ -44,12 +44,8 @@ export function exec(matrix: Matrix<bigint>): MunkresResult<bigint> {
   const starsY = new Array<number>(Y).fill(-1);
   const stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
 
-  // Check if complete matching
-  if (stars < Y) {
-    // Step 4: Find complete matching
-
-    step4(Y - stars, matrix, dualX, dualY, starsX, starsY);
-  }
+  // Step 4: Find complete matching
+  step4(Y - stars, matrix, dualX, dualY, starsX, starsY);
 
   // Return matching
   return { dualX, dualY, starsX, starsY };
@@ -159,13 +155,17 @@ export function step4(
   starsX: number[],
   starsY: number[]
 ): void {
+  if (unmatched <= 0) {
+    return;
+  }
+
   const X = dualX.length;
   const Y = dualY.length;
-  const coveredY = new Array<number>(Y).fill(-1);
-  const exposedX = new Array<number>(X);
-  const primeX = new Array<number>(X).fill(-1);
+  const coveredY = new Uint32Array(Y);
+  const exposedX = new Uint32Array(X);
+  const primeX = new Uint32Array(X);
   const slackV = new Array<bigint>(X);
-  const slackX = new Array<number>(X);
+  const slackX = new Uint32Array(X);
 
   for (let rootY = 0; unmatched > 0; ++rootY) {
     if (starsY[rootY] !== -1) {
@@ -173,7 +173,7 @@ export function step4(
     }
 
     // Initialize stage
-    coveredY[rootY] = rootY;
+    coveredY[rootY] = unmatched;
     initExposed(exposedX);
     initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
 
@@ -185,7 +185,7 @@ export function step4(
 
       // Step 6: If not zero, zero the min
       if (slackV[x] > 0n) {
-        step6(slackV[x], rootY, coveredY, dualX, dualY, exposedX, slackV);
+        step6(slackV[x], unmatched, coveredY, dualX, dualY, exposedX, slackV);
       }
 
       // Prime the zero
@@ -204,7 +204,7 @@ export function step4(
 
       // Cover the star's row
       const sy = starsX[x];
-      coveredY[sy] = rootY;
+      coveredY[sy] = unmatched;
 
       // Update slack
       updateSlack(sy, matrix, dualX, dualY, exposedX, slackV, slackX);
@@ -216,6 +216,7 @@ export function step4(
  * Adjusts dual variables and slack to uncover more admissible edges.
  *
  * @param min - The value to adjust by.
+ * @param covV - The value indicating a row is covered.
  * @param coveredY - An array indicating whether a row is covered.
  * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
  * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
@@ -224,11 +225,11 @@ export function step4(
  */
 export function step6(
   min: bigint,
-  rootY: number,
-  coveredY: number[],
+  covV: number,
+  coveredY: number[] | Uint32Array,
   dualX: bigint[],
   dualY: bigint[],
-  exposedX: number[],
+  exposedX: number[] | Uint32Array,
   slackV: bigint[]
 ): void {
   const X = dualX.length;
@@ -243,16 +244,16 @@ export function step6(
   }
 
   for (let y = 0; y < Y; ++y) {
-    if (coveredY[y] === rootY) {
+    if (coveredY[y] === covV) {
       dualY[y] += min;
     }
   }
 }
 
 export function findUncoveredMin(
-  exposedX: number[],
+  exposedX: number[] | Uint32Array,
   slackV: bigint[],
-  slackX: number[]
+  slackX: number[] | Uint32Array
 ): [number, number, number] {
   const X = slackV.length;
 
@@ -280,7 +281,7 @@ export function initSlack(
   dualX: bigint[],
   dualY: bigint[],
   slackV: bigint[],
-  slackX: number[]
+  slackX: number[] | Uint32Array
 ): void {
   const dy = dualY[y];
   const row = matrix[y];
@@ -297,9 +298,9 @@ export function updateSlack(
   matrix: Matrix<bigint>,
   dualX: bigint[],
   dualY: bigint[],
-  exposedX: number[],
+  exposedX: number[] | Uint32Array,
   slackV: bigint[],
-  slackX: number[]
+  slackX: number[] | Uint32Array
 ): void {
   const dy = dualY[y];
   const row = matrix[y];
