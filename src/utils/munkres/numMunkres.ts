@@ -160,9 +160,9 @@ export function step4(
 ): void {
   const X = dualX.length;
   const Y = dualY.length;
-  const coveredX = new Array<number>(X);
   const coveredY = new Array<number>(Y).fill(-1);
   const exposedX = new Array<number>(X);
+  const primeX = new Array<number>(X);
   const slackV = new Array<number>(X);
   const slackX = new Array<number>(X);
 
@@ -172,7 +172,7 @@ export function step4(
     }
 
     // Initialize stage
-    coveredX.fill(-1);
+    primeX.fill(-1);
     coveredY[rootY] = rootY;
     initExposed(exposedX);
     initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
@@ -185,26 +185,28 @@ export function step4(
 
       // Step 6: If not zero, zero the min
       if (slackV[x] > 0) {
-        step6(slackV[x], rootY, coveredX, coveredY, dualX, dualY, slackV);
+        step6(slackV[x], rootY, coveredY, dualX, dualY, exposedX, slackV);
       }
 
       // Prime the zero
-      coveredX[x] = y;
+      primeX[x] = y;
 
-      // Cover the column
+      // Cover the prime's column
       exposedX[x] = x + 1 < X ? exposedX[x + 1] : X;
       exposedX[px] = exposedX[x];
 
       // Step 5: If no star in the column, turn primes into stars
       if (starsX[x] === -1) {
-        step5(x, coveredX, starsX, starsY);
+        step5(x, primeX, starsX, starsY);
         --unmatched;
         break;
       }
 
-      // Cover the star's row and update slack
+      // Cover the star's row
       const sy = starsX[x];
       coveredY[sy] = rootY;
+
+      // Update slack
       updateSlack(sy, matrix, dualX, dualY, exposedX, slackV, slackX);
     }
   }
@@ -221,18 +223,18 @@ export function step4(
  * continuing until no matched edge can be found.
  *
  * @param x - The starting node's column.
- * @param coveredX - An array mapping covered columns to rows.
+ * @param primeX - An array mapping primed columns to rows.
  * @param starsX - An array mapping star columns to row. Modified in place.
  * @param starsY - An array mapping star rows to columns. Modified in place.
  */
 export function step5(
   x: number,
-  coveredX: number[],
+  primeX: number[],
   starsX: number[],
   starsY: number[]
 ): void {
   do {
-    const y = coveredX[x];
+    const y = primeX[x];
     const sx = starsY[y];
     starsX[x] = y;
     starsY[y] = x;
@@ -253,17 +255,17 @@ export function step5(
 export function step6(
   min: number,
   rootY: number,
-  coveredX: number[],
   coveredY: number[],
   dualX: number[],
   dualY: number[],
+  exposedX: number[],
   slackV: number[]
 ): void {
   const X = dualX.length;
   const Y = dualY.length;
 
   for (let x = 0; x < X; ++x) {
-    if (coveredX[x] === -1) {
+    if (exposedX[x] === x) {
       slackV[x] = slackV[x] === min ? 0 : slackV[x] - min;
     } else {
       dualX[x] = dualX[x] === min ? 0 : dualX[x] - min;
