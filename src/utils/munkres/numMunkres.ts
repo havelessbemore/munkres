@@ -181,7 +181,7 @@ export function step4(
     // eslint-disable-next-line no-constant-condition
     while (true) {
       // Find an uncovered min
-      const [y, x, px] = findUncoveredMin(exposedX, slackV, slackX);
+      const [x, px] = findUncoveredMin(exposedX, slackV);
 
       // Step 6: If not zero, zero the min
       if (slackV[x] > 0) {
@@ -189,7 +189,7 @@ export function step4(
       }
 
       // Prime the zero
-      primeX[x] = y;
+      primeX[x] = slackX[x];
 
       // Cover the prime's column
       exposedX[x] = x + 1 < X ? exposedX[x + 1] : X;
@@ -290,9 +290,8 @@ export function initExposed(exposed: number[] | Uint32Array): void {
 
 export function findUncoveredMin(
   exposedX: number[] | Uint32Array,
-  slackV: number[],
-  slackX: number[] | Uint32Array
-): [number, number, number] {
+  slackV: number[]
+): [number, number] {
   const X = slackV.length;
 
   let minP = 0;
@@ -309,8 +308,7 @@ export function findUncoveredMin(
     px = x;
   }
 
-  const minX = exposedX[minP];
-  return [slackX[minX], minX, minP];
+  return [exposedX[minP], minP];
 }
 
 export function initSlack(
