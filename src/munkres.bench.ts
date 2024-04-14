@@ -32,16 +32,22 @@ for (let i = 1; i < 14; ++i) {
     beforeEach: () => {
       mat = genNum(N);
     },
+    afterEach: () => {
+      mat = [];
+    },
   });
 }
 
 suite.add(`bigint`, (bench = new Bench()));
-for (let i = 1; i < 13; ++i) {
+for (let i = 1; i < 14; ++i) {
   const N = 1 << i;
   let mat: Matrix<bigint>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
     beforeEach: () => {
       mat = genBig(N);
+    },
+    afterEach: () => {
+      mat = [];
     },
   });
 }
