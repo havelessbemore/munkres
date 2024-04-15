@@ -267,33 +267,48 @@ function step4$1(unmatched, matrix, dualX, dualY, starsX, starsY) {
   const X = dualX.length;
   const Y = dualY.length;
   const coveredY = new Uint32Array(Y);
-  const exposedX = new Uint32Array(X);
-  const primeX = new Uint32Array(X);
-  const slackV = new Array(X);
+  const slack = new Uint32Array(X);
+  const slackV = new Array(X).fill(0);
   const slackX = new Uint32Array(X);
   for (let rootY = 0; unmatched > 0; ++rootY) {
     if (starsY[rootY] !== -1) {
       continue;
     }
+    let slackMin = 0;
+    slackX.fill(rootY);
     coveredY[rootY] = unmatched;
-    initExposed(exposedX);
-    initSlack$1(rootY, matrix, dualX, dualY, slackV, slackX);
+    let slackMid = initSlack$1(rootY, matrix, dualX, dualY, slack, slackV);
     while (true) {
-      const [y, x, px] = findUncoveredMin$1(exposedX, slackV, slackX);
-      if (slackV[x] > 0) {
-        step6$1(slackV[x], unmatched, coveredY, dualX, dualY, exposedX, slackV);
+      if (slackMin >= slackMid) {
+        slackMid = step6$1(
+          findUncoveredMin$1(slackMid, slack, slackV),
+          unmatched,
+          slackMid,
+          coveredY,
+          dualX,
+          dualY,
+          slack,
+          slackV
+        );
       }
-      primeX[x] = y;
-      exposedX[x] = x + 1 < X ? exposedX[x + 1] : X;
-      exposedX[px] = exposedX[x];
+      const x = slack[slackMin++];
       if (starsX[x] === -1) {
-        step5(x, primeX, starsX, starsY);
+        step5(x, slackX, starsX, starsY);
         --unmatched;
         break;
       }
       const sy = starsX[x];
       coveredY[sy] = unmatched;
-      updateSlack$1(sy, matrix, dualX, dualY, exposedX, slackV, slackX);
+      slackMid = updateSlack$1(
+        sy,
+        slackMid,
+        matrix,
+        dualX,
+        dualY,
+        slack,
+        slackV,
+        slackX
+      );
     }
   }
 }
@@ -306,14 +321,20 @@ function step5(x, primeX, starsX, starsY) {
     x = sx;
   } while (x !== -1);
 }
-function step6$1(min, covV, coveredY, dualX, dualY, exposedX, slackV) {
+function step6$1(min, covV, mid, coveredY, dualX, dualY, slack, slackV) {
   const X = dualX.length;
   const Y = dualY.length;
-  for (let x = 0; x < X; ++x) {
-    if (exposedX[x] === x) {
-      slackV[x] = slackV[x] === min ? 0 : slackV[x] - min;
+  for (let i = 0; i < mid; ++i) {
+    const x = slack[i];
+    dualX[x] = dualX[x] === min ? 0 : dualX[x] - min;
+  }
+  for (let i = mid; i < X; ++i) {
+    const x = slack[i];
+    if (slackV[x] === min) {
+      slack[i] = slack[mid];
+      slack[mid++] = x;
     } else {
-      dualX[x] = dualX[x] === min ? 0 : dualX[x] - min;
+      slackV[x] -= min;
     }
   }
   min = -min;
@@ -322,54 +343,55 @@ function step6$1(min, covV, coveredY, dualX, dualY, exposedX, slackV) {
       dualY[y] = dualY[y] === min ? 0 : dualY[y] - min;
     }
   }
+  return mid;
 }
-function initExposed(exposed) {
-  const N = exposed.length;
-  for (let i = 0; i < N; ++i) {
-    exposed[i] = i;
+function findUncoveredMin$1(mid, slack, slackV) {
+  const X = slack.length;
+  let minV = slackV[slack[mid]];
+  for (let i = mid + 1; i < X; ++i) {
+    if (slackV[slack[i]] < minV) {
+      minV = slackV[slack[i]];
+    }
   }
+  return minV;
 }
-function findUncoveredMin$1(exposedX, slackV, slackX) {
-  const X = slackV.length;
-  let minP = 0;
-  let minV = slackV[exposedX[minP]];
-  for (let px = exposedX[0] + 1; px < X && exposedX[px] < X; ++px) {
-    const x = exposedX[px];
-    if (slackV[x] < minV) {
-      minV = slackV[x];
-      minP = px;
-      if (minV === 0) {
-        break;
+function initSlack$1(y, matrix, dualX, dualY, slack, slackV) {
+  const dy = -dualY[y];
+  const row = matrix[y];
+  const X = dualX.length;
+  let mid = 0;
+  for (let x = 0; x < X; ++x) {
+    slack[x] = x;
+    const dual = dualX[x] === dy ? 0 : dualX[x] - dy;
+    if (row[x] === dual) {
+      slack[x] = slack[mid];
+      slack[mid++] = x;
+    } else {
+      slackV[x] = row[x] - dual;
+    }
+  }
+  return mid;
+}
+function updateSlack$1(y, midS, matrix, dualX, dualY, slack, slackV, slackX) {
+  const dy = -dualY[y];
+  const row = matrix[y];
+  const X = slackX.length;
+  for (let i = midS; i < X; ++i) {
+    const x = slack[i];
+    let value = dualX[x] === dy ? 0 : dualX[x] - dy;
+    if (row[x] === value) {
+      slack[i] = slack[midS];
+      slack[midS++] = x;
+      slackX[x] = y;
+    } else {
+      value = row[x] - value;
+      if (value < slackV[x]) {
+        slackV[x] = value;
+        slackX[x] = y;
       }
     }
-    px = x;
   }
-  const minX = exposedX[minP];
-  return [slackX[minX], minX, minP];
-}
-function initSlack$1(y, matrix, dualX, dualY, slackV, slackX) {
-  const dy = -dualY[y];
-  const row = matrix[y];
-  const X = slackX.length;
-  slackX.fill(y);
-  for (let x = 0; x < X; ++x) {
-    const dual = dualX[x] === dy ? 0 : dualX[x] - dy;
-    slackV[x] = row[x] === dual ? 0 : row[x] - dual;
-  }
-}
-function updateSlack$1(y, matrix, dualX, dualY, exposedX, slackV, slackX) {
-  const dy = -dualY[y];
-  const row = matrix[y];
-  const X = slackX.length;
-  for (let x = 0; x < X && exposedX[x] < X; ++x) {
-    x = exposedX[x];
-    const dual = dualX[x] === dy ? 0 : dualX[x] - dy;
-    const slack = row[x] === dual ? 0 : row[x] - dual;
-    if (slack < slackV[x]) {
-      slackV[x] = slack;
-      slackX[x] = y;
-    }
-  }
+  return midS;
 }
 function safeExec$1(matrix) {
   var _a;
@@ -451,44 +473,63 @@ function step4(unmatched, matrix, dualX, dualY, starsX, starsY) {
   const X = dualX.length;
   const Y = dualY.length;
   const coveredY = new Uint32Array(Y);
-  const exposedX = new Uint32Array(X);
-  const primeX = new Uint32Array(X);
+  const slack = new Uint32Array(X);
   const slackV = new Array(X);
   const slackX = new Uint32Array(X);
   for (let rootY = 0; unmatched > 0; ++rootY) {
     if (starsY[rootY] !== -1) {
       continue;
     }
+    let slackMin = 0;
+    slackX.fill(rootY);
     coveredY[rootY] = unmatched;
-    initExposed(exposedX);
-    initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
+    let slackMid = initSlack(rootY, matrix, dualX, dualY, slack, slackV);
     while (true) {
-      const [y, x, px] = findUncoveredMin(exposedX, slackV, slackX);
-      if (slackV[x] > 0n) {
-        step6(slackV[x], unmatched, coveredY, dualX, dualY, exposedX, slackV);
+      if (slackMin >= slackMid) {
+        slackMid = step6(
+          findUncoveredMin(slackMid, slack, slackV),
+          unmatched,
+          slackMid,
+          coveredY,
+          dualX,
+          dualY,
+          slack,
+          slackV
+        );
       }
-      primeX[x] = y;
-      exposedX[x] = x + 1 < X ? exposedX[x + 1] : X;
-      exposedX[px] = exposedX[x];
+      const x = slack[slackMin++];
       if (starsX[x] === -1) {
-        step5(x, primeX, starsX, starsY);
+        step5(x, slackX, starsX, starsY);
         --unmatched;
         break;
       }
       const sy = starsX[x];
       coveredY[sy] = unmatched;
-      updateSlack(sy, matrix, dualX, dualY, exposedX, slackV, slackX);
+      slackMid = updateSlack(
+        sy,
+        slackMid,
+        matrix,
+        dualX,
+        dualY,
+        slack,
+        slackV,
+        slackX
+      );
     }
   }
 }
-function step6(min, covV, coveredY, dualX, dualY, exposedX, slackV) {
+function step6(min, covV, mid, coveredY, dualX, dualY, slack, slackV) {
   const X = dualX.length;
   const Y = dualY.length;
-  for (let x = 0; x < X; ++x) {
-    if (exposedX[x] === x) {
-      slackV[x] -= min;
-    } else {
-      dualX[x] -= min;
+  for (let i = 0; i < mid; ++i) {
+    dualX[slack[i]] -= min;
+  }
+  for (let i = mid; i < X; ++i) {
+    const x = slack[i];
+    slackV[x] -= min;
+    if (slackV[x] === 0n) {
+      slack[i] = slack[mid];
+      slack[mid++] = x;
     }
   }
   for (let y = 0; y < Y; ++y) {
@@ -496,46 +537,52 @@ function step6(min, covV, coveredY, dualX, dualY, exposedX, slackV) {
       dualY[y] += min;
     }
   }
+  return mid;
 }
-function findUncoveredMin(exposedX, slackV, slackX) {
-  const X = slackV.length;
-  let minP = 0;
-  let minV = slackV[exposedX[minP]];
-  for (let px = exposedX[0] + 1; px < X && exposedX[px] < X; ++px) {
-    const x = exposedX[px];
-    if (slackV[x] < minV) {
-      minV = slackV[x];
-      minP = px;
-      if (minV === 0n) {
-        break;
+function findUncoveredMin(mid, slack, slackV) {
+  const X = slack.length;
+  let minV = slackV[slack[mid]];
+  for (let i = mid + 1; i < X; ++i) {
+    if (slackV[slack[i]] < minV) {
+      minV = slackV[slack[i]];
+    }
+  }
+  return minV;
+}
+function initSlack(y, matrix, dualX, dualY, slack, slackV) {
+  const dy = dualY[y];
+  const row = matrix[y];
+  const X = dualX.length;
+  let mid = 0;
+  for (let x = 0; x < X; ++x) {
+    slack[x] = x;
+    slackV[x] = row[x] - dualX[x] - dy;
+    if (slackV[x] === 0n) {
+      slack[x] = slack[mid];
+      slack[mid++] = x;
+    }
+  }
+  return mid;
+}
+function updateSlack(y, midS, matrix, dualX, dualY, slack, slackV, slackX) {
+  const dy = dualY[y];
+  const row = matrix[y];
+  const X = slackX.length;
+  for (let i = midS; i < X; ++i) {
+    const x = slack[i];
+    const value = row[x] - dualX[x] - dy;
+    if (value < slackV[x]) {
+      if (value === 0n) {
+        slack[i] = slack[midS];
+        slack[midS++] = x;
+        slackX[x] = y;
+      } else {
+        slackV[x] = value;
+        slackX[x] = y;
       }
     }
-    px = x;
   }
-  const minX = exposedX[minP];
-  return [slackX[minX], minX, minP];
-}
-function initSlack(y, matrix, dualX, dualY, slackV, slackX) {
-  const dy = dualY[y];
-  const row = matrix[y];
-  const X = slackX.length;
-  slackX.fill(y);
-  for (let x = 0; x < X; ++x) {
-    slackV[x] = row[x] - dualX[x] - dy;
-  }
-}
-function updateSlack(y, matrix, dualX, dualY, exposedX, slackV, slackX) {
-  const dy = dualY[y];
-  const row = matrix[y];
-  const X = slackX.length;
-  for (let x = 0; x < X && exposedX[x] < X; ++x) {
-    x = exposedX[x];
-    const slack = row[x] - dualX[x] - dy;
-    if (slack < slackV[x]) {
-      slackV[x] = slack;
-      slackX[x] = y;
-    }
-  }
+  return midS;
 }
 function safeExec(matrix) {
   return isBigInt((matrix[0] ?? [])[0]) ? safeExec$1(matrix) : safeExec$2(matrix);
