@@ -8,7 +8,6 @@ import { gen, map } from "../src/utils/matrix";
 import { Suite } from "./utils/suite";
 import { munkres } from "../src/munkres";
 import { CIReporter } from "./utils/ciReporter";
-import { TerminalReporter } from "./utils/terminalReporter";
 
 // Define and get parameters
 program.option("-o, --output <filepath>", "output file path");
@@ -37,7 +36,6 @@ const bench = new Bench()
 
 // Run benchmarks and report results
 await new Suite({ warmup: false })
-  .addReporter(new TerminalReporter())
   .addReporter(new CIReporter(path.resolve(options.output)))
   .add("", bench)
   .run();
