@@ -31,14 +31,14 @@
     "README.md"
   ],
   "scripts": {
-    "bench": "tsx --max-old-space-size=2304 ./src/munkres.bench.ts",
+    "bench": "tsx --max-old-space-size=2304 ./benchmarks/munkres.bench.ts",
     "build": "rimraf dist && tsc && vite build && vite build -c vite.config.misc.ts",
     "build:docs": "typedoc",
     "dev": "vite --host",
     "format": "prettier . --write",
     "lint": "eslint . --ext .ts",
     "prepare": "husky",
-    "prepublish": "npm run lint && npm run test && npm run build",
+    "prepublishOnly": "npm run lint && npm run test && npm run build",
     "test": "vitest --run",
     "test:coverage": "vitest --coverage --run"
   },
