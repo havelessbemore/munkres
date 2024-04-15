@@ -21,6 +21,8 @@ jobs:
           cache: "npm"
       - name: Clean install
         run: npm ci
+      - name: Create results directory
+        run: mkdir -p benchmark_results
       - name: Run number[][] benchmark
         run: npm run bench:number | tee benchmark_results/number.txt
       - name: Store number[][] results
