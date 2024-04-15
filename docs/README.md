@@ -186,7 +186,22 @@ To run benchmarks:
 npm run bench
 ```
 
-### `number[][]`
+### CI / CD
+
+[Click here](https://havelessbemore.github.io/munkres/dev/bench/) for historical results.
+
+Benchmarks are integrated into our CI/CD pipeline and automatically run with each commit to the `main` branch. This helps monitor the performance impacts of development, preventing regressions and verifying changes maintain performance standards.
+
+Specs (may vary per commit):
+
+- Package version: See [package.json](./package.json)
+- OS: See [workflow](.github/workflows/benchmark.yml)
+- Runtime: See [workflow](.github/workflows/benchmark.yml)
+- Benchmarking Tool: See [benchmark](./benchmarks/ci.bench.ts)
+
+### Current
+
+#### `number[][]`
 
 | Dimensions | Min (ms)    | Max (ms)    | Avg (ms)    | Samples   |
 | ---------- | ----------- | ----------- | ----------- | --------- |
@@ -204,7 +219,7 @@ npm run bench
 | 4096x4096  | 1,136.79017 | 1,456.63646 | 1,256.7295  | 10        |
 | 8192x8192  | 6,373.22838 | 7,600.0455  | 6,920.27934 | 10        |
 
-### `bigint[][]`
+#### `bigint[][]`
 
 | Dimensions | Min (ms)     | Max (ms)     | Avg (ms)     | Samples   |
 | ---------- | ------------ | ------------ | ------------ | --------- |
@@ -222,9 +237,7 @@ npm run bench
 | 4096x4096  | 3,690.12067  | 4,835.837    | 4,120.09768  | 10        |
 | 8192x8192  | 21,379.72487 | 27,010.15529 | 24,359.46667 | 10        |
 
-### Specs
-
-Benchmarked with:
+Specs:
 
 - Package version: v1.2.4
 - OS: M2 Macbook Air, Mac OS v14.4.1
