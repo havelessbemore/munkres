@@ -163,7 +163,6 @@ export function step4(
   const Y = dualY.length;
   const coveredY = new Uint32Array(Y);
   const exposedX = new Uint32Array(X);
-  const primeX = new Uint32Array(X);
   const slackV = new Array<bigint>(X);
   const slackX = new Uint32Array(X);
 
@@ -188,16 +187,13 @@ export function step4(
         step6(slackV[x], unmatched, coveredY, dualX, dualY, exposedX, slackV);
       }
 
-      // Prime the zero
-      primeX[x] = slackX[x];
-
       // Cover the prime's column
       exposedX[x] = x + 1 < X ? exposedX[x + 1] : X;
       exposedX[px] = exposedX[x];
 
       // Step 5: If no star in the column, turn primes into stars
       if (starsX[x] === -1) {
-        step5(x, primeX, starsX, starsY);
+        step5(x, slackX, starsX, starsY);
         --unmatched;
         break;
       }
