@@ -24,7 +24,7 @@ jobs:
       - name: Create results directory
         run: mkdir -p benchmark_results
       - name: Run benchmarks
-        run: npm run bench:ci | tee benchmark_results/ci.txt
+        run: npm run bench:ci -- --output benchmark_results/ci.txt
       - name: Store results
         uses: benchmark-action/github-action-benchmark@v1
         with:
