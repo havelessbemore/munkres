@@ -53,7 +53,7 @@ const config = defineConfig({
   ],
   test: {
     coverage: {
-      exclude: ["src/index.ts", "**/*.d.ts", "**/*.bench.ts", "tests/"],
+      exclude: ["src/index.ts", "**/*.d.ts", "benchmarks/", "tests/"],
     },
   },
 });
