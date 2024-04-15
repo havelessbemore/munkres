@@ -22,7 +22,17 @@ export class CIReporter implements BenchReporter {
   }
 
   onTaskComplete(task: Task): void {
-    this.results.push(this._toResult(task));
+    const res = this._toResult(task);
+    this.results.push(res);
+    console.log(
+      [
+        res.name,
+        "x",
+        `${res.value}${res.unit}`,
+        res.range,
+        `(${res.extra})`,
+      ].join(" ")
+    );
   }
 
   onComplete(): void {
