@@ -29,7 +29,7 @@ jobs:
         uses: benchmark-action/github-action-benchmark@v1
         with:
           name: Munkres Benchmarks
-          tool: "benchmarkjs"
+          tool: "customSmallerIsBetter"
           output-file-path: benchmark_results/ci.txt
           github-token: ${{ secrets.BENCHMARK_TOKEN }}
           auto-push: true
