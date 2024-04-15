@@ -19,7 +19,7 @@ let bench: Bench;
 const suite = new Suite({ warmup: false }).addReporter(new CIReporter());
 
 suite.add(`bigint`, (bench = new Bench()));
-for (let i = 1; i < 14; ++i) {
+for (let i = 1; i <= 12; ++i) {
   const N = 1 << i;
   let mat: Matrix<bigint>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
