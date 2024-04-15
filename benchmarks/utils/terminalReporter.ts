@@ -9,10 +9,10 @@ export class TerminalReporter implements BenchReporter {
     this.results = new Map();
     this.columns = [
       ["Name", task => task.name],
-      ["Min (ms)", task => task.result?.min ?? ""],
-      ["Max (ms)", task => task.result?.max ?? ""],
-      ["Avg (ms)", task => task.result?.mean ?? ""],
-      ["Samples", task => task.result?.samples?.length ?? ""],
+      ["Min (ms)", task => (task.result ? +task.result.min.toFixed(5) : NaN)],
+      ["Max (ms)", task => (task.result ? +task.result.max.toFixed(5) : NaN)],
+      ["Avg (ms)", task => (task.result ? +task.result.mean.toFixed(5) : NaN)],
+      ["Samples", task => (task.result ? +task.result.samples.length : NaN)],
     ];
   }
 
@@ -22,6 +22,7 @@ export class TerminalReporter implements BenchReporter {
   }
 
   onStart(bench: Bench, name?: string): void {
+    this.results.clear();
     name = name ?? "";
     process.stdout.clearLine(0);
     process.stdout.cursorTo(0);
@@ -51,7 +52,7 @@ export class TerminalReporter implements BenchReporter {
   onTaskComplete(task: Task): void {
     const results = this.results;
     if (results.size > 0) {
-      process.stdout.moveCursor(0, -4 - results.size);
+      process.stdout.moveCursor(0, -(4 + results.size));
     }
     results.set(task.name, this._toResult(task));
     console.table(Array.from(results.values()));
