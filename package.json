@@ -31,8 +31,8 @@
     "README.md"
   ],
   "scripts": {
-    "bench:bigint": "tsx ./benchmarks/bigint.bench.ts",
-    "bench:number": "tsx ./benchmarks/number.bench.ts",
+    "bench:ci": "tsx --max-old-space-size=2688 ./benchmarks/ci.bench.ts",
+    "bench": "tsx --max-old-space-size=2304 ./benchmarks/munkres.bench.ts",
     "build": "rimraf dist && tsc && vite build && vite build -c vite.config.misc.ts",
     "build:docs": "typedoc",
     "dev": "vite --host",

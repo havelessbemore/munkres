@@ -23,28 +23,14 @@ jobs:
         run: npm ci
       - name: Create results directory
         run: mkdir -p benchmark_results
-      - name: Run number[][] benchmark
-        run: npm run bench:number | tee benchmark_results/number.txt
-      - name: Store number[][] results
+      - name: Run benchmarks
+        run: npm run bench:ci | tee benchmark_results/ci.txt
+      - name: Store results
         uses: benchmark-action/github-action-benchmark@v1
         with:
-          name: number[][] Benchmark
+          name: Munkres Benchmarks
           tool: "benchmarkjs"
-          output-file-path: benchmark_results/number.txt
-          github-token: ${{ secrets.BENCHMARK_TOKEN }}
-          auto-push: true
-          # Show alert with commit comment on detecting possible performance regression
-          alert-threshold: "150%"
-          comment-on-alert: true
-          fail-on-alert: true
-      - name: Run bigint[][] benchmark
-        run: npm run bench:bigint | tee benchmark_results/bigint.txt
-      - name: Store bigint[][] results
-        uses: benchmark-action/github-action-benchmark@v1
-        with:
-          name: bigint[][] Benchmark
-          tool: "benchmarkjs"
-          output-file-path: benchmark_results/bigint.txt
+          output-file-path: benchmark_results/ci.txt
           github-token: ${{ secrets.BENCHMARK_TOKEN }}
           auto-push: true
           # Show alert with commit comment on detecting possible performance regression

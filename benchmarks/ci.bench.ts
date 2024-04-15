@@ -1,7 +1,7 @@
 import { Bench } from "tinybench";
 
 import { Matrix } from "../src/types/matrix";
-import { gen } from "../src/utils/matrix";
+import { gen, map } from "../src/utils/matrix";
 import { CIReporter, Suite } from "./utils/suite";
 import { munkres } from "../src/munkres";
 
@@ -15,21 +15,15 @@ function genNum(Y: number, X = Y): Matrix<number> {
   return gen(Y, X, () => minV + Math.trunc(span * Math.random()));
 }
 
-let bench: Bench;
-const suite = new Suite({ warmup: false }).addReporter(new CIReporter());
+const N = 8192; // 2**13;
+const numMat = genNum(N);
+const bigMat = map(numMat, v => BigInt(v));
 
-suite.add(`number`, (bench = new Bench()));
-for (let i = 1; i <= 12; ++i) {
-  const N = 1 << i;
-  let mat: Matrix<number>;
-  bench.add(`${N}x${N}`, () => munkres(mat), {
-    beforeEach: () => {
-      mat = genNum(N);
-    },
-    afterEach: () => {
-      mat = [];
-    },
-  });
-}
+const bench = new Bench()
+  .add(`number[${N}][${N}]`, () => munkres(numMat))
+  .add(`bigint[${N}][${N}]`, () => munkres(bigMat));
 
-await suite.run();
+await new Suite({ warmup: false })
+  .addReporter(new CIReporter())
+  .add("", bench)
+  .run();
