@@ -2,8 +2,9 @@ import { Bench } from "tinybench";
 
 import { Matrix } from "../src/types/matrix";
 import { gen, map } from "../src/utils/matrix";
-import { CIReporter, Suite } from "./utils/suite";
+import { Suite } from "./utils/suite";
 import { munkres } from "../src/munkres";
+import { BenchmarkjsReporter } from "./utils/benchmarkjsReporter";
 
 const minV = 1;
 const maxV = Number.MAX_SAFE_INTEGER;
@@ -24,6 +25,6 @@ const bench = new Bench()
   .add(`bigint[${N}][${N}]`, () => munkres(bigMat));
 
 await new Suite({ warmup: false })
-  .addReporter(new CIReporter())
+  .addReporter(new BenchmarkjsReporter())
   .add("", bench)
   .run();

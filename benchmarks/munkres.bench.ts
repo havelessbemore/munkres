@@ -2,8 +2,9 @@ import { Bench } from "tinybench";
 
 import { Matrix } from "../src/types/matrix";
 import { gen } from "../src/utils/matrix";
-import { ConsoleReporter, Suite } from "./utils/suite";
+import { Suite } from "./utils/suite";
 import { munkres } from "../src/munkres";
+import { TerminalReporter } from "./utils/terminalReporter";
 
 const minV = 1;
 const maxV = Number.MAX_SAFE_INTEGER;
@@ -22,7 +23,7 @@ function genBig(Y: number, X = Y): Matrix<bigint> {
 }
 
 let bench: Bench;
-const suite = new Suite({ warmup: false }).addReporter(new ConsoleReporter());
+const suite = new Suite({ warmup: false }).addReporter(new TerminalReporter());
 
 suite.add(`number`, (bench = new Bench()));
 for (let i = 1; i <= 13; ++i) {
