@@ -3,7 +3,7 @@ import { MunkresResult } from "../../types/munkres";
 
 import { getMin } from "../array";
 import { copy, transpose } from "../matrix";
-import { initExposed, step5 } from "./numMunkres";
+import { step5 } from "./numMunkres";
 
 export function safeExec(matrix: Matrix<bigint>): MunkresResult<bigint> {
   // Get dimensions
@@ -247,6 +247,13 @@ export function step6(
     if (coveredY[y] === covV) {
       dualY[y] += min;
     }
+  }
+}
+
+export function initExposed(exposed: number[] | Uint32Array): void {
+  const N = exposed.length;
+  for (let i = 0; i < N; ++i) {
+    exposed[i] = i;
   }
 }
 

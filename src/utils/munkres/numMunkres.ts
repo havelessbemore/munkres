@@ -162,9 +162,8 @@ export function step4(
   const X = dualX.length;
   const Y = dualY.length;
   const coveredY = new Uint32Array(Y);
-  const exposedX = new Uint32Array(X);
-  const primeX = new Uint32Array(X);
-  const slackV = new Array<number>(X);
+  const slack = new Uint32Array(X);
+  const slackV = new Array<number>(X).fill(0);
   const slackX = new Uint32Array(X);
 
   for (let rootY = 0; unmatched > 0; ++rootY) {
@@ -173,31 +172,34 @@ export function step4(
     }
 
     // Initialize stage
+    let slackMin = 0;
+    slackX.fill(rootY);
     coveredY[rootY] = unmatched;
-    initExposed(exposedX);
-    initSlack(rootY, matrix, dualX, dualY, slackV, slackX);
+    let slackMid = initSlack(rootY, matrix, dualX, dualY, slack, slackV);
 
     // Run stage
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      // Find an uncovered min
-      const [x, px] = findUncoveredMin(exposedX, slackV);
-
-      // Step 6: If not zero, zero the min
-      if (slackV[x] > 0) {
-        step6(slackV[x], unmatched, coveredY, dualX, dualY, exposedX, slackV);
+      // If no zero, zero the min
+      if (slackMin >= slackMid) {
+        slackMid = step6(
+          findUncoveredMin(slackMid, slack, slackV),
+          unmatched,
+          slackMid,
+          coveredY,
+          dualX,
+          dualY,
+          slack,
+          slackV
+        );
       }
 
-      // Prime the zero
-      primeX[x] = slackX[x];
-
-      // Cover the prime's column
-      exposedX[x] = x + 1 < X ? exposedX[x + 1] : X;
-      exposedX[px] = exposedX[x];
+      // Prime the zero / cover the prime's column
+      const x = slack[slackMin++];
 
       // Step 5: If no star in the column, turn primes into stars
       if (starsX[x] === -1) {
-        step5(x, primeX, starsX, starsY);
+        step5(x, slackX, starsX, starsY);
         --unmatched;
         break;
       }
@@ -207,7 +209,16 @@ export function step4(
       coveredY[sy] = unmatched;
 
       // Update slack
-      updateSlack(sy, matrix, dualX, dualY, exposedX, slackV, slackX);
+      slackMid = updateSlack(
+        sy,
+        slackMid,
+        matrix,
+        dualX,
+        dualY,
+        slack,
+        slackV,
+        slackX
+      );
     }
   }
 }
@@ -256,20 +267,28 @@ export function step5(
 export function step6(
   min: number,
   covV: number,
+  mid: number,
   coveredY: number[] | Uint32Array,
   dualX: number[],
   dualY: number[],
-  exposedX: number[] | Uint32Array,
+  slack: number[] | Uint32Array,
   slackV: number[]
-): void {
+): number {
   const X = dualX.length;
   const Y = dualY.length;
 
-  for (let x = 0; x < X; ++x) {
-    if (exposedX[x] === x) {
-      slackV[x] = slackV[x] === min ? 0 : slackV[x] - min;
+  for (let i = 0; i < mid; ++i) {
+    const x = slack[i];
+    dualX[x] = dualX[x] === min ? 0 : dualX[x] - min;
+  }
+
+  for (let i = mid; i < X; ++i) {
+    const x = slack[i];
+    if (slackV[x] === min) {
+      slack[i] = slack[mid];
+      slack[mid++] = x;
     } else {
-      dualX[x] = dualX[x] === min ? 0 : dualX[x] - min;
+      slackV[x] -= min;
     }
   }
 
@@ -279,36 +298,25 @@ export function step6(
       dualY[y] = dualY[y] === min ? 0 : dualY[y] - min;
     }
   }
-}
 
-export function initExposed(exposed: number[] | Uint32Array): void {
-  const N = exposed.length;
-  for (let i = 0; i < N; ++i) {
-    exposed[i] = i;
-  }
+  return mid;
 }
 
 export function findUncoveredMin(
-  exposedX: number[] | Uint32Array,
+  mid: number,
+  slack: number[] | Uint32Array,
   slackV: number[]
-): [number, number] {
-  const X = slackV.length;
+): number {
+  const X = slack.length;
 
-  let minP = 0;
-  let minV = slackV[exposedX[minP]];
-  for (let px = exposedX[0] + 1; px < X && exposedX[px] < X; ++px) {
-    const x = exposedX[px];
-    if (slackV[x] < minV) {
-      minV = slackV[x];
-      minP = px;
-      if (minV === 0) {
-        break;
-      }
+  let minV = slackV[slack[mid]];
+  for (let i = mid + 1; i < X; ++i) {
+    if (slackV[slack[i]] < minV) {
+      minV = slackV[slack[i]];
     }
-    px = x;
   }
 
-  return [exposedX[minP], minP];
+  return minV;
 }
 
 export function initSlack(
@@ -316,18 +324,26 @@ export function initSlack(
   matrix: Matrix<number>,
   dualX: number[],
   dualY: number[],
-  slackV: number[],
-  slackX: number[] | Uint32Array
-): void {
+  slack: number[] | Uint32Array,
+  slackV: number[]
+): number {
   const dy = -dualY[y];
   const row = matrix[y];
-  const X = slackX.length;
+  const X = dualX.length;
 
-  slackX.fill(y);
+  let mid = 0;
   for (let x = 0; x < X; ++x) {
+    slack[x] = x;
     const dual = dualX[x] === dy ? 0 : dualX[x] - dy;
-    slackV[x] = row[x] === dual ? 0 : row[x] - dual;
+    if (row[x] === dual) {
+      slack[x] = slack[mid];
+      slack[mid++] = x;
+    } else {
+      slackV[x] = row[x] - dual;
+    }
   }
+
+  return mid;
 }
 
 /**
@@ -365,24 +381,33 @@ export function toString<T>(
 
 export function updateSlack(
   y: number,
+  midS: number,
   matrix: Matrix<number>,
   dualX: number[],
   dualY: number[],
-  exposedX: number[] | Uint32Array,
+  slack: number[] | Uint32Array,
   slackV: number[],
   slackX: number[] | Uint32Array
-): void {
+): number {
   const dy = -dualY[y];
   const row = matrix[y];
   const X = slackX.length;
 
-  for (let x = 0; x < X && exposedX[x] < X; ++x) {
-    x = exposedX[x];
-    const dual = dualX[x] === dy ? 0 : dualX[x] - dy;
-    const slack = row[x] === dual ? 0 : row[x] - dual;
-    if (slack < slackV[x]) {
-      slackV[x] = slack;
+  for (let i = midS; i < X; ++i) {
+    const x = slack[i];
+    let value = dualX[x] === dy ? 0 : dualX[x] - dy;
+    if (row[x] === value) {
+      slack[i] = slack[midS];
+      slack[midS++] = x;
       slackX[x] = y;
+    } else {
+      value = row[x] - value;
+      if (value < slackV[x]) {
+        slackV[x] = value;
+        slackX[x] = y;
+      }
     }
   }
+
+  return midS;
 }
