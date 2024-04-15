@@ -1,8 +1,7 @@
 name: Benchmark
 on:
   push:
-    branches:
-      - master
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: write
@@ -30,7 +29,7 @@ jobs:
           name: number[][] Benchmark
           tool: "benchmarkjs"
           output-file-path: benchmark_results/number.txt
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.BENCHMARK_TOKEN }}
           auto-push: true
           # Show alert with commit comment on detecting possible performance regression
           alert-threshold: "150%"
@@ -44,7 +43,7 @@ jobs:
           name: bigint[][] Benchmark
           tool: "benchmarkjs"
           output-file-path: benchmark_results/bigint.txt
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.BENCHMARK_TOKEN }}
           auto-push: true
           # Show alert with commit comment on detecting possible performance regression
           alert-threshold: "150%"
