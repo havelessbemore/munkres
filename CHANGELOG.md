@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.2.4](https://github.com/havelessbemore/munkres/compare/v1.2.3...v1.2.4) (2024-04-15)
+
+### Updates
+
+- Improve performance by ~24% when using `number[][]` cost matrices.
+- Reduce memory by ~11%
+
+### Other
+
+- Implement continuous benchmarks ([link](https://havelessbemore.github.io/munkres/dev/bench/)).
+
 ## [1.2.3](https://github.com/havelessbemore/munkres/compare/v1.2.2...v1.2.3) (2024-04-13)
 
 ### Updates
