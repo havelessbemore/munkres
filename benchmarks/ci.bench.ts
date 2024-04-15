@@ -15,7 +15,7 @@ function genNum(Y: number, X = Y): Matrix<number> {
   return gen(Y, X, () => minV + Math.trunc(span * Math.random()));
 }
 
-const N = 8192; // 2**13;
+const N = 4096; // 2**12;
 const numMat = genNum(N);
 const bigMat = map(numMat, v => BigInt(v));
 
