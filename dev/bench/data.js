@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713306384938,
+  "lastUpdate": 1713309150023,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -608,6 +608,44 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±9.50%",
             "extra": "10 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "05d7dd79201ea0d3a01cfb51751cb59fe1cc592a",
+          "message": "Increase minimum CI benchmark iterations, Enable benchmark warmup",
+          "timestamp": "2024-04-16T19:06:03-04:00",
+          "tree_id": "33cf3cabd7390a078ee2d27343a2969d35faf2ee",
+          "url": "https://github.com/havelessbemore/munkres/commit/05d7dd79201ea0d3a01cfb51751cb59fe1cc592a"
+        },
+        "date": 1713309149117,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2038.8924792,
+            "unit": "ms",
+            "range": "±2.71%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 8250.958171400001,
+            "unit": "ms",
+            "range": "±6.80%",
+            "extra": "15 samples"
           }
         ]
       }
