@@ -173,9 +173,10 @@ export function step4(
     }
 
     // Initialize stage
+    let covMax = 1;
     let slackMin = 0;
     slackX.fill(rootY);
-    coveredY[rootY] = unmatched;
+    coveredY[0] = rootY;
     let slackMid = initSlack(rootY, matrix, dualX, dualY, slack, slackV);
 
     // Run stage
@@ -185,7 +186,7 @@ export function step4(
       if (slackMin >= slackMid) {
         slackMid = step6(
           findUncoveredMin(slackMid, slack, slackV),
-          unmatched,
+          covMax,
           slackMid,
           coveredY,
           dualX,
@@ -207,7 +208,7 @@ export function step4(
 
       // Cover the star's row
       const sy = starsX[x];
-      coveredY[sy] = unmatched;
+      coveredY[covMax++] = sy;
 
       // Update slack
       slackMid = updateSlack(
@@ -267,7 +268,7 @@ export function step5(
  */
 export function step6(
   min: number,
-  covV: number,
+  covMax: number,
   mid: number,
   coveredY: ArrayLike<number>,
   dualX: number[],
@@ -275,14 +276,17 @@ export function step6(
   slack: IndexArray,
   slackV: number[]
 ): number {
-  const X = dualX.length;
-  const Y = dualY.length;
+  for (let i = 0; i < covMax; ++i) {
+    const y = coveredY[i];
+    dualY[y] = dualY[y] + min || 0;
+  }
 
   for (let i = 0; i < mid; ++i) {
     const x = slack[i];
     dualX[x] = dualX[x] - min || 0;
   }
 
+  const X = dualX.length;
   for (let i = mid; i < X; ++i) {
     const x = slack[i];
     if (slackV[x] === min) {
@@ -290,12 +294,6 @@ export function step6(
       slack[mid++] = x;
     } else {
       slackV[x] -= min;
-    }
-  }
-
-  for (let y = 0; y < Y; ++y) {
-    if (coveredY[y] === covV) {
-      dualY[y] = dualY[y] + min || 0;
     }
   }
 
