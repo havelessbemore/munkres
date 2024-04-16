@@ -173,8 +173,7 @@ export function step4(
     }
 
     // Initialize stage
-    let covMax = 1;
-    let slackMin = 0;
+    let step = 0;
     slackX.fill(rootY);
     coveredY[0] = rootY;
     let slackMid = initSlack(rootY, matrix, dualX, dualY, slack, slackV);
@@ -183,10 +182,10 @@ export function step4(
     // eslint-disable-next-line no-constant-condition
     while (true) {
       // If no zero, zero the min
-      if (slackMin >= slackMid) {
+      if (step >= slackMid) {
         slackMid = step6(
           findUncoveredMin(slackMid, slack, slackV),
-          covMax,
+          step + 1,
           slackMid,
           coveredY,
           dualX,
@@ -197,7 +196,7 @@ export function step4(
       }
 
       // Prime the zero / cover the prime's column
-      const x = slack[slackMin++];
+      const x = slack[step++];
 
       // Step 5: If no star in the column, turn primes into stars
       if (starsX[x] === -1) {
@@ -208,7 +207,7 @@ export function step4(
 
       // Cover the star's row
       const sy = starsX[x];
-      coveredY[covMax++] = sy;
+      coveredY[step] = sy;
 
       // Update slack
       slackMid = updateSlack(
