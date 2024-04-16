@@ -164,7 +164,7 @@ export function step4(
   const Y = dualY.length;
   const coveredY = new Uint32Array(Y);
   const slack = new Uint32Array(X);
-  const slackV = new Array<number>(X).fill(0);
+  const slackV = new Array<number>(X);
   const slackX = new Uint32Array(X);
 
   for (let rootY = 0; unmatched > 0; ++rootY) {
@@ -339,12 +339,10 @@ export function initSlack(
   let mid = 0;
   for (let x = 0; x < X; ++x) {
     slack[x] = x;
-    const dual = dualX[x] + dy || 0;
-    if (row[x] === dual) {
+    slackV[x] = row[x] - (dualX[x] + dy || 0) || 0;
+    if (slackV[x] === 0) {
       slack[x] = slack[mid];
       slack[mid++] = x;
-    } else {
-      slackV[x] = row[x] - dual;
     }
   }
 
