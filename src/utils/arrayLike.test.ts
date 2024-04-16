@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { entries, getMin } from "./array";
+import { entries, getMin } from "./arrayLike";
 
 describe(`${entries.name}()`, () => {
   it("should return an empty array for an empty input array", () => {

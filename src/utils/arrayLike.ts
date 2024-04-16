@@ -10,7 +10,7 @@
  * entries(['a', 'b', 'c']);
  * // Returns [[0, 'a'], [1, 'b'], [2, 'c']]
  */
-export function entries<T>(array: T[]): [number, T][] {
+export function entries<T>(array: ArrayLike<T>): [number, T][] {
   const N = array.length;
   const out = new Array(N);
   for (let i = 0; i < N; ++i) {
@@ -38,14 +38,11 @@ export function entries<T>(array: T[]): [number, T][] {
  * const array = ['d', 'b', 'c'];
  * console.log(getMin(array)); // Output: 'b'
  */
-export function getMin(array: number[]): number | undefined;
-export function getMin(array: bigint[]): bigint | undefined;
-export function getMin(array: string[]): string | undefined;
+export function getMin(array: ArrayLike<number>): number | undefined;
+export function getMin(array: ArrayLike<bigint>): bigint | undefined;
+export function getMin(array: ArrayLike<string>): string | undefined;
 export function getMin<T extends number | bigint | string>(
-  array: T[]
-): T | undefined;
-export function getMin<T extends number | bigint | string>(
-  array: T[]
+  array: ArrayLike<T>
 ): T | undefined {
   const N = array.length;
   if (N <= 0) {
