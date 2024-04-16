@@ -1,6 +1,7 @@
 import { Matrix } from "../types/matrix";
 
-import { create, getMax, getMin, invert, negate } from "./matrix";
+import { create, invert, negate } from "./matrix";
+import { getMax, getMin } from "./matrixLike";
 
 /**
  * Constructs a cost matrix for a set of

@@ -1,4 +1,5 @@
 import { Matrix } from "../types/matrix";
+import { getMax } from "./matrixLike";
 
 /**
  * Creates a copy of a given matrix.
@@ -43,8 +44,8 @@ export function copy<T>(matrix: Matrix<T>): Matrix<T> {
  * // ]
  */
 export function create<R, C, T>(
-  rows: R[],
-  columns: C[],
+  rows: ArrayLike<R>,
+  columns: ArrayLike<C>,
   callbackFn: (row: R, col: C) => T
 ): Matrix<T> {
   const Y = rows.length;
@@ -118,46 +119,6 @@ export function flipV<T>(matrix: Matrix<T>): void {
 }
 
 /**
- * Performs the specified action for each element in the matrix.
- *
- * @param matrix - The matrix.
- * @param callbackFn - A function that accepts up to four arguments.
- * It is called one time for each element in the matrix.
- * @param thisArg - An object to which the `this` keyword refers to
- * in the `callbackFn` function. If omitted, `undefined` is used.
- *
- * @example
- * ```javascript
- * const matrix = [
- *   [1, 2, 3],
- *   [4, 5, 6],
- *   [7, 8, 9],
- * ];
- * forEach(matrix, (value, row, col, mat) => {
- *   console.log(`Value at ${row},${col} is ${value}`);
- * });
- * ```
- */
-export function forEach<T>(
-  matrix: Matrix<T>,
-  callbackFn: (value: T, y: number, x: number, matrix: Matrix<T>) => void,
-  thisArg?: unknown
-): void {
-  [].forEach;
-  const Y = matrix.length;
-  const X = matrix[0]?.length ?? 0;
-  if (Y <= 0 || X <= 0) {
-    return;
-  }
-  for (let y = 0; y < Y; ++y) {
-    const row = matrix[y];
-    for (let x = 0; x < X; ++x) {
-      callbackFn.call(thisArg, row[x], y, x, matrix);
-    }
-  }
-}
-
-/**
  * Generates a matrix with specified rows and columns.
  *
  * The callback function is called with every combination of row and column indices,
@@ -190,7 +151,7 @@ export function gen<T>(
   const matrix: Matrix<T> = new Array(rows);
 
   for (let r = 0; r < rows; ++r) {
-    const row = new Array(cols);
+    const row = new Array<T>(cols);
     for (let c = 0; c < cols; ++c) {
       row[c] = callbackFn(r, c);
     }
@@ -198,118 +159,6 @@ export function gen<T>(
   }
 
   return matrix;
-}
-
-/**
- * Finds the maximum value in a given matrix.
- *
- * @param matrix - The matrix.
- *
- * @returns The maximum value, or `undefined` if the matrix is empty.
- *
- * @example
- * const matrix = [
- *   [1, 3, 2],
- *   [4, 0, 6],
- *   [7, 5, 8]
- * ];
- * console.log(getMax(matrix)); // Output: 8
- *
- * @example
- * const matrix = [
- *   [1n, 3n, 2n],
- *   [4n, 0n, 6n],
- *   [7n, 5n, 8n]
- * ];
- * console.log(getMax(matrix)); // Output: 8n
- *
- * @example
- * const matrix = [
- *   ['b', 'd', 'c'],
- *   ['e', 'a', 'g'],
- *   ['h', 'f', 'i']
- * ];
- * console.log(getMax(matrix)); // Output: 'i'
- */
-export function getMax(matrix: Matrix<number>): number | undefined;
-export function getMax(matrix: Matrix<bigint>): bigint | undefined;
-export function getMax(matrix: Matrix<string>): string | undefined;
-export function getMax<T extends number | bigint | string>(
-  matrix: Matrix<T>
-): T | undefined {
-  const Y = matrix.length;
-  const X = matrix[0]?.length ?? 0;
-  if (Y <= 0 || X <= 0) {
-    return undefined;
-  }
-
-  let max = matrix[0][0];
-  for (let y = 0; y < Y; ++y) {
-    const row = matrix[y];
-    for (let x = 0; x < X; ++x) {
-      if (max < row[x]) {
-        max = row[x];
-      }
-    }
-  }
-
-  return max;
-}
-
-/**
- * Finds the minimum value in a given matrix.
- *
- * @param matrix - The matrix.
- *
- * @returns The minimum value, or `undefined` if the matrix is empty.
- *
- * @example
- * const matrix = [
- *   [1, 3, 2],
- *   [4, 0, 6],
- *   [7, 5, 8]
- * ];
- * console.log(getMin(matrix)); // Output: 0
- *
- * @example
- * const matrix = [
- *   [1n, 3n, 2n],
- *   [4n, 0n, 6n],
- *   [7n, 5n, 8n]
- * ];
- * console.log(getMin(matrix)); // Output: 0n
- *
- * @example
- * const matrix = [
- *   ['b', 'd', 'c'],
- *   ['e', 'a', 'g'],
- *   ['h', 'f', 'i']
- * ];
- * console.log(getMin(matrix)); // Output: 'a'
- */
-export function getMin(matrix: Matrix<number>): number | undefined;
-export function getMin(matrix: Matrix<bigint>): bigint | undefined;
-export function getMin(matrix: Matrix<string>): string | undefined;
-export function getMin<T extends number | bigint | string>(
-  matrix: Matrix<T>
-): T | undefined {
-  const Y = matrix.length;
-  const X = matrix[0]?.length ?? 0;
-  if (Y <= 0 || X <= 0) {
-    return undefined;
-  }
-
-  let min = matrix[0][0];
-  for (let y = 0; y < Y; ++y) {
-    const row = matrix[y];
-    for (let x = 0; x < X; ++x) {
-      if (min > row[x]) {
-        min = row[x];
-      }
-    }
-  }
-
-  return min;
 }
 
 /**

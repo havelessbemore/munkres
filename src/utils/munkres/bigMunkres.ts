@@ -1,7 +1,7 @@
-import { Matrix } from "../../types/matrix";
+import { Matrix, MatrixLike } from "../../types/matrix";
 import { MunkresResult } from "../../types/munkres";
 
-import { getMin } from "../array";
+import { getMin } from "../arrayLike";
 import { copy, transpose } from "../matrix";
 import { step5 } from "./numMunkres";
 
@@ -20,7 +20,7 @@ export function safeExec(matrix: Matrix<bigint>): MunkresResult<bigint> {
   return exec(matrix);
 }
 
-export function exec(matrix: Matrix<bigint>): MunkresResult<bigint> {
+export function exec(matrix: MatrixLike<bigint>): MunkresResult<bigint> {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
 
@@ -64,7 +64,7 @@ export function exec(matrix: Matrix<bigint>): MunkresResult<bigint> {
  * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
  */
 export function step1(
-  matrix: Matrix<bigint>,
+  matrix: MatrixLike<bigint>,
   dualX: bigint[],
   dualY: bigint[]
 ): void {
@@ -109,7 +109,7 @@ export function step1(
  * @returns The number of matches (stars) found.
  */
 export function steps2To3(
-  matrix: Matrix<bigint>,
+  matrix: MatrixLike<bigint>,
   dualX: bigint[],
   dualY: bigint[],
   starsX: number[],
@@ -149,7 +149,7 @@ export function steps2To3(
  */
 export function step4(
   unmatched: number,
-  matrix: Matrix<bigint>,
+  matrix: MatrixLike<bigint>,
   dualX: bigint[],
   dualY: bigint[],
   starsX: number[],
@@ -288,7 +288,7 @@ export function findUncoveredMin(
 
 export function initSlack(
   y: number,
-  matrix: Matrix<bigint>,
+  matrix: MatrixLike<bigint>,
   dualX: bigint[],
   dualY: bigint[],
   slack: number[] | Uint32Array,
@@ -314,7 +314,7 @@ export function initSlack(
 export function updateSlack(
   y: number,
   midS: number,
-  matrix: Matrix<bigint>,
+  matrix: MatrixLike<bigint>,
   dualX: bigint[],
   dualY: bigint[],
   slack: number[] | Uint32Array,

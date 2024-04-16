@@ -1,7 +1,7 @@
-import { Matrix } from "../../types/matrix";
+import { Matrix, MatrixLike } from "../../types/matrix";
 import { MunkresResult } from "../../types/munkres";
 
-import { getMin } from "../array";
+import { getMin } from "../arrayLike";
 import { toString as _toString, copy, transpose } from "../matrix";
 
 export function safeExec(matrix: Matrix<number>): MunkresResult<number> {
@@ -19,7 +19,7 @@ export function safeExec(matrix: Matrix<number>): MunkresResult<number> {
   return exec(matrix);
 }
 
-export function exec(matrix: Matrix<number>): MunkresResult<number> {
+export function exec(matrix: MatrixLike<number>): MunkresResult<number> {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
 
@@ -63,7 +63,7 @@ export function exec(matrix: Matrix<number>): MunkresResult<number> {
  * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
  */
 export function step1(
-  matrix: Matrix<number>,
+  matrix: MatrixLike<number>,
   dualX: number[],
   dualY: number[]
 ): void {
@@ -108,7 +108,7 @@ export function step1(
  * @returns The number of matches (stars) found.
  */
 export function steps2To3(
-  matrix: Matrix<number>,
+  matrix: MatrixLike<number>,
   dualX: number[],
   dualY: number[],
   starsX: number[],
@@ -148,7 +148,7 @@ export function steps2To3(
  */
 export function step4(
   unmatched: number,
-  matrix: Matrix<number>,
+  matrix: MatrixLike<number>,
   dualX: number[],
   dualY: number[],
   starsX: number[],
@@ -239,7 +239,7 @@ export function step4(
  */
 export function step5(
   x: number,
-  primeX: number[] | Uint32Array,
+  primeX: ArrayLike<number>,
   starsX: number[],
   starsY: number[]
 ): void {
@@ -319,7 +319,7 @@ export function findUncoveredMin(
 
 export function initSlack(
   y: number,
-  matrix: Matrix<number>,
+  matrix: MatrixLike<number>,
   dualX: number[],
   dualY: number[],
   slack: number[] | Uint32Array,
@@ -380,7 +380,7 @@ export function toString<T>(
 export function updateSlack(
   y: number,
   midS: number,
-  matrix: Matrix<number>,
+  matrix: MatrixLike<number>,
   dualX: number[],
   dualY: number[],
   slack: number[] | Uint32Array,

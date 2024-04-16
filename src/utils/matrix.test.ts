@@ -8,10 +8,7 @@ import {
   create,
   flipH,
   flipV,
-  forEach,
   gen,
-  getMax,
-  getMin,
   invert,
   map,
   negate,
@@ -23,6 +20,7 @@ import {
   toString,
   transpose,
 } from "./matrix";
+import { getMax } from "./matrixLike";
 
 describe(`${copy.name}()`, () => {
   it("returns an empty matrix when copying an empty matrix", () => {
@@ -307,76 +305,6 @@ describe(`${flipV.name}()`, () => {
   });
 });
 
-describe(`${forEach.name}()`, () => {
-  it("should handle an empty matrix", () => {
-    const matrix: Matrix<number> = [];
-    const mockCallback = vi.fn();
-    expect(() => forEach(matrix, mockCallback)).not.toThrow();
-    expect(mockCallback).not.toHaveBeenCalled();
-  });
-
-  it("should handle a single element matrix", () => {
-    const matrix: Matrix<string> = [["foo"]];
-    const mockCallback = vi.fn();
-    expect(() => forEach(matrix, mockCallback)).not.toThrow();
-    expect(mockCallback).toHaveBeenCalledTimes(1);
-    expect(mockCallback).toHaveBeenCalledWith("foo", 0, 0, matrix);
-  });
-
-  it("should call the callback for each element in the matrix", () => {
-    const matrix = [
-      [1, 2],
-      [3, 4],
-    ];
-    const mockCallback = vi.fn();
-    forEach(matrix, mockCallback);
-    expect(mockCallback).toHaveBeenCalledTimes(4);
-    expect(mockCallback).toHaveBeenNthCalledWith(1, 1, 0, 0, matrix);
-    expect(mockCallback).toHaveBeenNthCalledWith(2, 2, 0, 1, matrix);
-    expect(mockCallback).toHaveBeenNthCalledWith(3, 3, 1, 0, matrix);
-    expect(mockCallback).toHaveBeenNthCalledWith(4, 4, 1, 1, matrix);
-  });
-
-  it("should bind thisArg to callback", () => {
-    const matrix = [[1], [2]];
-    const thisArg = { custom: "context" };
-
-    function testFn(this: typeof thisArg): void {
-      expect(this).toBe(thisArg);
-    }
-
-    forEach(matrix, testFn, thisArg);
-  });
-
-  it("should handle matrices with undefined elements", () => {
-    const matrix = [
-      [undefined, 2],
-      [3, undefined],
-    ];
-    const mockCallback = vi.fn();
-    forEach(matrix, mockCallback);
-    expect(mockCallback).toHaveBeenCalledTimes(4);
-    expect(mockCallback).toHaveBeenCalledWith(undefined, 0, 0, matrix);
-    expect(mockCallback).toHaveBeenCalledWith(2, 0, 1, matrix);
-    expect(mockCallback).toHaveBeenCalledWith(3, 1, 0, matrix);
-    expect(mockCallback).toHaveBeenCalledWith(undefined, 1, 1, matrix);
-  });
-
-  it("should process matrices with mixed data types", () => {
-    const matrix = [
-      ["a", null],
-      [true, 0],
-    ];
-    const mockCallback = vi.fn();
-    forEach(matrix, mockCallback);
-    expect(mockCallback).toHaveBeenCalledTimes(4);
-    expect(mockCallback).toHaveBeenCalledWith("a", 0, 0, matrix);
-    expect(mockCallback).toHaveBeenCalledWith(null, 0, 1, matrix);
-    expect(mockCallback).toHaveBeenCalledWith(true, 1, 0, matrix);
-    expect(mockCallback).toHaveBeenCalledWith(0, 1, 1, matrix);
-  });
-});
-
 describe(`${gen.name}()`, () => {
   it("should generate an empty matrix when rows and columns are 0", () => {
     const result = gen(0, 0, () => 0);
@@ -438,153 +366,6 @@ describe(`${gen.name}()`, () => {
     ];
     const result = gen(rows, cols, callbackFn);
     expect(result).toEqual(expectedMatrix);
-  });
-});
-
-describe(`${getMax.name}()`, () => {
-  it("returns undefined for an empty matrix", () => {
-    const matrix: Matrix<number> = [];
-    expect(getMax(matrix)).toBeUndefined();
-  });
-
-  it("returns undefined for a matrix with empty rows", () => {
-    const mat = [[], []];
-    expect(getMax(mat)).toBeUndefined();
-  });
-
-  it("handles a matrix with a single element", () => {
-    const mat = [[42]];
-    expect(getMax(mat)).toBe(42);
-  });
-
-  it("handles matrix with a single row correctly", () => {
-    const matrix = [[2, 9, 4]];
-    expect(getMax(matrix)).toBe(9);
-  });
-
-  it("handles a matrix with a single row", () => {
-    const mat = [[1, 2, 5, 3, 4]];
-    expect(getMax(mat)).toBe(5);
-  });
-
-  it("finds the maximum value in a matrix with a single column", () => {
-    const mat = [[1], [5], [2], [3], [4]];
-    expect(getMax(mat)).toBe(5);
-  });
-
-  it("finds the maximum value in a matrix of positive numbers", () => {
-    const matrix = [
-      [1, 3, 2],
-      [4, 0, 6],
-      [7, 5, 8],
-    ];
-    expect(getMax(matrix)).toBe(8);
-  });
-
-  it("finds the maximum value in a matrix with negative numbers", () => {
-    const mat = [
-      [-1, -2, -3],
-      [-4, -5, -6],
-      [-7, -8, -9],
-    ];
-    expect(getMax(mat)).toBe(-1);
-  });
-
-  it("finds the maximum value in a matrix of positive and negative numbers", () => {
-    const mat = [
-      [-11, 22],
-      [33, -44],
-    ];
-    expect(getMax(mat)).toBe(33);
-  });
-
-  it("finds the maximum value in a matrix of bigints", () => {
-    const matrix = [
-      [1n, 3n, 2n],
-      [4n, 0n, 6n],
-      [7n, 5n, 8n],
-    ];
-    expect(getMax(matrix)).toBe(8n);
-  });
-
-  it("finds the maximum value in a matrix of strings", () => {
-    const matrix = [
-      ["b", "d", "c"],
-      ["e", "a", "g"],
-      ["h", "f", "i"],
-    ];
-    expect(getMax(matrix)).toBe("i");
-  });
-});
-
-describe(`${getMin.name}()`, () => {
-  it("returns undefined for an empty matrix", () => {
-    const matrix: Matrix<number> = [];
-    expect(getMin(matrix)).toBeUndefined();
-  });
-
-  it("returns undefined for a matrix with empty rows", () => {
-    const mat = [[], []];
-    expect(getMin(mat)).toBeUndefined();
-  });
-
-  it("handles a matrix with a single element", () => {
-    const mat = [[42]];
-    expect(getMin(mat)).toBe(42);
-  });
-
-  it("handles a matrix with a single row", () => {
-    const mat = [[3, 2, 1, 4, 5]];
-    expect(getMin(mat)).toBe(1);
-  });
-
-  it("handles a matrix with a single column", () => {
-    const mat = [[2], [3], [1], [4], [5]];
-    expect(getMin(mat)).toBe(1);
-  });
-
-  it("handles a matrix of positive numbers", () => {
-    const mat = [
-      [5, 2, 3],
-      [4, 1, 6],
-      [7, 8, 9],
-    ];
-    expect(getMin(mat)).toBe(1);
-  });
-
-  it("handles a matrix with negative numbers", () => {
-    const mat = [
-      [-1, -2, -3],
-      [-4, -5, -6],
-      [-7, -8, -9],
-    ];
-    expect(getMin(mat)).toBe(-9);
-  });
-
-  it("handles a matrix of positive and negative numbers", () => {
-    const mat = [
-      [-11, 22],
-      [33, -44],
-    ];
-    expect(getMin(mat)).toBe(-44);
-  });
-
-  it("handles a matrix of bigints", () => {
-    const matrix = [
-      [1n, 3n, 2n],
-      [4n, 0n, 6n],
-      [7n, 5n, 8n],
-    ];
-    expect(getMin(matrix)).toBe(0n);
-  });
-
-  it("handles a matrix of strings", () => {
-    const matrix = [
-      ["b", "d", "c"],
-      ["e", "a", "g"],
-      ["h", "f", "i"],
-    ];
-    expect(getMin(matrix)).toBe("a");
   });
 });
 

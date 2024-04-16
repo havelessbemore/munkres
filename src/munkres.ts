@@ -1,7 +1,7 @@
 import { Matrix } from "./types/matrix";
 import { Tuple } from "./types/tuple";
 
-import { entries } from "./utils/array";
+import { entries } from "./utils/arrayLike";
 import { flipH } from "./utils/matrix";
 
 import { safeExec } from "./utils/munkres/munkres";
