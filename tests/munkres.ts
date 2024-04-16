@@ -4,9 +4,10 @@ import { Matrix } from "../src/types/matrix";
 import { Tuple } from "../src/types/tuple";
 
 import { gen, map } from "../src/utils/matrix";
+import { MatrixLike } from "../src";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type MunkresFn = (costMatrix: Matrix<any>) => Tuple<number>[];
+export type MunkresFn = (costMatrix: MatrixLike<any>) => Tuple<number>[];
 
 export function oneOf<T>(actual: T, expecteds: Iterable<T>): void {
   let error: Error | undefined = undefined;
@@ -55,6 +56,25 @@ export function checkOutputMeta(
     console.log(`${Y} by ${X}, pairs: ${pairs}, cost matrix:\n${matrix}`);
     throw e;
   }
+}
+
+export function toMatrixLike<T>(matrix: Matrix<T>): MatrixLike<T> {
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
+  const obj: {
+    length: number;
+    [index: number]: { length: number; [index: number]: T };
+  } = {
+    length: Y,
+  };
+  for (let y = 0; y < Y; ++y) {
+    const row: { length: number; [index: number]: T } = { length: X };
+    for (let x = 0; x < X; ++x) {
+      row[x] = matrix[y][x];
+    }
+    obj[y] = row;
+  }
+  return obj;
 }
 
 export function testSquare(munkres: MunkresFn, isBigInt = false): void {
@@ -702,6 +722,61 @@ export function testInfinity(munkres: MunkresFn): void {
         });
         checkOutputMeta(costs, munkres(costs));
       }
+    });
+  });
+}
+
+export function testMatrixLike(munkres: MunkresFn): void {
+  describe(`${munkres.name}()`, () => {
+    test("handles an empty cost matrix", () => {
+      const res = munkres(toMatrixLike([]));
+      expect(res).toEqual([]);
+    });
+
+    test("handles a 3x3 cost matrix", () => {
+      const costs = toMatrixLike([
+        [1, 2, 3],
+        [2, 4, 6],
+        [3, 6, 9],
+      ]);
+      const res = munkres(costs);
+      expect(new Map(res)).toEqual(
+        new Map([
+          [0, 2],
+          [1, 1],
+          [2, 0],
+        ])
+      );
+    });
+
+    test("handles a 4x2 matrix", () => {
+      const costs = toMatrixLike([
+        [4, 5, 6, 1],
+        [7, 8, 9, 2],
+      ]);
+      const res = munkres(costs);
+      expect(new Map(res)).toEqual(
+        new Map([
+          [0, 0],
+          [1, 3],
+        ])
+      );
+    });
+
+    test("handles a 2x4 matrix", () => {
+      const costs = toMatrixLike([
+        [1, 2],
+        [6, 9],
+        [5, 8],
+        [4, 7],
+      ]);
+      const res = munkres(costs);
+      expect(new Map(res)).toEqual(
+        new Map([
+          [0, 1],
+          [3, 0],
+        ])
+      );
     });
   });
 }
