@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713300445105,
+  "lastUpdate": 1713304448478,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -493,6 +493,44 @@ window.BENCHMARK_DATA = {
             "value": 8942.192324299998,
             "unit": "ms",
             "range": "±5.38%",
+            "extra": "10 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "05b711b28f63982c15b3b7b0f308acda78cb8160",
+          "message": "Merge covMax and slackMin variables into step",
+          "timestamp": "2024-04-16T17:51:20-04:00",
+          "tree_id": "56ef2c9bfc9da6c0867178b9a80c0c3ddb507bb7",
+          "url": "https://github.com/havelessbemore/munkres/commit/05b711b28f63982c15b3b7b0f308acda78cb8160"
+        },
+        "date": 1713304447895,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2035.0269900999997,
+            "unit": "ms",
+            "range": "±7.27%",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 8438.355241599998,
+            "unit": "ms",
+            "range": "±7.31%",
             "extra": "10 samples"
           }
         ]
