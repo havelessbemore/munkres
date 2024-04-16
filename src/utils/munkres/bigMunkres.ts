@@ -1,10 +1,11 @@
+import { IndexArray } from "../../types/indexArray";
 import { Matrix } from "../../types/matrix";
 import { MatrixLike } from "../../types/matrixLike";
 import { MunkresResult } from "../../types/munkres";
 
 import { getMin } from "../arrayLike";
 import { from, transpose } from "../matrix";
-import { step5 } from "./numMunkres";
+import { findUncoveredMin, step5 } from "./numMunkres";
 
 export function safeExec(matrix: MatrixLike<bigint>): MunkresResult<bigint> {
   // Get dimensions
@@ -111,8 +112,8 @@ export function step1(
  */
 export function steps2To3(
   matrix: MatrixLike<bigint>,
-  dualX: bigint[],
-  dualY: bigint[],
+  dualX: ArrayLike<bigint>,
+  dualY: ArrayLike<bigint>,
   starsX: number[],
   starsY: number[]
 ): number {
@@ -239,10 +240,10 @@ export function step6(
   min: bigint,
   covV: number,
   mid: number,
-  coveredY: number[] | Uint32Array,
+  coveredY: ArrayLike<number>,
   dualX: bigint[],
   dualY: bigint[],
-  slack: number[] | Uint32Array,
+  slack: IndexArray,
   slackV: bigint[]
 ): number {
   const X = dualX.length;
@@ -270,29 +271,12 @@ export function step6(
   return mid;
 }
 
-export function findUncoveredMin(
-  mid: number,
-  slack: number[] | Uint32Array,
-  slackV: bigint[]
-): bigint {
-  const X = slack.length;
-
-  let minV = slackV[slack[mid]];
-  for (let i = mid + 1; i < X; ++i) {
-    if (slackV[slack[i]] < minV) {
-      minV = slackV[slack[i]];
-    }
-  }
-
-  return minV;
-}
-
 export function initSlack(
   y: number,
   matrix: MatrixLike<bigint>,
-  dualX: bigint[],
-  dualY: bigint[],
-  slack: number[] | Uint32Array,
+  dualX: ArrayLike<bigint>,
+  dualY: ArrayLike<bigint>,
+  slack: IndexArray,
   slackV: bigint[]
 ): number {
   const dy = dualY[y];
@@ -316,11 +300,11 @@ export function updateSlack(
   y: number,
   midS: number,
   matrix: MatrixLike<bigint>,
-  dualX: bigint[],
-  dualY: bigint[],
-  slack: number[] | Uint32Array,
+  dualX: ArrayLike<bigint>,
+  dualY: ArrayLike<bigint>,
+  slack: IndexArray,
   slackV: bigint[],
-  slackX: number[] | Uint32Array
+  slackX: IndexArray
 ): number {
   const dy = dualY[y];
   const row = matrix[y];

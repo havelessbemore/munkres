@@ -1,3 +1,4 @@
+import { IndexArray } from "../../types/indexArray";
 import { Matrix } from "../../types/matrix";
 import { MatrixLike } from "../../types/matrixLike";
 import { MunkresResult } from "../../types/munkres";
@@ -110,8 +111,8 @@ export function step1(
  */
 export function steps2To3(
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
+  dualX: ArrayLike<number>,
+  dualY: ArrayLike<number>,
   starsX: number[],
   starsY: number[]
 ): number {
@@ -268,10 +269,10 @@ export function step6(
   min: number,
   covV: number,
   mid: number,
-  coveredY: number[] | Uint32Array,
+  coveredY: ArrayLike<number>,
   dualX: number[],
   dualY: number[],
-  slack: number[] | Uint32Array,
+  slack: IndexArray,
   slackV: number[]
 ): number {
   const X = dualX.length;
@@ -303,9 +304,19 @@ export function step6(
 
 export function findUncoveredMin(
   mid: number,
-  slack: number[] | Uint32Array,
-  slackV: number[]
-): number {
+  slack: ArrayLike<number>,
+  slackV: ArrayLike<number>
+): number;
+export function findUncoveredMin(
+  mid: number,
+  slack: ArrayLike<number>,
+  slackV: ArrayLike<bigint>
+): bigint;
+export function findUncoveredMin<T extends number | bigint>(
+  mid: number,
+  slack: ArrayLike<number>,
+  slackV: ArrayLike<T>
+): T {
   const X = slack.length;
 
   let minV = slackV[slack[mid]];
@@ -321,9 +332,9 @@ export function findUncoveredMin(
 export function initSlack(
   y: number,
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  slack: number[] | Uint32Array,
+  dualX: ArrayLike<number>,
+  dualY: ArrayLike<number>,
+  slack: IndexArray,
   slackV: number[]
 ): number {
   const dy = dualY[y];
@@ -362,8 +373,8 @@ export function initSlack(
  */
 export function toString<T>(
   matrix: Matrix<T>,
-  starsY: number[],
-  primeX: number[]
+  starsY: ArrayLike<number>,
+  primeX: ArrayLike<number>
 ): string {
   // Mark values as stars or primes
   return _toString(matrix, (v, y, x): string => {
@@ -382,11 +393,11 @@ export function updateSlack(
   y: number,
   midS: number,
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  slack: number[] | Uint32Array,
+  dualX: ArrayLike<number>,
+  dualY: ArrayLike<number>,
+  slack: IndexArray,
   slackV: number[],
-  slackX: number[] | Uint32Array
+  slackX: IndexArray
 ): number {
   const dy = dualY[y];
   const row = matrix[y];
