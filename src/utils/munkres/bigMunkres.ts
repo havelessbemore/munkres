@@ -120,10 +120,10 @@ export function steps2To3(
 
   let stars = 0;
   for (let y = 0; y < Y; ++y) {
-    const dy = -dualY[y];
+    const dy = dualY[y];
     const row = matrix[y];
     for (let x = 0; x < X; ++x) {
-      if (starsX[x] === -1 && row[x] === dualX[x] - dy) {
+      if (starsX[x] === -1 && row[x] === dualX[x] + dy) {
         starsX[x] = y;
         starsY[y] = x;
         ++stars;
@@ -332,11 +332,9 @@ export function updateSlack(
       if (value === 0n) {
         slack[i] = slack[midS];
         slack[midS++] = x;
-        slackX[x] = y;
-      } else {
-        slackV[x] = value;
-        slackX[x] = y;
       }
+      slackV[x] = value;
+      slackX[x] = y;
     }
   }
 

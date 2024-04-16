@@ -84,13 +84,13 @@ export function step1(
   let dy = dualY[0];
   let row = matrix[0];
   for (let x = 0; x < X; ++x) {
-    dualX[x] = row[x] === dy ? 0 : row[x] - dy;
+    dualX[x] = row[x] - dy || 0;
   }
   for (let y = 1; y < Y; ++y) {
     dy = dualY[y];
     row = matrix[y];
     for (let x = 0; x < X; ++x) {
-      const dx = row[x] === dy ? 0 : row[x] - dy;
+      const dx = row[x] - dy || 0;
       if (dx < dualX[x]) {
         dualX[x] = dx;
       }
@@ -119,11 +119,10 @@ export function steps2To3(
 
   let stars = 0;
   for (let y = 0; y < Y; ++y) {
-    const dy = -dualY[y];
+    const dy = dualY[y];
     const row = matrix[y];
     for (let x = 0; x < X; ++x) {
-      const dual = dualX[x] === dy ? 0 : dualX[x] - dy;
-      if (starsX[x] === -1 && row[x] === dual) {
+      if (starsX[x] === -1 && row[x] === (dualX[x] + dy || 0)) {
         starsX[x] = y;
         starsY[y] = x;
         ++stars;
@@ -279,7 +278,7 @@ export function step6(
 
   for (let i = 0; i < mid; ++i) {
     const x = slack[i];
-    dualX[x] = dualX[x] === min ? 0 : dualX[x] - min;
+    dualX[x] = dualX[x] - min || 0;
   }
 
   for (let i = mid; i < X; ++i) {
@@ -292,10 +291,9 @@ export function step6(
     }
   }
 
-  min = -min;
   for (let y = 0; y < Y; ++y) {
     if (coveredY[y] === covV) {
-      dualY[y] = dualY[y] === min ? 0 : dualY[y] - min;
+      dualY[y] = dualY[y] + min || 0;
     }
   }
 
@@ -327,14 +325,14 @@ export function initSlack(
   slack: number[] | Uint32Array,
   slackV: number[]
 ): number {
-  const dy = -dualY[y];
+  const dy = dualY[y];
   const row = matrix[y];
   const X = dualX.length;
 
   let mid = 0;
   for (let x = 0; x < X; ++x) {
     slack[x] = x;
-    const dual = dualX[x] === dy ? 0 : dualX[x] - dy;
+    const dual = dualX[x] + dy || 0;
     if (row[x] === dual) {
       slack[x] = slack[mid];
       slack[mid++] = x;
@@ -389,13 +387,13 @@ export function updateSlack(
   slackV: number[],
   slackX: number[] | Uint32Array
 ): number {
-  const dy = -dualY[y];
+  const dy = dualY[y];
   const row = matrix[y];
   const X = slackX.length;
 
   for (let i = midS; i < X; ++i) {
     const x = slack[i];
-    let value = dualX[x] === dy ? 0 : dualX[x] - dy;
+    let value = dualX[x] + dy || 0;
     if (row[x] === value) {
       slack[i] = slack[midS];
       slack[midS++] = x;
