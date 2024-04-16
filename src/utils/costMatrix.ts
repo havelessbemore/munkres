@@ -1,4 +1,5 @@
 import { Matrix } from "../types/matrix";
+import { MatrixLike } from "../types/matrixLike";
 
 import { create, invert, negate } from "./matrix";
 import { getMax, getMin } from "./matrixLike";
@@ -57,12 +58,12 @@ export function createCostMatrix<W, J, T extends number | bigint>(
  *
  * @returns The maximum value, or `undefined` if the matrix is empty.
  */
-export function getMaxCost(costMatrix: Matrix<number>): number | undefined;
-export function getMaxCost(costMatrix: Matrix<bigint>): bigint | undefined;
+export function getMaxCost(costMatrix: MatrixLike<number>): number | undefined;
+export function getMaxCost(costMatrix: MatrixLike<bigint>): bigint | undefined;
 export function getMaxCost<T extends number | bigint>(
-  costMatrix: Matrix<T>
+  costMatrix: MatrixLike<T>
 ): T | undefined {
-  return getMax(costMatrix as Matrix<number>) as T | undefined;
+  return getMax(costMatrix as MatrixLike<number>) as T | undefined;
 }
 
 /**
@@ -72,12 +73,12 @@ export function getMaxCost<T extends number | bigint>(
  *
  * @returns The maximum value, or `undefined` if the matrix is empty.
  */
-export function getMinCost(costMatrix: Matrix<number>): number | undefined;
-export function getMinCost(costMatrix: Matrix<bigint>): bigint | undefined;
+export function getMinCost(costMatrix: MatrixLike<number>): number | undefined;
+export function getMinCost(costMatrix: MatrixLike<bigint>): bigint | undefined;
 export function getMinCost<T extends number | bigint>(
-  costMatrix: Matrix<T>
+  costMatrix: MatrixLike<T>
 ): T | undefined {
-  return getMin(costMatrix as Matrix<number>) as T | undefined;
+  return getMin(costMatrix as MatrixLike<number>) as T | undefined;
 }
 
 /**

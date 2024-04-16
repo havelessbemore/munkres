@@ -1,5 +1,6 @@
 // Types
 export type { Matrix } from "./types/matrix";
+export type { MatrixLike } from "./types/matrixLike";
 export type { Tuple } from "./types/tuple";
 
 // Cost Matrix Helpers
