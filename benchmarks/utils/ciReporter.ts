@@ -2,7 +2,7 @@ import fs from "fs";
 
 import { Task } from "tinybench";
 
-import { BenchReporter } from "./benchReporter";
+import { SuiteReporter } from "./suiteReporter";
 
 export interface Result {
   name: string;
@@ -12,13 +12,21 @@ export interface Result {
   extra: string;
 }
 
-export class CIReporter implements BenchReporter {
+export class CIReporter implements SuiteReporter {
   protected outputPath: string;
   protected results: Result[];
 
   constructor(outputPath: string) {
     this.outputPath = outputPath;
     this.results = [];
+  }
+
+  onSuiteStart(): void {
+    this.results = [];
+  }
+
+  onSuiteComplete(): void {
+    fs.appendFileSync(this.outputPath, JSON.stringify(this.results));
   }
 
   onTaskComplete(task: Task): void {
@@ -33,10 +41,6 @@ export class CIReporter implements BenchReporter {
         `(${res.extra})`,
       ].join(" ")
     );
-  }
-
-  onComplete(): void {
-    fs.appendFileSync(this.outputPath, JSON.stringify(this.results));
   }
 
   private _toResult(task: Task): Result {

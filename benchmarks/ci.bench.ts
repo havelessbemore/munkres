@@ -36,27 +36,42 @@ const N = 4096;
 let mat: Matrix<number>;
 let bigMat: Matrix<bigint>;
 
-// Create benchmarks
-const bench = new Bench()
-  .add(`number[${N}][${N}]`, () => munkres(mat), {
+// Create benchmark suite
+let bench: Bench;
+const suite = new Suite({ warmup: true });
+
+// Add reporters
+suite.addReporter(new CIReporter(path.resolve(options.output)));
+
+// Create number[][] benchmark
+bench = new Bench({ iterations: 50 }).add(
+  `number[${N}][${N}]`,
+  () => munkres(mat),
+  {
     afterEach: () => {
       mat = [];
     },
     beforeEach: () => {
       mat = genNum(N);
     },
-  })
-  .add(`bigint[${N}][${N}]`, () => munkres(bigMat), {
+  }
+);
+suite.add("number[][]", bench);
+
+// Create bigint[][] benchmark
+bench = new Bench({ iterations: 15 }).add(
+  `bigint[${N}][${N}]`,
+  () => munkres(bigMat),
+  {
     afterEach: () => {
       bigMat = [];
     },
     beforeEach: () => {
       bigMat = genBig(N);
     },
-  });
+  }
+);
+suite.add("bigint[][]", bench);
 
 // Run benchmarks and report results
-await new Suite({ warmup: false })
-  .addReporter(new CIReporter(path.resolve(options.output)))
-  .add("", bench)
-  .run();
+await suite.run();

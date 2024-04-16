@@ -1,7 +1,7 @@
 import Bench, { Task } from "tinybench";
-import { BenchReporter } from "./benchReporter";
+import { SuiteReporter } from "./suiteReporter";
 
-export class TerminalReporter implements BenchReporter {
+export class TerminalReporter implements SuiteReporter {
   protected results: Map<string, { [key: string]: unknown }>;
   protected columns: [string, (task: Task) => unknown][];
 
@@ -16,12 +16,12 @@ export class TerminalReporter implements BenchReporter {
     ];
   }
 
-  onWarmup(bench: Bench, name?: string): void {
+  onBenchWarmup(bench: Bench, name?: string): void {
     name = name ?? "";
     process.stdout.write(`${name} (${bench.tasks.length}): Warming up...`);
   }
 
-  onStart(bench: Bench, name?: string): void {
+  onBenchStart(bench: Bench, name?: string): void {
     this.results.clear();
     name = name ?? "";
     process.stdout.clearLine(0);
@@ -29,7 +29,7 @@ export class TerminalReporter implements BenchReporter {
     process.stdout.write(`${name} (${bench.tasks.length}): Running...\n`);
   }
 
-  onComplete(bench: Bench, name?: string): void {
+  onBenchComplete(bench: Bench, name?: string): void {
     const time = bench.tasks.reduce((sum, t) => sum + t.result!.totalTime, 0);
     const dy = 6 + this.results.size;
     process.stdout.write(`Total time: ${time}ms\n`);

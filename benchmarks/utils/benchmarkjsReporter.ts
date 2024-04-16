@@ -1,7 +1,7 @@
 import { Task } from "tinybench";
-import { BenchReporter } from "./benchReporter";
+import { SuiteReporter } from "./suiteReporter";
 
-export class BenchmarkjsReporter implements BenchReporter {
+export class BenchmarkjsReporter implements SuiteReporter {
   constructor() {}
 
   onTaskComplete(task: Task): void {
