@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713287616198,
+  "lastUpdate": 1713299708752,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -417,6 +417,44 @@ window.BENCHMARK_DATA = {
             "value": 8515.225748899997,
             "unit": "ms",
             "range": "±5.66%",
+            "extra": "10 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "5b482ba0856c2e6619712d01225cfc8accb4dfe2",
+          "message": "Improve usage of coveredY in numMunkres",
+          "timestamp": "2024-04-16T16:32:14-04:00",
+          "tree_id": "a5e202e8539bb96029cac0a5120d0cb5ef12b151",
+          "url": "https://github.com/havelessbemore/munkres/commit/5b482ba0856c2e6619712d01225cfc8accb4dfe2"
+        },
+        "date": 1713299708348,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1950.6706754999996,
+            "unit": "ms",
+            "range": "±5.53%",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 9186.902552000001,
+            "unit": "ms",
+            "range": "±8.93%",
             "extra": "10 samples"
           }
         ]
