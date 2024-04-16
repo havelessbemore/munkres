@@ -1,4 +1,4 @@
-import { Matrix } from "./types/matrix";
+import { MatrixLike } from "./types/matrixLike";
 import { Tuple } from "./types/tuple";
 
 import { entries } from "./utils/arrayLike";
@@ -17,13 +17,13 @@ import { safeExec } from "./utils/munkres/munkres";
  * of workers to jobs. Each pair consists of a worker index `y` and a job
  * index `x`, indicating that worker `y` is assigned to job `x`.
  */
-export function munkres(costMatrix: Matrix<number>): Tuple<number>[];
-export function munkres(costMatrix: Matrix<bigint>): Tuple<number>[];
+export function munkres(costMatrix: MatrixLike<number>): Tuple<number>[];
+export function munkres(costMatrix: MatrixLike<bigint>): Tuple<number>[];
 export function munkres<T extends number | bigint>(
-  costMatrix: Matrix<T>
+  costMatrix: MatrixLike<T>
 ): Tuple<number>[] {
   // Get optimal assignments
-  const { starsY } = safeExec(costMatrix as Matrix<number>);
+  const { starsY } = safeExec(costMatrix as MatrixLike<number>);
 
   // Create assignment pairs
   const pairs = entries(starsY);

@@ -1,21 +1,6 @@
 import { Matrix } from "../types/matrix";
+import { MatrixLike } from "../types/matrixLike";
 import { getMax } from "./matrixLike";
-
-/**
- * Creates a copy of a given matrix.
- *
- * @param matrix - The matrix to be copied.
- *
- * @returns A copy of the input matrix.
- */
-export function copy<T>(matrix: Matrix<T>): Matrix<T> {
-  const Y = matrix.length;
-  const dupe: Matrix<T> = new Array(Y);
-  for (let y = 0; y < Y; ++y) {
-    dupe[y] = matrix[y].slice(0);
-  }
-  return dupe;
-}
 
 /**
  * Creates a matrix with specified rows and columns.
@@ -116,6 +101,28 @@ export function flipH<T>(matrix: Matrix<T>): void {
  */
 export function flipV<T>(matrix: Matrix<T>): void {
   matrix.reverse();
+}
+
+/**
+ * Creates a {@link Matrix} from a given {@link MatrixLike}.
+ *
+ * @param matrix - The matrix to be copied.
+ *
+ * @returns A copy of the given matrix.
+ */
+export function from<T>(matrix: MatrixLike<T>): Matrix<T> {
+  const Y = matrix.length;
+  const dupe: Matrix<T> = new Array(Y);
+  for (let y = 0; y < Y; ++y) {
+    const rowA = matrix[y];
+    const X = rowA.length;
+    const rowB = new Array(X);
+    for (let x = 0; x < X; ++x) {
+      rowB[x] = rowA[x];
+    }
+    dupe[y] = rowB;
+  }
+  return dupe;
 }
 
 /**

@@ -1,4 +1,4 @@
-import { Matrix } from "../../types/matrix";
+import { MatrixLike } from "../../types/matrixLike";
 import { MunkresResult } from "../../types/munkres";
 
 import { isBigInt } from "../is";
@@ -28,14 +28,14 @@ import { safeExec as numSafeExec } from "./numMunkres";
  * 1. {@link https://public.websites.umich.edu/~murty/612/612slides4.pdf | Murty, K. G.. Primal-Dual Algorithms. [IOE 612, Lecture slides 4]. Department of Industrial and Operations Engineering, University of Michigan.}
  *     - Used to implement primal-dual and slack variables.
  */
-export function safeExec(matrix: Matrix<number>): MunkresResult<number>;
-export function safeExec(matrix: Matrix<bigint>): MunkresResult<bigint>;
+export function safeExec(matrix: MatrixLike<number>): MunkresResult<number>;
+export function safeExec(matrix: MatrixLike<bigint>): MunkresResult<bigint>;
 export function safeExec<T extends number | bigint>(
-  matrix: Matrix<T>
+  matrix: MatrixLike<T>
 ): MunkresResult<T> {
   return (
     isBigInt((matrix[0] ?? [])[0])
-      ? bigSafeExec(matrix as Matrix<bigint>)
-      : numSafeExec(matrix as Matrix<number>)
+      ? bigSafeExec(matrix as MatrixLike<bigint>)
+      : numSafeExec(matrix as MatrixLike<number>)
   ) as MunkresResult<T>;
 }

@@ -1,4 +1,4 @@
-import { MatrixLike } from "../types/matrix";
+import { MatrixLike } from "../types/matrixLike";
 
 /**
  * Finds the maximum value in a given matrix.

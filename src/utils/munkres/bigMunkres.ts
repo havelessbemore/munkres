@@ -1,19 +1,20 @@
-import { Matrix, MatrixLike } from "../../types/matrix";
+import { Matrix } from "../../types/matrix";
+import { MatrixLike } from "../../types/matrixLike";
 import { MunkresResult } from "../../types/munkres";
 
 import { getMin } from "../arrayLike";
-import { copy, transpose } from "../matrix";
+import { from, transpose } from "../matrix";
 import { step5 } from "./numMunkres";
 
-export function safeExec(matrix: Matrix<bigint>): MunkresResult<bigint> {
+export function safeExec(matrix: MatrixLike<bigint>): MunkresResult<bigint> {
   // Get dimensions
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
 
   // Transpose if Y > X
   if (Y > X) {
-    matrix = copy(matrix);
-    transpose(matrix);
+    matrix = from(matrix);
+    transpose(matrix as Matrix<bigint>);
   }
 
   // Get optimal assignments
