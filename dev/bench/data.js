@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713282296445,
+  "lastUpdate": 1713283265296,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -265,6 +265,44 @@ window.BENCHMARK_DATA = {
             "value": 9133.003276799995,
             "unit": "ms",
             "range": "±10.71%",
+            "extra": "10 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "ef8999d1433ccf55c37b23c0c131cfadbef107db",
+          "message": "Update package to accept MatrixLike matrices",
+          "timestamp": "2024-04-16T11:57:57-04:00",
+          "tree_id": "0e270aef29af6bac7d2c25228e317d8056aea83c",
+          "url": "https://github.com/havelessbemore/munkres/commit/ef8999d1433ccf55c37b23c0c131cfadbef107db"
+        },
+        "date": 1713283264876,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2194.6394295000005,
+            "unit": "ms",
+            "range": "±6.99%",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 8575.278438999998,
+            "unit": "ms",
+            "range": "±9.89%",
             "extra": "10 samples"
           }
         ]
