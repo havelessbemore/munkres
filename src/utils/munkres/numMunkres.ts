@@ -185,7 +185,6 @@ export function step4(
       if (step >= slackMid) {
         slackMid = step6(
           findUncoveredMin(slackMid, slack, slackV),
-          step + 1,
           slackMid,
           coveredY,
           dualX,
@@ -267,7 +266,6 @@ export function step5(
  */
 export function step6(
   min: number,
-  covMax: number,
   mid: number,
   coveredY: ArrayLike<number>,
   dualX: number[],
@@ -275,7 +273,7 @@ export function step6(
   slack: IndexArray,
   slackV: number[]
 ): number {
-  for (let i = 0; i < covMax; ++i) {
+  for (let i = 0; i <= mid; ++i) {
     const y = coveredY[i];
     dualY[y] = dualY[y] + min || 0;
   }
