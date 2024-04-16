@@ -403,17 +403,14 @@ export function updateSlack(
 
   for (let i = midS; i < X; ++i) {
     const x = slack[i];
-    let value = dualX[x] + dy || 0;
-    if (row[x] === value) {
-      slack[i] = slack[midS];
-      slack[midS++] = x;
-      slackX[x] = y;
-    } else {
-      value = row[x] - value;
-      if (value < slackV[x]) {
-        slackV[x] = value;
-        slackX[x] = y;
+    const value = row[x] - (dualX[x] + dy || 0) || 0;
+    if (value < slackV[x]) {
+      if (value === 0) {
+        slack[i] = slack[midS];
+        slack[midS++] = x;
       }
+      slackV[x] = value;
+      slackX[x] = y;
     }
   }
 
