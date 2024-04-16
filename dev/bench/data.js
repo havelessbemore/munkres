@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713304448478,
+  "lastUpdate": 1713305683441,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -531,6 +531,44 @@ window.BENCHMARK_DATA = {
             "value": 8438.355241599998,
             "unit": "ms",
             "range": "±7.31%",
+            "extra": "10 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "d3d9d906c2329b6833617152546a4cb8ac9e3910",
+          "message": "Remove redundant step6() input",
+          "timestamp": "2024-04-16T18:11:40-04:00",
+          "tree_id": "9b03058583d21fe4e047b02e6d764cb8c51772a0",
+          "url": "https://github.com/havelessbemore/munkres/commit/d3d9d906c2329b6833617152546a4cb8ac9e3910"
+        },
+        "date": 1713305683070,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1977.9301035000003,
+            "unit": "ms",
+            "range": "±7.92%",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 8996.391490099995,
+            "unit": "ms",
+            "range": "±7.01%",
             "extra": "10 samples"
           }
         ]
