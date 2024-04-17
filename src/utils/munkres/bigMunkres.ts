@@ -187,7 +187,6 @@ export function step4(
         // Zero the min
         const min = findUncoveredMin(zeros, slack, slackV);
         zeros = partition(min, zeros, slack, slackV);
-        slackV[slack[step]] = min;
       }
 
       // Prime the zero / cover the prime's column
@@ -199,7 +198,7 @@ export function step4(
         step5(x, slackX, starsX, starsY);
 
         // Update dual variables
-        step6(step, coveredY, dualX, dualY, slack, slackV);
+        step6(step, slackV[x], coveredY, dualX, dualY, slack, slackV);
 
         // Terminate stage
         --unmatched;
@@ -213,6 +212,7 @@ export function step4(
       // Update slack
       zeros = updateSlack(
         sy,
+        slackV[x],
         zeros,
         matrix,
         dualX,
@@ -238,22 +238,19 @@ export function step4(
  */
 export function step6(
   max: number,
+  min: bigint,
   coveredY: ArrayLike<number>,
   dualX: bigint[],
   dualY: bigint[],
-  slack: IndexArray,
-  slackV: bigint[]
+  slack: ArrayLike<number>,
+  slackV: ArrayLike<bigint>
 ): void {
-  let min = 0n;
-  for (let i = 0; i <= max; ++i) {
-    min += slackV[slack[i]];
-  }
-
+  let prev = 0n;
   for (let i = 0; i <= max; ++i) {
     const x = slack[i];
-    dualY[coveredY[i]] += min;
-    min -= slackV[x];
-    dualX[x] -= min;
+    dualY[coveredY[i]] += min - prev;
+    prev = slackV[x];
+    dualX[x] -= min - prev;
   }
 }
 
@@ -261,13 +258,12 @@ export function partition(
   pivot: bigint,
   min: number,
   slack: IndexArray,
-  slackV: bigint[]
+  slackV: ArrayLike<bigint>
 ): number {
   const max = slack.length;
   for (let i = min; i < max; ++i) {
     const x = slack[i];
-    slackV[x] = slackV[x] - pivot;
-    if (slackV[x] === 0n) {
+    if (slackV[x] === pivot) {
       slack[i] = slack[min];
       slack[min++] = x;
     }
@@ -302,6 +298,7 @@ export function initSlack(
 
 export function updateSlack(
   y: number,
+  minV: bigint,
   midS: number,
   matrix: MatrixLike<bigint>,
   dualX: ArrayLike<bigint>,
@@ -310,7 +307,7 @@ export function updateSlack(
   slackV: bigint[],
   slackX: IndexArray
 ): number {
-  const dy = dualY[y];
+  const dy = dualY[y] - minV;
   const row = matrix[y];
   const X = slackX.length;
 
@@ -318,7 +315,7 @@ export function updateSlack(
     const x = slack[i];
     const value = row[x] - dualX[x] - dy;
     if (value < slackV[x]) {
-      if (value === 0n) {
+      if (value === minV) {
         slack[i] = slack[midS];
         slack[midS++] = x;
       }
