@@ -15,26 +15,16 @@ program.parse(process.argv);
 const options = program.opts();
 
 // Define helpers
-const minV = 1;
-const maxV = Number.MAX_SAFE_INTEGER;
-const span = maxV - minV;
+const MIN_VAL = 1;
+const MAX_VAL = Number.MAX_SAFE_INTEGER;
 
-function genBig(N: number): Matrix<bigint>;
-function genBig(Y: number, X: number): Matrix<bigint>;
-function genBig(Y: number, X = Y): Matrix<bigint> {
-  return gen(Y, X, () => BigInt(minV + Math.trunc(span * Math.random())));
+function genBig(min: number, max: number): bigint {
+  return BigInt(genNum(min, max));
 }
 
-function genNum(N: number): Matrix<number>;
-function genNum(Y: number, X: number): Matrix<number>;
-function genNum(Y: number, X = Y): Matrix<number> {
-  return gen(Y, X, () => minV + Math.trunc(span * Math.random()));
+function genNum(min: number, max: number): number {
+  return min + Math.trunc((max - min) * Math.random());
 }
-
-// Create random matrix
-const N = 4096;
-let mat: Matrix<number>;
-let bigMat: Matrix<bigint>;
 
 // Create benchmark suite
 let bench: Bench;
@@ -44,34 +34,42 @@ const suite = new Suite({ warmup: true });
 suite.addReporter(new CIReporter(path.resolve(options.output)));
 
 // Create number[][] benchmark
-bench = new Bench({ iterations: 50 }).add(
-  `number[${N}][${N}]`,
-  () => munkres(mat),
-  {
-    afterEach: () => {
-      mat = [];
-    },
-    beforeEach: () => {
-      mat = genNum(N);
-    },
-  }
-);
-suite.add("number[][]", bench);
+(() => {
+  const N = 4096; // 2**12
+  let mat: Matrix<number>;
+  bench = new Bench({ iterations: 50 }).add(
+    `number[${N}][${N}]`,
+    () => munkres(mat),
+    {
+      afterEach: () => {
+        mat = [];
+      },
+      beforeEach: () => {
+        mat = gen(N, N, () => genNum(MIN_VAL, MAX_VAL));
+      },
+    }
+  );
+  suite.add("number[][]", bench);
+})();
 
 // Create bigint[][] benchmark
-bench = new Bench({ iterations: 15 }).add(
-  `bigint[${N}][${N}]`,
-  () => munkres(bigMat),
-  {
-    afterEach: () => {
-      bigMat = [];
-    },
-    beforeEach: () => {
-      bigMat = genBig(N);
-    },
-  }
-);
-suite.add("bigint[][]", bench);
+(() => {
+  const N = 2048; // 2**11
+  let mat: Matrix<bigint>;
+  bench = new Bench({ iterations: 50 }).add(
+    `bigint[${N}][${N}]`,
+    () => munkres(mat),
+    {
+      afterEach: () => {
+        mat = [];
+      },
+      beforeEach: () => {
+        mat = gen(N, N, () => genBig(MIN_VAL, MAX_VAL));
+      },
+    }
+  );
+  suite.add("bigint[][]", bench);
+})();
 
 // Run benchmarks and report results
 await suite.run();

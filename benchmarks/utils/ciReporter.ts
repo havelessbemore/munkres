@@ -1,6 +1,6 @@
 import fs from "fs";
 
-import { Task } from "tinybench";
+import Bench, { Task } from "tinybench";
 
 import { SuiteReporter } from "./suiteReporter";
 
@@ -27,6 +27,15 @@ export class CIReporter implements SuiteReporter {
 
   onSuiteComplete(): void {
     fs.appendFileSync(this.outputPath, JSON.stringify(this.results));
+  }
+
+  onBenchWarmup(bench: Bench, name?: string): void {
+    name = name ?? "";
+    console.log(`Bench '${name}' (${bench.tasks.length}): Warming up...`);
+  }
+
+  onTaskStart(task: Task): void {
+    console.log(`Task '${task.name}': Running...`);
   }
 
   onTaskComplete(task: Task): void {
