@@ -17,7 +17,7 @@ A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm
 1. Supports square and rectangular matrices.
 1. Supports `-Infinity` and `Infinity` values.
 1. Accepts any [MatrixLike](#types) matrix (e.g. made of arrays, typed arrays, objects, etc).
-1. [Helper methods](#helpers) for creating and manipulating matrices.
+1. [Helper methods](#helpers) for creating and modifying matrices.
 
 ## Getting Started
 
@@ -98,21 +98,25 @@ console.log(assignments);
 
 ### Helpers
 
-A set of utility functions are provided to help create and manipulate matrices:
-
 1. `copyMatrix(matrix)`: Creates a copy of the given matrix.
+
 1. `createMatrix(workers, jobs, callbackFn)`: Generates a matrix based on the given workers, jobs, and callback function.
+
 1. `genMatrix(numRows, numCols, callbackFn)`: Generates a matrix based on the given dimensions and a callback function.
+
 1. `getMatrixMax(matrix)`: Finds the maximum value in a given matrix.
+
 1. `getMatrixMin(matrix)`: Finds the minimum value in a given matrix.
+
 1. `invertMatrix(matrix, bigVal?)`: Inverts the values in the given matrix. Useful for converting between minimizing and maximizing problems. If `bigVal` is not given, the matrix's max value is used instead.
+
 1. `negateMatrix(matrix)`: Negates all values in the given matrix. Useful for converting between minimizing and maximizing problems.
 
 ## Community and Support
 
-Any feedback or bug reports are welcomed.
+Any feedback, bug reports, feature requests, etc. are welcomed!
 
-Feel free to [submit an issue](https://github.com/havelessbemore/munkres/issues), pull request or reach out via [GitHub discussions](https://github.com/havelessbemore/munkres/discussions).
+Feel free to [submit an issue](https://github.com/havelessbemore/munkres/issues), pull request, or reach out via [GitHub discussions](https://github.com/havelessbemore/munkres/discussions).
 
 ## Build
 
