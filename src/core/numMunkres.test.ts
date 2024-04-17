@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { Matrix } from "../../types/matrix";
+import { Matrix } from "../types/matrix";
 
 import { exec, toString } from "./numMunkres";
 

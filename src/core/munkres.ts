@@ -1,7 +1,7 @@
-import { MatrixLike } from "../../types/matrixLike";
-import { MunkresResult } from "../../types/munkres";
+import { MatrixLike } from "../types/matrixLike";
+import { MunkresResult } from "../types/munkresResult";
 
-import { isBigInt } from "../is";
+import { isBigInt } from "../utils/is";
 
 import { safeExec as bigSafeExec } from "./bigMunkres";
 import { safeExec as numSafeExec } from "./numMunkres";

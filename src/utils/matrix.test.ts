@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 
 import { Matrix } from "../types/matrix";
-import { Tuple } from "../types/tuple";
+import { Pair } from "../types/pair";
 
 import {
   create,
@@ -488,7 +488,7 @@ describe(`${map.name}()`, () => {
       ["a", "b"],
       ["c", "d"],
     ];
-    const coords: Tuple<number>[] = [];
+    const coords: Pair<number>[] = [];
     map(matrix, (value, y, x) => {
       coords.push([y, x]);
       return value.toUpperCase();
