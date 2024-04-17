@@ -23,10 +23,10 @@ function genBig(Y: number, X = Y): Matrix<bigint> {
 }
 
 let bench: Bench;
-const suite = new Suite({ warmup: false }).addReporter(new TerminalReporter());
+const suite = new Suite({ warmup: true }).addReporter(new TerminalReporter());
 
-suite.add(`number`, (bench = new Bench()));
-for (let i = 1; i <= 13; ++i) {
+suite.add(`number`, (bench = new Bench({ iterations: 50 })));
+for (let i = 1; i <= 12; ++i) {
   const N = 1 << i;
   let mat: Matrix<number>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
@@ -39,8 +39,8 @@ for (let i = 1; i <= 13; ++i) {
   });
 }
 
-suite.add(`bigint`, (bench = new Bench()));
-for (let i = 1; i <= 13; ++i) {
+suite.add(`bigint`, (bench = new Bench({ iterations: 50 })));
+for (let i = 1; i <= 11; ++i) {
   const N = 1 << i;
   let mat: Matrix<bigint>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
