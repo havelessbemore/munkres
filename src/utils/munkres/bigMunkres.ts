@@ -174,46 +174,46 @@ export function step4(
     }
 
     // Initialize stage
-    let slackMin = 0;
+    let step = 0;
     slackX.fill(rootY);
-    coveredY[rootY] = unmatched;
-    let slackMid = initSlack(rootY, matrix, dualX, dualY, slack, slackV);
+    coveredY[0] = rootY;
+    let zeros = initSlack(rootY, matrix, dualX, dualY, slack, slackV);
 
     // Run stage
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      // If no zero, zero the min
-      if (slackMin >= slackMid) {
-        slackMid = step6(
-          findUncoveredMin(slackMid, slack, slackV),
-          unmatched,
-          slackMid,
-          coveredY,
-          dualX,
-          dualY,
-          slack,
-          slackV
-        );
+      // If no zero
+      if (step >= zeros) {
+        // Zero the min
+        const min = findUncoveredMin(zeros, slack, slackV);
+        zeros = partition(min, zeros, slack, slackV);
+        slackV[slack[step]] = min;
       }
 
       // Prime the zero / cover the prime's column
-      const x = slack[slackMin++];
+      const x = slack[step];
 
-      // Step 5: If no star in the column, turn primes into stars
+      // If no star in the column
       if (starsX[x] === -1) {
+        // Turn primes into stars
         step5(x, slackX, starsX, starsY);
+
+        // Update dual variables
+        step6(step, coveredY, dualX, dualY, slack, slackV);
+
+        // Terminate stage
         --unmatched;
         break;
       }
 
       // Cover the star's row
       const sy = starsX[x];
-      coveredY[sy] = unmatched;
+      coveredY[++step] = sy;
 
       // Update slack
-      slackMid = updateSlack(
+      zeros = updateSlack(
         sy,
-        slackMid,
+        zeros,
         matrix,
         dualX,
         dualY,
@@ -237,38 +237,42 @@ export function step4(
  * @param slackV - The slack values for each column. Modified in place.
  */
 export function step6(
-  min: bigint,
-  covV: number,
-  mid: number,
+  max: number,
   coveredY: ArrayLike<number>,
   dualX: bigint[],
   dualY: bigint[],
   slack: IndexArray,
   slackV: bigint[]
-): number {
-  const X = dualX.length;
-  const Y = dualY.length;
-
-  for (let i = 0; i < mid; ++i) {
-    dualX[slack[i]] -= min;
+): void {
+  let min = 0n;
+  for (let i = 0; i <= max; ++i) {
+    min += slackV[slack[i]];
   }
 
-  for (let i = mid; i < X; ++i) {
+  for (let i = 0; i <= max; ++i) {
     const x = slack[i];
-    slackV[x] -= min;
+    dualY[coveredY[i]] += min;
+    min -= slackV[x];
+    dualX[x] -= min;
+  }
+}
+
+export function partition(
+  pivot: bigint,
+  min: number,
+  slack: IndexArray,
+  slackV: bigint[]
+): number {
+  const max = slack.length;
+  for (let i = min; i < max; ++i) {
+    const x = slack[i];
+    slackV[x] = slackV[x] - pivot;
     if (slackV[x] === 0n) {
-      slack[i] = slack[mid];
-      slack[mid++] = x;
+      slack[i] = slack[min];
+      slack[min++] = x;
     }
   }
-
-  for (let y = 0; y < Y; ++y) {
-    if (coveredY[y] === covV) {
-      dualY[y] += min;
-    }
-  }
-
-  return mid;
+  return min;
 }
 
 export function initSlack(
