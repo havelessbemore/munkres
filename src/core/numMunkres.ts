@@ -104,8 +104,6 @@ export function step1(
  * Finds an initial matching for the munkres algorithm.
  *
  * @param matrix - The cost matrix.
- * @param dualX - The dual variables associated with each column of the matrix.
- * @param dualY - The dual variables associated with each row of the matrix.
  * @param starsX - An array mapping star columns to row. Modified in place.
  * @param starsY - An array mapping star rows to columns. Modified in place.
  *
@@ -183,10 +181,9 @@ export function step4(
     do {
       // If no zero
       if (step >= zeros) {
-        // Zero the min
+        // Find and zero the min
         const min = findUncoveredMin(zeros, slack, slackV);
         zeros = partition(min, zeros, slack, slackV);
-        slackV[slack[step]] = min;
       }
 
       // Prime the zero / cover the prime's column
@@ -198,7 +195,7 @@ export function step4(
         step5(x, slackX, starsX, starsY);
 
         // Update dual variables
-        step6(step, coveredY, dualX, dualY, slack, slackV);
+        step6(step, slackV[x], coveredY, dualX, dualY, slack, slackV);
 
         // Terminate stage
         --unmatched;
@@ -212,6 +209,7 @@ export function step4(
       zeros = updateSlack(
         starsX[x],
         zeros,
+        slackV[x],
         matrix,
         dualX,
         dualY,
@@ -256,49 +254,45 @@ export function step5(
 }
 
 /**
- * Adjusts dual variables to uncover more admissible edges.
+ * Adjusts dual variables and slack to uncover more admissible edges.
  *
- * @param N - The number of adjustments to make.
- * @param min - The value to adjust by.
+ * @param pivot - The value to adjust by.
+ * @param covV - The value indicating a row is covered.
  * @param coveredY - An array indicating whether a row is covered.
  * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
  * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
- * @param slack - An array of covered column indices.
+ * @param exposedX - An array indicating uncovered columns.
  * @param slackV - The slack values for each column. Modified in place.
  */
 export function step6(
   N: number,
+  min: number,
   coveredY: ArrayLike<number>,
   dualX: number[],
   dualY: number[],
-  slack: ArrayLike<number>,
-  slackV: ArrayLike<number>
+  slack: IndexArray,
+  slackV: number[]
 ): void {
-  let min = 0;
-  for (let i = 0; i < N; ++i) {
-    min = min + slackV[slack[i]] || 0;
-  }
-
+  let prev = 0;
   for (let i = 0; i < N; ++i) {
     let j = coveredY[i];
-    dualY[j] = dualY[j] + min || 0;
+    dualY[j] = dualY[j] + (min - prev || 0) || 0;
     j = slack[i];
-    min = min - slackV[j] || 0;
-    dualX[j] = dualX[j] - min || 0;
+    prev = slackV[j];
+    dualX[j] = dualX[j] - (min - prev || 0) || 0;
   }
 }
 
-export function partition(
-  pivot: number,
+export function partition<T>(
+  pivot: T,
   min: number,
   slack: IndexArray,
-  slackV: number[]
+  slackV: ArrayLike<T>
 ): number {
   const max = slack.length;
   for (let i = min; i < max; ++i) {
     const x = slack[i];
-    slackV[x] = slackV[x] - pivot || 0;
-    if (slackV[x] === 0) {
+    if (slackV[x] === pivot) {
       slack[i] = slack[min];
       slack[min++] = x;
     }
@@ -396,6 +390,7 @@ export function toString<T>(
 export function updateSlack(
   y: number,
   midS: number,
+  minV: number,
   matrix: MatrixLike<number>,
   dualX: ArrayLike<number>,
   dualY: ArrayLike<number>,
@@ -409,9 +404,9 @@ export function updateSlack(
 
   for (let i = midS; i < X; ++i) {
     const x = slack[i];
-    const value = row[x] - (dualX[x] + dy || 0) || 0;
+    const value = (row[x] - (dualX[x] + dy || 0) || 0) + minV || 0;
     if (value < slackV[x]) {
-      if (value === 0) {
+      if (value === minV) {
         slack[i] = slack[midS];
         slack[midS++] = x;
       }

@@ -2,6 +2,7 @@
  * Checks if the given value is of type `bigint`.
  *
  * @param value - The value to check.
+ *
  * @returns `true` if the value is of type `bigint`, `false` otherwise.
  *
  * @example
@@ -18,6 +19,7 @@ export function isBigInt(value: unknown): value is bigint {
  * Checks if the given value is of type `number`.
  *
  * @param value - The value to check.
+ *
  * @returns `true` if the value is of type `number`, `false` otherwise.
  *
  * @example

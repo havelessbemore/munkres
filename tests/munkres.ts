@@ -1,13 +1,13 @@
 import { describe, expect, test } from "vitest";
 
 import { Matrix } from "../src/types/matrix";
-import { Tuple } from "../src/types/tuple";
+import { Pair } from "../src/types/pair";
 
 import { gen, map } from "../src/utils/matrix";
 import { MatrixLike } from "../src";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type MunkresFn = (costMatrix: MatrixLike<any>) => Tuple<number>[];
+export type MunkresFn = (costMatrix: MatrixLike<any>) => Pair<number>[];
 
 export function oneOf<T>(actual: T, expecteds: Iterable<T>): void {
   let error: Error | undefined = undefined;

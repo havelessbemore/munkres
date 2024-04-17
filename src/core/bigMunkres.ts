@@ -5,7 +5,7 @@ import { MunkresResult } from "../types/munkresResult";
 
 import { getMin } from "../utils/arrayLike";
 import { from, transpose } from "../utils/matrix";
-import { findUncoveredMin, step5 } from "./numMunkres";
+import { findUncoveredMin, partition, step5 } from "./numMunkres";
 
 export function safeExec(matrix: MatrixLike<bigint>): MunkresResult<bigint> {
   // Get dimensions
@@ -220,6 +220,7 @@ export function step4(
         slackV,
         slackX
       );
+
       // eslint-disable-next-line no-constant-condition
     } while (true);
   }
@@ -252,23 +253,6 @@ export function step6(
     prev = slackV[x];
     dualX[x] -= min - prev;
   }
-}
-
-export function partition(
-  pivot: bigint,
-  min: number,
-  slack: IndexArray,
-  slackV: ArrayLike<bigint>
-): number {
-  const max = slack.length;
-  for (let i = min; i < max; ++i) {
-    const x = slack[i];
-    if (slackV[x] === pivot) {
-      slack[i] = slack[min];
-      slack[min++] = x;
-    }
-  }
-  return min;
 }
 
 export function initSlack(
