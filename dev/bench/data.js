@@ -31,13 +31,6 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±6.58%",
             "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 7689.995308,
-            "unit": "ms",
-            "range": "±6.64%",
-            "extra": "10 samples"
           }
         ]
       },
@@ -68,13 +61,6 @@ window.BENCHMARK_DATA = {
             "value": 2250.9367762999996,
             "unit": "ms",
             "range": "±9.36%",
-            "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 8150.9530288,
-            "unit": "ms",
-            "range": "±6.76%",
             "extra": "10 samples"
           }
         ]
@@ -107,13 +93,6 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±5.74%",
             "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 8275.0578466,
-            "unit": "ms",
-            "range": "±6.19%",
-            "extra": "10 samples"
           }
         ]
       },
@@ -144,13 +123,6 @@ window.BENCHMARK_DATA = {
             "value": 2260.4567498000006,
             "unit": "ms",
             "range": "±4.23%",
-            "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 8763.505167700001,
-            "unit": "ms",
-            "range": "±5.48%",
             "extra": "10 samples"
           }
         ]
@@ -183,13 +155,6 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±5.85%",
             "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 8567.189153399999,
-            "unit": "ms",
-            "range": "±8.11%",
-            "extra": "10 samples"
           }
         ]
       },
@@ -220,13 +185,6 @@ window.BENCHMARK_DATA = {
             "value": 2272.4415532000007,
             "unit": "ms",
             "range": "±8.08%",
-            "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 9469.295842,
-            "unit": "ms",
-            "range": "±10.58%",
             "extra": "10 samples"
           }
         ]
@@ -259,13 +217,6 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±7.48%",
             "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 9133.003276799995,
-            "unit": "ms",
-            "range": "±10.71%",
-            "extra": "10 samples"
           }
         ]
       },
@@ -296,13 +247,6 @@ window.BENCHMARK_DATA = {
             "value": 2194.6394295000005,
             "unit": "ms",
             "range": "±6.99%",
-            "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 8575.278438999998,
-            "unit": "ms",
-            "range": "±9.89%",
             "extra": "10 samples"
           }
         ]
@@ -335,13 +279,6 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±4.69%",
             "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 8108.3750136000035,
-            "unit": "ms",
-            "range": "±8.50%",
-            "extra": "10 samples"
           }
         ]
       },
@@ -372,13 +309,6 @@ window.BENCHMARK_DATA = {
             "value": 2108.6609656999995,
             "unit": "ms",
             "range": "±3.77%",
-            "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 8421.469078999999,
-            "unit": "ms",
-            "range": "±6.45%",
             "extra": "10 samples"
           }
         ]
@@ -411,13 +341,6 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±6.70%",
             "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 8515.225748899997,
-            "unit": "ms",
-            "range": "±5.66%",
-            "extra": "10 samples"
           }
         ]
       },
@@ -448,13 +371,6 @@ window.BENCHMARK_DATA = {
             "value": 1950.6706754999996,
             "unit": "ms",
             "range": "±5.53%",
-            "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 9186.902552000001,
-            "unit": "ms",
-            "range": "±8.93%",
             "extra": "10 samples"
           }
         ]
@@ -487,13 +403,6 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±7.66%",
             "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 8942.192324299998,
-            "unit": "ms",
-            "range": "±5.38%",
-            "extra": "10 samples"
           }
         ]
       },
@@ -524,13 +433,6 @@ window.BENCHMARK_DATA = {
             "value": 2035.0269900999997,
             "unit": "ms",
             "range": "±7.27%",
-            "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 8438.355241599998,
-            "unit": "ms",
-            "range": "±7.31%",
             "extra": "10 samples"
           }
         ]
@@ -563,13 +465,6 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±7.92%",
             "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 8996.391490099995,
-            "unit": "ms",
-            "range": "±7.01%",
-            "extra": "10 samples"
           }
         ]
       },
@@ -600,13 +495,6 @@ window.BENCHMARK_DATA = {
             "value": 2280.288109,
             "unit": "ms",
             "range": "±4.60%",
-            "extra": "10 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 9071.396724800003,
-            "unit": "ms",
-            "range": "±9.50%",
             "extra": "10 samples"
           }
         ]
@@ -639,13 +527,6 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±2.71%",
             "extra": "50 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 8250.958171400001,
-            "unit": "ms",
-            "range": "±6.80%",
-            "extra": "15 samples"
           }
         ]
       },
@@ -677,13 +558,6 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±2.43%",
             "extra": "50 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 8944.898030000004,
-            "unit": "ms",
-            "range": "±5.38%",
-            "extra": "15 samples"
           }
         ]
       },
@@ -715,13 +589,6 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±3.15%",
             "extra": "50 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 9004.052103466662,
-            "unit": "ms",
-            "range": "±5.24%",
-            "extra": "15 samples"
           }
         ]
       },
@@ -753,13 +620,6 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±2.54%",
             "extra": "50 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 9679.304249866665,
-            "unit": "ms",
-            "range": "±6.91%",
-            "extra": "15 samples"
           }
         ]
       },
@@ -791,13 +651,6 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±2.94%",
             "extra": "50 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 9420.240992800002,
-            "unit": "ms",
-            "range": "±5.92%",
-            "extra": "15 samples"
           }
         ]
       },
@@ -829,13 +682,6 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "range": "±2.67%",
             "extra": "50 samples"
-          },
-          {
-            "name": "bigint[4096][4096]",
-            "value": 11720.013516000014,
-            "unit": "ms",
-            "range": "±17.21%",
-            "extra": "15 samples"
           }
         ]
       },
