@@ -4,7 +4,8 @@
 
 ### New
 
-- `munkres` now accepts [MatrixLike](./src/types/matrixLike.d.ts) inputs
+- Add new type [MatrixLike](./src/types/matrixLike.d.ts).
+- `munkres` now accepts `MatrixLike` inputs
 - Helper functions `getMatrixMax` and `getMatrixMin` now accept `MatrixLike` inputs.
 - Add new helper functions:
   - `copyMatrix`
@@ -24,8 +25,6 @@
   - `getMinCost` -> `getMatrixMin`
   - `invertCostMatrix` -> `invertMatrix`
   - `negateCostMatrix` -> `negateMatrix`
-
-### Updates
 
 ## [1.2.4](https://github.com/havelessbemore/munkres/compare/v1.2.3...v1.2.4) (2024-04-15)
 
