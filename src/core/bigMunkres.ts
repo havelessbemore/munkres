@@ -176,14 +176,12 @@ export function step4(
     }
 
     // Initialize stage
-    let step = 0;
-    slackX.fill(rootY);
+    let zeros = initSlack(rootY, matrix, dualX, dualY, slack, slackV, slackX);
     coveredY[0] = rootY;
-    let zeros = initSlack(rootY, matrix, dualX, dualY, slack, slackV);
+    let step = 0;
 
     // Run stage
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
+    do {
       // If no zero
       if (step >= zeros) {
         // Zero the min
@@ -208,14 +206,13 @@ export function step4(
       }
 
       // Cover the star's row
-      const sy = starsX[x];
-      coveredY[step] = sy;
+      coveredY[step] = starsX[x];
 
       // Update slack
       zeros = updateSlack(
-        sy,
-        slackV[x],
+        starsX[x],
         zeros,
+        slackV[x],
         matrix,
         dualX,
         dualY,
@@ -223,7 +220,8 @@ export function step4(
         slackV,
         slackX
       );
-    }
+      // eslint-disable-next-line no-constant-condition
+    } while (true);
   }
 }
 
@@ -279,29 +277,31 @@ export function initSlack(
   dualX: ArrayLike<bigint>,
   dualY: ArrayLike<bigint>,
   slack: IndexArray,
-  slackV: bigint[]
+  slackV: bigint[],
+  slackX: IndexArray
 ): number {
   const dy = dualY[y];
   const row = matrix[y];
-  const X = dualX.length;
+  const X = slack.length;
 
-  let mid = 0;
+  let zeros = 0;
   for (let x = 0; x < X; ++x) {
     slack[x] = x;
+    slackX[x] = y;
     slackV[x] = row[x] - dualX[x] - dy;
     if (slackV[x] === 0n) {
-      slack[x] = slack[mid];
-      slack[mid++] = x;
+      slack[x] = slack[zeros];
+      slack[zeros++] = x;
     }
   }
 
-  return mid;
+  return zeros;
 }
 
 export function updateSlack(
   y: number,
-  minV: bigint,
   midS: number,
+  minV: bigint,
   matrix: MatrixLike<bigint>,
   dualX: ArrayLike<bigint>,
   dualY: ArrayLike<bigint>,
@@ -311,7 +311,7 @@ export function updateSlack(
 ): number {
   const dy = dualY[y] - minV;
   const row = matrix[y];
-  const X = slackX.length;
+  const X = slack.length;
 
   for (let i = midS; i < X; ++i) {
     const x = slack[i];
