@@ -175,14 +175,12 @@ export function step4(
     }
 
     // Initialize stage
-    let step = 0;
-    slackX.fill(rootY);
+    let zeros = initSlack(rootY, matrix, dualX, dualY, slack, slackV, slackX);
     coveredY[0] = rootY;
-    let zeros = initSlack(rootY, matrix, dualX, dualY, slack, slackV);
+    let step = 0;
 
     // Run stage
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
+    do {
       // If no zero
       if (step >= zeros) {
         // Zero the min
@@ -208,12 +206,11 @@ export function step4(
       }
 
       // Cover the star's row
-      const sy = starsX[x];
-      coveredY[step] = sy;
+      coveredY[step] = starsX[x];
 
       // Update slack
       zeros = updateSlack(
-        sy,
+        starsX[x],
         zeros,
         matrix,
         dualX,
@@ -222,7 +219,9 @@ export function step4(
         slackV,
         slackX
       );
-    }
+
+      // eslint-disable-next-line no-constant-condition
+    } while (true);
   }
 }
 
@@ -340,23 +339,25 @@ export function initSlack(
   dualX: ArrayLike<number>,
   dualY: ArrayLike<number>,
   slack: IndexArray,
-  slackV: number[]
+  slackV: number[],
+  slackX: IndexArray
 ): number {
   const dy = dualY[y];
   const row = matrix[y];
-  const X = dualX.length;
+  const X = slack.length;
 
-  let mid = 0;
+  let zeros = 0;
   for (let x = 0; x < X; ++x) {
     slack[x] = x;
+    slackX[x] = y;
     slackV[x] = row[x] - (dualX[x] + dy || 0) || 0;
     if (slackV[x] === 0) {
-      slack[x] = slack[mid];
-      slack[mid++] = x;
+      slack[x] = slack[zeros];
+      slack[zeros++] = x;
     }
   }
 
-  return mid;
+  return zeros;
 }
 
 /**
