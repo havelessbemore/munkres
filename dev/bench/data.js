@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713328050691,
+  "lastUpdate": 1713330657337,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -683,6 +683,44 @@ window.BENCHMARK_DATA = {
             "value": 8944.898030000004,
             "unit": "ms",
             "range": "±5.38%",
+            "extra": "15 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "924a48624f5e4b75949a9b6a5f135929cb31fef3",
+          "message": "Move step6() to after step5() for bigMunkres; Update dual variables once per stage",
+          "timestamp": "2024-04-17T01:04:12-04:00",
+          "tree_id": "d97f314b1e9b0659c824146d1066cb3956dad742",
+          "url": "https://github.com/havelessbemore/munkres/commit/924a48624f5e4b75949a9b6a5f135929cb31fef3"
+        },
+        "date": 1713330656821,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2046.8587404799996,
+            "unit": "ms",
+            "range": "±3.15%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 9004.052103466662,
+            "unit": "ms",
+            "range": "±5.24%",
             "extra": "15 samples"
           }
         ]
