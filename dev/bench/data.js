@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713382225157,
+  "lastUpdate": 1713385029114,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -1137,6 +1137,44 @@ window.BENCHMARK_DATA = {
             "value": 1477.1855837600008,
             "unit": "ms",
             "range": "±3.79%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "147a5e7861c1be40f5ae56b4a20b26c239426ee2",
+          "message": "Update SECURITY.md",
+          "timestamp": "2024-04-17T16:12:46-04:00",
+          "tree_id": "154eccaf2a174708d84cb8d6ad916e299601d49c",
+          "url": "https://github.com/havelessbemore/munkres/commit/147a5e7861c1be40f5ae56b4a20b26c239426ee2"
+        },
+        "date": 1713385028573,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2098.435002,
+            "unit": "ms",
+            "range": "±2.40%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1373.7351553199999,
+            "unit": "ms",
+            "range": "±3.05%",
             "extra": "50 samples"
           }
         ]
