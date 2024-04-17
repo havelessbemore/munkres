@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713359842370,
+  "lastUpdate": 1713364898580,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -797,6 +797,44 @@ window.BENCHMARK_DATA = {
             "value": 9420.240992800002,
             "unit": "ms",
             "range": "±5.92%",
+            "extra": "15 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "c2f9228c1ccab81e5c87db30e34d1d76354abcc1",
+          "message": "Move src/utils/munkres to src/core, Rename Tuple type to Pair, Move helper functions from src/utils/costMatrix.ts to src/helpers.ts, Rename helper functions, Add helper functions genMatrix and copyMatrix, Update CHANGELOG.md",
+          "timestamp": "2024-04-17T10:34:11-04:00",
+          "tree_id": "62d4e5dc275f28e00d45a2af668b3885da09afb0",
+          "url": "https://github.com/havelessbemore/munkres/commit/c2f9228c1ccab81e5c87db30e34d1d76354abcc1"
+        },
+        "date": 1713364898099,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1957.3954575600003,
+            "unit": "ms",
+            "range": "±2.67%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 11720.013516000014,
+            "unit": "ms",
+            "range": "±17.21%",
             "extra": "15 samples"
           }
         ]
