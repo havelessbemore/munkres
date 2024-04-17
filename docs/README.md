@@ -16,7 +16,7 @@ A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm
 1. Supports `number` and `bigint` matrices.
 1. Supports square and rectangular matrices.
 1. Supports `-Infinity` and `Infinity` values.
-1. Accepts any [MatrixLike](#types) matrix (e.g. made of arrays, typed arrays, objects, etc).
+1. Accepts any [`MatrixLike`](src/types/matrixLike.d.ts) matrix (e.g. made of arrays, typed arrays, objects, etc).
 1. [Helper methods](#helpers) for creating and modifying matrices.
 
 ## Getting Started
@@ -87,14 +87,14 @@ console.log(assignments);
 
 ### Types
 
-- `Matrix<T>`: A generic two-dimensional matrix type (i.e. `T[][]`).
+- [`Matrix<T>`](src/types/matrix.d.ts): A generic two-dimensional matrix type (i.e. `T[][]`).
 
-- `MatrixLike<T>`: A generic read-only two-dimensional matrix type (i.e. `ArrayLike<ArrayLike<T>>`).
+- [`MatrixLike<T>`](src/types/matrixLike.d.ts): A generic read-only two-dimensional matrix type (i.e. `ArrayLike<ArrayLike<T>>`).
 
   - These matrices can be made from any `ArrayLike` objects (i.e. any indexable object with a numeric length property). This
     allows for more flexible matrices, such as those made with typed arrays or custom objects.
 
-- `Pair<A, B = A>`: A generic pair type (i.e. `[A, B]`).
+- [`Pair<A, B = A>`](src/types/pair.d.ts): A generic pair type (i.e. `[A, B]`).
 
 ### Helpers
 
