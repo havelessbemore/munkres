@@ -1,6 +1,12 @@
 import { describe, it, expect } from "vitest";
 
-import { exec } from "./bigMunkres";
+import { exec, safeExec } from "./bigMunkres";
+
+describe(`${safeExec.name}()`, () => {
+  it("handles an empty matrix without error", () => {
+    expect(() => safeExec([])).not.toThrow();
+  });
+});
 
 describe(`${exec.name}()`, () => {
   it("handles an empty matrix without error", () => {
