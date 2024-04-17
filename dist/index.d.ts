@@ -1,108 +1,142 @@
 import { Matrix } from './types/matrix';
-import { Matrix as Matrix_2 } from '../types/matrix';
-import { Tuple } from './types/tuple';
+import { MatrixLike } from './types/matrixLike';
+import { Pair } from './types/pair';
 
 /**
- * Constructs a cost matrix for a set of
- * workers and jobs using a provided cost function.
+ * Creates a copy from a given matrix or matrix-like input.
  *
- * Each element of the matrix represents the cost associated with assigning a
- * specific worker to a specific job. The cost is determined by `costFn`,
- * which computes the cost based on a worker-job pair.
+ * @param matrix - The matrix to be copied.
  *
- * @param workers - An array of workers.
- * @param jobs - An array of jobs.
- * @param costFn - Given a worker and a job, returns the
- * numeric cost of assigning that worker to that job.
+ * @returns A copy of the given matrix.
+ */
+export declare function copyMatrix<T>(matrix: MatrixLike<T>): Matrix<T>;
+
+/**
+ * Constructs a matrix from a set of row
+ * and column objects using a provided callback function.
  *
- * @returns A cost matrix where the values at position `[y][x]`
- * represent the cost of assigning the `y`-th worker to the `x`-th job.
+ * @param rows - An array of row objects (such as workers).
+ * @param cols - An array of column objects (such as jobs).
+ * @param callbackFn - Given a row and a column, returns a value.
+ *
+ * @returns A matrix where the values at position `[r][c]`
+ * represent the value derived from row `r` and column `c`.
  *
  * @example
+ * ```typescript
  * // Define workers, jobs, and a simple cost function
  * const workers = ['Alice', 'Bob'];
  * const jobs = ['Job1', 'Job2'];
- * const costFn = (worker: string, job: string) =\> worker.length + job.length;
+ * const costFn = (worker: string, job: string) => worker.length + job.length;
  *
- * // Create the cost matrix
- * const matrix = createCostMatrix(workers, jobs, costFn);
+ * // Create a cost matrix
+ * const costs = createMatrix(workers, jobs, costFn);
  * // [
  * //   [9, 9], // ['Alice' + 'Job1', 'Alice' + 'Job2']
  * //   [7, 7]  // [  'Bob' + 'Job1',   'Bob' + 'Job2']
  * // ]
+ * ```
  */
-export declare function createCostMatrix<W, J>(workers: W[], jobs: J[], costFn: (worker: W, job: J) => number): Matrix_2<number>;
-
-export declare function createCostMatrix<W, J>(workers: W[], jobs: J[], costFn: (worker: W, job: J) => bigint): Matrix_2<bigint>;
+export declare function createMatrix<R, C, T>(rows: ArrayLike<R>, cols: ArrayLike<C>, callbackFn: (row: R, col: C) => T): Matrix<T>;
 
 /**
- * Finds the maximum value in a given cost matrix.
+ * Constructs a matrix with given dimensions
+ * using a provided callback function.
  *
- * @param costMatrix - The cost matrix.
+ * @param rows - The number of rows in the matrix.
+ * @param cols - The number of columns in the matrix.
+ * @param callbackFn - Given row and column indices, returns a value.
+ *
+ * @returns A matrix where the values at position `[r][c]`
+ * represent the value derived from row `r` and column `c`.
+ *
+ * @example
+ * ```typescript
+ * // Define workers, jobs, and a simple cost function
+ * const workers = ['Alice', 'Bob'];
+ * const jobs = ['Job1', 'Job2'];
+ * const costFn = (w: number, j: number) => workers[w].length + jobs[j].length;
+ *
+ * // Create a cost matrix
+ * const costs = createMatrix(workers.length, jobs.length, costFn);
+ * // [
+ * //   [9, 9], // ['Alice' + 'Job1', 'Alice' + 'Job2']
+ * //   [7, 7]  // [  'Bob' + 'Job1',   'Bob' + 'Job2']
+ * // ]
+ * ```
+ */
+export declare function genMatrix<T>(rows: number, cols: number, callbackFn: (row: number, col: number) => T): Matrix<T>;
+
+/**
+ * Finds the maximum value in a given matrix.
+ *
+ * @param matrix - The matrix.
  *
  * @returns The maximum value, or `undefined` if the matrix is empty.
  */
-export declare function getMaxCost(costMatrix: Matrix_2<number>): number | undefined;
+export declare function getMatrixMax(matrix: MatrixLike<number>): number | undefined;
 
-export declare function getMaxCost(costMatrix: Matrix_2<bigint>): bigint | undefined;
+export declare function getMatrixMax(matrix: MatrixLike<bigint>): bigint | undefined;
 
 /**
- * Finds the maximum value in a given cost matrix.
+ * Finds the minimum value in a given matrix.
  *
- * @param costMatrix - The cost matrix.
+ * @param matrix - The matrix.
  *
- * @returns The maximum value, or `undefined` if the matrix is empty.
+ * @returns The minimum value, or `undefined` if the matrix is empty.
  */
-export declare function getMinCost(costMatrix: Matrix_2<number>): number | undefined;
+export declare function getMatrixMin(matrix: MatrixLike<number>): number | undefined;
 
-export declare function getMinCost(costMatrix: Matrix_2<bigint>): bigint | undefined;
+export declare function getMatrixMin(matrix: MatrixLike<bigint>): bigint | undefined;
 
 /**
- * Inverts the values in a given cost matrix by
+ * Inverts the values in a given matrix by
  * subtracting each element from a specified large value.
  *
- * This is useful for converting a minimized cost matrix
- * into a maximized cost matrix (or vice versa).
+ * This is useful for converting a profit matrix
+ * into a cost matrix, or vice versa.
  *
- * @param costMatrix - The cost matrix to be inverted. Modified in place.
+ * @param matrix - The cost matrix to be inverted. Modified in place.
  * @param bigVal - (Optional) A large value used as the basis for inversion.
  * If not provided, the maximum value in the matrix is used.
  *
  * @example
- * const costMatrix = [
+ * const matrix = [
  *   [1, 2, 3],
  *   [4, 5, 6]
  * ];
  *
  * // Invert the matrix
- * invertCostMatrix(costMatrix);
+ * invertMatrix(matrix);
  *
- * // costMatrix is now:
+ * // matrix is now:
  * // [
  * //   [5, 4, 3],
  * //   [2, 1, 0]
  * // ]
  *
  * @example
- * const anotherMatrix = [
+ * const matrix = [
  *   [10, 20],
  *   [30, 40]
  * ];
  *
  * // Invert the matrix with a given bigVal
- * invertCostMatrix(anotherMatrix, 50);
+ * invertMatrix(matrix, 50);
  *
- * // costMatrix is now:
+ * // matrix is now:
  * // [
  * //   [40, 30],
  * //   [20, 10]
  * // ]
  */
-export declare function invertCostMatrix(costMatrix: Matrix_2<number>, bigVal?: number): void;
+export declare function invertMatrix(matrix: Matrix<number>, bigVal?: number): void;
 
-export declare function invertCostMatrix(costMatrix: Matrix_2<bigint>, bigVal?: bigint): void;
+export declare function invertMatrix(matrix: Matrix<bigint>, bigVal?: bigint): void;
 
 export { Matrix }
+
+export { MatrixLike }
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -115,41 +149,41 @@ export { Matrix }
  * of workers to jobs. Each pair consists of a worker index `y` and a job
  * index `x`, indicating that worker `y` is assigned to job `x`.
  */
-declare function munkres(costMatrix: Matrix<number>): Tuple<number>[];
+declare function munkres(costMatrix: MatrixLike<number>): Pair<number>[];
 
-declare function munkres(costMatrix: Matrix<bigint>): Tuple<number>[];
+declare function munkres(costMatrix: MatrixLike<bigint>): Pair<number>[];
 export default munkres;
 export { munkres }
 
 /**
- * Negates the values in a given cost matrix.
+ * Negates the values in a given matrix.
  *
- * This is useful for converting a minimized cost matrix
- * into a maximized cost matrix (or vice versa).
+ * This is useful for converting a profit matrix
+ * into a cost matrix, or vice versa.
  *
- * @param costMatrix - The cost matrix to be negated. Modified in place.
+ * @param matrix - The matrix to be negated. Modified in place.
  *
  * @example
- * const costMatrix = [
+ * const matrix = [
  *   [1,  2, 3],
  *   [4, -5, 6],
  *   [7,  8, 9]
  * ];
  *
- * // Negate the cost matrix
- * negateCostMatrix(costMatrix);
+ * // Negate the matrix
+ * negateMatrix(matrix);
  *
- * // costMatrix is now:
+ * // matrix is now:
  * // [
  * //   [-1, -2, -3],
  * //   [-4,  5, -6],
  * //   [-7, -8, -9]
  * // ]
  */
-export declare function negateCostMatrix(costMatrix: Matrix_2<number>): void;
+export declare function negateMatrix(matrix: Matrix<number>): void;
 
-export declare function negateCostMatrix(costMatrix: Matrix_2<bigint>): void;
+export declare function negateMatrix(matrix: Matrix<bigint>): void;
 
-export { Tuple }
+export { Pair }
 
 export { }
