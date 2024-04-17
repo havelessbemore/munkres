@@ -181,32 +181,33 @@ export function step4(
     // Run stage
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      // If no zero, zero the min
+      // If no zero
       if (step >= slackMid) {
-        slackMid = step6(
-          findUncoveredMin(slackMid, slack, slackV),
-          slackMid,
-          coveredY,
-          dualX,
-          dualY,
-          slack,
-          slackV
-        );
+        // Find and zero the min
+        const min = findUncoveredMin(slackMid, slack, slackV);
+        slackMid = partition(min, slackMid, slack, slackV);
+        slackV[slack[step]] = min;
       }
 
       // Prime the zero / cover the prime's column
-      const x = slack[step++];
+      const x = slack[step];
 
-      // Step 5: If no star in the column, turn primes into stars
+      // If no star in the column
       if (starsX[x] === -1) {
+        // Turn primes into stars
         step5(x, slackX, starsX, starsY);
+
+        // Update dual variables
+        step6(step, coveredY, dualX, dualY, slack, slackV);
+
+        // Terminate stage
         --unmatched;
         break;
       }
 
       // Cover the star's row
       const sy = starsX[x];
-      coveredY[step] = sy;
+      coveredY[++step] = sy;
 
       // Update slack
       slackMid = updateSlack(
@@ -256,7 +257,7 @@ export function step5(
 /**
  * Adjusts dual variables and slack to uncover more admissible edges.
  *
- * @param min - The value to adjust by.
+ * @param pivot - The value to adjust by.
  * @param covV - The value indicating a row is covered.
  * @param coveredY - An array indicating whether a row is covered.
  * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
@@ -265,36 +266,43 @@ export function step5(
  * @param slackV - The slack values for each column. Modified in place.
  */
 export function step6(
-  min: number,
-  mid: number,
+  max: number,
   coveredY: ArrayLike<number>,
   dualX: number[],
   dualY: number[],
   slack: IndexArray,
   slackV: number[]
+): void {
+  let min = 0;
+  for (let i = 0; i <= max; ++i) {
+    min = min + slackV[slack[i]] || 0;
+  }
+
+  for (let i = 0; i <= max; ++i) {
+    let j = coveredY[i];
+    dualY[j] = dualY[j] + min || 0;
+    j = slack[i];
+    min = min - slackV[j] || 0;
+    dualX[j] = dualX[j] - min || 0;
+  }
+}
+
+export function partition(
+  pivot: number,
+  min: number,
+  slack: IndexArray,
+  slackV: number[]
 ): number {
-  for (let i = 0; i <= mid; ++i) {
-    const y = coveredY[i];
-    dualY[y] = dualY[y] + min || 0;
-  }
-
-  for (let i = 0; i < mid; ++i) {
+  const max = slack.length;
+  for (let i = min; i < max; ++i) {
     const x = slack[i];
-    dualX[x] = dualX[x] - min || 0;
-  }
-
-  const X = dualX.length;
-  for (let i = mid; i < X; ++i) {
-    const x = slack[i];
-    if (slackV[x] === min) {
-      slack[i] = slack[mid];
-      slack[mid++] = x;
-    } else {
-      slackV[x] -= min;
+    slackV[x] = slackV[x] - pivot || 0;
+    if (slackV[x] === 0) {
+      slack[i] = slack[min];
+      slack[min++] = x;
     }
   }
-
-  return mid;
+  return min;
 }
 
 export function findUncoveredMin(
@@ -394,7 +402,7 @@ export function updateSlack(
 ): number {
   const dy = dualY[y];
   const row = matrix[y];
-  const X = slackX.length;
+  const X = slack.length;
 
   for (let i = midS; i < X; ++i) {
     const x = slack[i];
