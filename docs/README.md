@@ -87,13 +87,11 @@ console.log(assignments);
 
 ### Types
 
-The package exports the following TypeScript types:
-
 - `Matrix<T>`: A generic two-dimensional matrix type (i.e. `T[][]`).
 
 - `MatrixLike<T>`: A generic read-only two-dimensional matrix type (i.e. `ArrayLike<ArrayLike<T>>`).
 
-  - These matrices can be made from any `ArrayLike` object (i.e. any indexable object with a numeric length property). This
+  - These matrices can be made from any `ArrayLike` objects (i.e. any indexable object with a numeric length property). This
     allows for more flexible matrices, such as those made with typed arrays or custom objects.
 
 - `Pair<A, B = A>`: A generic pair type (i.e. `[A, B]`).
