@@ -5,7 +5,9 @@ export type { Pair } from "./types/pair";
 
 // Cost Matrix Helpers
 export {
+  copyMatrix,
   createMatrix,
+  genMatrix,
   getMatrixMax,
   getMatrixMin,
   invertMatrix,

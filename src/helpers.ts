@@ -20,7 +20,7 @@ export function copyMatrix<T>(matrix: MatrixLike<T>): Matrix<T> {
  * and column objects using a provided callback function.
  *
  * @param rows - An array of row objects (such as workers).
- * @param columns - An array of column objects (such as jobs).
+ * @param cols - An array of column objects (such as jobs).
  * @param callbackFn - Given a row and a column, returns a value.
  *
  * @returns A matrix where the values at position `[r][c]`
