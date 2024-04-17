@@ -2,27 +2,28 @@
 
 ## [2.0.0](https://github.com/havelessbemore/munkres/compare/v1.2.4...v2.0.0) (2024-04-17)
 
-### Updates
+### New
 
-- `munkres` now accepts [MatrixLike](./src/types/matrixLike.d.ts) inputs.
+- `munkres` now accepts [MatrixLike](./src/types/matrixLike.d.ts) inputs
 - Helper functions `getMatrixMax` and `getMatrixMin` now accept `MatrixLike` inputs.
 - Add new helper functions:
-
   - `copyMatrix`
   - `genMatrix`
 
-- Improve performance
+### Updates
+
+- Improve performance by ~10%.
 
 ### Breaking
 
 - Rename type `Tuple` to `Pair`.
 
 - Rename helper functions:
-  - `createCostMatrix` to `createMatrix`
-  - `getMaxCost` to `getMatrixMax`
-  - `getMinCost` to `getMatrixMin`
-  - `invertCostMatrix` to `invertMatrix`
-  - `negateCostMatrix` to `negateMatrix`
+  - `createCostMatrix` -> `createMatrix`
+  - `getMaxCost` -> `getMatrixMax`
+  - `getMinCost` -> `getMatrixMin`
+  - `invertCostMatrix` -> `invertMatrix`
+  - `negateCostMatrix` -> `negateMatrix`
 
 ### Updates
 
