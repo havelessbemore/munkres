@@ -10,11 +10,12 @@ A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm
 
 ## Features
 
-- Supports square and rectangular cost matrices.
-- Supports `number[][]` and `bigint[][]` cost matrices.
-- Supports `-Infinity` and `Infinity`.
-- [Helper methods](#helpers) for creating and manipulating cost matrices.
-- Fast ([benchmarks](#benchmarks)).
+1. Fast ([benchmarks](#results)).
+1. Supports `number` and `bigint` matrices.
+1. Supports square and rectangular matrices.
+1. Supports `-Infinity` and `Infinity` values.
+1. Accepts any [MatrixLike](#types) matrix (e.g. made of arrays, typed arrays, objects, etc).
+1. [Helper methods](#helpers) for creating and manipulating matrices.
 
 ## Getting Started
 
@@ -47,81 +48,71 @@ const costMatrix = [
   [3, 6, 9],
 ];
 
-// Find the optimal assignments. Returns an array of pairs
-// of the form [y, x], indicating that worker y was assigned
-// to job x.
+// Find a set of optimal assignments pairs (y, x).
 const assignments = munkres(costMatrix);
 
 console.log(assignments);
 // Output: [[0, 2], [1, 1], [2, 0]]
 ```
 
-Example 2: Creating a cost matrix
+Example 2: Using a profit matrix
 
 ```javascript
-import { munkres, createCostMatrix } from "munkres";
+import { munkres, copyMatrix, invertMatrix } from "munkres";
 
-// Define your workers and jobs.
-const workers = ["Alice", "Bob"];
-const jobs = ["Job 1", "Job 2", "Job 3"];
+// Create a profit matrix. Cell [y, x] is the
+// profit of assigning the y-th worker to the x-th job.
+const profitMatrix = [
+  [9, 8, 7],
+  [8, 6, 4],
+  [7, 4, 1],
+];
 
-// Define a cost function that takes a worker
-// and a job and returns the cost of assigning
-// the worker to the job.
-//
-// For this example, we'll use a precomputed map.
-const costs = {
-  "AliceJob 1": 2,
-  "AliceJob 2": 25,
-  "AliceJob 3": 18,
-  "BobJob 1": 9,
-  "BobJob 2": 4,
-  "BobJob 3": 17,
-};
-const costFn = (worker, job) => {
-  // Your cost calculation goes here.
-  return costs[worker + job];
-};
+// Covert the profit matrix into a cost matrix.
+const costMatrix = copyMatrix(profitMatrix);
+invertMatrix(costMatrix);
 
-// Create the 2x3 cost matrix. Each cell [y, x] will be
-// the cost of assigning the y-th worker to the x-th job.
-const costMatrix = createCostMatrix(workers, jobs, costFn);
-
-// Find the optimal assignments. Returns an array of pairs
-// of the form [y, x], indicating that worker y was assigned
-// to job x.
+// Find a set of optimal assignments pairs (y, x).
 const assignments = munkres(costMatrix);
 
 console.log(assignments);
-// Output: [[0, 0], [1, 1]]
+// Output: [[0, 2], [1, 1], [2, 0]]
 ```
 
 ## API
 
-- `munkres(costMatrix)`: Executes the Munkres algorithm on the given cost matrix and returns an optimal assignment set of workers to jobs. Even if there are multiple optimal assignment sets, only one is returned.
+- `munkres(costMatrix)`: Executes the Munkres algorithm on the given cost matrix and returns a set of optimal assignment pairs. Even if there are multiple optimal assignment sets, only one is returned.
 
 ### Types
 
 The package exports the following TypeScript types:
 
 - `Matrix<T>`: A generic two-dimensional matrix type (i.e. `T[][]`).
-- `Tuple<A, B = A>`: A generic tuple type (i.e. `[A, B]`).
+
+- `MatrixLike<T>`: A generic read-only two-dimensional matrix type (i.e. `ArrayLike<ArrayLike<T>>`).
+
+  - These matrices can be made from any `ArrayLike` object (i.e. any indexable object with a numeric length property). This
+    allows for more flexible matrices, such as those made with typed arrays or custom objects.
+
+- `Pair<A, B = A>`: A generic pair type (i.e. `[A, B]`).
 
 ### Helpers
 
-A set of utility functions are provided to help create and manipulate cost matrices:
+A set of utility functions are provided to help create and manipulate matrices:
 
-- `createCostMatrix(workers, jobs, costFn)`: Generates a cost matrix based on the given workers, jobs, and cost function.
-- `getMaxCost(costMatrix)`: Finds the maximum cost in a given cost matrix.
-- `getMinCost(costMatrix)`: Finds the minimum cost in a given cost matrix.
-- `invertCostMatrix(costMatrix, bigVal?)`: Inverts the costs in the given matrix, useful for converting between minimizing and maximizing problems. If `bigVal` is not given, the matrix's max cost is used instead.
-- `negateCostMatrix(costMatrix)`: Negates all costs in the given matrix, also useful for converting between minimizing and maximizing problems.
+1. `copyMatrix(matrix)`: Creates a copy of the given matrix.
+1. `createMatrix(workers, jobs, callbackFn)`: Generates a matrix based on the given workers, jobs, and callback function.
+1. `genMatrix(numRows, numCols, callbackFn)`: Generates a matrix based on the given dimensions and a callback function.
+1. `getMatrixMax(matrix)`: Finds the maximum value in a given matrix.
+1. `getMatrixMin(matrix)`: Finds the minimum value in a given matrix.
+1. `invertMatrix(matrix, bigVal?)`: Inverts the values in the given matrix. Useful for converting between minimizing and maximizing problems. If `bigVal` is not given, the matrix's max value is used instead.
+1. `negateMatrix(matrix)`: Negates all values in the given matrix. Useful for converting between minimizing and maximizing problems.
 
 ## Community and Support
 
-We welcome contributions, feedback, and bug reports. Please feel free to [submit an issue](https://github.com/havelessbemore/munkres/issues) or a pull request.
+Any feedback or bug reports are welcomed.
 
-For support, you can reach out via [GitHub discussions](https://github.com/havelessbemore/munkres/discussions).
+Feel free to [submit an issue](https://github.com/havelessbemore/munkres/issues), pull request or reach out via [GitHub discussions](https://github.com/havelessbemore/munkres/discussions).
 
 ## Build
 
@@ -190,57 +181,60 @@ npm run bench
 
 Benchmarks are integrated into our CI/CD pipeline and automatically run with each commit to the `main` branch. This helps monitor the performance impacts of development, preventing regressions and verifying changes maintain performance standards.
 
-Specs (may vary per commit):
+Specs:
 
-- Package version: See [package.json](./package.json)
-- OS: See [workflow](.github/workflows/benchmark.yml)
-- Runtime: See [workflow](.github/workflows/benchmark.yml)
-- Benchmarking Tool: See [benchmark](./benchmarks/ci.bench.ts)
+- Package version: latest
+- OS: [ubuntu-latest](https://github.com/actions/runner-images)
+- Runtime: NodeJS v20.x.x
+- Benchmarking Tool: tinybench v2.6.0
 
-### Current
+### Results
+
+These are the latest benchmark results, run locally.
+
+Specs:
+
+- Package version: v2.0.0
+- OS: M2 Macbook Air, Mac OS v14.4.1
+- Runtime: NodeJS v20.12.1
+- Benchmarking Tool: tinybench v2.6.0
 
 #### `number[][]`
 
-| Dimensions | Min (ms)    | Max (ms)    | Avg (ms)    | Samples   |
-| ---------- | ----------- | ----------- | ----------- | --------- |
-| 2x2        | 0           | 0.389       | 0.00015     | 3,246,770 |
-| 4x4        | 0.00017     | 0.11        | 0.00044     | 1,128,909 |
-| 8x8        | 0.00062     | 0.17213     | 0.00146     | 343,260   |
-| 16x16      | 0.00204     | 0.17567     | 0.00549     | 91,072    |
-| 32x32      | 0.00917     | 0.18367     | 0.02226     | 22,463    |
-| 64x64      | 0.04763     | 0.29942     | 0.09342     | 5,353     |
-| 128x128    | 0.23521     | 0.57821     | 0.40318     | 1,241     |
-| 256x256    | 1.34192     | 2.42842     | 1.85265     | 270       |
-| 512x512    | 6.8625      | 12.01879    | 9.15225     | 55        |
-| 1024x1024  | 35.03438    | 50.46496    | 45.14792    | 12        |
-| 2048x2048  | 195.369     | 269.28162   | 238.75253   | 10        |
-| 4096x4096  | 1,136.79017 | 1,456.63646 | 1,256.7295  | 10        |
-| 8192x8192  | 6,373.22838 | 7,600.0455  | 6,920.27934 | 10        |
+| Dimensions  | Min (ms)     | Max (ms)     | Avg (ms)     | Samples   |
+| ----------- | ------------ | ------------ | ------------ | --------- |
+| 2x2         | 0.00004      | 1.33775      | 0.00015      | 3,278,766 |
+| 4x4         | 0.00017      | 0.13233      | 0.00043      | 1,164,723 |
+| 8x8         | 0.00062      | 0.15721      | 0.0014       | 357,761   |
+| 16x16       | 0.00212      | 0.14429      | 0.00508      | 98,427    |
+| 32x32       | 0.00867      | 0.14792      | 0.02032      | 24,603    |
+| 64x64       | 0.04625      | 0.25133      | 0.08442      | 5,923     |
+| 128x128     | 0.21204      | 0.56425      | 0.37118      | 1,348     |
+| 256x256     | 1.24296      | 2.36254      | 1.7532       | 286       |
+| 512x512     | 6.75338      | 11.09775     | 8.61339      | 59        |
+| 1024x1024   | 34.86392     | 49.97971     | 41.90432     | 50        |
+| 2048x2048   | 171.89683    | 259.61888    | 222.12547    | 50        |
+| 4096x4096   | 932.68375    | 1,461.66762  | 1,201.93912  | 50        |
+| 8192x8192   | 5,280.11042  | 7,467.18662  | 6,364.06774  | 50        |
+| 16384x16384 | 29,352.95512 | 39,033.75583 | 35,109.07895 | 10        |
 
 #### `bigint[][]`
 
 | Dimensions | Min (ms)     | Max (ms)     | Avg (ms)     | Samples   |
 | ---------- | ------------ | ------------ | ------------ | --------- |
-| 2x2        | 0.00008      | 1.59204      | 0.0002       | 2,551,810 |
-| 4x4        | 0.00029      | 0.17362      | 0.00059      | 841,185   |
-| 8x8        | 0.00125      | 0.18075      | 0.00254      | 196,772   |
-| 16x16      | 0.00446      | 0.20708      | 0.01071      | 46,669    |
-| 32x32      | 0.02108      | 0.67183      | 0.04641      | 10,774    |
-| 64x64      | 0.111        | 0.46192      | 0.20924      | 2,390     |
-| 128x128    | 0.61675      | 1.67129      | 0.99047      | 505       |
-| 256x256    | 3.45625      | 6.7085       | 4.95576      | 101       |
-| 512x512    | 24.02083     | 31.46667     | 27.30115     | 19        |
-| 1024x1024  | 131.35329    | 166.47275    | 143.47399    | 10        |
-| 2048x2048  | 553.782      | 813.82258    | 707.90787    | 10        |
-| 4096x4096  | 3,690.12067  | 4,835.837    | 4,120.09768  | 10        |
-| 8192x8192  | 21,379.72487 | 27,010.15529 | 24,359.46667 | 10        |
-
-Specs:
-
-- Package version: v1.2.4
-- OS: M2 Macbook Air, Mac OS v14.4.1
-- Runtime: NodeJS v20.12.1
-- Benchmarking Tool: tinybench v2.6.0
+| 2x2        | 0.00004      | 3.38546      | 0.00019      | 2,607,053 |
+| 4x4        | 0.00029      | 0.19804      | 0.00059      | 849,558   |
+| 8x8        | 0.00117      | 0.16379      | 0.00249      | 200,470   |
+| 16x16      | 0.0045       | 0.18046      | 0.01038      | 48,184    |
+| 32x32      | 0.022        | 0.19354      | 0.04531      | 11,037    |
+| 64x64      | 0.11708      | 0.42021      | 0.20553      | 2,433     |
+| 128x128    | 0.65929      | 1.48925      | 0.95534      | 524       |
+| 256x256    | 3.04058      | 6.13196      | 4.64887      | 108       |
+| 512x512    | 17.61296     | 29.17404     | 24.33943     | 50        |
+| 1024x1024  | 106.67346    | 162.21587    | 131.54723    | 50        |
+| 2048x2048  | 546.41683    | 880.2815     | 701.56288    | 50        |
+| 4096x4096  | 3,246.61062  | 4,691.93688  | 4,048.15453  | 50        |
+| 8192x8192  | 18,582.48279 | 24,507.90367 | 22,092.35407 | 10        |
 
 ---
 

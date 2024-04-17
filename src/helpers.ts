@@ -54,7 +54,7 @@ export function createMatrix<R, C, T>(
  * using a provided callback function.
  *
  * @param rows - The number of rows in the matrix.
- * @param columns - The number of columns in the matrix.
+ * @param cols - The number of columns in the matrix.
  * @param callbackFn - Given row and column indices, returns a value.
  *
  * @returns A matrix where the values at position `[r][c]`
