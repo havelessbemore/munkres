@@ -300,25 +300,15 @@ export function partition<T>(
   return min;
 }
 
-export function findUncoveredMin(
-  mid: number,
-  slack: ArrayLike<number>,
-  slackV: ArrayLike<number>
-): number;
-export function findUncoveredMin(
-  mid: number,
-  slack: ArrayLike<number>,
-  slackV: ArrayLike<bigint>
-): bigint;
 export function findUncoveredMin<T extends number | bigint>(
-  mid: number,
+  min: number,
   slack: ArrayLike<number>,
   slackV: ArrayLike<T>
 ): T {
   const X = slack.length;
 
-  let minV = slackV[slack[mid]];
-  for (let i = mid + 1; i < X; ++i) {
+  let minV = slackV[slack[min]];
+  for (let i = min + 1; i < X; ++i) {
     if (slackV[slack[i]] < minV) {
       minV = slackV[slack[i]];
     }
