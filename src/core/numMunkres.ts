@@ -164,8 +164,6 @@ export function step4(
   }
 
   const X = dualX.length;
-  const Y = dualY.length;
-  const coveredY = new Uint32Array(Y);
   const slack = new Uint32Array(X);
   const slackV = new Array<number>(X);
   const slackX = new Uint32Array(X);
@@ -177,18 +175,14 @@ export function step4(
     }
 
     // Initialize stage
-    coveredY[0] = rootY;
     let zeros = initStage(rootY, matrix, dualX, dualY, slack, slackV, slackX);
 
     // Run stage
     let steps = 1;
     let x: number;
     for (x = slack[0]; starsX[x] !== -1; x = slack[steps++]) {
-      // Cover the star's row
-      const y = starsX[x];
-      coveredY[steps] = y;
-
       // Update stage
+      const y = starsX[x];
       const dy = dualY[y];
       const ds = slackV[x];
       const row = matrix[y];
@@ -211,11 +205,11 @@ export function step4(
       }
     }
 
+    // Update dual variables
+    step6(rootY, steps, dualX, dualY, slack, slackV, starsX);
+
     // Turn primes into stars
     step5(x, slackX, starsX, starsY);
-
-    // Update dual variables
-    step6(steps, coveredY, dualX, dualY, slack, slackV);
 
     // Update unmatched count
     --unmatched;
@@ -264,22 +258,23 @@ export function step5(
  * @param slackV - The slack values for each column. Modified in place.
  */
 export function step6(
+  y: number,
   N: number,
-  coveredY: ArrayLike<number>,
   dualX: number[],
   dualY: number[],
   slack: MutableArrayLike<number>,
-  slackV: MutableArrayLike<number>
+  slackV: MutableArrayLike<number>,
+  starsX: number[]
 ): void {
   const min = slackV[slack[N - 1]];
 
   let prev = 0;
   for (let i = 0; i < N; ++i) {
-    let j = coveredY[i];
-    dualY[j] = dualY[j] + (min - prev || 0) || 0;
-    j = slack[i];
-    prev = slackV[j];
-    dualX[j] = dualX[j] - (min - prev || 0) || 0;
+    const x = slack[i];
+    dualY[y] = dualY[y] + (min - prev || 0) || 0;
+    prev = slackV[x];
+    dualX[x] = dualX[x] - (min - prev || 0) || 0;
+    y = starsX[x];
   }
 }
 
