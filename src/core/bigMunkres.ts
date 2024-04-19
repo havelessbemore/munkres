@@ -176,17 +176,16 @@ export function step4(
     }
 
     // Initialize stage
-    let zeros = initSlack(rootY, matrix, dualX, dualY, slack, slackV, slackX);
+    initSlack(rootY, matrix, dualX, dualY, slack, slackV, slackX);
+    let zeros = partition(0n, 0, slack, slackV);
     coveredY[0] = rootY;
     let step = 0;
 
     // Run stage
     do {
-      // If no zero
+      // If no zero, zero the min
       if (step >= zeros) {
-        // Zero the min
-        const min = findUncoveredMin(zeros, slack, slackV);
-        zeros = partition(min, zeros, slack, slackV);
+        zeros = findUncoveredMin(zeros, slack, slackV);
       }
 
       // Prime the zero / cover the prime's column
@@ -263,23 +262,15 @@ export function initSlack(
   slack: IndexArray,
   slackV: bigint[],
   slackX: IndexArray
-): number {
+): void {
   const dy = dualY[y];
   const row = matrix[y];
   const X = slack.length;
-
-  let zeros = 0;
   for (let x = 0; x < X; ++x) {
     slack[x] = x;
-    slackX[x] = y;
     slackV[x] = row[x] - dualX[x] - dy;
-    if (slackV[x] === 0n) {
-      slack[x] = slack[zeros];
-      slack[zeros++] = x;
-    }
+    slackX[x] = y;
   }
-
-  return zeros;
 }
 
 export function updateSlack(

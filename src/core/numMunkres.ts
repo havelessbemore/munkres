@@ -173,17 +173,16 @@ export function step4(
     }
 
     // Initialize stage
-    let zeros = initSlack(rootY, matrix, dualX, dualY, slack, slackV, slackX);
+    initSlack(rootY, matrix, dualX, dualY, slack, slackV, slackX);
+    let zeros = partition(0, 0, slack, slackV);
     coveredY[0] = rootY;
     let step = 0;
 
     // Run stage
     do {
-      // If no zero
+      // If no zero, zero the min
       if (step >= zeros) {
-        // Find and zero the min
-        const min = findUncoveredMin(zeros, slack, slackV);
-        zeros = partition(min, zeros, slack, slackV);
+        zeros = findUncoveredMin(zeros, slack, slackV);
       }
 
       // Prime the zero / cover the prime's column
@@ -302,19 +301,27 @@ export function partition<T>(
 
 export function findUncoveredMin<T extends number | bigint>(
   min: number,
-  slack: ArrayLike<number>,
+  slack: IndexArray,
   slackV: ArrayLike<T>
-): T {
-  const X = slack.length;
+): number {
+  const max = slack.length;
 
-  let minV = slackV[slack[min]];
-  for (let i = min + 1; i < X; ++i) {
-    if (slackV[slack[i]] < minV) {
-      minV = slackV[slack[i]];
+  let mid = min + 1;
+  let minX = slack[min];
+  for (let i = mid; i < max; ++i) {
+    const x = slack[i];
+    if (slackV[x] > slackV[minX]) {
+      continue;
     }
+    if (slackV[x] < slackV[minX]) {
+      minX = x;
+      mid = min;
+    }
+    slack[i] = slack[mid];
+    slack[mid++] = x;
   }
 
-  return minV;
+  return mid;
 }
 
 export function initSlack(
@@ -325,23 +332,15 @@ export function initSlack(
   slack: IndexArray,
   slackV: number[],
   slackX: IndexArray
-): number {
+): void {
   const dy = dualY[y];
   const row = matrix[y];
   const X = slack.length;
-
-  let zeros = 0;
   for (let x = 0; x < X; ++x) {
     slack[x] = x;
+    slackV[x] = (row[x] - dualX[x] || 0) - dy || 0;
     slackX[x] = y;
-    slackV[x] = row[x] - (dualX[x] + dy || 0) || 0;
-    if (slackV[x] === 0) {
-      slack[x] = slack[zeros];
-      slack[zeros++] = x;
-    }
   }
-
-  return zeros;
 }
 
 /**
@@ -394,7 +393,7 @@ export function updateSlack(
 
   for (let i = midS; i < X; ++i) {
     const x = slack[i];
-    const value = (row[x] - (dualX[x] + dy || 0) || 0) + minV || 0;
+    const value = ((row[x] - dualX[x] || 0) - dy || 0) + minV || 0;
     if (value < slackV[x]) {
       if (value === minV) {
         slack[i] = slack[midS];
