@@ -78,17 +78,20 @@ export function step1(
     dualY[y] = getMin(matrix[y])!;
   }
 
-  // Reduce columns
+  // If matrix is wide, skip column reduction
   if (Y < X) {
     dualX.fill(0n);
     return;
   }
 
+  // Initialize column reduction
   let dy = dualY[0];
   let row = matrix[0];
   for (let x = 0; x < X; ++x) {
     dualX[x] = row[x] - dy;
   }
+
+  // Reduce columns
   for (let y = 1; y < Y; ++y) {
     dy = dualY[y];
     row = matrix[y];
