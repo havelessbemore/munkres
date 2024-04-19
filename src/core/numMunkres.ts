@@ -170,58 +170,55 @@ export function step4(
   const slackV = new Array<number>(X);
   const slackX = new Uint32Array(X);
 
+  // For each unmatched row
   for (let rootY = 0; unmatched > 0; ++rootY) {
     if (starsY[rootY] !== -1) {
       continue;
     }
 
     // Initialize stage
-    initSlack(rootY, matrix, dualX, dualY, slack, slackV, slackX);
-    let zeros = partition(0, 0, slack, slackV);
     coveredY[0] = rootY;
-    let step = 0;
+    let zeros = initStage(rootY, matrix, dualX, dualY, slack, slackV, slackX);
 
     // Run stage
-    do {
-      // If no zero, zero the min
-      if (step >= zeros) {
-        zeros = findUncoveredMin(zeros, slack, slackV);
-      }
-
-      // Prime the zero / cover the prime's column
-      const x = slack[step++];
-
-      // If no star in the column
-      if (starsX[x] === -1) {
-        // Turn primes into stars
-        step5(x, slackX, starsX, starsY);
-
-        // Update dual variables
-        step6(step, slackV[x], coveredY, dualX, dualY, slack, slackV);
-
-        // Terminate stage
-        --unmatched;
-        break;
-      }
-
+    let steps = 1;
+    let x: number;
+    for (x = slack[0]; starsX[x] !== -1; x = slack[steps++]) {
       // Cover the star's row
-      coveredY[step] = starsX[x];
+      const y = starsX[x];
+      coveredY[steps] = y;
 
-      // Update slack
-      zeros = updateSlack(
-        starsX[x],
-        zeros,
-        slackV[x],
-        matrix,
-        dualX,
-        dualY,
-        slack,
-        slackV,
-        slackX
-      );
+      // Update stage
+      const dy = dualY[y];
+      const ds = slackV[x];
+      const row = matrix[y];
+      for (let i = zeros; i < X; ++i) {
+        x = slack[i];
+        const value = ((row[x] - dualX[x] || 0) - dy || 0) + ds || 0;
+        if (value < slackV[x]) {
+          if (value === ds) {
+            slack[i] = slack[zeros];
+            slack[zeros++] = x;
+          }
+          slackV[x] = value;
+          slackX[x] = y;
+        }
+      }
 
-      // eslint-disable-next-line no-constant-condition
-    } while (true);
+      // If no zeros, zero the min
+      if (steps >= zeros) {
+        zeros = zeroUncoveredMin(zeros, slack, slackV);
+      }
+    }
+
+    // Turn primes into stars
+    step5(x, slackX, starsX, starsY);
+
+    // Update dual variables
+    step6(steps, coveredY, dualX, dualY, slack, slackV);
+
+    // Update unmatched count
+    --unmatched;
   }
 }
 
@@ -268,13 +265,14 @@ export function step5(
  */
 export function step6(
   N: number,
-  min: number,
   coveredY: ArrayLike<number>,
   dualX: number[],
   dualY: number[],
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<number>
 ): void {
+  const min = slackV[slack[N - 1]];
+
   let prev = 0;
   for (let i = 0; i < N; ++i) {
     let j = coveredY[i];
@@ -285,49 +283,7 @@ export function step6(
   }
 }
 
-export function partition<T>(
-  pivot: T,
-  min: number,
-  slack: MutableArrayLike<number>,
-  slackV: ArrayLike<T>
-): number {
-  const max = slack.length;
-  for (let i = min; i < max; ++i) {
-    const x = slack[i];
-    if (slackV[x] === pivot) {
-      slack[i] = slack[min];
-      slack[min++] = x;
-    }
-  }
-  return min;
-}
-
-export function findUncoveredMin<T extends number | bigint>(
-  min: number,
-  slack: MutableArrayLike<number>,
-  slackV: ArrayLike<T>
-): number {
-  const max = slack.length;
-
-  let mid = min + 1;
-  let minX = slack[min];
-  for (let i = mid; i < max; ++i) {
-    const x = slack[i];
-    if (slackV[x] > slackV[minX]) {
-      continue;
-    }
-    if (slackV[x] < slackV[minX]) {
-      minX = x;
-      mid = min;
-    }
-    slack[i] = slack[mid];
-    slack[mid++] = x;
-  }
-
-  return mid;
-}
-
-export function initSlack(
+export function initStage(
   y: number,
   matrix: MatrixLike<number>,
   dualX: number[],
@@ -335,15 +291,23 @@ export function initSlack(
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<number>,
   slackX: MutableArrayLike<number>
-): void {
+): number {
   const dy = dualY[y];
   const row = matrix[y];
   const X = slack.length;
+
+  let zeros = 0;
   for (let x = 0; x < X; ++x) {
     slack[x] = x;
-    slackV[x] = (row[x] - dualX[x] || 0) - dy || 0;
     slackX[x] = y;
+    slackV[x] = (row[x] - dualX[x] || 0) - dy || 0;
+    if (slackV[x] === 0) {
+      slack[x] = slack[zeros];
+      slack[zeros++] = x;
+    }
   }
+
+  return zeros || zeroUncoveredMin(zeros, slack, slackV);
 }
 
 /**
@@ -366,7 +330,6 @@ export function toString<T>(
   starsY: ArrayLike<number>,
   primeX: ArrayLike<number>
 ): string {
-  // Mark values as stars or primes
   return _toString(matrix, (v, y, x): string => {
     let str = `${v}`;
     if (x == starsY[y]) {
@@ -379,33 +342,27 @@ export function toString<T>(
   });
 }
 
-export function updateSlack(
-  y: number,
-  midS: number,
-  minV: number,
-  matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
+export function zeroUncoveredMin<T extends number | bigint>(
+  min: number,
   slack: MutableArrayLike<number>,
-  slackV: MutableArrayLike<number>,
-  slackX: MutableArrayLike<number>
+  slackV: ArrayLike<T>
 ): number {
-  const dy = dualY[y];
-  const row = matrix[y];
-  const X = slack.length;
+  const max = slack.length;
 
-  for (let i = midS; i < X; ++i) {
+  let mid = min + 1;
+  let minX = slack[min];
+  for (let i = mid; i < max; ++i) {
     const x = slack[i];
-    const value = ((row[x] - dualX[x] || 0) - dy || 0) + minV || 0;
-    if (value < slackV[x]) {
-      if (value === minV) {
-        slack[i] = slack[midS];
-        slack[midS++] = x;
-      }
-      slackV[x] = value;
-      slackX[x] = y;
+    if (slackV[x] > slackV[minX]) {
+      continue;
     }
+    if (slackV[x] < slackV[minX]) {
+      minX = x;
+      mid = min;
+    }
+    slack[i] = slack[mid];
+    slack[mid++] = x;
   }
 
-  return midS;
+  return mid;
 }
