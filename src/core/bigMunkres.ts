@@ -1,7 +1,7 @@
-import { IndexArray } from "../types/indexArray";
 import { Matrix } from "../types/matrix";
 import { MatrixLike } from "../types/matrixLike";
 import { MunkresResult } from "../types/munkresResult";
+import { MutableArrayLike } from "../types/mutableArrayLike";
 
 import { getMin } from "../utils/arrayLike";
 import { from, transpose } from "../utils/matrix";
@@ -114,8 +114,8 @@ export function step1(
  */
 export function steps2To3(
   matrix: MatrixLike<bigint>,
-  dualX: ArrayLike<bigint>,
-  dualY: ArrayLike<bigint>,
+  dualX: bigint[],
+  dualY: bigint[],
   starsX: number[],
   starsY: number[]
 ): number {
@@ -257,11 +257,11 @@ export function step6(
 export function initSlack(
   y: number,
   matrix: MatrixLike<bigint>,
-  dualX: ArrayLike<bigint>,
-  dualY: ArrayLike<bigint>,
-  slack: IndexArray,
-  slackV: bigint[],
-  slackX: IndexArray
+  dualX: bigint[],
+  dualY: bigint[],
+  slack: MutableArrayLike<number>,
+  slackV: MutableArrayLike<bigint>,
+  slackX: MutableArrayLike<number>
 ): void {
   const dy = dualY[y];
   const row = matrix[y];
@@ -278,11 +278,11 @@ export function updateSlack(
   midS: number,
   minV: bigint,
   matrix: MatrixLike<bigint>,
-  dualX: ArrayLike<bigint>,
-  dualY: ArrayLike<bigint>,
-  slack: IndexArray,
-  slackV: bigint[],
-  slackX: IndexArray
+  dualX: bigint[],
+  dualY: bigint[],
+  slack: MutableArrayLike<number>,
+  slackV: MutableArrayLike<bigint>,
+  slackX: MutableArrayLike<number>
 ): number {
   const dy = dualY[y] - minV;
   const row = matrix[y];

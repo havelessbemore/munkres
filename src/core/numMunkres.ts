@@ -1,7 +1,7 @@
-import { IndexArray } from "../types/indexArray";
 import { Matrix } from "../types/matrix";
 import { MatrixLike } from "../types/matrixLike";
 import { MunkresResult } from "../types/munkresResult";
+import { MutableArrayLike } from "../types/mutableArrayLike";
 
 import { getMin } from "../utils/arrayLike";
 import { toString as _toString, from, transpose } from "../utils/matrix";
@@ -111,8 +111,8 @@ export function step1(
  */
 export function steps2To3(
   matrix: MatrixLike<number>,
-  dualX: ArrayLike<number>,
-  dualY: ArrayLike<number>,
+  dualX: number[],
+  dualY: number[],
   starsX: number[],
   starsY: number[]
 ): number {
@@ -269,8 +269,8 @@ export function step6(
   coveredY: ArrayLike<number>,
   dualX: number[],
   dualY: number[],
-  slack: IndexArray,
-  slackV: number[]
+  slack: MutableArrayLike<number>,
+  slackV: MutableArrayLike<number>
 ): void {
   let prev = 0;
   for (let i = 0; i < N; ++i) {
@@ -285,7 +285,7 @@ export function step6(
 export function partition<T>(
   pivot: T,
   min: number,
-  slack: IndexArray,
+  slack: MutableArrayLike<number>,
   slackV: ArrayLike<T>
 ): number {
   const max = slack.length;
@@ -301,7 +301,7 @@ export function partition<T>(
 
 export function findUncoveredMin<T extends number | bigint>(
   min: number,
-  slack: IndexArray,
+  slack: MutableArrayLike<number>,
   slackV: ArrayLike<T>
 ): number {
   const max = slack.length;
@@ -327,11 +327,11 @@ export function findUncoveredMin<T extends number | bigint>(
 export function initSlack(
   y: number,
   matrix: MatrixLike<number>,
-  dualX: ArrayLike<number>,
-  dualY: ArrayLike<number>,
-  slack: IndexArray,
-  slackV: number[],
-  slackX: IndexArray
+  dualX: number[],
+  dualY: number[],
+  slack: MutableArrayLike<number>,
+  slackV: MutableArrayLike<number>,
+  slackX: MutableArrayLike<number>
 ): void {
   const dy = dualY[y];
   const row = matrix[y];
@@ -381,11 +381,11 @@ export function updateSlack(
   midS: number,
   minV: number,
   matrix: MatrixLike<number>,
-  dualX: ArrayLike<number>,
-  dualY: ArrayLike<number>,
-  slack: IndexArray,
-  slackV: number[],
-  slackX: IndexArray
+  dualX: number[],
+  dualY: number[],
+  slack: MutableArrayLike<number>,
+  slackV: MutableArrayLike<number>,
+  slackX: MutableArrayLike<number>
 ): number {
   const dy = dualY[y];
   const row = matrix[y];
