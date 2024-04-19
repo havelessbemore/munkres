@@ -193,7 +193,9 @@ Specs:
 
 ### Results
 
-These are the latest benchmark results, run locally.
+[Run benchmarks in your browser](https://jsbm.dev/R7plQcHOIBp6H).
+
+Below are the latest results from running locally.
 
 Specs:
 

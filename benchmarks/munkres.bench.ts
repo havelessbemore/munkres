@@ -6,20 +6,19 @@ import { Suite } from "./utils/suite";
 import { munkres } from "../src/munkres";
 import { TerminalReporter } from "./utils/terminalReporter";
 
-const minV = 1;
-const maxV = Number.MAX_SAFE_INTEGER;
-const span = maxV - minV;
+const MIN_VAL = 1;
+const MAX_VAL = Number.MAX_SAFE_INTEGER;
 
-function genNum(N: number): Matrix<number>;
-function genNum(Y: number, X: number): Matrix<number>;
-function genNum(Y: number, X = Y): Matrix<number> {
-  return gen(Y, X, () => minV + Math.trunc(span * Math.random()));
+export function genBig(): bigint {
+  return BigInt(genInt());
 }
 
-function genBig(N: number): Matrix<bigint>;
-function genBig(Y: number, X: number): Matrix<bigint>;
-function genBig(Y: number, X = Y): Matrix<bigint> {
-  return gen(Y, X, () => BigInt(minV + Math.trunc(span * Math.random())));
+export function genInt(): number {
+  return randomInt(MIN_VAL, MAX_VAL);
+}
+
+export function randomInt(min: number, max: number): number {
+  return min + Math.trunc((max - min) * Math.random());
 }
 
 let bench: Bench;
@@ -34,7 +33,7 @@ for (let i = 1; i <= 12; ++i) {
       mat = [];
     },
     beforeEach: () => {
-      mat = genNum(N);
+      mat = gen(N, N, genInt);
     },
   });
 }
@@ -48,7 +47,7 @@ for (let i = 1; i <= 11; ++i) {
       mat = [];
     },
     beforeEach: () => {
-      mat = genBig(N);
+      mat = gen(N, N, genBig);
     },
   });
 }
