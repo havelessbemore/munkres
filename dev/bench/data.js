@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713534423543,
+  "lastUpdate": 1713537573283,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -1251,6 +1251,44 @@ window.BENCHMARK_DATA = {
             "value": 1437.023643700002,
             "unit": "ms",
             "range": "±3.20%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "c9c7e2f3be790ee2e5184605b2331877c77ed129",
+          "message": "Improve memory use by up to ~12%",
+          "timestamp": "2024-04-19T10:34:25-04:00",
+          "tree_id": "6ed95a7038d46dcd8ed9f7102a53bddff18ccf0c",
+          "url": "https://github.com/havelessbemore/munkres/commit/c9c7e2f3be790ee2e5184605b2331877c77ed129"
+        },
+        "date": 1713537572684,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2251.7591420599997,
+            "unit": "ms",
+            "range": "±3.19%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1437.5237546,
+            "unit": "ms",
+            "range": "±3.58%",
             "extra": "50 samples"
           }
         ]
