@@ -169,7 +169,7 @@ export function step4(
   const X = dualX.length;
   const slack = new Uint32Array(X);
   const slackV = new Array<bigint>(X);
-  const slackX = new Uint32Array(X);
+  const slackY = new Uint32Array(X);
 
   for (let rootY = 0; unmatched > 0; ++rootY) {
     if (starsY[rootY] !== -1) {
@@ -177,7 +177,7 @@ export function step4(
     }
 
     // Initialize stage
-    let zeros = initStage(rootY, matrix, dualX, dualY, slack, slackV, slackX);
+    let zeros = initStage(rootY, matrix, dualX, dualY, slack, slackV, slackY);
 
     // Run stage
     let steps = 1;
@@ -197,7 +197,7 @@ export function step4(
             slack[zeros++] = x;
           }
           slackV[x] = value;
-          slackX[x] = y;
+          slackY[x] = y;
         }
       }
 
@@ -211,7 +211,7 @@ export function step4(
     step6(rootY, steps, dualX, dualY, slack, slackV, starsX);
 
     // Turn primes into stars
-    step5(x, slackX, starsX, starsY);
+    step5(x, slackY, starsX, starsY);
 
     // Update unmatched count
     --unmatched;
@@ -257,7 +257,7 @@ export function initStage(
   dualY: bigint[],
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<bigint>,
-  slackX: MutableArrayLike<number>
+  slackY: MutableArrayLike<number>
 ): number {
   const dy = dualY[y];
   const row = matrix[y];
@@ -266,7 +266,7 @@ export function initStage(
   let zeros = 0;
   for (let x = 0; x < X; ++x) {
     slack[x] = x;
-    slackX[x] = y;
+    slackY[x] = y;
     slackV[x] = row[x] - dualX[x] - dy;
     if (slackV[x] === 0n) {
       slack[x] = slack[zeros];
