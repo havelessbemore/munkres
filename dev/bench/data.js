@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713631225630,
+  "lastUpdate": 1713650743379,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -1479,6 +1479,44 @@ window.BENCHMARK_DATA = {
             "value": 1402.19099232,
             "unit": "ms",
             "range": "±3.07%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "d5abc5753e7c6585e276b4a692701ba560414231",
+          "message": "Update ESLint and Prettier",
+          "timestamp": "2024-04-20T18:01:02-04:00",
+          "tree_id": "da871ed2855e098527afc9c952bbdf9b9758972e",
+          "url": "https://github.com/havelessbemore/munkres/commit/d5abc5753e7c6585e276b4a692701ba560414231"
+        },
+        "date": 1713650742820,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2086.7246315600005,
+            "unit": "ms",
+            "range": "±3.10%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1406.5457322599996,
+            "unit": "ms",
+            "range": "±3.08%",
             "extra": "50 samples"
           }
         ]
