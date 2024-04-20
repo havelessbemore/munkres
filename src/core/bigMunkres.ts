@@ -12,6 +12,11 @@ export function exec(matrix: MatrixLike<bigint>): Matching<bigint> {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
 
+  // Check if empty matrix
+  if (Y <= 0 && X <= 0) {
+    return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
+  }
+
   // Step 1: Reduce
   const dualX = new Array<bigint>(X);
   const dualY = new Array<bigint>(Y);
