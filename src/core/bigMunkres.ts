@@ -1,13 +1,13 @@
 import { Matrix } from "../types/matrix";
 import { MatrixLike } from "../types/matrixLike";
-import { MunkresResult } from "../types/munkresResult";
+import { Matching } from "../types/matching";
 import { MutableArrayLike } from "../types/mutableArrayLike";
 
 import { getMin } from "../utils/arrayLike";
 import { from, transpose } from "../utils/matrix";
 import { zeroUncoveredMin, step5 } from "./numMunkres";
 
-export function safeExec(matrix: MatrixLike<bigint>): MunkresResult<bigint> {
+export function safeExec(matrix: MatrixLike<bigint>): Matching<bigint> {
   // Get dimensions
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
@@ -22,13 +22,13 @@ export function safeExec(matrix: MatrixLike<bigint>): MunkresResult<bigint> {
   return exec(matrix);
 }
 
-export function exec(matrix: MatrixLike<bigint>): MunkresResult<bigint> {
+export function exec(matrix: MatrixLike<bigint>): Matching<bigint> {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
 
   // If empty matrix
   if (Y <= 0 || X <= 0) {
-    return { dualX: [], dualY: [], starsX: [], starsY: [] };
+    return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
   }
 
   // If invalid matrix
@@ -50,7 +50,7 @@ export function exec(matrix: MatrixLike<bigint>): MunkresResult<bigint> {
   step4(Y - stars, matrix, dualX, dualY, starsX, starsY);
 
   // Return matching
-  return { dualX, dualY, starsX, starsY };
+  return { dualX, dualY, matrix, starsX, starsY };
 }
 
 /**
