@@ -247,8 +247,8 @@ export function invert<T extends number | bigint>(
  * // ]
  */
 export function map<T, R>(
-  matrix: Matrix<T>,
-  callbackFn: (value: T, y: number, x: number, matrix: Matrix<T>) => R
+  matrix: MatrixLike<T>,
+  callbackFn: (value: T, y: number, x: number, mat: typeof matrix) => R
 ): Matrix<R> {
   const Y = matrix.length;
   const out: Matrix<R> = new Array(Y);
@@ -452,22 +452,22 @@ export function rotNeg90<T>(matrix: Matrix<T>): void {
 /**
  * Generates a string representation of a matrix.
  *
- * @param mat - The matrix.
+ * @param matrix - The matrix.
  * @param callbackFn - (Optional) A callback function to convert each element
  * to a string. Defaults to using each elements `toString` method.
  *
  * @returns A string representation of the matrix.
  */
 export function toString<T>(
-  mat: Matrix<T>,
+  matrix: MatrixLike<T>,
   callbackFn: (
     value: T,
     row: number,
     col: number,
-    matrix: Matrix<T>
+    mat: typeof matrix
   ) => string = v => `${v}`
 ): string {
-  const strs: Matrix<string> = map(mat, callbackFn);
+  const strs: Matrix<string> = map(matrix, callbackFn);
   const Y = strs.length;
   const X = strs[0]?.length ?? 0;
 
