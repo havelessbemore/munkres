@@ -29,10 +29,8 @@ for (let i = 1; i <= 12; ++i) {
   const N = 1 << i;
   let mat: Matrix<number>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
-    afterEach: () => {
-      mat = [];
-    },
     beforeEach: () => {
+      mat = [];
       mat = gen(N, N, genInt);
     },
   });
@@ -43,10 +41,8 @@ for (let i = 1; i <= 11; ++i) {
   const N = 1 << i;
   let mat: Matrix<bigint>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
-    afterEach: () => {
-      mat = [];
-    },
     beforeEach: () => {
+      mat = [];
       mat = gen(N, N, genBig);
     },
   });

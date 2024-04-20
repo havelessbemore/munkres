@@ -12,11 +12,12 @@ A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm
 
 ## Features
 
-1. Fast ([benchmarks](#results)).
+1. Fast: Runs in $O(M^2N)$ ([benchmarks](#results)).
+1. Efficient: Uses $O(M + N)$ memory.
 1. Supports `number` and `bigint` matrices.
 1. Supports square and rectangular matrices.
 1. Supports `-Infinity` and `Infinity` values.
-1. Accepts any [`MatrixLike`](src/types/matrixLike.d.ts) matrix (e.g. made of arrays, typed arrays, objects, etc).
+1. Accepts any [`MatrixLike`](src/types/matrixLike.d.ts) matrix (e.g. arrays, typed arrays, objects, etc).
 1. [Helper methods](#helpers) for creating and modifying matrices.
 
 ## Getting Started
@@ -87,14 +88,14 @@ console.log(assignments);
 
 ### Types
 
-- [`Matrix<T>`](src/types/matrix.d.ts): A generic two-dimensional matrix type (i.e. `T[][]`).
+- [`Matrix<T>`](src/types/matrix.d.ts): A generic 2D matrix (i.e. `T[][]`).
 
-- [`MatrixLike<T>`](src/types/matrixLike.d.ts): A generic read-only two-dimensional matrix type (i.e. `ArrayLike<ArrayLike<T>>`).
+- [`MatrixLike<T>`](src/types/matrixLike.d.ts): A generic read-only 2D matrix.
 
-  - These matrices can be made from any `ArrayLike` objects (i.e. any indexable object with a numeric length property). This
-    allows for more flexible matrices, such as those made with typed arrays or custom objects.
+  - Can be made from any `ArrayLike` objects (i.e. any indexable object with a numeric `length` property). This
+    allows for more flexibility, such as matrices made with typed arrays or objects.
 
-- [`Pair<A, B = A>`](src/types/pair.d.ts): A generic pair type (i.e. `[A, B]`).
+- [`Pair<A, B = A>`](src/types/pair.d.ts): A generic pair (i.e. `[A, B]`).
 
 ### Helpers
 
@@ -189,56 +190,57 @@ Specs:
 
 - Package version: latest
 - OS: [ubuntu-latest](https://github.com/actions/runner-images)
-- Runtime: NodeJS v20.x.x
+- Runtime: NodeJS v20
 - Benchmarking Tool: tinybench v2.6.0
 
 ### Results
 
-These are the latest benchmark results, run locally.
+[Run benchmarks in your browser](https://jsbm.dev/R7plQcHOIBp6H).
+
+Below are the latest results from running locally.
 
 Specs:
 
-- Package version: v2.0.0
-- OS: M2 Macbook Air, Mac OS v14.4.1
-- Runtime: NodeJS v20.12.1
+- Package version: v2.0.1
+- OS: M2 Macbook Air, Sonoma v14.4.1
+- Runtime: NodeJS v20.12.2
 - Benchmarking Tool: tinybench v2.6.0
 
 #### `number[][]`
 
-| Dimensions  | Min (ms)     | Max (ms)     | Avg (ms)     | Samples   |
-| ----------- | ------------ | ------------ | ------------ | --------- |
-| 2x2         | 0.00004      | 1.33775      | 0.00015      | 3,278,766 |
-| 4x4         | 0.00017      | 0.13233      | 0.00043      | 1,164,723 |
-| 8x8         | 0.00062      | 0.15721      | 0.0014       | 357,761   |
-| 16x16       | 0.00212      | 0.14429      | 0.00508      | 98,427    |
-| 32x32       | 0.00867      | 0.14792      | 0.02032      | 24,603    |
-| 64x64       | 0.04625      | 0.25133      | 0.08442      | 5,923     |
-| 128x128     | 0.21204      | 0.56425      | 0.37118      | 1,348     |
-| 256x256     | 1.24296      | 2.36254      | 1.7532       | 286       |
-| 512x512     | 6.75338      | 11.09775     | 8.61339      | 59        |
-| 1024x1024   | 34.86392     | 49.97971     | 41.90432     | 50        |
-| 2048x2048   | 171.89683    | 259.61888    | 222.12547    | 50        |
-| 4096x4096   | 932.68375    | 1,461.66762  | 1,201.93912  | 50        |
-| 8192x8192   | 5,280.11042  | 7,467.18662  | 6,364.06774  | 50        |
-| 16384x16384 | 29,352.95512 | 39,033.75583 | 35,109.07895 | 10        |
+| Dimensions | Min (ms)    | Max (ms)    | Avg (ms)    | Samples   |
+| ---------- | ----------- | ----------- | ----------- | --------- |
+| 2x2        | 0           | 0.92475     | 0.00014     | 3,611,437 |
+| 4x4        | 0.00013     | 0.38683     | 0.00041     | 1,227,622 |
+| 8x8        | 0.00062     | 0.2005      | 0.00134     | 372,763   |
+| 16x16      | 0.002       | 0.26346     | 0.00487     | 102,720   |
+| 32x32      | 0.009       | 0.06462     | 0.01874     | 26,678    |
+| 64x64      | 0.04483     | 0.28279     | 0.07837     | 6,381     |
+| 128x128    | 0.228       | 0.52058     | 0.34338     | 1,457     |
+| 256x256    | 1.07725     | 2.37567     | 1.59139     | 315       |
+| 512x512    | 5.86442     | 9.18546     | 7.71347     | 65        |
+| 1024x1024  | 31.82083    | 45.471      | 38.12961    | 50        |
+| 2048x2048  | 165.45792   | 245.93154   | 205.5154    | 50        |
+| 4096x4096  | 905.25592   | 1,384.78808 | 1,129.78629 | 50        |
+| 8192x8192  | 5,062.63533 | 7,561.39129 | 6,152.11964 | 50        |
 
 #### `bigint[][]`
 
 | Dimensions | Min (ms)     | Max (ms)     | Avg (ms)     | Samples   |
 | ---------- | ------------ | ------------ | ------------ | --------- |
-| 2x2        | 0.00004      | 3.38546      | 0.00019      | 2,607,053 |
-| 4x4        | 0.00029      | 0.19804      | 0.00059      | 849,558   |
-| 8x8        | 0.00117      | 0.16379      | 0.00249      | 200,470   |
-| 16x16      | 0.0045       | 0.18046      | 0.01038      | 48,184    |
-| 32x32      | 0.022        | 0.19354      | 0.04531      | 11,037    |
-| 64x64      | 0.11708      | 0.42021      | 0.20553      | 2,433     |
-| 128x128    | 0.65929      | 1.48925      | 0.95534      | 524       |
-| 256x256    | 3.04058      | 6.13196      | 4.64887      | 108       |
-| 512x512    | 17.61296     | 29.17404     | 24.33943     | 50        |
-| 1024x1024  | 106.67346    | 162.21587    | 131.54723    | 50        |
-| 2048x2048  | 546.41683    | 880.2815     | 701.56288    | 50        |
-| 4096x4096  | 3,246.61062  | 4,691.93688  | 4,048.15453  | 50        |
-| 8192x8192  | 18,582.48279 | 24,507.90367 | 22,092.35407 | 10        |
+| 2x2        | 0.00004      | 1.45567      | 0.00018      | 2,763,520 |
+| 4x4        | 0.00029      | 0.61792      | 0.00058      | 860,516   |
+| 8x8        | 0.00121      | 0.63829      | 0.00246      | 203,435   |
+| 16x16      | 0.0045       | 0.639        | 0.00994      | 50,320    |
+| 32x32      | 0.02021      | 0.66221      | 0.04299      | 11,633    |
+| 64x64      | 0.11575      | 1.00283      | 0.19514      | 2,563     |
+| 128x128    | 0.53988      | 1.92654      | 0.9169       | 546       |
+| 256x256    | 3.32492      | 6.38088      | 4.51322      | 112       |
+| 512x512    | 15.75375     | 46.94746     | 25.27091     | 50        |
+| 1024x1024  | 107.30771    | 171.37271    | 129.81464    | 50        |
+| 2048x2048  | 546.04767    | 850.22892    | 689.95893    | 50        |
+| 4096x4096  | 2,835.29229  | 4,583.96688  | 3,697.85205  | 50        |
+| 8192x8192  | 18,069.79829 | 24,171.88267 | 21,107.47192 | 10        |
 
 ---
 
