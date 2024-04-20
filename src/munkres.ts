@@ -1,10 +1,8 @@
 import { MatrixLike } from "./types/matrixLike";
 import { Pair } from "./types/pair";
 
-import { entries } from "./utils/arrayLike";
-import { flipH } from "./utils/matrix";
-
 import { exec } from "./core/munkres";
+import { toPairs } from "./utils/matching";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -22,17 +20,5 @@ export function munkres(costMatrix: MatrixLike<bigint>): Pair<number>[];
 export function munkres<T extends number | bigint>(
   costMatrix: MatrixLike<T>
 ): Pair<number>[] {
-  // Get optimal assignments
-  const { starsY } = exec(costMatrix as MatrixLike<number>);
-
-  // Create assignment pairs
-  const pairs = entries(starsY);
-
-  // Transpose if Y > X
-  if (costMatrix.length > (costMatrix[0]?.length ?? 0)) {
-    flipH(pairs);
-  }
-
-  // Return assignments
-  return pairs;
+  return toPairs(exec(costMatrix as MatrixLike<number>));
 }
