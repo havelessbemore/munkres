@@ -1,29 +1,16 @@
-import { Matrix } from "../types/matrix";
 import { MatrixLike } from "../types/matrixLike";
 import { Matching } from "../types/matching";
 import { MutableArrayLike } from "../types/mutableArrayLike";
 
 import { getMin } from "../utils/arrayLike";
-import { from, transpose } from "../utils/matrix";
-import { zeroUncoveredMin, step5 } from "./numMunkres";
+
+import { step4B as step4b } from "./bigMunkresB";
+import { zeroUncoveredMin } from "./munkres";
 
 export function exec(matrix: MatrixLike<bigint>): Matching<bigint> {
   // Get dimensions
-  let Y = matrix.length;
-  let X = matrix[0]?.length ?? 0;
-
-  // If empty matrix
-  if (Y <= 0 || X <= 0) {
-    return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
-  }
-
-  // Transpose if Y > X
-  if (Y > X) {
-    X = matrix.length;
-    Y = matrix[0].length;
-    matrix = from(matrix);
-    transpose(matrix as Matrix<bigint>);
-  }
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
 
   // Step 1: Reduce
   const dualX = new Array<bigint>(X);
@@ -36,7 +23,9 @@ export function exec(matrix: MatrixLike<bigint>): Matching<bigint> {
   const stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
 
   // Step 4: Find complete matching
-  step4(Y - stars, matrix, dualX, dualY, starsX, starsY);
+  Y <= X
+    ? step4(Y - stars, matrix, dualX, dualY, starsX, starsY)
+    : step4b(X - stars, matrix, dualX, dualY, starsX, starsY);
 
   // Return matching
   return { dualX, dualY, matrix, starsX, starsY };
@@ -63,8 +52,12 @@ export function step1(
   const Y = dualY.length;
 
   // Reduce rows
-  for (let y = 0; y < Y; ++y) {
-    dualY[y] = getMin(matrix[y])!;
+  if (Y > X) {
+    dualY.fill(0n);
+  } else {
+    for (let y = 0; y < Y; ++y) {
+      dualY[y] = getMin(matrix[y])!;
+    }
   }
 
   // If matrix is wide, skip column reduction
@@ -113,9 +106,10 @@ export function steps2To3(
 ): number {
   const X = dualX.length;
   const Y = dualY.length;
+  const S = Y <= X ? Y : X;
 
   let stars = 0;
-  for (let y = 0; y < Y; ++y) {
+  for (let y = 0; y < Y && stars < S; ++y) {
     const dy = dualY[y];
     const row = matrix[y];
     for (let x = 0; x < X; ++x) {
@@ -205,6 +199,36 @@ export function step4(
     // Update unmatched count
     --unmatched;
   }
+}
+
+/**
+ * Augments the current matching.
+ *
+ * This step effectively increases the number of matches (stars)
+ * by 1, bringing the algorithm closer to an optimal assignment.
+ *
+ * Augmentation is performed by flipping matched and unmatched edges along
+ * an augmenting path, starting from an unmatched node / edge and
+ * continuing until no matched edge can be found.
+ *
+ * @param x - The starting node's column.
+ * @param primeX - An array mapping primed columns to rows.
+ * @param starsX - An array mapping star columns to row. Modified in place.
+ * @param starsY - An array mapping star rows to columns. Modified in place.
+ */
+export function step5(
+  x: number,
+  primeX: ArrayLike<number>,
+  starsX: number[],
+  starsY: number[]
+): void {
+  do {
+    const y = primeX[x];
+    const sx = starsY[y];
+    starsX[x] = y;
+    starsY[y] = x;
+    x = sx;
+  } while (x !== -1);
 }
 
 /**
