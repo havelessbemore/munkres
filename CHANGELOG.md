@@ -1,12 +1,12 @@
 # Change Log
 
-## [2.0.1](https://github.com/havelessbemore/munkres/compare/v2.0.0...v2.0.1) (TBD)
+## [2.0.1](https://github.com/havelessbemore/munkres/compare/v2.0.0...v2.0.1) (2024-04-20)
 
 ### Updates
 
 - Cap memory complexity to $O(M + N)$
 
-  - Tall MxN matrices (M > N) no longer need to be copied and rotatedx.
+  - Tall MxN matrices (M > N) no longer need to be copied and rotated.
 
 - Reduce memory usage by up to ~12%
 
