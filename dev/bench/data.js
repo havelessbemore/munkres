@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713650743379,
+  "lastUpdate": 1713651593392,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -1517,6 +1517,44 @@ window.BENCHMARK_DATA = {
             "value": 1406.5457322599996,
             "unit": "ms",
             "range": "±3.08%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "b373c4f4e7dcb5058823b9f072390678cca236ac",
+          "message": "Remove package eslint-config-standard-with-typescript",
+          "timestamp": "2024-04-20T18:15:02-04:00",
+          "tree_id": "f75140c942861481e04accd968e72dc7a73a0b0e",
+          "url": "https://github.com/havelessbemore/munkres/commit/b373c4f4e7dcb5058823b9f072390678cca236ac"
+        },
+        "date": 1713651592472,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2045.3658243400005,
+            "unit": "ms",
+            "range": "±2.85%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1418.397046619999,
+            "unit": "ms",
+            "range": "±3.15%",
             "extra": "50 samples"
           }
         ]
