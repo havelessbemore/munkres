@@ -130,7 +130,7 @@ export function steps2To3(
     const dy = dualY[y];
     const row = matrix[y];
     for (let x = 0; x < X; ++x) {
-      if (starsX[x] === -1 && row[x] === dualX[x] + dy) {
+      if (starsX[x] === -1 && dy === row[x] - dualX[x]) {
         starsX[x] = y;
         starsY[y] = x;
         ++stars;

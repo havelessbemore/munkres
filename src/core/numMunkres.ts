@@ -188,7 +188,7 @@ export function step4(
       const row = matrix[y];
       for (let i = zeros; i < X; ++i) {
         x = slack[i];
-        const value = ((row[x] - dualX[x] || 0) - dy || 0) + ds || 0;
+        const value = (row[x] - (dualX[x] + dy || 0) || 0) + ds || 0;
         if (value < slackV[x]) {
           if (value === ds) {
             slack[i] = slack[zeros];
@@ -295,7 +295,7 @@ export function initStage(
   for (let x = 0; x < X; ++x) {
     slack[x] = x;
     slackY[x] = y;
-    slackV[x] = (row[x] - dualX[x] || 0) - dy || 0;
+    slackV[x] = row[x] - (dualX[x] + dy || 0) || 0;
     if (slackV[x] === 0) {
       slack[x] = slack[zeros];
       slack[zeros++] = x;
