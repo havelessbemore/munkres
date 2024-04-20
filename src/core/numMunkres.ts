@@ -221,14 +221,14 @@ export function step6(
   slackV: MutableArrayLike<number>,
   starsX: number[]
 ): void {
-  const min = slackV[slack[N - 1]];
+  const sum = slackV[slack[N - 1]];
 
-  let prev = 0;
+  let min = sum;
   for (let i = 0; i < N; ++i) {
     const x = slack[i];
-    dualY[y] = dualY[y] + (min - prev || 0) || 0;
-    prev = slackV[x];
-    dualX[x] = dualX[x] - (min - prev || 0) || 0;
+    dualY[y] = dualY[y] + min || 0;
+    min = sum - slackV[x] || 0;
+    dualX[x] = dualX[x] - min || 0;
     y = starsX[x];
   }
 }

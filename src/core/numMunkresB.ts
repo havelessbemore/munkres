@@ -76,14 +76,14 @@ export function step6B(
   slackV: ArrayLike<number>,
   starsY: number[]
 ): void {
-  const min = slackV[slack[N - 1]];
+  const sum = slackV[slack[N - 1]];
 
-  let prev = 0;
+  let min = sum;
   for (let i = 0; i < N; ++i) {
     const y = slack[i];
-    dualX[x] = dualX[x] + (min - prev || 0) || 0;
-    prev = slackV[y];
-    dualY[y] = dualY[y] - (min - prev || 0) || 0;
+    dualX[x] = dualX[x] + min || 0;
+    min = sum - slackV[y] || 0;
+    dualY[y] = dualY[y] - min || 0;
     x = starsY[y];
   }
 }
