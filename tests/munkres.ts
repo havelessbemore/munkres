@@ -28,7 +28,7 @@ export function oneOf<T>(actual: T, expecteds: Iterable<T>): void {
 
 export function checkOutputMeta(
   matrix: Matrix<unknown>,
-  pairs: [number, number][]
+  pairs: [number, number][],
 ): void {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
@@ -86,7 +86,7 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
 
     test("handles a 1x1 cost matrix", () => {
       const costs: Matrix<number> = [[5]];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(res).toEqual([[0, 0]]);
     });
@@ -96,13 +96,13 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
         [1, 2],
         [2, 4],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
           [0, 1],
           [1, 0],
-        ])
+        ]),
       );
     });
 
@@ -112,14 +112,14 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
         [2, 4, 6],
         [3, 6, 9],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
           [0, 2],
           [1, 1],
           [2, 0],
-        ])
+        ]),
       );
     });
 
@@ -130,7 +130,7 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
         [8, 6, 5, 9],
         [3, 4, 5, 11],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
@@ -138,7 +138,7 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
           [1, 3],
           [2, 2],
           [3, 0],
-        ])
+        ]),
       );
     });
 
@@ -150,7 +150,7 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
         [61, 95, 21, 14, 64],
         [89, 90, 4, 5, 79],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
@@ -159,7 +159,7 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
           [2, 1],
           [3, 3],
           [4, 2],
-        ])
+        ]),
       );
     });
 
@@ -169,14 +169,14 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
         [5, 2, 3],
         [9, 4, 8],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
           [0, 0],
           [1, 2],
           [2, 1],
-        ])
+        ]),
       );
     });
 
@@ -186,14 +186,14 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
         [9, 4, 17],
         [11, 26, 1],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
           [0, 0],
           [1, 1],
           [2, 2],
-        ])
+        ]),
       );
     });
 
@@ -203,14 +203,14 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
         [9, 4, 17],
         [11, 1, 10],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
           [0, 0],
           [1, 1],
           [2, 2],
-        ])
+        ]),
       );
     });
 
@@ -220,14 +220,14 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
         [25, 30, 45],
         [55, 30, 25],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
           [0, 2],
           [1, 0],
           [2, 1],
-        ])
+        ]),
       );
     });
 
@@ -237,14 +237,14 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
         [9, 18, 5],
         [6, 14, 3],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
           [0, 1],
           [1, 2],
           [2, 0],
-        ])
+        ]),
       );
     });
 
@@ -269,7 +269,7 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
           [3, 0],
         ]),
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       oneOf(new Map(res), sols);
     });
@@ -281,7 +281,7 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
         [15, 9, 12, 0],
         [27, 5, 13, 0],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
@@ -289,7 +289,7 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
           [1, 0],
           [2, 2],
           [3, 1],
-        ])
+        ]),
       );
     });
 
@@ -299,14 +299,14 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
         [400, 450, 600],
         [300, 225, 300],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
           [0, 1],
           [1, 0],
           [2, 2],
-        ])
+        ]),
       );
     });
 
@@ -317,7 +317,7 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
         [0, 2, 4, 6],
         [0, 3, 6, 9],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
@@ -325,7 +325,7 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
           [1, 2],
           [2, 1],
           [3, 0],
-        ])
+        ]),
       );
     });
 
@@ -338,7 +338,7 @@ export function testSquare(munkres: MunkresFn, isBigInt = false): void {
           const span = VAL_MAX - VAL_MIN;
           return VAL_MIN + Math.trunc(span * Math.random());
         });
-        const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+        const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
         checkOutputMeta(input, munkres(input));
       }
     });
@@ -349,7 +349,7 @@ export function testWide(munkres: MunkresFn, isBigInt = false): void {
   describe(`${munkres.name}()`, () => {
     test("handles a 5x1 matrix", () => {
       const costs: Matrix<number> = [[3, 2, 1, 4, 5]];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(res).toEqual([[0, 2]]);
     });
@@ -359,13 +359,13 @@ export function testWide(munkres: MunkresFn, isBigInt = false): void {
         [2, 25, 18],
         [9, 4, 17],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
           [0, 0],
           [1, 1],
-        ])
+        ]),
       );
     });
 
@@ -374,13 +374,13 @@ export function testWide(munkres: MunkresFn, isBigInt = false): void {
         [4, 5, 6, 1],
         [7, 8, 9, 2],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
           [0, 0],
           [1, 3],
-        ])
+        ]),
       );
     });
 
@@ -390,14 +390,14 @@ export function testWide(munkres: MunkresFn, isBigInt = false): void {
         [2, 4, 6, 8, 10, 12, 14, 16, 18],
         [3, 6, 9, 12, 15, 18, 21, 24, 27],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
           [0, 2],
           [1, 1],
           [2, 0],
-        ])
+        ]),
       );
     });
 
@@ -412,7 +412,7 @@ export function testWide(munkres: MunkresFn, isBigInt = false): void {
             const span = VAL_MAX - VAL_MIN;
             return VAL_MIN + Math.trunc(span * Math.random());
           });
-          const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+          const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
           checkOutputMeta(input, munkres(input));
         }
       }
@@ -424,7 +424,7 @@ export function testLong(munkres: MunkresFn, isBigInt = false): void {
   describe(`${munkres.name}()`, () => {
     test("handles a 1x5 matrix", () => {
       const costs: Matrix<number> = [[3], [2], [1], [4], [5]];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(res).toEqual([[2, 0]]);
     });
@@ -435,13 +435,13 @@ export function testLong(munkres: MunkresFn, isBigInt = false): void {
         [25, 4],
         [18, 17],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
           [0, 0],
           [1, 1],
-        ])
+        ]),
       );
     });
 
@@ -452,13 +452,13 @@ export function testLong(munkres: MunkresFn, isBigInt = false): void {
         [5, 8],
         [4, 7],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
           [0, 1],
           [3, 0],
-        ])
+        ]),
       );
     });
 
@@ -474,14 +474,14 @@ export function testLong(munkres: MunkresFn, isBigInt = false): void {
         [8, 16, 24],
         [9, 18, 27],
       ];
-      const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+      const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
       const res = munkres(input);
       expect(new Map(res)).toEqual(
         new Map([
           [0, 2],
           [1, 1],
           [2, 0],
-        ])
+        ]),
       );
     });
 
@@ -496,7 +496,7 @@ export function testLong(munkres: MunkresFn, isBigInt = false): void {
             const span = VAL_MAX - VAL_MIN;
             return VAL_MIN + Math.trunc(span * Math.random());
           });
-          const input = isBigInt ? map(costs, v => BigInt(v)) : costs;
+          const input = isBigInt ? map(costs, (v) => BigInt(v)) : costs;
           checkOutputMeta(input, munkres(input));
         }
       }
@@ -518,7 +518,7 @@ export function testInfinity(munkres: MunkresFn): void {
           [0, 0],
           [1, 1],
           [2, 2],
-        ])
+        ]),
       );
     });
 
@@ -534,7 +534,7 @@ export function testInfinity(munkres: MunkresFn): void {
           [0, 0],
           [1, 1],
           [2, 2],
-        ])
+        ]),
       );
     });
 
@@ -550,7 +550,7 @@ export function testInfinity(munkres: MunkresFn): void {
           [0, 0],
           [1, 2],
           [2, 1],
-        ])
+        ]),
       );
     });
 
@@ -566,7 +566,7 @@ export function testInfinity(munkres: MunkresFn): void {
           [0, 0],
           [1, 1],
           [2, 2],
-        ])
+        ]),
       );
     });
 
@@ -609,7 +609,7 @@ export function testInfinity(munkres: MunkresFn): void {
           [0, 2],
           [1, 1],
           [2, 0],
-        ])
+        ]),
       );
     });
 
@@ -657,7 +657,7 @@ export function testInfinity(munkres: MunkresFn): void {
           [0, 0],
           [1, 1],
           [2, 2],
-        ])
+        ]),
       );
     });
 
@@ -673,7 +673,7 @@ export function testInfinity(munkres: MunkresFn): void {
           [0, 1],
           [1, 2],
           [2, 0],
-        ])
+        ]),
       );
     });
 
@@ -745,7 +745,7 @@ export function testMatrixLike(munkres: MunkresFn): void {
           [0, 2],
           [1, 1],
           [2, 0],
-        ])
+        ]),
       );
     });
 
@@ -759,7 +759,7 @@ export function testMatrixLike(munkres: MunkresFn): void {
         new Map([
           [0, 0],
           [1, 3],
-        ])
+        ]),
       );
     });
 
@@ -775,7 +775,7 @@ export function testMatrixLike(munkres: MunkresFn): void {
         new Map([
           [0, 1],
           [3, 0],
-        ])
+        ]),
       );
     });
   });

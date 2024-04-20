@@ -47,7 +47,7 @@ suite.addReporter(new CIReporter(path.resolve(options.output)));
       beforeEach: () => {
         mat = gen(N, N, () => genNum(MIN_VAL, MAX_VAL));
       },
-    }
+    },
   );
   suite.add("number[][]", bench);
 })();
@@ -66,7 +66,7 @@ suite.addReporter(new CIReporter(path.resolve(options.output)));
       beforeEach: () => {
         mat = gen(N, N, () => genBig(MIN_VAL, MAX_VAL));
       },
-    }
+    },
   );
   suite.add("bigint[][]", bench);
 })();

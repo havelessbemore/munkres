@@ -44,7 +44,7 @@ export function copyMatrix<T>(matrix: MatrixLike<T>): Matrix<T> {
 export function createMatrix<R, C, T>(
   rows: ArrayLike<R>,
   cols: ArrayLike<C>,
-  callbackFn: (row: R, col: C) => T
+  callbackFn: (row: R, col: C) => T,
 ): Matrix<T> {
   return create(rows, cols, callbackFn);
 }
@@ -78,7 +78,7 @@ export function createMatrix<R, C, T>(
 export function genMatrix<T>(
   rows: number,
   cols: number,
-  callbackFn: (row: number, col: number) => T
+  callbackFn: (row: number, col: number) => T,
 ): Matrix<T> {
   return gen(rows, cols, callbackFn);
 }
@@ -93,7 +93,7 @@ export function genMatrix<T>(
 export function getMatrixMax(matrix: MatrixLike<number>): number | undefined;
 export function getMatrixMax(matrix: MatrixLike<bigint>): bigint | undefined;
 export function getMatrixMax<T extends number | bigint>(
-  matrix: MatrixLike<T>
+  matrix: MatrixLike<T>,
 ): T | undefined {
   return getMax(matrix as MatrixLike<number>) as T | undefined;
 }
@@ -108,7 +108,7 @@ export function getMatrixMax<T extends number | bigint>(
 export function getMatrixMin(matrix: MatrixLike<number>): number | undefined;
 export function getMatrixMin(matrix: MatrixLike<bigint>): bigint | undefined;
 export function getMatrixMin<T extends number | bigint>(
-  matrix: MatrixLike<T>
+  matrix: MatrixLike<T>,
 ): T | undefined {
   return getMin(matrix as MatrixLike<number>) as T | undefined;
 }
@@ -158,7 +158,7 @@ export function invertMatrix(matrix: Matrix<number>, bigVal?: number): void;
 export function invertMatrix(matrix: Matrix<bigint>, bigVal?: bigint): void;
 export function invertMatrix<T extends number | bigint>(
   matrix: Matrix<T>,
-  bigVal?: T
+  bigVal?: T,
 ): void {
   invert(matrix as Matrix<number>, bigVal as number);
 }
@@ -191,7 +191,7 @@ export function invertMatrix<T extends number | bigint>(
 export function negateMatrix(matrix: Matrix<number>): void;
 export function negateMatrix(matrix: Matrix<bigint>): void;
 export function negateMatrix<T extends number | bigint>(
-  matrix: Matrix<T>
+  matrix: Matrix<T>,
 ): void {
   negate(matrix);
 }

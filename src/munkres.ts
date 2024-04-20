@@ -18,7 +18,7 @@ import { toPairs } from "./utils/matching";
 export function munkres(costMatrix: MatrixLike<number>): Pair<number>[];
 export function munkres(costMatrix: MatrixLike<bigint>): Pair<number>[];
 export function munkres<T extends number | bigint>(
-  costMatrix: MatrixLike<T>
+  costMatrix: MatrixLike<T>,
 ): Pair<number>[] {
   return toPairs(exec(costMatrix as MatrixLike<number>));
 }

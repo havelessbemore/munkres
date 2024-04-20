@@ -8,7 +8,7 @@ export function step4B(
   dualX: bigint[],
   dualY: bigint[],
   starsX: number[],
-  starsY: number[]
+  starsY: number[],
 ): void {
   if (unmatched <= 0) {
     return;
@@ -69,7 +69,7 @@ export function step5B(
   y: number,
   primeY: ArrayLike<number>,
   starsX: number[],
-  starsY: number[]
+  starsY: number[],
 ): void {
   do {
     const x = primeY[y];
@@ -87,7 +87,7 @@ export function step6B(
   dualY: bigint[],
   slack: ArrayLike<number>,
   slackV: ArrayLike<bigint>,
-  starsY: number[]
+  starsY: number[],
 ): void {
   const sum = slackV[slack[N - 1]];
 
@@ -108,7 +108,7 @@ export function initStageB(
   dualY: bigint[],
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<bigint>,
-  slackX: MutableArrayLike<number>
+  slackX: MutableArrayLike<number>,
 ): number {
   const dx = dualX[x];
   const Y = slack.length;

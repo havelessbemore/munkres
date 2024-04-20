@@ -10,7 +10,7 @@ export function step4B(
   dualX: number[],
   dualY: number[],
   starsX: number[],
-  starsY: number[]
+  starsY: number[],
 ): void {
   if (unmatched <= 0) {
     return;
@@ -74,7 +74,7 @@ export function step6B(
   dualY: number[],
   slack: ArrayLike<number>,
   slackV: ArrayLike<number>,
-  starsY: number[]
+  starsY: number[],
 ): void {
   const sum = slackV[slack[N - 1]];
 
@@ -95,7 +95,7 @@ export function initStageB(
   dualY: number[],
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<number>,
-  slackX: MutableArrayLike<number>
+  slackX: MutableArrayLike<number>,
 ): number {
   const dx = dualX[x];
   const Y = slack.length;

@@ -35,7 +35,7 @@ export function getMax(matrix: MatrixLike<number>): number | undefined;
 export function getMax(matrix: MatrixLike<bigint>): bigint | undefined;
 export function getMax(matrix: MatrixLike<string>): string | undefined;
 export function getMax<T extends number | bigint | string>(
-  matrix: MatrixLike<T>
+  matrix: MatrixLike<T>,
 ): T | undefined {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
@@ -91,7 +91,7 @@ export function getMin(matrix: MatrixLike<number>): number | undefined;
 export function getMin(matrix: MatrixLike<bigint>): bigint | undefined;
 export function getMin(matrix: MatrixLike<string>): string | undefined;
 export function getMin<T extends number | bigint | string>(
-  matrix: MatrixLike<T>
+  matrix: MatrixLike<T>,
 ): T | undefined {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;

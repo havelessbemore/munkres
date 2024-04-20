@@ -52,7 +52,7 @@ export function exec(matrix: MatrixLike<number>): Matching<number> {
 export function step1(
   matrix: MatrixLike<number>,
   dualX: number[],
-  dualY: number[]
+  dualY: number[],
 ): void {
   const X = dualX.length;
   const Y = dualY.length;
@@ -106,7 +106,7 @@ export function steps2To3(
   dualX: number[],
   dualY: number[],
   starsX: number[],
-  starsY: number[]
+  starsY: number[],
 ): number {
   const X = dualX.length;
   const Y = dualY.length;
@@ -147,7 +147,7 @@ export function step4(
   dualX: number[],
   dualY: number[],
   starsX: number[],
-  starsY: number[]
+  starsY: number[],
 ): void {
   if (unmatched <= 0) {
     return;
@@ -224,7 +224,7 @@ export function step6(
   dualY: number[],
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<number>,
-  starsX: number[]
+  starsX: number[],
 ): void {
   const sum = slackV[slack[N - 1]];
 
@@ -245,7 +245,7 @@ export function initStage(
   dualY: number[],
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<number>,
-  slackY: MutableArrayLike<number>
+  slackY: MutableArrayLike<number>,
 ): number {
   const dy = dualY[y];
   const row = matrix[y];

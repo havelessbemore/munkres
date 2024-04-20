@@ -48,7 +48,7 @@ export class CIReporter implements SuiteReporter {
         `${res.value}${res.unit}`,
         res.range,
         `(${res.extra})`,
-      ].join(" ")
+      ].join(" "),
     );
   }
 

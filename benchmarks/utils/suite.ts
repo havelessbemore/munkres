@@ -58,21 +58,21 @@ export class Suite extends EventTarget {
   private _setupBenchReporting(
     reporter: SuiteReporter,
     name: string,
-    bench: Bench
+    bench: Bench,
   ): void {
     if (reporter.onBenchWarmup != null) {
       bench.addEventListener("warmup", () =>
-        reporter.onBenchWarmup!(bench, name)
+        reporter.onBenchWarmup!(bench, name),
       );
     }
     if (reporter.onBenchStart != null) {
       bench.addEventListener("start", () =>
-        reporter.onBenchStart!(bench, name)
+        reporter.onBenchStart!(bench, name),
       );
     }
     if (reporter.onBenchComplete != null) {
       bench.addEventListener("complete", () =>
-        reporter.onBenchComplete!(bench, name)
+        reporter.onBenchComplete!(bench, name),
       );
     }
     for (const task of bench.tasks) {

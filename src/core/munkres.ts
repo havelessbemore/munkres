@@ -32,7 +32,7 @@ import { MutableArrayLike } from "../types/mutableArrayLike";
 export function exec(matrix: MatrixLike<number>): Matching<number>;
 export function exec(matrix: MatrixLike<bigint>): Matching<bigint>;
 export function exec<T extends number | bigint>(
-  matrix: MatrixLike<T>
+  matrix: MatrixLike<T>,
 ): Matching<T> {
   return (
     isBigInt((matrix[0] ?? [])[0])
@@ -44,7 +44,7 @@ export function exec<T extends number | bigint>(
 export function zeroUncoveredMin<T extends number | bigint>(
   min: number,
   slack: MutableArrayLike<number>,
-  slackV: ArrayLike<T>
+  slackV: ArrayLike<T>,
 ): number {
   const max = slack.length;
 

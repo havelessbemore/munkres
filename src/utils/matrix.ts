@@ -31,7 +31,7 @@ import { getMax } from "./matrixLike";
 export function create<R, C, T>(
   rows: ArrayLike<R>,
   columns: ArrayLike<C>,
-  callbackFn: (row: R, col: C) => T
+  callbackFn: (row: R, col: C) => T,
 ): Matrix<T> {
   const Y = rows.length;
   const X = columns.length;
@@ -153,7 +153,7 @@ export function from<T>(matrix: MatrixLike<T>): Matrix<T> {
 export function gen<T>(
   rows: number,
   cols: number,
-  callbackFn: (row: number, col: number) => T
+  callbackFn: (row: number, col: number) => T,
 ): Matrix<T> {
   const matrix: Matrix<T> = new Array(rows);
 
@@ -206,7 +206,7 @@ export function invert(matrix: Matrix<number>, bigVal?: number): void;
 export function invert(matrix: Matrix<bigint>, bigVal?: bigint): void;
 export function invert<T extends number | bigint>(
   matrix: Matrix<T>,
-  bigVal?: T
+  bigVal?: T,
 ): void {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
@@ -248,7 +248,7 @@ export function invert<T extends number | bigint>(
  */
 export function map<T, R>(
   matrix: MatrixLike<T>,
-  callbackFn: (value: T, y: number, x: number, mat: typeof matrix) => R
+  callbackFn: (value: T, y: number, x: number, mat: typeof matrix) => R,
 ): Matrix<R> {
   const Y = matrix.length;
   const out: Matrix<R> = new Array(Y);
@@ -314,7 +314,7 @@ export function pad<T>(
   matrix: Matrix<T>,
   height: number,
   width: number,
-  fillValue: T
+  fillValue: T,
 ): void {
   padHeight(matrix, height, fillValue);
   padWidth(matrix, width, fillValue);
@@ -334,7 +334,7 @@ export function pad<T>(
 export function padHeight<T>(
   matrix: Matrix<T>,
   height: number,
-  fillValue: T
+  fillValue: T,
 ): void {
   const Y = matrix.length;
   if (Y >= height) {
@@ -362,7 +362,7 @@ export function padHeight<T>(
 export function padWidth<T>(
   matrix: Matrix<T>,
   width: number,
-  fillValue: T
+  fillValue: T,
 ): void {
   const X = matrix[0]?.length ?? 0;
   if (X >= width) {
@@ -464,8 +464,8 @@ export function toString<T>(
     value: T,
     row: number,
     col: number,
-    mat: typeof matrix
-  ) => string = v => `${v}`
+    mat: typeof matrix,
+  ) => string = (v) => `${v}`,
 ): string {
   const strs: Matrix<string> = map(matrix, callbackFn);
   const Y = strs.length;

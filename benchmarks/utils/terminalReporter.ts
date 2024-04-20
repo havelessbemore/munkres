@@ -8,11 +8,14 @@ export class TerminalReporter implements SuiteReporter {
   constructor() {
     this.results = new Map();
     this.columns = [
-      ["Name", task => task.name],
-      ["Min (ms)", task => (task.result ? +task.result.min.toFixed(5) : NaN)],
-      ["Max (ms)", task => (task.result ? +task.result.max.toFixed(5) : NaN)],
-      ["Avg (ms)", task => (task.result ? +task.result.mean.toFixed(5) : NaN)],
-      ["Samples", task => (task.result ? +task.result.samples.length : NaN)],
+      ["Name", (task) => task.name],
+      ["Min (ms)", (task) => (task.result ? +task.result.min.toFixed(5) : NaN)],
+      ["Max (ms)", (task) => (task.result ? +task.result.max.toFixed(5) : NaN)],
+      [
+        "Avg (ms)",
+        (task) => (task.result ? +task.result.mean.toFixed(5) : NaN),
+      ],
+      ["Samples", (task) => (task.result ? +task.result.samples.length : NaN)],
     ];
   }
 

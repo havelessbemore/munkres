@@ -316,7 +316,7 @@ describe(`${gen.name}()`, () => {
     const cols = 3;
     const result = gen(rows, cols, () => 0);
     expect(result.length).toBe(rows);
-    result.forEach(row => {
+    result.forEach((row) => {
       expect(row.length).toBe(cols);
     });
   });
@@ -463,7 +463,7 @@ describe(`${invert.name}()`, () => {
 describe(`${map.name}()`, () => {
   it("handles an empty matrix", () => {
     const matrix: number[][] = [];
-    const result = map(matrix, value => value * 2);
+    const result = map(matrix, (value) => value * 2);
     const expected: number[][] = [];
 
     expect(result).toEqual(expected);
@@ -474,7 +474,7 @@ describe(`${map.name}()`, () => {
       [1, 2],
       [3, 4],
     ];
-    const result = map(matrix, value => value * 2);
+    const result = map(matrix, (value) => value * 2);
     const expected = [
       [2, 4],
       [6, 8],
@@ -509,7 +509,7 @@ describe(`${map.name}()`, () => {
       ["hello", "world"],
       ["foo", "bar"],
     ];
-    const result = map(matrix, value => value.toUpperCase());
+    const result = map(matrix, (value) => value.toUpperCase());
     const expected = [
       ["HELLO", "WORLD"],
       ["FOO", "BAR"],
@@ -523,7 +523,7 @@ describe(`${map.name}()`, () => {
       [1, "a"],
       ["b", 2],
     ];
-    const result = map(matrix, value => {
+    const result = map(matrix, (value) => {
       return typeof value === "number" ? value * 2 : value.toUpperCase();
     });
     const expected = [

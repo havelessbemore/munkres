@@ -10,7 +10,7 @@ if (PACKAGE.name == null) {
 }
 
 const pkgName = PACKAGE.name;
-const pkgNameCamel = pkgName.replace(/(?<=-)./g, char => char.toUpperCase());
+const pkgNameCamel = pkgName.replace(/(?<=-)./g, (char) => char.toUpperCase());
 
 const dirs = {
   es: "esm",
@@ -32,7 +32,7 @@ const config = defineConfig({
     minify: false,
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
-      fileName: format => {
+      fileName: (format) => {
         const min = config.build?.minify ? ".min" : "";
         return `${dirs[format]}/${pkgName}${min}.${exts[format]}`;
       },

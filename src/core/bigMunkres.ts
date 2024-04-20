@@ -51,7 +51,7 @@ export function exec(matrix: MatrixLike<bigint>): Matching<bigint> {
 export function step1(
   matrix: MatrixLike<bigint>,
   dualX: bigint[],
-  dualY: bigint[]
+  dualY: bigint[],
 ): void {
   const X = dualX.length;
   const Y = dualY.length;
@@ -107,7 +107,7 @@ export function steps2To3(
   dualX: bigint[],
   dualY: bigint[],
   starsX: number[],
-  starsY: number[]
+  starsY: number[],
 ): number {
   const X = dualX.length;
   const Y = dualY.length;
@@ -148,7 +148,7 @@ export function step4(
   dualX: bigint[],
   dualY: bigint[],
   starsX: number[],
-  starsY: number[]
+  starsY: number[],
 ): void {
   if (unmatched <= 0) {
     return;
@@ -225,7 +225,7 @@ export function step5(
   x: number,
   primeX: ArrayLike<number>,
   starsX: number[],
-  starsY: number[]
+  starsY: number[],
 ): void {
   do {
     const y = primeX[x];
@@ -254,7 +254,7 @@ export function step6(
   dualY: bigint[],
   slack: ArrayLike<number>,
   slackV: ArrayLike<bigint>,
-  starsX: number[]
+  starsX: number[],
 ): void {
   const sum = slackV[slack[N - 1]];
 
@@ -275,7 +275,7 @@ export function initStage(
   dualY: bigint[],
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<bigint>,
-  slackY: MutableArrayLike<number>
+  slackY: MutableArrayLike<number>,
 ): number {
   const dy = dualY[y];
   const row = matrix[y];

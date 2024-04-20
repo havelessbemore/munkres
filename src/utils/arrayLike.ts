@@ -42,7 +42,7 @@ export function getMin(array: ArrayLike<number>): number | undefined;
 export function getMin(array: ArrayLike<bigint>): bigint | undefined;
 export function getMin(array: ArrayLike<string>): string | undefined;
 export function getMin<T extends number | bigint | string>(
-  array: ArrayLike<T>
+  array: ArrayLike<T>,
 ): T | undefined {
   const N = array.length;
   if (N <= 0) {

@@ -7,7 +7,7 @@ config.plugins!.push(
   dts({
     outDir: "./dist",
     rollupTypes: true,
-  })
+  }),
 );
 
 export default config;
