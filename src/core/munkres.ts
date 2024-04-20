@@ -3,8 +3,8 @@ import { Matching } from "../types/matching";
 
 import { isBigInt } from "../utils/is";
 
-import { safeExec as bigSafeExec } from "./bigMunkres";
-import { safeExec as numSafeExec } from "./numMunkres";
+import { exec as bigExec } from "./bigMunkres";
+import { exec as numExec } from "./numMunkres";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -28,14 +28,14 @@ import { safeExec as numSafeExec } from "./numMunkres";
  * 1. {@link https://public.websites.umich.edu/~murty/612/612slides4.pdf | Murty, K. G.. Primal-Dual Algorithms. [IOE 612, Lecture slides 4]. Department of Industrial and Operations Engineering, University of Michigan.}
  *     - Used to implement primal-dual and slack variables.
  */
-export function safeExec(matrix: MatrixLike<number>): Matching<number>;
-export function safeExec(matrix: MatrixLike<bigint>): Matching<bigint>;
-export function safeExec<T extends number | bigint>(
+export function exec(matrix: MatrixLike<number>): Matching<number>;
+export function exec(matrix: MatrixLike<bigint>): Matching<bigint>;
+export function exec<T extends number | bigint>(
   matrix: MatrixLike<T>
 ): Matching<T> {
   return (
     isBigInt((matrix[0] ?? [])[0])
-      ? bigSafeExec(matrix as MatrixLike<bigint>)
-      : numSafeExec(matrix as MatrixLike<number>)
+      ? bigExec(matrix as MatrixLike<bigint>)
+      : numExec(matrix as MatrixLike<number>)
   ) as Matching<T>;
 }

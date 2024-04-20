@@ -7,33 +7,22 @@ import { getMin } from "../utils/arrayLike";
 import { from, transpose } from "../utils/matrix";
 import { zeroUncoveredMin, step5 } from "./numMunkres";
 
-export function safeExec(matrix: MatrixLike<bigint>): Matching<bigint> {
-  // Get dimensions
-  const Y = matrix.length;
-  const X = matrix[0]?.length ?? 0;
-
-  // Transpose if Y > X
-  if (Y > X) {
-    matrix = from(matrix);
-    transpose(matrix as Matrix<bigint>);
-  }
-
-  // Get optimal assignments
-  return exec(matrix);
-}
-
 export function exec(matrix: MatrixLike<bigint>): Matching<bigint> {
-  const Y = matrix.length;
-  const X = matrix[0]?.length ?? 0;
+  // Get dimensions
+  let Y = matrix.length;
+  let X = matrix[0]?.length ?? 0;
 
   // If empty matrix
   if (Y <= 0 || X <= 0) {
     return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
   }
 
-  // If invalid matrix
+  // Transpose if Y > X
   if (Y > X) {
-    throw new RangeError("invalid MxN matrix: M > N");
+    X = matrix.length;
+    Y = matrix[0].length;
+    matrix = from(matrix);
+    transpose(matrix as Matrix<bigint>);
   }
 
   // Step 1: Reduce

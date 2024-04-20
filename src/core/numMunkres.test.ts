@@ -2,27 +2,11 @@ import { describe, it, expect } from "vitest";
 
 import { Matrix } from "../types/matrix";
 
-import { exec, safeExec, toString } from "./numMunkres";
-
-describe(`${safeExec.name}()`, () => {
-  it("handles an empty matrix without error", () => {
-    expect(() => safeExec([])).not.toThrow();
-  });
-});
+import { exec, toString } from "./numMunkres";
 
 describe(`${exec.name}()`, () => {
   it("handles an empty matrix without error", () => {
     expect(() => exec([])).not.toThrow();
-  });
-
-  it("throws an error if M > N in an MxN matrix", () => {
-    expect(() =>
-      exec([
-        [1, 2],
-        [3, 4],
-        [5, 6],
-      ])
-    ).toThrow(RangeError);
   });
 });
 
