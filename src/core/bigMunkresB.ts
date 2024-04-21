@@ -113,16 +113,11 @@ export function initStageB(
   const dx = dualX[x];
   const Y = slack.length;
 
-  let zeros = 0;
   for (let y = 0; y < Y; ++y) {
     slack[y] = y;
-    slackX[y] = x;
     slackV[y] = matrix[y][x] - dualY[y] - dx;
-    if (slackV[y] === 0n) {
-      slack[y] = slack[zeros];
-      slack[zeros++] = y;
-    }
+    slackX[y] = x;
   }
 
-  return zeros || zeroUncoveredMin(zeros, slack, slackV);
+  return zeroUncoveredMin(0, slack, slackV);
 }

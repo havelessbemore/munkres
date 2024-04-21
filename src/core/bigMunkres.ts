@@ -281,16 +281,11 @@ export function initStage(
   const row = matrix[y];
   const X = slack.length;
 
-  let zeros = 0;
   for (let x = 0; x < X; ++x) {
     slack[x] = x;
-    slackY[x] = y;
     slackV[x] = row[x] - dualX[x] - dy;
-    if (slackV[x] === 0n) {
-      slack[x] = slack[zeros];
-      slack[zeros++] = x;
-    }
+    slackY[x] = y;
   }
 
-  return zeros || zeroUncoveredMin(zeros, slack, slackV);
+  return zeroUncoveredMin(0, slack, slackV);
 }
