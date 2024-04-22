@@ -5,7 +5,6 @@ import { isBigInt } from "../utils/is";
 
 import { exec as bigExec } from "./bigMunkres";
 import { exec as numExec } from "./numMunkres";
-import { MutableArrayLike } from "../types/mutableArrayLike";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -39,29 +38,4 @@ export function exec<T extends number | bigint>(
       ? bigExec(matrix as MatrixLike<bigint>)
       : numExec(matrix as MatrixLike<number>)
   ) as Matching<T>;
-}
-
-export function zeroUncoveredMin<T extends number | bigint>(
-  min: number,
-  slack: MutableArrayLike<number>,
-  slackV: ArrayLike<T>,
-): number {
-  const max = slack.length;
-
-  let mid = min + 1;
-  let minZ = slack[min];
-  for (let i = mid; i < max; ++i) {
-    const z = slack[i];
-    if (slackV[z] > slackV[minZ]) {
-      continue;
-    }
-    if (slackV[z] < slackV[minZ]) {
-      minZ = z;
-      mid = min;
-    }
-    slack[i] = slack[mid];
-    slack[mid++] = z;
-  }
-
-  return mid;
 }

@@ -1,6 +1,7 @@
 import { MatrixLike } from "../types/matrixLike";
 import { MutableArrayLike } from "../types/mutableArrayLike";
-import { zeroUncoveredMin } from "./munkres";
+
+import { partitionByMin } from "../utils/mutableArrayLike";
 
 export function step4B(
   unmatched: number,
@@ -50,7 +51,7 @@ export function step4B(
 
       // If no zeros, zero the min
       if (steps >= zeros) {
-        zeros = zeroUncoveredMin(zeros, slack, slackV);
+        zeros = partitionByMin(slack, slackV, zeros);
       }
     }
 
@@ -119,5 +120,5 @@ export function initStageB(
     slackX[y] = x;
   }
 
-  return zeroUncoveredMin(0, slack, slackV);
+  return partitionByMin(slack, slackV, 0);
 }

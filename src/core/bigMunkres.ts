@@ -3,9 +3,9 @@ import { Matching } from "../types/matching";
 import { MutableArrayLike } from "../types/mutableArrayLike";
 
 import { getMin } from "../utils/arrayLike";
+import { partitionByMin } from "../utils/mutableArrayLike";
 
 import { step4B as step4b } from "./bigMunkresB";
-import { zeroUncoveredMin } from "./munkres";
 
 export function exec(matrix: MatrixLike<bigint>): Matching<bigint> {
   // Get dimensions
@@ -191,7 +191,7 @@ export function step4(
 
       // If no zeros, zero the min
       if (steps >= zeros) {
-        zeros = zeroUncoveredMin(zeros, slack, slackV);
+        zeros = partitionByMin(slack, slackV, zeros);
       }
     }
 
@@ -287,5 +287,5 @@ export function initStage(
     slackY[x] = y;
   }
 
-  return zeroUncoveredMin(0, slack, slackV);
+  return partitionByMin(slack, slackV, 0);
 }
