@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713808183869,
+  "lastUpdate": 1713827821208,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -1707,6 +1707,44 @@ window.BENCHMARK_DATA = {
             "value": 1448.1795128599967,
             "unit": "ms",
             "range": "±2.90%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "decfdd4a042872b675d48d4174659ec4e6a27e95",
+          "message": "Replace zeroUncoveredMin() function with partitionByMin() function",
+          "timestamp": "2024-04-22T19:12:21-04:00",
+          "tree_id": "95ef7702360726b567dc67ed5f20cc4c417186ce",
+          "url": "https://github.com/havelessbemore/munkres/commit/decfdd4a042872b675d48d4174659ec4e6a27e95"
+        },
+        "date": 1713827820196,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2063.1173706199997,
+            "unit": "ms",
+            "range": "±2.80%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1412.86166218,
+            "unit": "ms",
+            "range": "±3.59%",
             "extra": "50 samples"
           }
         ]
