@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713651593392,
+  "lastUpdate": 1713807823577,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -1555,6 +1555,44 @@ window.BENCHMARK_DATA = {
             "value": 1418.397046619999,
             "unit": "ms",
             "range": "±3.15%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "45243e3088e90c4af530261a8fe21f537bf3a38a",
+          "message": "Merge pull request #17 from havelessbemore/dependabot/npm_and_yarn/tinybench-2.8.0\n\nnpm: bump tinybench from 2.7.0 to 2.8.0",
+          "timestamp": "2024-04-22T13:38:37-04:00",
+          "tree_id": "b82b3d58a4f57a97b4260acbef07091e6fb98509",
+          "url": "https://github.com/havelessbemore/munkres/commit/45243e3088e90c4af530261a8fe21f537bf3a38a"
+        },
+        "date": 1713807823204,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2313.0361345799993,
+            "unit": "ms",
+            "range": "±3.28%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1569.1267930799995,
+            "unit": "ms",
+            "range": "±3.83%",
             "extra": "50 samples"
           }
         ]
