@@ -54,7 +54,7 @@ export function step6B(
 }
 
 export function matchB(
-  x: number,
+  rootX: number,
   matrix: MatrixLike<number>,
   dualX: number[],
   dualY: number[],
@@ -64,10 +64,10 @@ export function matchB(
   slackV: MutableArrayLike<number>,
   slackX: MutableArrayLike<number>,
 ): void {
-  const rootX = x;
   const Y = slack.length;
 
   // Initialize slack
+  let x = rootX;
   let dx = dualX[x];
   for (let y = 0; y < Y; ++y) {
     slack[y] = y;

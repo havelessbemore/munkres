@@ -201,7 +201,7 @@ export function step6(
 }
 
 export function match(
-  y: number,
+  rootY: number,
   matrix: MatrixLike<number>,
   dualX: number[],
   dualY: number[],
@@ -211,10 +211,10 @@ export function match(
   slackV: MutableArrayLike<number>,
   slackY: MutableArrayLike<number>,
 ): void {
-  const rootY = y;
   const X = slack.length;
 
   // Initialize slack
+  let y = rootY;
   let dy = dualY[y];
   let row = matrix[y];
   for (let x = 0; x < X; ++x) {

@@ -232,7 +232,7 @@ export function step6(
 }
 
 export function match(
-  y: number,
+  rootY: number,
   matrix: MatrixLike<bigint>,
   dualX: bigint[],
   dualY: bigint[],
@@ -242,10 +242,10 @@ export function match(
   slackV: MutableArrayLike<bigint>,
   slackY: MutableArrayLike<number>,
 ): void {
-  const rootY = y;
   const X = slack.length;
 
   // Initialize slack
+  let y = rootY;
   let dy = dualY[y];
   let row = matrix[y];
   for (let x = 0; x < X; ++x) {
