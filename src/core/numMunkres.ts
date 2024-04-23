@@ -149,6 +149,7 @@ export function step4(
   starsX: number[],
   starsY: number[],
 ): void {
+  // If no unmatched row
   if (unmatched <= 0) {
     return;
   }
@@ -158,51 +159,12 @@ export function step4(
   const slackV = new Array<number>(X);
   const slackY = new Uint32Array(X);
 
-  // For each unmatched row
-  for (let rootY = 0; unmatched > 0; ++rootY) {
-    if (starsY[rootY] !== -1) {
-      continue;
+  // Match unmatched rows
+  for (let y = 0; unmatched > 0; ++y) {
+    if (starsY[y] === -1) {
+      match(y, matrix, dualX, dualY, starsX, starsY, slack, slackV, slackY);
+      --unmatched;
     }
-
-    // Initialize stage
-    let zeros = initStage(rootY, matrix, dualX, dualY, slack, slackV, slackY);
-
-    // Run stage
-    let steps = 1;
-    let x: number;
-    for (x = slack[0]; starsX[x] !== -1; x = slack[steps++]) {
-      // Update stage
-      const y = starsX[x];
-      const dy = dualY[y];
-      const ds = slackV[x];
-      const row = matrix[y];
-      for (let i = zeros; i < X; ++i) {
-        x = slack[i];
-        const value = (row[x] - (dualX[x] + dy || 0) || 0) + ds || 0;
-        if (value < slackV[x]) {
-          if (value === ds) {
-            slack[i] = slack[zeros];
-            slack[zeros++] = x;
-          }
-          slackV[x] = value;
-          slackY[x] = y;
-        }
-      }
-
-      // If no zeros, zero the min
-      if (steps >= zeros) {
-        zeros = partitionByMin(slack, slackV, zeros);
-      }
-    }
-
-    // Update dual variables
-    step6(rootY, steps, dualX, dualY, slack, slackV, starsX);
-
-    // Turn primes into stars
-    step5(x, slackY, starsX, starsY);
-
-    // Update unmatched count
-    --unmatched;
   }
 }
 
@@ -238,29 +200,64 @@ export function step6(
   }
 }
 
-export function initStage(
+export function match(
   y: number,
   matrix: MatrixLike<number>,
   dualX: number[],
   dualY: number[],
+  starsX: number[],
+  starsY: number[],
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<number>,
   slackY: MutableArrayLike<number>,
-): number {
-  const dy = dualY[y];
-  const row = matrix[y];
+): void {
+  const rootY = y;
   const X = slack.length;
 
-  let zeros = 0;
+  // Initialize slack
+  let dy = dualY[y];
+  let row = matrix[y];
   for (let x = 0; x < X; ++x) {
     slack[x] = x;
-    slackY[x] = y;
     slackV[x] = row[x] - (dualX[x] + dy || 0) || 0;
-    if (slackV[x] === 0) {
-      slack[x] = slack[zeros];
-      slack[zeros++] = x;
+    slackY[x] = y;
+  }
+
+  // Initialize zeros
+  let zeros = partitionByMin(slack, slackV, 0);
+  let zero = slackV[slack[0]];
+
+  // Grow a hungarian tree until an augmenting path is found
+  let steps = 1;
+  let x: number;
+  for (x = slack[0]; starsX[x] !== -1; x = slack[steps++]) {
+    // Update slack
+    y = starsX[x];
+    dy = dualY[y];
+    row = matrix[y];
+    for (let i = zeros; i < X; ++i) {
+      x = slack[i];
+      const value = (row[x] - (dualX[x] + dy || 0) || 0) + zero || 0;
+      if (value < slackV[x]) {
+        if (value === zero) {
+          slack[i] = slack[zeros];
+          slack[zeros++] = x;
+        }
+        slackV[x] = value;
+        slackY[x] = y;
+      }
+    }
+
+    // Update zeros
+    if (steps >= zeros) {
+      zeros = partitionByMin(slack, slackV, zeros);
+      zero = slackV[slack[steps]];
     }
   }
 
-  return zeros || partitionByMin(slack, slackV, zeros);
+  // Update dual variables
+  step6(rootY, steps, dualX, dualY, slack, slackV, starsX);
+
+  // Update matching
+  step5(x, slackY, starsX, starsY);
 }
