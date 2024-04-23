@@ -1,12 +1,12 @@
 import { MatrixLike } from "../types/matrixLike";
 import { Matching } from "../types/matching";
+import { MutableArrayLike } from "../types/mutableArrayLike";
 
 import { getMin } from "../utils/arrayLike";
+import { isBigInt } from "../utils/is";
 import { partitionByMin } from "../utils/mutableArrayLike";
 
 import { step4B as step4b } from "./bigMunkresB";
-import { MutableArrayLike } from "../types/mutableArrayLike";
-import { isBigInt } from "../utils/is";
 
 export function exec(matrix: MatrixLike<number>): Matching<number>;
 export function exec(matrix: MatrixLike<bigint>): Matching<bigint>;
