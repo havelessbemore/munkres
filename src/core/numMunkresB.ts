@@ -23,7 +23,7 @@ export function step4B(
   const slackV = new Array<number>(Y);
   const slackX = new Uint32Array(Y);
 
-  // Match unmatched rows
+  // Match unmatched columns
   for (let x = 0; unmatched > 0; ++x) {
     if (starsX[x] === -1) {
       matchB(x, matrix, dualX, dualY, starsX, starsY, slack, slackV, slackX);
