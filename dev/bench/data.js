@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1713839337527,
+  "lastUpdate": 1713839642711,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -1859,6 +1859,44 @@ window.BENCHMARK_DATA = {
             "value": 1427.8105719600007,
             "unit": "ms",
             "range": "±4.23%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "5a23a66bbef778c41a67f1c95a157dd4184a3b3f",
+          "message": "Reorder features so M and N dimension variables make more sense",
+          "timestamp": "2024-04-22T22:29:26-04:00",
+          "tree_id": "6d9d520c61843c89096ea1cda2bf032faafb9b62",
+          "url": "https://github.com/havelessbemore/munkres/commit/5a23a66bbef778c41a67f1c95a157dd4184a3b3f"
+        },
+        "date": 1713839641731,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2090.731498239999,
+            "unit": "ms",
+            "range": "±2.74%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1495.35710716,
+            "unit": "ms",
+            "range": "±3.50%",
             "extra": "50 samples"
           }
         ]
