@@ -11,13 +11,21 @@ A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm
 ## Features
 
 1. Supports `number` and `bigint` matrices.
+
 1. Supports square (NxN) and rectangular (MxN) matrices.
-1. Accepts any [`MatrixLike`](src/types/matrixLike.d.ts) matrix. Use arrays, typed arrays, objects, etc.
+
 1. Fast ([benchmarks](#results)):
-   - $O(M^2N)$ where M <= N
-   - $O(MN^2)$ where M > N
-1. Efficient: Uses $O(M + N)$ memory.
+
+   - _O(M<sup>2</sup>N)_ when _M <= N_
+
+   - _O(MN<sup>2</sup>)_ when _M > N_
+
+1. Efficient: Uses _O(M + N)_ memory.
+
+1. Accepts any [MatrixLike](src/types/matrixLike.d.ts) matrix. Use arrays, typed arrays, objects, etc.
+
 1. Supports `-Infinity` and `Infinity` values.
+
 1. [Helper methods](#helpers) for creating and modifying matrices.
 
 ## Getting Started
