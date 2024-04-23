@@ -1,5 +1,11 @@
 # Change Log
 
+## [2.0.2](https://github.com/havelessbemore/munkres/compare/v2.0.1...v2.0.2) (TBD)
+
+### Updates
+
+- TBD
+
 ## [2.0.1](https://github.com/havelessbemore/munkres/compare/v2.0.0...v2.0.1) (2024-04-20)
 
 ### Updates
