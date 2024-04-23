@@ -92,7 +92,7 @@ const booleanMatrix: Matrix<boolean> = [
 
 #### Defined in
 
-[types/matrix.d.ts:37](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/types/matrix.d.ts#L37)
+[types/matrix.d.ts:37](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/types/matrix.d.ts#L37)
 
 ___
 
@@ -136,7 +136,7 @@ const divMatrix: MatrixLike<HTMLElement> = document.querySelectorAll('.foo');
 
 #### Defined in
 
-[types/matrixLike.d.ts:28](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/types/matrixLike.d.ts#L28)
+[types/matrixLike.d.ts:28](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/types/matrixLike.d.ts#L28)
 
 ___
 
@@ -176,7 +176,7 @@ const keyValue: Pair<string, number> = ['age', 30];
 
 #### Defined in
 
-[types/pair.d.ts:23](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/types/pair.d.ts#L23)
+[types/pair.d.ts:23](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/types/pair.d.ts#L23)
 
 ## Functions
 
@@ -206,7 +206,7 @@ A copy of the given matrix.
 
 #### Defined in
 
-[helpers.ts:14](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/helpers.ts#L14)
+[helpers.ts:14](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/helpers.ts#L14)
 
 ___
 
@@ -258,7 +258,7 @@ const costs = createMatrix(workers, jobs, costFn);
 
 #### Defined in
 
-[helpers.ts:44](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/helpers.ts#L44)
+[helpers.ts:44](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/helpers.ts#L44)
 
 ___
 
@@ -308,7 +308,7 @@ const costs = createMatrix(workers.length, jobs.length, costFn);
 
 #### Defined in
 
-[helpers.ts:78](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/helpers.ts#L78)
+[helpers.ts:78](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/helpers.ts#L78)
 
 ___
 
@@ -332,7 +332,7 @@ The maximum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[helpers.ts:93](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/helpers.ts#L93)
+[helpers.ts:93](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/helpers.ts#L93)
 
 ▸ **getMatrixMax**(`matrix`): `bigint` \| `undefined`
 
@@ -348,7 +348,7 @@ The maximum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[helpers.ts:94](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/helpers.ts#L94)
+[helpers.ts:94](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/helpers.ts#L94)
 
 ___
 
@@ -372,7 +372,7 @@ The minimum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[helpers.ts:108](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/helpers.ts#L108)
+[helpers.ts:108](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/helpers.ts#L108)
 
 ▸ **getMatrixMin**(`matrix`): `bigint` \| `undefined`
 
@@ -388,7 +388,7 @@ The minimum value, or `undefined` if the matrix is empty.
 
 #### Defined in
 
-[helpers.ts:109](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/helpers.ts#L109)
+[helpers.ts:109](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/helpers.ts#L109)
 
 ___
 
@@ -451,7 +451,7 @@ invertMatrix(matrix, 50);
 
 #### Defined in
 
-[helpers.ts:157](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/helpers.ts#L157)
+[helpers.ts:157](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/helpers.ts#L157)
 
 ▸ **invertMatrix**(`matrix`, `bigVal?`): `void`
 
@@ -468,7 +468,7 @@ invertMatrix(matrix, 50);
 
 #### Defined in
 
-[helpers.ts:158](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/helpers.ts#L158)
+[helpers.ts:158](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/helpers.ts#L158)
 
 ___
 
@@ -495,7 +495,7 @@ index `x`, indicating that worker `y` is assigned to job `x`.
 
 #### Defined in
 
-[munkres.ts:18](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/munkres.ts#L18)
+[munkres.ts:18](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/munkres.ts#L18)
 
 ▸ **munkres**(`costMatrix`): [`Pair`](modules.md#pair)\<`number`\>[]
 
@@ -511,7 +511,7 @@ index `x`, indicating that worker `y` is assigned to job `x`.
 
 #### Defined in
 
-[munkres.ts:19](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/munkres.ts#L19)
+[munkres.ts:19](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/munkres.ts#L19)
 
 ___
 
@@ -556,7 +556,7 @@ negateMatrix(matrix);
 
 #### Defined in
 
-[helpers.ts:191](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/helpers.ts#L191)
+[helpers.ts:191](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/helpers.ts#L191)
 
 ▸ **negateMatrix**(`matrix`): `void`
 
@@ -572,4 +572,4 @@ negateMatrix(matrix);
 
 #### Defined in
 
-[helpers.ts:192](https://github.com/havelessbemore/munkres/blob/0f713ec5652acecc132284c6fc11cb2b86608591/src/helpers.ts#L192)
+[helpers.ts:192](https://github.com/havelessbemore/munkres/blob/78f5b097ac12b239e04399cdc09a8e7456a8d14b/src/helpers.ts#L192)
