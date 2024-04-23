@@ -46,8 +46,8 @@ export function exec(matrix: MatrixLike<number>): Matching<number> {
  * of subsequent steps.
  *
  * @param matrix - The cost matrix.
- * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
- * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ * @param dualX - The dual variables for each matrix column. Modified in place.
+ * @param dualY - The dual variables for each matrix row. Modified in place.
  */
 export function step1(
   matrix: MatrixLike<number>,
@@ -57,10 +57,11 @@ export function step1(
   const X = dualX.length;
   const Y = dualY.length;
 
-  // Reduce rows
+  // If matrix is tall, skip row reduction
   if (Y > X) {
     dualY.fill(0);
   } else {
+    // Reduce rows
     for (let y = 0; y < Y; ++y) {
       dualY[y] = getMin(matrix[y])!;
     }
@@ -72,7 +73,7 @@ export function step1(
     return;
   }
 
-  // Initialize column reduction
+  // Initialize dualX
   let dy = dualY[0];
   let row = matrix[0];
   for (let x = 0; x < X; ++x) {
@@ -136,8 +137,8 @@ export function steps2To3(
  *
  * @param unmatched - The number of missing matches.
  * @param mat - An MxN cost matrix.
- * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
- * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ * @param dualX - The dual variables for each matrix column. Modified in place.
+ * @param dualY - The dual variables for each matrix row. Modified in place.
  * @param starsX - An array mapping star columns to row. Modified in place.
  * @param starsY - An array mapping star rows to columns. Modified in place.
  */
@@ -174,8 +175,8 @@ export function step4(
  * @param pivot - The value to adjust by.
  * @param covV - The value indicating a row is covered.
  * @param coveredY - An array indicating whether a row is covered.
- * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
- * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ * @param dualX - The dual variables for each matrix column. Modified in place.
+ * @param dualY - The dual variables for each matrix row. Modified in place.
  * @param exposedX - An array indicating uncovered columns.
  * @param slackV - The slack values for each column. Modified in place.
  */

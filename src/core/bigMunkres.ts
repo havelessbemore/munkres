@@ -54,8 +54,8 @@ export function exec<T extends number | bigint>(
  * of subsequent steps.
  *
  * @param matrix - The cost matrix.
- * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
- * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ * @param dualX - The dual variables for each matrix column. Modified in place.
+ * @param dualY - The dual variables for each matrix row. Modified in place.
  */
 export function step1(
   matrix: MatrixLike<number>,
@@ -75,10 +75,11 @@ export function step1<T extends number | bigint>(
   const X = dualX.length;
   const Y = dualY.length;
 
-  // Reduce rows
+  // If matrix is tall, skip row reduction
   if (Y > X) {
     dualY.fill((isBigInt(matrix[0][0]) ? 0n : 0) as T);
   } else {
+    // Reduce rows
     for (let y = 0; y < Y; ++y) {
       // @ts-expect-error ts(2769)
       dualY[y] = getMin(matrix[y])!;
@@ -91,7 +92,7 @@ export function step1<T extends number | bigint>(
     return;
   }
 
-  // Initialize column reduction
+  // Initialize dualX
   let dy = dualY[0];
   let row = matrix[0];
   for (let x = 0; x < X; ++x) {
@@ -115,8 +116,8 @@ export function step1<T extends number | bigint>(
  * Finds an initial matching for the munkres algorithm.
  *
  * @param matrix - The cost matrix.
- * @param dualX - The dual variables associated with each column of the matrix.
- * @param dualY - The dual variables associated with each row of the matrix.
+ * @param dualX - The dual variables for each matrix column.
+ * @param dualY - The dual variables for each matrix row.
  * @param starsX - An array mapping star columns to row. Modified in place.
  * @param starsY - An array mapping star rows to columns. Modified in place.
  *
@@ -171,8 +172,8 @@ export function steps2To3<T extends number | bigint>(
  *
  * @param unmatched - The number of missing matches.
  * @param mat - An MxN cost matrix.
- * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
- * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ * @param dualX - The dual variables for each matrix column. Modified in place.
+ * @param dualY - The dual variables for each matrix row. Modified in place.
  * @param starsX - An array mapping star columns to row. Modified in place.
  * @param starsY - An array mapping star rows to columns. Modified in place.
  */
@@ -256,8 +257,8 @@ export function step5(
  * @param N - The number of adjustments to make.
  * @param min - The value to adjust by.
  * @param coveredY - An array indicating whether a row is covered.
- * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
- * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ * @param dualX - The dual variables for each matrix column. Modified in place.
+ * @param dualY - The dual variables for each matrix row. Modified in place.
  * @param slack - An array of covered column indices.
  * @param slackV - The slack values for each column. Modified in place.
  */
