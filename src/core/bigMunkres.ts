@@ -6,8 +6,13 @@ import { partitionByMin } from "../utils/mutableArrayLike";
 
 import { step4B as step4b } from "./bigMunkresB";
 import { MutableArrayLike } from "../types/mutableArrayLike";
+import { isBigInt } from "../utils/is";
 
-export function exec(matrix: MatrixLike<bigint>): Matching<bigint> {
+export function exec(matrix: MatrixLike<number>): Matching<number>;
+export function exec(matrix: MatrixLike<bigint>): Matching<bigint>;
+export function exec<T extends number | bigint>(
+  matrix: MatrixLike<T>,
+): Matching<T> {
   // Get dimensions
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
@@ -18,19 +23,23 @@ export function exec(matrix: MatrixLike<bigint>): Matching<bigint> {
   }
 
   // Step 1: Reduce
-  const dualX = new Array<bigint>(X);
-  const dualY = new Array<bigint>(Y);
+  const dualX = new Array<T>(X);
+  const dualY = new Array<T>(Y);
+  // @ts-expect-error ts(2769)
   step1(matrix, dualX, dualY);
 
   // Steps 2 & 3: Find initial matching
   const starsX = new Array<number>(X).fill(-1);
   const starsY = new Array<number>(Y).fill(-1);
+  // @ts-expect-error ts(2769)
   const stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
 
   // Step 4: Find complete matching
   Y <= X
-    ? step4(Y - stars, matrix, dualX, dualY, starsX, starsY)
-    : step4b(X - stars, matrix, dualX, dualY, starsX, starsY);
+    ? // @ts-expect-error ts(2769)
+      step4(Y - stars, matrix, dualX, dualY, starsX, starsY)
+    : // @ts-expect-error ts(2769)
+      step4b(X - stars, matrix, dualX, dualY, starsX, starsY);
 
   // Return matching
   return { dualX, dualY, matrix, starsX, starsY };
@@ -49,25 +58,36 @@ export function exec(matrix: MatrixLike<bigint>): Matching<bigint> {
  * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
  */
 export function step1(
+  matrix: MatrixLike<number>,
+  dualX: number[],
+  dualY: number[],
+): void;
+export function step1(
   matrix: MatrixLike<bigint>,
   dualX: bigint[],
   dualY: bigint[],
+): void;
+export function step1<T extends number | bigint>(
+  matrix: MatrixLike<T>,
+  dualX: T[],
+  dualY: T[],
 ): void {
   const X = dualX.length;
   const Y = dualY.length;
 
   // Reduce rows
   if (Y > X) {
-    dualY.fill(0n);
+    dualY.fill((isBigInt(matrix[0][0]) ? 0n : 0) as T);
   } else {
     for (let y = 0; y < Y; ++y) {
+      // @ts-expect-error ts(2769)
       dualY[y] = getMin(matrix[y])!;
     }
   }
 
   // If matrix is wide, skip column reduction
   if (Y < X) {
-    dualX.fill(0n);
+    dualX.fill((isBigInt(matrix[0][0]) ? 0n : 0) as T);
     return;
   }
 
@@ -75,7 +95,7 @@ export function step1(
   let dy = dualY[0];
   let row = matrix[0];
   for (let x = 0; x < X; ++x) {
-    dualX[x] = row[x] - dy;
+    dualX[x] = (row[x] - dy) as T;
   }
 
   // Reduce columns
@@ -85,7 +105,7 @@ export function step1(
     for (let x = 0; x < X; ++x) {
       const dx = row[x] - dy;
       if (dx < dualX[x]) {
-        dualX[x] = dx;
+        dualX[x] = dx as T;
       }
     }
   }
@@ -103,9 +123,23 @@ export function step1(
  * @returns The number of matches (stars) found.
  */
 export function steps2To3(
+  matrix: MatrixLike<number>,
+  dualX: number[],
+  dualY: number[],
+  starsX: number[],
+  starsY: number[],
+): number;
+export function steps2To3(
   matrix: MatrixLike<bigint>,
   dualX: bigint[],
   dualY: bigint[],
+  starsX: number[],
+  starsY: number[],
+): number;
+export function steps2To3<T extends number | bigint>(
+  matrix: MatrixLike<T>,
+  dualX: T[],
+  dualY: T[],
   starsX: number[],
   starsY: number[],
 ): number {
@@ -144,9 +178,25 @@ export function steps2To3(
  */
 export function step4(
   unmatched: number,
+  matrix: MatrixLike<number>,
+  dualX: number[],
+  dualY: number[],
+  starsX: number[],
+  starsY: number[],
+): void;
+export function step4(
+  unmatched: number,
   matrix: MatrixLike<bigint>,
   dualX: bigint[],
   dualY: bigint[],
+  starsX: number[],
+  starsY: number[],
+): void;
+export function step4<T extends number | bigint>(
+  unmatched: number,
+  matrix: MatrixLike<T>,
+  dualX: T[],
+  dualY: T[],
   starsX: number[],
   starsY: number[],
 ): void {
@@ -157,12 +207,13 @@ export function step4(
 
   const X = dualX.length;
   const slack = new Uint32Array(X);
-  const slackV = new Array<bigint>(X);
+  const slackV = new Array<T>(X);
   const slackY = new Uint32Array(X);
 
   // Match unmatched rows
   for (let y = 0; unmatched > 0; ++y) {
     if (starsY[y] === -1) {
+      // @ts-expect-error ts(2769)
       match(y, matrix, dualX, dualY, starsX, starsY, slack, slackV, slackY);
       --unmatched;
     }
@@ -213,10 +264,28 @@ export function step5(
 export function step6(
   y: number,
   N: number,
+  dualX: number[],
+  dualY: number[],
+  slack: ArrayLike<number>,
+  slackV: ArrayLike<number>,
+  starsX: number[],
+): void;
+export function step6(
+  y: number,
+  N: number,
   dualX: bigint[],
   dualY: bigint[],
   slack: ArrayLike<number>,
   slackV: ArrayLike<bigint>,
+  starsX: number[],
+): void;
+export function step6<T extends number | bigint>(
+  y: number,
+  N: number,
+  dualX: T[],
+  dualY: T[],
+  slack: ArrayLike<number>,
+  slackV: ArrayLike<T>,
   starsX: number[],
 ): void {
   const sum = slackV[slack[N - 1]];
@@ -224,13 +293,26 @@ export function step6(
   let min = sum;
   for (let i = 0; i < N; ++i) {
     const x = slack[i];
+    // @ts-expect-error ts(2365)
     dualY[y] += min;
-    min = sum - slackV[x];
+    min = (sum - slackV[x]) as T;
+    // @ts-expect-error ts(2322)
     dualX[x] -= min;
     y = starsX[x];
   }
 }
 
+export function match(
+  rootY: number,
+  matrix: MatrixLike<number>,
+  dualX: number[],
+  dualY: number[],
+  starsX: number[],
+  starsY: number[],
+  slack: MutableArrayLike<number>,
+  slackV: MutableArrayLike<number>,
+  slackY: MutableArrayLike<number>,
+): void;
 export function match(
   rootY: number,
   matrix: MatrixLike<bigint>,
@@ -241,6 +323,17 @@ export function match(
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<bigint>,
   slackY: MutableArrayLike<number>,
+): void;
+export function match<T extends number | bigint>(
+  rootY: number,
+  matrix: MatrixLike<T>,
+  dualX: T[],
+  dualY: T[],
+  starsX: number[],
+  starsY: number[],
+  slack: MutableArrayLike<number>,
+  slackV: MutableArrayLike<T>,
+  slackY: MutableArrayLike<number>,
 ): void {
   const X = slack.length;
 
@@ -250,7 +343,7 @@ export function match(
   let row = matrix[y];
   for (let x = 0; x < X; ++x) {
     slack[x] = x;
-    slackV[x] = row[x] - dualX[x] - dy;
+    slackV[x] = (row[x] - dualX[x] - dy) as T;
     slackY[x] = y;
   }
 
@@ -264,11 +357,11 @@ export function match(
   for (x = slack[0]; starsX[x] !== -1; x = slack[steps++]) {
     // Update slack
     y = starsX[x];
-    dy = dualY[y] - zero;
+    dy = (dualY[y] - zero) as T;
     row = matrix[y];
     for (let i = zeros; i < X; ++i) {
       x = slack[i];
-      const value = row[x] - dualX[x] - dy;
+      const value = (row[x] - dualX[x] - dy) as T;
       if (value < slackV[x]) {
         if (value === zero) {
           slack[i] = slack[zeros];
@@ -287,6 +380,7 @@ export function match(
   }
 
   // Update dual variables
+  // @ts-expect-error ts(2769)
   step6(rootY, steps, dualX, dualY, slack, slackV, starsX);
 
   // Update matching

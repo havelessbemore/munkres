@@ -5,9 +5,25 @@ import { partitionByMin } from "../utils/mutableArrayLike";
 
 export function step4B(
   unmatched: number,
+  matrix: MatrixLike<number>,
+  dualX: number[],
+  dualY: number[],
+  starsX: number[],
+  starsY: number[],
+): void;
+export function step4B(
+  unmatched: number,
   matrix: MatrixLike<bigint>,
   dualX: bigint[],
   dualY: bigint[],
+  starsX: number[],
+  starsY: number[],
+): void;
+export function step4B<T extends number | bigint>(
+  unmatched: number,
+  matrix: MatrixLike<T>,
+  dualX: T[],
+  dualY: T[],
   starsX: number[],
   starsY: number[],
 ): void {
@@ -18,12 +34,13 @@ export function step4B(
 
   const Y = dualY.length;
   const slack = new Uint32Array(Y);
-  const slackV = new Array<bigint>(Y);
+  const slackV = new Array<T>(Y);
   const slackX = new Uint32Array(Y);
 
   // Match unmatched columns
   for (let x = 0; unmatched > 0; ++x) {
     if (starsX[x] === -1) {
+      // @ts-expect-error ts(2769)
       matchB(x, matrix, dualX, dualY, starsX, starsY, slack, slackV, slackX);
       --unmatched;
     }
@@ -48,10 +65,28 @@ export function step5B(
 export function step6B(
   x: number,
   N: number,
+  dualX: number[],
+  dualY: number[],
+  slack: ArrayLike<number>,
+  slackV: ArrayLike<number>,
+  starsY: number[],
+): void;
+export function step6B(
+  x: number,
+  N: number,
   dualX: bigint[],
   dualY: bigint[],
   slack: ArrayLike<number>,
   slackV: ArrayLike<bigint>,
+  starsY: number[],
+): void;
+export function step6B<T extends number | bigint>(
+  x: number,
+  N: number,
+  dualX: T[],
+  dualY: T[],
+  slack: ArrayLike<number>,
+  slackV: ArrayLike<T>,
   starsY: number[],
 ): void {
   const sum = slackV[slack[N - 1]];
@@ -59,13 +94,26 @@ export function step6B(
   let min = sum;
   for (let i = 0; i < N; ++i) {
     const y = slack[i];
+    // @ts-expect-error ts(2365)
     dualX[x] += min;
-    min = sum - slackV[y];
+    min = (sum - slackV[y]) as T;
+    // @ts-expect-error ts(2322)
     dualY[y] -= min;
     x = starsY[y];
   }
 }
 
+export function matchB(
+  rootX: number,
+  matrix: MatrixLike<number>,
+  dualX: number[],
+  dualY: number[],
+  starsX: number[],
+  starsY: number[],
+  slack: MutableArrayLike<number>,
+  slackV: MutableArrayLike<number>,
+  slackX: MutableArrayLike<number>,
+): void;
 export function matchB(
   rootX: number,
   matrix: MatrixLike<bigint>,
@@ -76,6 +124,17 @@ export function matchB(
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<bigint>,
   slackX: MutableArrayLike<number>,
+): void;
+export function matchB<T extends number | bigint>(
+  rootX: number,
+  matrix: MatrixLike<T>,
+  dualX: T[],
+  dualY: T[],
+  starsX: number[],
+  starsY: number[],
+  slack: MutableArrayLike<number>,
+  slackV: MutableArrayLike<T>,
+  slackX: MutableArrayLike<number>,
 ): void {
   const Y = slack.length;
 
@@ -84,7 +143,7 @@ export function matchB(
   let dx = dualX[x];
   for (let y = 0; y < Y; ++y) {
     slack[y] = y;
-    slackV[y] = matrix[y][x] - dualY[y] - dx;
+    slackV[y] = (matrix[y][x] - dualY[y] - dx) as T;
     slackX[y] = x;
   }
 
@@ -98,10 +157,10 @@ export function matchB(
   for (y = slack[0]; starsY[y] !== -1; y = slack[steps++]) {
     // Update slack
     x = starsY[y];
-    dx = dualX[x] - zero;
+    dx = (dualX[x] - zero) as T;
     for (let i = zeros; i < Y; ++i) {
       y = slack[i];
-      const value = matrix[y][x] - dualY[y] - dx;
+      const value = (matrix[y][x] - dualY[y] - dx) as T;
       if (value < slackV[y]) {
         if (value === zero) {
           slack[i] = slack[zeros];
@@ -120,6 +179,7 @@ export function matchB(
   }
 
   // Update dual variables
+  // @ts-expect-error ts(2769)
   step6B(rootX, steps, dualX, dualY, slack, slackV, starsY);
 
   // Update matching
