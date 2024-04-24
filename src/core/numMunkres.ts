@@ -14,7 +14,7 @@ export function exec(matrix: MatrixLike<number>): Matching<number> {
   const X = matrix[0]?.length ?? 0;
 
   // Check if empty matrix
-  if (Y <= 0 && X <= 0) {
+  if (Y <= 0 || X <= 0) {
     return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
   }
 
