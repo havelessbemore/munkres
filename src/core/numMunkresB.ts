@@ -89,13 +89,14 @@ export function matchB(
     for (let i = zeros; i < Y; ++i) {
       y = slack[i];
       const value = (matrix[y][x] - (dx + dualY[y] || 0) || 0) + zero || 0;
-      if (value < slackV[y]) {
-        if (value === zero) {
-          slack[i] = slack[zeros];
-          slack[zeros++] = y;
-        }
-        slackV[y] = value;
-        slackX[y] = x;
+      if (value >= slackV[y]) {
+        continue;
+      }
+      slackX[y] = x;
+      slackV[y] = value;
+      if (value === zero) {
+        slack[i] = slack[zeros];
+        slack[zeros++] = y;
       }
     }
 

@@ -161,13 +161,14 @@ export function matchB<T extends number | bigint>(
     for (let i = zeros; i < Y; ++i) {
       y = slack[i];
       const value = (matrix[y][x] - dualY[y] - dx) as T;
-      if (value < slackV[y]) {
-        if (value === zero) {
-          slack[i] = slack[zeros];
-          slack[zeros++] = y;
-        }
-        slackV[y] = value;
-        slackX[y] = x;
+      if (value >= slackV[y]) {
+        continue;
+      }
+      slackX[y] = x;
+      slackV[y] = value;
+      if (value === zero) {
+        slack[i] = slack[zeros];
+        slack[zeros++] = y;
       }
     }
 

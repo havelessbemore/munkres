@@ -239,13 +239,14 @@ export function match(
     for (let i = zeros; i < X; ++i) {
       x = slack[i];
       const value = (row[x] - (dualX[x] + dy || 0) || 0) + zero || 0;
-      if (value < slackV[x]) {
-        if (value === zero) {
-          slack[i] = slack[zeros];
-          slack[zeros++] = x;
-        }
-        slackV[x] = value;
-        slackY[x] = y;
+      if (value >= slackV[x]) {
+        continue;
+      }
+      slackY[x] = y;
+      slackV[x] = value;
+      if (value === zero) {
+        slack[i] = slack[zeros];
+        slack[zeros++] = x;
       }
     }
 
