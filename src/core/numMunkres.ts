@@ -181,28 +181,27 @@ export function step4(
  * @param slackV - The slack values for each column. Modified in place.
  */
 export function step6(
-  y: number,
   N: number,
   dualX: number[],
   dualY: number[],
-  slack: MutableArrayLike<number>,
-  slackV: MutableArrayLike<number>,
-  starsX: number[],
+  slack: ArrayLike<number>,
+  slackV: ArrayLike<number>,
+  slackY: ArrayLike<number>,
 ): void {
   const sum = slackV[slack[N - 1]];
 
   let min = sum;
   for (let i = 0; i < N; ++i) {
     const x = slack[i];
+    const y = slackY[x];
     dualY[y] = dualY[y] + min || 0;
     min = sum - slackV[x] || 0;
     dualX[x] = dualX[x] - min || 0;
-    y = starsX[x];
   }
 }
 
 export function match(
-  rootY: number,
+  y: number,
   matrix: MatrixLike<number>,
   dualX: number[],
   dualY: number[],
@@ -215,7 +214,6 @@ export function match(
   const X = slack.length;
 
   // Initialize slack
-  let y = rootY;
   let dy = dualY[y];
   let row = matrix[y];
   for (let x = 0; x < X; ++x) {
@@ -257,9 +255,9 @@ export function match(
     }
   }
 
-  // Update dual variables
-  step6(rootY, steps, dualX, dualY, slack, slackV, starsX);
-
   // Update matching
   step5(x, slackY, starsX, starsY);
+
+  // Update dual variables
+  step6(steps, dualX, dualY, slack, slackV, slackY);
 }

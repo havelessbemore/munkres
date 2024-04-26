@@ -33,28 +33,27 @@ export function step4B(
 }
 
 export function step6B(
-  x: number,
   N: number,
   dualX: number[],
   dualY: number[],
   slack: ArrayLike<number>,
   slackV: ArrayLike<number>,
-  starsY: number[],
+  slackX: ArrayLike<number>,
 ): void {
   const sum = slackV[slack[N - 1]];
 
   let min = sum;
   for (let i = 0; i < N; ++i) {
     const y = slack[i];
+    const x = slackX[y];
     dualX[x] = dualX[x] + min || 0;
     min = sum - slackV[y] || 0;
     dualY[y] = dualY[y] - min || 0;
-    x = starsY[y];
   }
 }
 
 export function matchB(
-  rootX: number,
+  x: number,
   matrix: MatrixLike<number>,
   dualX: number[],
   dualY: number[],
@@ -67,7 +66,6 @@ export function matchB(
   const Y = slack.length;
 
   // Initialize slack
-  let x = rootX;
   let dx = dualX[x];
   for (let y = 0; y < Y; ++y) {
     slack[y] = y;
@@ -107,9 +105,9 @@ export function matchB(
     }
   }
 
-  // Update dual variables
-  step6B(rootX, steps, dualX, dualY, slack, slackV, starsY);
-
   // Update matching
   step5B(y, slackX, starsX, starsY);
+
+  // Update dual variables
+  step6B(steps, dualX, dualY, slack, slackV, slackX);
 }

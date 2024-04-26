@@ -263,48 +263,45 @@ export function step5(
  * @param slackV - The slack values for each column. Modified in place.
  */
 export function step6(
-  y: number,
   N: number,
   dualX: number[],
   dualY: number[],
   slack: ArrayLike<number>,
   slackV: ArrayLike<number>,
-  starsX: number[],
+  slackY: number[],
 ): void;
 export function step6(
-  y: number,
   N: number,
   dualX: bigint[],
   dualY: bigint[],
   slack: ArrayLike<number>,
   slackV: ArrayLike<bigint>,
-  starsX: number[],
+  slackY: number[],
 ): void;
 export function step6<T extends number | bigint>(
-  y: number,
   N: number,
   dualX: T[],
   dualY: T[],
   slack: ArrayLike<number>,
   slackV: ArrayLike<T>,
-  starsX: number[],
+  slackY: number[],
 ): void {
   const sum = slackV[slack[N - 1]];
 
   let min = sum;
   for (let i = 0; i < N; ++i) {
     const x = slack[i];
+    const y = slackY[x];
     // @ts-expect-error ts(2365)
     dualY[y] += min;
     min = (sum - slackV[x]) as T;
     // @ts-expect-error ts(2322)
     dualX[x] -= min;
-    y = starsX[x];
   }
 }
 
 export function match(
-  rootY: number,
+  y: number,
   matrix: MatrixLike<number>,
   dualX: number[],
   dualY: number[],
@@ -315,7 +312,7 @@ export function match(
   slackY: MutableArrayLike<number>,
 ): void;
 export function match(
-  rootY: number,
+  y: number,
   matrix: MatrixLike<bigint>,
   dualX: bigint[],
   dualY: bigint[],
@@ -326,7 +323,7 @@ export function match(
   slackY: MutableArrayLike<number>,
 ): void;
 export function match<T extends number | bigint>(
-  rootY: number,
+  y: number,
   matrix: MatrixLike<T>,
   dualX: T[],
   dualY: T[],
@@ -339,7 +336,6 @@ export function match<T extends number | bigint>(
   const X = slack.length;
 
   // Initialize slack
-  let y = rootY;
   let dy = dualY[y];
   let row = matrix[y];
   for (let x = 0; x < X; ++x) {
@@ -381,10 +377,10 @@ export function match<T extends number | bigint>(
     }
   }
 
-  // Update dual variables
-  // @ts-expect-error ts(2769)
-  step6(rootY, steps, dualX, dualY, slack, slackV, starsX);
-
   // Update matching
   step5(x, slackY, starsX, starsY);
+
+  // Update dual variables
+  // @ts-expect-error ts(2769)
+  step6(steps, dualX, dualY, slack, slackV, slackY);
 }
