@@ -162,10 +162,18 @@ export function step4(
 
   // Match unmatched rows
   for (let y = 0; unmatched > 0; ++y) {
-    if (starsY[y] === -1) {
-      match(y, matrix, dualX, dualY, starsX, starsY, slack, slackV, slackY);
-      --unmatched;
+    if (starsY[y] !== -1) {
+      continue;
     }
+
+    const N = match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
+    --unmatched;
+
+    // Update dual variables
+    step6(y, N, dualX, dualY, slack, slackV, starsX);
+
+    // Update matching
+    step5(slack[N - 1], slackY, starsX, starsY);
   }
 }
 
@@ -181,22 +189,23 @@ export function step4(
  * @param slackV - The slack values for each column. Modified in place.
  */
 export function step6(
+  y: number,
   N: number,
   dualX: number[],
   dualY: number[],
   slack: ArrayLike<number>,
   slackV: ArrayLike<number>,
-  slackY: ArrayLike<number>,
+  starsX: ArrayLike<number>,
 ): void {
   const sum = slackV[slack[N - 1]];
 
   let min = sum;
   for (let i = 0; i < N; ++i) {
     const x = slack[i];
-    const y = slackY[x];
     dualY[y] = dualY[y] + min || 0;
     min = sum - slackV[x] || 0;
     dualX[x] = dualX[x] - min || 0;
+    y = starsX[x];
   }
 }
 
@@ -206,11 +215,10 @@ export function match(
   dualX: number[],
   dualY: number[],
   starsX: number[],
-  starsY: number[],
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<number>,
   slackY: MutableArrayLike<number>,
-): void {
+): number {
   const X = slack.length;
 
   // Initialize slack
@@ -228,8 +236,7 @@ export function match(
 
   // Grow a hungarian tree until an augmenting path is found
   let steps = 1;
-  let x: number;
-  for (x = slack[0]; starsX[x] !== -1; x = slack[steps++]) {
+  for (let x = slack[0]; starsX[x] !== -1; x = slack[steps++]) {
     // Update slack
     y = starsX[x];
     dy = dualY[y];
@@ -255,9 +262,5 @@ export function match(
     }
   }
 
-  // Update matching
-  step5(x, slackY, starsX, starsY);
-
-  // Update dual variables
-  step6(steps, dualX, dualY, slack, slackV, slackY);
+  return steps;
 }
