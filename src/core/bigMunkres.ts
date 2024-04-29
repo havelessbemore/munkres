@@ -59,18 +59,18 @@ export function exec<T extends number | bigint>(
  */
 export function step1(
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
+  dualX: MutableArrayLike<number>,
+  dualY: MutableArrayLike<number>,
 ): void;
 export function step1(
   matrix: MatrixLike<bigint>,
-  dualX: bigint[],
-  dualY: bigint[],
+  dualX: MutableArrayLike<bigint>,
+  dualY: MutableArrayLike<bigint>,
 ): void;
 export function step1<T extends number | bigint>(
   matrix: MatrixLike<T>,
-  dualX: T[],
-  dualY: T[],
+  dualX: MutableArrayLike<T>,
+  dualY: MutableArrayLike<T>,
 ): void {
   const X = dualX.length;
   const Y = dualY.length;
@@ -125,24 +125,24 @@ export function step1<T extends number | bigint>(
  */
 export function steps2To3(
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  starsX: number[],
-  starsY: number[],
+  dualX: ArrayLike<number>,
+  dualY: ArrayLike<number>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): number;
 export function steps2To3(
   matrix: MatrixLike<bigint>,
-  dualX: bigint[],
-  dualY: bigint[],
-  starsX: number[],
-  starsY: number[],
+  dualX: ArrayLike<bigint>,
+  dualY: ArrayLike<bigint>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): number;
 export function steps2To3<T extends number | bigint>(
   matrix: MatrixLike<T>,
-  dualX: T[],
-  dualY: T[],
-  starsX: number[],
-  starsY: number[],
+  dualX: ArrayLike<T>,
+  dualY: ArrayLike<T>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): number {
   const X = dualX.length;
   const Y = dualY.length;
@@ -180,26 +180,26 @@ export function steps2To3<T extends number | bigint>(
 export function step4(
   unmatched: number,
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  starsX: number[],
-  starsY: number[],
+  dualX: MutableArrayLike<number>,
+  dualY: MutableArrayLike<number>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): void;
 export function step4(
   unmatched: number,
   matrix: MatrixLike<bigint>,
-  dualX: bigint[],
-  dualY: bigint[],
-  starsX: number[],
-  starsY: number[],
+  dualX: MutableArrayLike<bigint>,
+  dualY: MutableArrayLike<bigint>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): void;
 export function step4<T extends number | bigint>(
   unmatched: number,
   matrix: MatrixLike<T>,
-  dualX: T[],
-  dualY: T[],
-  starsX: number[],
-  starsY: number[],
+  dualX: MutableArrayLike<T>,
+  dualY: MutableArrayLike<T>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): void {
   // If no unmatched row
   if (unmatched <= 0) {
@@ -248,8 +248,8 @@ export function step4<T extends number | bigint>(
 export function step5(
   x: number,
   primeX: ArrayLike<number>,
-  starsX: number[],
-  starsY: number[],
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): void {
   do {
     const y = primeX[x];
@@ -274,29 +274,29 @@ export function step5(
 export function step6(
   y: number,
   N: number,
-  dualX: number[],
-  dualY: number[],
+  dualX: MutableArrayLike<number>,
+  dualY: MutableArrayLike<number>,
   slack: ArrayLike<number>,
   slackV: ArrayLike<number>,
-  starsX: number[],
+  starsX: ArrayLike<number>,
 ): void;
 export function step6(
   y: number,
   N: number,
-  dualX: bigint[],
-  dualY: bigint[],
+  dualX: MutableArrayLike<bigint>,
+  dualY: MutableArrayLike<bigint>,
   slack: ArrayLike<number>,
   slackV: ArrayLike<bigint>,
-  starsX: number[],
+  starsX: ArrayLike<number>,
 ): void;
 export function step6<T extends number | bigint>(
   y: number,
   N: number,
-  dualX: T[],
-  dualY: T[],
+  dualX: MutableArrayLike<T>,
+  dualY: MutableArrayLike<T>,
   slack: ArrayLike<number>,
   slackV: ArrayLike<T>,
-  starsX: number[],
+  starsX: ArrayLike<number>,
 ): void {
   const sum = slackV[slack[N - 1]];
 
@@ -315,9 +315,9 @@ export function step6<T extends number | bigint>(
 export function match(
   y: number,
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  starsX: number[],
+  dualX: ArrayLike<number>,
+  dualY: ArrayLike<number>,
+  starsX: ArrayLike<number>,
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<number>,
   slackY: MutableArrayLike<number>,
@@ -325,9 +325,9 @@ export function match(
 export function match(
   y: number,
   matrix: MatrixLike<bigint>,
-  dualX: bigint[],
-  dualY: bigint[],
-  starsX: number[],
+  dualX: ArrayLike<bigint>,
+  dualY: ArrayLike<bigint>,
+  starsX: ArrayLike<number>,
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<bigint>,
   slackY: MutableArrayLike<number>,
@@ -335,9 +335,9 @@ export function match(
 export function match<T extends number | bigint>(
   y: number,
   matrix: MatrixLike<T>,
-  dualX: T[],
-  dualY: T[],
-  starsX: number[],
+  dualX: ArrayLike<T>,
+  dualY: ArrayLike<T>,
+  starsX: ArrayLike<number>,
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<T>,
   slackY: MutableArrayLike<number>,

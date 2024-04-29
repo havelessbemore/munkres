@@ -6,26 +6,26 @@ import { partitionByMin } from "../utils/mutableArrayLike";
 export function step4B(
   unmatched: number,
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  starsX: number[],
-  starsY: number[],
+  dualX: MutableArrayLike<number>,
+  dualY: MutableArrayLike<number>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): void;
 export function step4B(
   unmatched: number,
   matrix: MatrixLike<bigint>,
-  dualX: bigint[],
-  dualY: bigint[],
-  starsX: number[],
-  starsY: number[],
+  dualX: MutableArrayLike<bigint>,
+  dualY: MutableArrayLike<bigint>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): void;
 export function step4B<T extends number | bigint>(
   unmatched: number,
   matrix: MatrixLike<T>,
-  dualX: T[],
-  dualY: T[],
-  starsX: number[],
-  starsY: number[],
+  dualX: MutableArrayLike<T>,
+  dualY: MutableArrayLike<T>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): void {
   // If no unmatched column
   if (unmatched <= 0) {
@@ -59,8 +59,8 @@ export function step4B<T extends number | bigint>(
 export function step5B(
   y: number,
   primeY: ArrayLike<number>,
-  starsX: number[],
-  starsY: number[],
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): void {
   do {
     const x = primeY[y];
@@ -74,29 +74,29 @@ export function step5B(
 export function step6B(
   x: number,
   N: number,
-  dualX: number[],
-  dualY: number[],
+  dualX: MutableArrayLike<number>,
+  dualY: MutableArrayLike<number>,
   slack: ArrayLike<number>,
   slackV: ArrayLike<number>,
-  starsY: number[],
+  starsY: ArrayLike<number>,
 ): void;
 export function step6B(
   x: number,
   N: number,
-  dualX: bigint[],
-  dualY: bigint[],
+  dualX: MutableArrayLike<bigint>,
+  dualY: MutableArrayLike<bigint>,
   slack: ArrayLike<number>,
   slackV: ArrayLike<bigint>,
-  starsY: number[],
+  starsY: ArrayLike<number>,
 ): void;
 export function step6B<T extends number | bigint>(
   x: number,
   N: number,
-  dualX: T[],
-  dualY: T[],
+  dualX: MutableArrayLike<T>,
+  dualY: MutableArrayLike<T>,
   slack: ArrayLike<number>,
   slackV: ArrayLike<T>,
-  starsY: number[],
+  starsY: ArrayLike<number>,
 ): void {
   const sum = slackV[slack[N - 1]];
 
@@ -115,9 +115,9 @@ export function step6B<T extends number | bigint>(
 export function matchB(
   x: number,
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  starsY: number[],
+  dualX: ArrayLike<number>,
+  dualY: ArrayLike<number>,
+  starsY: ArrayLike<number>,
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<number>,
   slackX: MutableArrayLike<number>,
@@ -125,9 +125,9 @@ export function matchB(
 export function matchB(
   x: number,
   matrix: MatrixLike<bigint>,
-  dualX: bigint[],
-  dualY: bigint[],
-  starsY: number[],
+  dualX: ArrayLike<bigint>,
+  dualY: ArrayLike<bigint>,
+  starsY: ArrayLike<number>,
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<bigint>,
   slackX: MutableArrayLike<number>,
@@ -135,9 +135,9 @@ export function matchB(
 export function matchB<T extends number | bigint>(
   x: number,
   matrix: MatrixLike<T>,
-  dualX: T[],
-  dualY: T[],
-  starsY: number[],
+  dualX: ArrayLike<T>,
+  dualY: ArrayLike<T>,
+  starsY: ArrayLike<number>,
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<T>,
   slackX: MutableArrayLike<number>,
