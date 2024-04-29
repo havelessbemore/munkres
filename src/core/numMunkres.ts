@@ -6,7 +6,7 @@ import { getMin } from "../utils/arrayLike";
 import { partitionByMin } from "../utils/mutableArrayLike";
 
 import { step5 } from "./bigMunkres";
-import { step4B as step4b } from "./numMunkresB";
+import { step4B } from "./numMunkresB";
 
 export function exec(matrix: MatrixLike<number>): Matching<number> {
   // Get dimensions
@@ -31,7 +31,7 @@ export function exec(matrix: MatrixLike<number>): Matching<number> {
   // Step 4: Find complete matching
   Y <= X
     ? step4(Y - stars, matrix, dualX, dualY, starsX, starsY)
-    : step4b(X - stars, matrix, dualX, dualY, starsX, starsY);
+    : step4B(X - stars, matrix, dualX, dualY, starsX, starsY);
 
   // Return matching
   return { dualX, dualY, matrix, starsX, starsY };

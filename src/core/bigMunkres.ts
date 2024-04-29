@@ -6,7 +6,7 @@ import { getMin } from "../utils/arrayLike";
 import { isBigInt } from "../utils/is";
 import { partitionByMin } from "../utils/mutableArrayLike";
 
-import { step4B as step4b } from "./bigMunkresB";
+import { step4B } from "./bigMunkresB";
 
 export function exec(matrix: MatrixLike<number>): Matching<number>;
 export function exec(matrix: MatrixLike<bigint>): Matching<bigint>;
@@ -39,7 +39,7 @@ export function exec<T extends number | bigint>(
     ? // @ts-expect-error ts(2769)
       step4(Y - stars, matrix, dualX, dualY, starsX, starsY)
     : // @ts-expect-error ts(2769)
-      step4b(X - stars, matrix, dualX, dualY, starsX, starsY);
+      step4B(X - stars, matrix, dualX, dualY, starsX, starsY);
 
   // Return matching
   return { dualX, dualY, matrix, starsX, starsY };
