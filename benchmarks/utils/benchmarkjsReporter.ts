@@ -2,8 +2,6 @@ import { Task } from "tinybench";
 import { SuiteReporter } from "./suiteReporter";
 
 export class BenchmarkjsReporter implements SuiteReporter {
-  constructor() {}
-
   onTaskComplete(task: Task): void {
     const res = task.result!;
     const runs = res.samples.length;

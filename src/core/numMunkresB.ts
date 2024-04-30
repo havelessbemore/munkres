@@ -25,10 +25,18 @@ export function step4B(
 
   // Match unmatched columns
   for (let x = 0; unmatched > 0; ++x) {
-    if (starsX[x] === -1) {
-      matchB(x, matrix, dualX, dualY, starsX, starsY, slack, slackV, slackX);
-      --unmatched;
+    if (starsX[x] !== -1) {
+      continue;
     }
+
+    const N = matchB(x, matrix, dualX, dualY, starsY, slack, slackV, slackX);
+    --unmatched;
+
+    // Update dual variables
+    step6B(x, N, dualX, dualY, slack, slackV, starsY);
+
+    // Update matching
+    step5B(slack[N - 1], slackX, starsX, starsY);
   }
 }
 
@@ -39,7 +47,7 @@ export function step6B(
   dualY: number[],
   slack: ArrayLike<number>,
   slackV: ArrayLike<number>,
-  starsY: number[],
+  starsY: ArrayLike<number>,
 ): void {
   const sum = slackV[slack[N - 1]];
 
@@ -58,13 +66,11 @@ export function matchB(
   matrix: MatrixLike<number>,
   dualX: number[],
   dualY: number[],
-  starsX: number[],
   starsY: number[],
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<number>,
   slackX: MutableArrayLike<number>,
-): void {
-  const rootX = x;
+): number {
   const Y = slack.length;
 
   // Initialize slack
@@ -81,21 +87,21 @@ export function matchB(
 
   // Grow a hungarian tree until an augmenting path is found
   let steps = 1;
-  let y: number;
-  for (y = slack[0]; starsY[y] !== -1; y = slack[steps++]) {
+  for (let y = slack[0]; starsY[y] !== -1; y = slack[steps++]) {
     // Update slack
     x = starsY[y];
     dx = dualX[x];
     for (let i = zeros; i < Y; ++i) {
       y = slack[i];
       const value = (matrix[y][x] - (dx + dualY[y] || 0) || 0) + zero || 0;
-      if (value < slackV[y]) {
-        if (value === zero) {
-          slack[i] = slack[zeros];
-          slack[zeros++] = y;
-        }
-        slackV[y] = value;
-        slackX[y] = x;
+      if (value >= slackV[y]) {
+        continue;
+      }
+      slackX[y] = x;
+      slackV[y] = value;
+      if (value === zero) {
+        slack[i] = slack[zeros];
+        slack[zeros++] = y;
       }
     }
 
@@ -106,9 +112,5 @@ export function matchB(
     }
   }
 
-  // Update dual variables
-  step6B(rootX, steps, dualX, dualY, slack, slackV, starsY);
-
-  // Update matching
-  step5B(y, slackX, starsX, starsY);
+  return steps;
 }

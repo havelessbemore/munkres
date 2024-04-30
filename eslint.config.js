@@ -1,19 +1,14 @@
-import globals from "globals";
-
 import eslint from "@eslint/js";
-import prettierPluginRecommended from "eslint-plugin-prettier/recommended";
+import prettierConfig from "eslint-config-prettier";
 import tseslint from "typescript-eslint";
 
+/** @type {import('@typescript-eslint/utils').TSESLint.FlatConfig.ConfigArray} */
 export default tseslint.config(
+  {
+    ignores: ["dist", "docs", "src/.*/"],
+  },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
-  prettierPluginRecommended,
-  {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
-    },
-  },
+  ...tseslint.configs.stylistic,
+  prettierConfig,
 );

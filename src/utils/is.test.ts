@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "@jest/globals";
 
 import { isBigInt, isNumber } from "./is";
 
@@ -38,7 +38,7 @@ describe(`${isBigInt.name}()`, () => {
   });
 
   it("returns false for function and symbol", () => {
-    expect(isBigInt(() => {})).toBe(false);
+    expect(isBigInt(() => 0n)).toBe(false);
     expect(isBigInt(Symbol("bigint"))).toBe(false);
   });
 });
@@ -84,7 +84,7 @@ describe(`${isNumber.name}()`, () => {
   });
 
   it("returns false for function and symbol", () => {
-    expect(isNumber(() => {})).toBe(false);
+    expect(isNumber(() => 0n)).toBe(false);
     expect(isNumber(Symbol("number"))).toBe(false);
   });
 });

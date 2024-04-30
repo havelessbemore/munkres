@@ -6,7 +6,7 @@ import { getMin } from "../utils/arrayLike";
 import { partitionByMin } from "../utils/mutableArrayLike";
 
 import { step5 } from "./bigMunkres";
-import { step4B as step4b } from "./numMunkresB";
+import { step4B } from "./numMunkresB";
 
 export function exec(matrix: MatrixLike<number>): Matching<number> {
   // Get dimensions
@@ -14,7 +14,7 @@ export function exec(matrix: MatrixLike<number>): Matching<number> {
   const X = matrix[0]?.length ?? 0;
 
   // Check if empty matrix
-  if (Y <= 0 && X <= 0) {
+  if (Y <= 0 || X <= 0) {
     return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
   }
 
@@ -31,7 +31,7 @@ export function exec(matrix: MatrixLike<number>): Matching<number> {
   // Step 4: Find complete matching
   Y <= X
     ? step4(Y - stars, matrix, dualX, dualY, starsX, starsY)
-    : step4b(X - stars, matrix, dualX, dualY, starsX, starsY);
+    : step4B(X - stars, matrix, dualX, dualY, starsX, starsY);
 
   // Return matching
   return { dualX, dualY, matrix, starsX, starsY };
@@ -46,8 +46,8 @@ export function exec(matrix: MatrixLike<number>): Matching<number> {
  * of subsequent steps.
  *
  * @param matrix - The cost matrix.
- * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
- * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ * @param dualX - The dual variables for each matrix column. Modified in place.
+ * @param dualY - The dual variables for each matrix row. Modified in place.
  */
 export function step1(
   matrix: MatrixLike<number>,
@@ -57,10 +57,11 @@ export function step1(
   const X = dualX.length;
   const Y = dualY.length;
 
-  // Reduce rows
+  // If matrix is tall, skip row reduction
   if (Y > X) {
     dualY.fill(0);
   } else {
+    // Reduce rows
     for (let y = 0; y < Y; ++y) {
       dualY[y] = getMin(matrix[y])!;
     }
@@ -72,7 +73,7 @@ export function step1(
     return;
   }
 
-  // Initialize column reduction
+  // Initialize dualX
   let dy = dualY[0];
   let row = matrix[0];
   for (let x = 0; x < X; ++x) {
@@ -136,8 +137,8 @@ export function steps2To3(
  *
  * @param unmatched - The number of missing matches.
  * @param mat - An MxN cost matrix.
- * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
- * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ * @param dualX - The dual variables for each matrix column. Modified in place.
+ * @param dualY - The dual variables for each matrix row. Modified in place.
  * @param starsX - An array mapping star columns to row. Modified in place.
  * @param starsY - An array mapping star rows to columns. Modified in place.
  */
@@ -161,10 +162,18 @@ export function step4(
 
   // Match unmatched rows
   for (let y = 0; unmatched > 0; ++y) {
-    if (starsY[y] === -1) {
-      match(y, matrix, dualX, dualY, starsX, starsY, slack, slackV, slackY);
-      --unmatched;
+    if (starsY[y] !== -1) {
+      continue;
     }
+
+    const N = match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
+    --unmatched;
+
+    // Update dual variables
+    step6(y, N, dualX, dualY, slack, slackV, starsX);
+
+    // Update matching
+    step5(slack[N - 1], slackY, starsX, starsY);
   }
 }
 
@@ -174,8 +183,8 @@ export function step4(
  * @param pivot - The value to adjust by.
  * @param covV - The value indicating a row is covered.
  * @param coveredY - An array indicating whether a row is covered.
- * @param dualX - The dual variables associated with each column of the matrix. Modified in place.
- * @param dualY - The dual variables associated with each row of the matrix. Modified in place.
+ * @param dualX - The dual variables for each matrix column. Modified in place.
+ * @param dualY - The dual variables for each matrix row. Modified in place.
  * @param exposedX - An array indicating uncovered columns.
  * @param slackV - The slack values for each column. Modified in place.
  */
@@ -184,9 +193,9 @@ export function step6(
   N: number,
   dualX: number[],
   dualY: number[],
-  slack: MutableArrayLike<number>,
-  slackV: MutableArrayLike<number>,
-  starsX: number[],
+  slack: ArrayLike<number>,
+  slackV: ArrayLike<number>,
+  starsX: ArrayLike<number>,
 ): void {
   const sum = slackV[slack[N - 1]];
 
@@ -206,12 +215,10 @@ export function match(
   dualX: number[],
   dualY: number[],
   starsX: number[],
-  starsY: number[],
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<number>,
   slackY: MutableArrayLike<number>,
-): void {
-  const rootY = y;
+): number {
   const X = slack.length;
 
   // Initialize slack
@@ -229,8 +236,7 @@ export function match(
 
   // Grow a hungarian tree until an augmenting path is found
   let steps = 1;
-  let x: number;
-  for (x = slack[0]; starsX[x] !== -1; x = slack[steps++]) {
+  for (let x = slack[0]; starsX[x] !== -1; x = slack[steps++]) {
     // Update slack
     y = starsX[x];
     dy = dualY[y];
@@ -238,13 +244,14 @@ export function match(
     for (let i = zeros; i < X; ++i) {
       x = slack[i];
       const value = (row[x] - (dualX[x] + dy || 0) || 0) + zero || 0;
-      if (value < slackV[x]) {
-        if (value === zero) {
-          slack[i] = slack[zeros];
-          slack[zeros++] = x;
-        }
-        slackV[x] = value;
-        slackY[x] = y;
+      if (value >= slackV[x]) {
+        continue;
+      }
+      slackY[x] = y;
+      slackV[x] = value;
+      if (value === zero) {
+        slack[i] = slack[zeros];
+        slack[zeros++] = x;
       }
     }
 
@@ -255,9 +262,5 @@ export function match(
     }
   }
 
-  // Update dual variables
-  step6(rootY, steps, dualX, dualY, slack, slackV, starsX);
-
-  // Update matching
-  step5(x, slackY, starsX, starsY);
+  return steps;
 }

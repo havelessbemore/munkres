@@ -2,7 +2,7 @@ import Bench, { Task } from "tinybench";
 import { SuiteReporter } from "./suiteReporter";
 
 export class TerminalReporter implements SuiteReporter {
-  protected results: Map<string, { [key: string]: unknown }>;
+  protected results: Map<string, Record<string, unknown>>;
   protected columns: [string, (task: Task) => unknown][];
 
   constructor() {
@@ -61,8 +61,8 @@ export class TerminalReporter implements SuiteReporter {
     console.table(Array.from(results.values()));
   }
 
-  private _toResult(task: Task): { [key: string]: unknown } {
-    const out: { [key: string]: unknown } = {};
+  private _toResult(task: Task): Record<string, unknown> {
+    const out: Record<string, unknown> = {};
     for (const [key, valueFn] of this.columns) {
       out[key] = valueFn(task);
     }

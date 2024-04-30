@@ -14,4 +14,5 @@
 export interface MutableArrayLike<T> {
   readonly length: number;
   [n: number]: T;
+  fill(value: T, start?: number, end?: number): this;
 }

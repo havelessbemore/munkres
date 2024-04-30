@@ -12,7 +12,7 @@ A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm
 
 1. Supports `number` and `bigint` matrices.
 
-1. Supports square (NxN) and rectangular (MxN) matrices.
+1. Supports square (_NxN_) and rectangular (_MxN_) matrices.
 
 1. Fast ([benchmarks](#results)):
 
