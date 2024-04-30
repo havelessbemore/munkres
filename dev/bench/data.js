@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1714494309322,
+  "lastUpdate": 1714494312117,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -2239,6 +2239,44 @@ window.BENCHMARK_DATA = {
             "value": 1387.0014228399966,
             "unit": "ms",
             "range": "±3.50%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "13eea284afcf990eb4b4897c9ad0e61878fd44d8",
+          "message": "Merge pull request #26 from havelessbemore/dependabot/npm_and_yarn/eslint-plugin-n-17.4.0\n\nnpm: bump eslint-plugin-n from 17.3.1 to 17.4.0",
+          "timestamp": "2024-04-30T12:20:53-04:00",
+          "tree_id": "5e2a53f7220ad194a93cc408c368a8af0745b3e3",
+          "url": "https://github.com/havelessbemore/munkres/commit/13eea284afcf990eb4b4897c9ad0e61878fd44d8"
+        },
+        "date": 1714494311141,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1950.5989776199997,
+            "unit": "ms",
+            "range": "±2.84%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1352.8964421000005,
+            "unit": "ms",
+            "range": "±2.90%",
             "extra": "50 samples"
           }
         ]
