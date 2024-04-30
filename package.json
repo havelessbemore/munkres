@@ -11,14 +11,14 @@
     "node": ">= 18"
   },
   "type": "module",
-  "main": "./dist/cjs/munkres.cjs",
-  "module": "./dist/esm/munkres.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/munkres.js",
+  "module": "./dist/munkres.mjs",
+  "types": "./dist/munkres.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/esm/munkres.mjs",
-      "require": "./dist/cjs/munkres.cjs",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/munkres.mjs",
+      "require": "./dist/munkres.js",
+      "types": "./dist/munkres.d.ts"
     }
   },
   "repository": {
@@ -33,15 +33,14 @@
   "scripts": {
     "bench:ci": "tsx ./benchmarks/ci.bench.ts",
     "bench": "tsx --max-old-space-size=2560 ./benchmarks/munkres.bench.ts",
-    "build": "rimraf dist && tsc && vite build && vite build -c vite.config.misc.ts",
+    "build": "rimraf dist && tsc && rollup -c",
     "build:docs": "typedoc",
-    "dev": "vite --host",
     "format": "prettier . --write",
     "lint": "eslint .",
     "prepare": "husky",
     "prepublishOnly": "npm run lint && npm run test && npm run build",
-    "test": "vitest --run",
-    "test:coverage": "vitest --coverage --run"
+    "test": "jest",
+    "test:coverage": "jest --collect-coverage"
   },
   "keywords": [
     "algorithm",
@@ -58,10 +57,12 @@
   ],
   "devDependencies": {
     "@eslint/js": "^9.1.1",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/jest": "^29.5.12",
     "@types/node": "^20.12.7",
     "@typescript-eslint/eslint-plugin": "^7.7.0",
-    "@vitest/coverage-v8": "^1.5.2",
     "commander": "^12.0.0",
+    "esbuild": "^0.20.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
@@ -70,18 +71,21 @@
     "eslint-plugin-promise": "^6.1.1",
     "globals": "^15.0.0",
     "husky": "^9.0.11",
+    "jest": "^29.7.0",
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
     "rimraf": "^5.0.5",
+    "rollup": "^4.17.1",
+    "rollup-plugin-dts": "^6.1.0",
+    "rollup-plugin-esbuild": "^6.1.1",
+    "rollup-plugin-license": "^3.3.1",
     "tinybench": "^2.8.0",
+    "ts-jest": "^29.1.2",
+    "tslib": "^2.6.2",
     "tsx": "^4.7.3",
     "typedoc": "^0.25.13",
     "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "^5.4.5",
-    "typescript-eslint": "^7.7.1",
-    "vite": "^5.2.10",
-    "vite-plugin-banner": "^0.7.1",
-    "vite-plugin-dts": "^3.9.0",
-    "vitest": "^1.4.0"
+    "typescript-eslint": "^7.7.1"
   }
 }
