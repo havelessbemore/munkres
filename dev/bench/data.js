@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1714494296947,
+  "lastUpdate": 1714494309322,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -2201,6 +2201,44 @@ window.BENCHMARK_DATA = {
             "value": 1408.7856544199994,
             "unit": "ms",
             "range": "±3.69%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bf60c8e568e97dc37351b0294ac6225dec607dbc",
+          "message": "Merge pull request #27 from havelessbemore/dependabot/npm_and_yarn/typescript-eslint-7.8.0\n\nnpm: bump typescript-eslint from 7.7.1 to 7.8.0",
+          "timestamp": "2024-04-30T12:20:44-04:00",
+          "tree_id": "3b2c9b6ab2fbdd3610bd903701549be1d863f19b",
+          "url": "https://github.com/havelessbemore/munkres/commit/bf60c8e568e97dc37351b0294ac6225dec607dbc"
+        },
+        "date": 1714494308915,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2021.5069481599996,
+            "unit": "ms",
+            "range": "±3.39%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1387.0014228399966,
+            "unit": "ms",
+            "range": "±3.50%",
             "extra": "50 samples"
           }
         ]
