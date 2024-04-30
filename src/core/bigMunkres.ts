@@ -1,6 +1,6 @@
-import { MatrixLike } from "../types/matrixLike";
-import { Matching } from "../types/matching";
-import { MutableArrayLike } from "../types/mutableArrayLike";
+import type { MatrixLike } from "../types/matrixLike";
+import type { Matching } from "../types/matching";
+import type { MutableArrayLike } from "../types/mutableArrayLike";
 
 import { getMin } from "../utils/arrayLike";
 import { isBigInt } from "../utils/is";

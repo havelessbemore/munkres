@@ -1,5 +1,6 @@
-import { Matching } from "../types/matching";
-import { Pair } from "../types/pair";
+import type { Matching } from "../types/matching";
+import type { Pair } from "../types/pair";
+
 import { entries } from "./arrayLike";
 import { flipH } from "./matrix";
 

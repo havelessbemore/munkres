@@ -1,7 +1,7 @@
 import { describe, expect, test } from "@jest/globals";
 
-import { Matrix } from "../src/types/matrix";
-import { Pair } from "../src/types/pair";
+import type { Matrix } from "../src/types/matrix";
+import type { Pair } from "../src/types/pair";
 
 import { gen, map } from "../src/utils/matrix";
 import { MatrixLike } from "../src";

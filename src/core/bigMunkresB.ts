@@ -1,5 +1,5 @@
-import { MatrixLike } from "../types/matrixLike";
-import { MutableArrayLike } from "../types/mutableArrayLike";
+import type { MatrixLike } from "../types/matrixLike";
+import type { MutableArrayLike } from "../types/mutableArrayLike";
 
 import { partitionByMin } from "../utils/mutableArrayLike";
 

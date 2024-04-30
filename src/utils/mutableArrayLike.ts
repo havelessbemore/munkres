@@ -1,4 +1,4 @@
-import { MutableArrayLike } from "../types/mutableArrayLike";
+import type { MutableArrayLike } from "../types/mutableArrayLike";
 
 /**
  * Partitions an array of indices based on the minimum value of the indices in another array.

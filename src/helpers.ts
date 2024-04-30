@@ -1,5 +1,5 @@
-import { Matrix } from "./types/matrix";
-import { MatrixLike } from "./types/matrixLike";
+import type { Matrix } from "./types/matrix";
+import type { MatrixLike } from "./types/matrixLike";
 
 import { create, from, gen, invert, negate } from "./utils/matrix";
 import { getMax, getMin } from "./utils/matrixLike";

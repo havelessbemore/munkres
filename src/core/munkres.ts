@@ -1,5 +1,5 @@
-import { MatrixLike } from "../types/matrixLike";
-import { Matching } from "../types/matching";
+import type { MatrixLike } from "../types/matrixLike";
+import type { Matching } from "../types/matching";
 
 import { isBigInt } from "../utils/is";
 

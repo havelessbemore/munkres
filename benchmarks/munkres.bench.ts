@@ -1,6 +1,7 @@
 import { Bench } from "tinybench";
 
-import { Matrix } from "../src/types/matrix";
+import type { Matrix } from "../src/types/matrix";
+
 import { gen } from "../src/utils/matrix";
 import { Suite } from "./utils/suite";
 import { munkres } from "../src/munkres";

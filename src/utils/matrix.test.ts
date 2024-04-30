@@ -1,7 +1,7 @@
 import { describe, it, expect, jest } from "@jest/globals";
 
-import { Matrix } from "../types/matrix";
-import { Pair } from "../types/pair";
+import type { Matrix } from "../types/matrix";
+import type { Pair } from "../types/pair";
 
 import {
   create,

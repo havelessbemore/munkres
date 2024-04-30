@@ -1,5 +1,6 @@
-import { Matrix } from "../types/matrix";
-import { MatrixLike } from "../types/matrixLike";
+import type { Matrix } from "../types/matrix";
+import type { MatrixLike } from "../types/matrixLike";
+
 import { getMax } from "./matrixLike";
 
 /**

@@ -1,5 +1,5 @@
-import { MatrixLike } from "./types/matrixLike";
-import { Pair } from "./types/pair";
+import type { MatrixLike } from "./types/matrixLike";
+import type { Pair } from "./types/pair";
 
 import { exec } from "./core/munkres";
 import { toPairs } from "./utils/matching";
