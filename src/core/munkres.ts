@@ -3,8 +3,8 @@ import type { Matching } from "../types/matching";
 
 import { isBigInt } from "../utils/is";
 
-import { exec as bigExec } from "./bigMunkres";
-import { exec as numExec } from "./numMunkres";
+import { exec as finExec } from "./finMunkres";
+import { exec as infExec } from "./infMunkres";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -35,7 +35,7 @@ export function exec<T extends number | bigint>(
 ): Matching<T> {
   return (
     isBigInt((matrix[0] ?? [])[0])
-      ? bigExec(matrix as MatrixLike<bigint>)
-      : numExec(matrix as MatrixLike<number>)
+      ? finExec(matrix as MatrixLike<bigint>)
+      : infExec(matrix as MatrixLike<number>)
   ) as Matching<T>;
 }
