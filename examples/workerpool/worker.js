@@ -1,11 +1,5 @@
 import workerpool from "workerpool";
 
-function add(a, b) {
-  return a + b;
-}
+import { matchAsync } from "../../dist/munkres.mjs";
 
-function fibonacci(n) {
-  return n < 2 ? n : fibonacci(n - 2) + fibonacci(n - 1);
-}
-
-workerpool.worker({ add, fibonacci });
+workerpool.worker({ match: matchAsync });

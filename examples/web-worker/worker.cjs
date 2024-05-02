@@ -1,12 +1,8 @@
-function add(a, b) {
-  return a + b;
-}
+/* eslint-disable @typescript-eslint/no-var-requires */
+const { matchAsync } = require("../..");
 
-function fibonacci(n) {
-  return n < 2 ? n : fibonacci(n - 2) + fibonacci(n - 1);
-}
+const fns = { match: matchAsync };
 
-const fns = { add, fibonacci };
 addEventListener("message", (e) => {
   const { name, args } = e.data;
   try {

@@ -241,6 +241,77 @@ declare function negateMatrix(matrix: Matrix<number>): void;
 declare function negateMatrix(matrix: Matrix<bigint>): void;
 
 /**
+ * Represents a fixed-length, array-like object of mutable elements.
+ *
+ * This is similar to {@link ArrayLike},
+ * but with support for updating elements.
+ *
+ * @example
+ * ```typescript
+ * const array: MutableArrayLike<number> = [1, 2, 3];
+ * array[1] = 5; // Modifying the second element
+ * console.log(array); // Output: [1, 5, 3]
+ * ```
+ */
+interface MutableArrayLike<T> {
+  readonly length: number;
+  [n: number]: T;
+  fill(value: T, start?: number, end?: number): this;
+}
+
+/**
+ * Defines the result of the Munkres algorithm.
+ */
+interface Matching<T> {
+  /**
+   * An array of dual variables for the columns of the cost matrix.
+   */
+  dualX: MutableArrayLike<T>;
+
+  /**
+   * An array of dual variables for the rows of the cost matrix.
+   */
+  dualY: MutableArrayLike<T>;
+
+  /**
+   * The cost matrix this matching is for.
+   */
+  matrix: MatrixLike<T>;
+
+  /**
+   * An assignment mapping for the cost matrix, from column
+   * index to row index. Unassigned columns are mapped to `-1`.
+   */
+  starsX: MutableArrayLike<number>;
+
+  /**
+   * An assignment mapping for the cost matrix, from row
+   * index to column index. Unassigned rows are mapped to `-1`.
+   */
+  starsY: MutableArrayLike<number>;
+}
+
+interface AsyncMatcher<T> {
+    size: Readonly<number>;
+    match(data: MatchRequest<T>): Promise<MatchResult<T>>;
+}
+interface MatchRequest<T> {
+    y?: number;
+    x?: number;
+    matching: Matching<T>;
+}
+interface MatchResult<T> {
+    y?: number;
+    x?: number;
+    N: number;
+    slack: ArrayLike<number>;
+    slackV: ArrayLike<T>;
+    slackY: ArrayLike<number>;
+}
+declare function matchAsync(req: MatchRequest<number>): MatchResult<number>;
+declare function matchAsync(req: MatchRequest<bigint>): MatchResult<bigint>;
+
+/**
  * Find the optimal assignments of `y` workers to `x` jobs to
  * minimize total cost.
  *
@@ -253,5 +324,18 @@ declare function negateMatrix(matrix: Matrix<bigint>): void;
  */
 declare function munkres(costMatrix: MatrixLike<number>): Pair<number>[];
 declare function munkres(costMatrix: MatrixLike<bigint>): Pair<number>[];
+/**
+ * Find the optimal assignments of `y` workers to `x` jobs to
+ * minimize total cost.
+ *
+ * @param costMatrix - The cost matrix, where `mat[y][x]` represents the cost
+ * of assigning worker `y` to job `x`.
+ *
+ * @returns An array of pairs `[y, x]` representing the optimal assignment
+ * of workers to jobs. Each pair consists of a worker index `y` and a job
+ * index `x`, indicating that worker `y` is assigned to job `x`.
+ */
+declare function munkresAsync(costMatrix: MatrixLike<number>, matcher: AsyncMatcher<number>): Promise<Pair<number>[]>;
+declare function munkresAsync(costMatrix: MatrixLike<bigint>, matcher: AsyncMatcher<bigint>): Promise<Pair<number>[]>;
 
-export { type Matrix, type MatrixLike, type Pair, copyMatrix, createMatrix, munkres as default, genMatrix, getMatrixMax, getMatrixMin, invertMatrix, munkres, negateMatrix };
+export { type Matrix, type MatrixLike, type Pair, copyMatrix, createMatrix, munkres as default, genMatrix, getMatrixMax, getMatrixMin, invertMatrix, matchAsync, munkres, munkresAsync, negateMatrix };

@@ -14,8 +14,11 @@ export {
   negateMatrix,
 } from "./helpers";
 
-// Algorithm
-export { munkres } from "./munkres";
+// Main
+export { munkres, munkresAsync } from "./munkres";
+
+// Matchers
+export { matchAsync } from "./core/munkresAsync";
 
 // Default
 import { munkres } from "./munkres";

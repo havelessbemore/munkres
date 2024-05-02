@@ -199,6 +199,150 @@ function partitionByMin(indices, values, min = 0, max = indices.length) {
   return mid;
 }
 
+function exec$3(matrix) {
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
+  if (Y <= 0 || X <= 0) {
+    return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
+  }
+  const dualX = new Array(X);
+  const dualY = new Array(Y);
+  step1$1(matrix, dualX, dualY);
+  const starsX = new Array(X).fill(-1);
+  const starsY = new Array(Y).fill(-1);
+  const stars = steps2To3$1(matrix, dualX, dualY, starsX, starsY);
+  Y <= X ? (
+    // @ts-expect-error ts(2769)
+    step4$2(Y - stars, matrix, dualX, dualY, starsX, starsY)
+  ) : (
+    // @ts-expect-error ts(2769)
+    step4B$1(X - stars, matrix, dualX, dualY, starsX, starsY)
+  );
+  return { dualX, dualY, matrix, starsX, starsY };
+}
+function step1$1(matrix, dualX, dualY) {
+  const X = dualX.length;
+  const Y = dualY.length;
+  if (Y > X) {
+    dualY.fill(isBigInt(matrix[0][0]) ? 0n : 0);
+  } else {
+    for (let y = 0; y < Y; ++y) {
+      dualY[y] = getMin(matrix[y]);
+    }
+  }
+  if (Y < X) {
+    dualX.fill(isBigInt(matrix[0][0]) ? 0n : 0);
+    return;
+  }
+  let dy = dualY[0];
+  let row = matrix[0];
+  for (let x = 0; x < X; ++x) {
+    dualX[x] = row[x] - dy;
+  }
+  for (let y = 1; y < Y; ++y) {
+    dy = dualY[y];
+    row = matrix[y];
+    for (let x = 0; x < X; ++x) {
+      const dx = row[x] - dy;
+      if (dx < dualX[x]) {
+        dualX[x] = dx;
+      }
+    }
+  }
+}
+function steps2To3$1(matrix, dualX, dualY, starsX, starsY) {
+  const X = dualX.length;
+  const Y = dualY.length;
+  const S = Y <= X ? Y : X;
+  let stars = 0;
+  for (let y = 0; y < Y && stars < S; ++y) {
+    const dy = dualY[y];
+    const row = matrix[y];
+    for (let x = 0; x < X; ++x) {
+      if (starsX[x] === -1 && dy === row[x] - dualX[x]) {
+        starsX[x] = y;
+        starsY[y] = x;
+        ++stars;
+        break;
+      }
+    }
+  }
+  return stars;
+}
+function step4$2(unmatched, matrix, dualX, dualY, starsX, starsY) {
+  if (unmatched <= 0) {
+    return;
+  }
+  const X = dualX.length;
+  const slack = new Uint32Array(X);
+  const slackV = new Array(X);
+  const slackY = new Uint32Array(X);
+  for (let y = 0; unmatched > 0; ++y) {
+    if (starsY[y] !== -1) {
+      continue;
+    }
+    const N = match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
+    --unmatched;
+    step6$1(y, N, dualX, dualY, slack, slackV, starsX);
+    step5(slack[N - 1], slackY, starsX, starsY);
+  }
+}
+function step5(x, primeX, starsX, starsY) {
+  do {
+    const y = primeX[x];
+    const sx = starsY[y];
+    starsX[x] = y;
+    starsY[y] = x;
+    x = sx;
+  } while (x !== -1);
+}
+function step6$1(y, N, dualX, dualY, slack, slackV, starsX) {
+  const sum = slackV[slack[N - 1]];
+  let min = sum;
+  for (let i = 0; i < N; ++i) {
+    const x = slack[i];
+    dualY[y] += min;
+    min = sum - slackV[x];
+    dualX[x] -= min;
+    y = starsX[x];
+  }
+}
+function match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
+  const X = slack.length;
+  let dy = dualY[y];
+  let row = matrix[y];
+  for (let x = 0; x < X; ++x) {
+    slack[x] = x;
+    slackV[x] = row[x] - dualX[x] - dy;
+    slackY[x] = y;
+  }
+  let zeros = partitionByMin(slack, slackV, 0);
+  let zero = slackV[slack[0]];
+  let steps = 1;
+  for (let x = slack[0]; starsX[x] !== -1; x = slack[steps++]) {
+    y = starsX[x];
+    dy = dualY[y] - zero;
+    row = matrix[y];
+    for (let i = zeros; i < X; ++i) {
+      x = slack[i];
+      const value = row[x] - dualX[x] - dy;
+      if (value >= slackV[x]) {
+        continue;
+      }
+      slackY[x] = y;
+      slackV[x] = value;
+      if (value === zero) {
+        slack[i] = slack[zeros];
+        slack[zeros++] = x;
+      }
+    }
+    if (steps >= zeros) {
+      zeros = partitionByMin(slack, slackV, zeros);
+      zero = slackV[slack[steps]];
+    }
+  }
+  return steps;
+}
 function step4B$1(unmatched, matrix, dualX, dualY, starsX, starsY) {
   if (unmatched <= 0) {
     return;
@@ -280,50 +424,44 @@ function exec$2(matrix) {
   }
   const dualX = new Array(X);
   const dualY = new Array(Y);
-  step1$1(matrix, dualX, dualY);
+  step1(matrix, dualX, dualY);
   const starsX = new Array(X).fill(-1);
   const starsY = new Array(Y).fill(-1);
-  const stars = steps2To3$1(matrix, dualX, dualY, starsX, starsY);
-  Y <= X ? (
-    // @ts-expect-error ts(2769)
-    step4$1(Y - stars, matrix, dualX, dualY, starsX, starsY)
-  ) : (
-    // @ts-expect-error ts(2769)
-    step4B$1(X - stars, matrix, dualX, dualY, starsX, starsY)
-  );
+  const stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
+  Y <= X ? step4$1(Y - stars, matrix, dualX, dualY, starsX, starsY) : step4B(X - stars, matrix, dualX, dualY, starsX, starsY);
   return { dualX, dualY, matrix, starsX, starsY };
 }
-function step1$1(matrix, dualX, dualY) {
+function step1(matrix, dualX, dualY) {
   const X = dualX.length;
   const Y = dualY.length;
   if (Y > X) {
-    dualY.fill(isBigInt(matrix[0][0]) ? 0n : 0);
+    dualY.fill(0);
   } else {
     for (let y = 0; y < Y; ++y) {
       dualY[y] = getMin(matrix[y]);
     }
   }
   if (Y < X) {
-    dualX.fill(isBigInt(matrix[0][0]) ? 0n : 0);
+    dualX.fill(0);
     return;
   }
   let dy = dualY[0];
   let row = matrix[0];
   for (let x = 0; x < X; ++x) {
-    dualX[x] = row[x] - dy;
+    dualX[x] = row[x] - dy || 0;
   }
   for (let y = 1; y < Y; ++y) {
     dy = dualY[y];
     row = matrix[y];
     for (let x = 0; x < X; ++x) {
-      const dx = row[x] - dy;
+      const dx = row[x] - dy || 0;
       if (dx < dualX[x]) {
         dualX[x] = dx;
       }
     }
   }
 }
-function steps2To3$1(matrix, dualX, dualY, starsX, starsY) {
+function steps2To3(matrix, dualX, dualY, starsX, starsY) {
   const X = dualX.length;
   const Y = dualY.length;
   const S = Y <= X ? Y : X;
@@ -332,7 +470,7 @@ function steps2To3$1(matrix, dualX, dualY, starsX, starsY) {
     const dy = dualY[y];
     const row = matrix[y];
     for (let x = 0; x < X; ++x) {
-      if (starsX[x] === -1 && dy === row[x] - dualX[x]) {
+      if (starsX[x] === -1 && row[x] === (dualX[x] + dy || 0)) {
         starsX[x] = y;
         starsY[y] = x;
         ++stars;
@@ -354,39 +492,30 @@ function step4$1(unmatched, matrix, dualX, dualY, starsX, starsY) {
     if (starsY[y] !== -1) {
       continue;
     }
-    const N = match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
+    const N = match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
     --unmatched;
-    step6$1(y, N, dualX, dualY, slack, slackV, starsX);
+    step6(y, N, dualX, dualY, slack, slackV, starsX);
     step5(slack[N - 1], slackY, starsX, starsY);
   }
 }
-function step5(x, primeX, starsX, starsY) {
-  do {
-    const y = primeX[x];
-    const sx = starsY[y];
-    starsX[x] = y;
-    starsY[y] = x;
-    x = sx;
-  } while (x !== -1);
-}
-function step6$1(y, N, dualX, dualY, slack, slackV, starsX) {
+function step6(y, N, dualX, dualY, slack, slackV, starsX) {
   const sum = slackV[slack[N - 1]];
   let min = sum;
   for (let i = 0; i < N; ++i) {
     const x = slack[i];
-    dualY[y] += min;
-    min = sum - slackV[x];
-    dualX[x] -= min;
+    dualY[y] = dualY[y] + min || 0;
+    min = sum - slackV[x] || 0;
+    dualX[x] = dualX[x] - min || 0;
     y = starsX[x];
   }
 }
-function match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
+function match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
   const X = slack.length;
   let dy = dualY[y];
   let row = matrix[y];
   for (let x = 0; x < X; ++x) {
     slack[x] = x;
-    slackV[x] = row[x] - dualX[x] - dy;
+    slackV[x] = row[x] - (dualX[x] + dy || 0) || 0;
     slackY[x] = y;
   }
   let zeros = partitionByMin(slack, slackV, 0);
@@ -394,11 +523,11 @@ function match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
   let steps = 1;
   for (let x = slack[0]; starsX[x] !== -1; x = slack[steps++]) {
     y = starsX[x];
-    dy = dualY[y] - zero;
+    dy = dualY[y];
     row = matrix[y];
     for (let i = zeros; i < X; ++i) {
       x = slack[i];
-      const value = row[x] - dualX[x] - dy;
+      const value = (row[x] - (dualX[x] + dy || 0) || 0) + zero || 0;
       if (value >= slackV[x]) {
         continue;
       }
@@ -416,7 +545,6 @@ function match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
   }
   return steps;
 }
-
 function step4B(unmatched, matrix, dualX, dualY, starsX, starsY) {
   if (unmatched <= 0) {
     return;
@@ -482,137 +610,7 @@ function matchB(x, matrix, dualX, dualY, starsY, slack, slackV, slackX) {
 }
 
 function exec$1(matrix) {
-  const Y = matrix.length;
-  const X = matrix[0]?.length ?? 0;
-  if (Y <= 0 || X <= 0) {
-    return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
-  }
-  const dualX = new Array(X);
-  const dualY = new Array(Y);
-  step1(matrix, dualX, dualY);
-  const starsX = new Array(X).fill(-1);
-  const starsY = new Array(Y).fill(-1);
-  const stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
-  Y <= X ? step4(Y - stars, matrix, dualX, dualY, starsX, starsY) : step4B(X - stars, matrix, dualX, dualY, starsX, starsY);
-  return { dualX, dualY, matrix, starsX, starsY };
-}
-function step1(matrix, dualX, dualY) {
-  const X = dualX.length;
-  const Y = dualY.length;
-  if (Y > X) {
-    dualY.fill(0);
-  } else {
-    for (let y = 0; y < Y; ++y) {
-      dualY[y] = getMin(matrix[y]);
-    }
-  }
-  if (Y < X) {
-    dualX.fill(0);
-    return;
-  }
-  let dy = dualY[0];
-  let row = matrix[0];
-  for (let x = 0; x < X; ++x) {
-    dualX[x] = row[x] - dy || 0;
-  }
-  for (let y = 1; y < Y; ++y) {
-    dy = dualY[y];
-    row = matrix[y];
-    for (let x = 0; x < X; ++x) {
-      const dx = row[x] - dy || 0;
-      if (dx < dualX[x]) {
-        dualX[x] = dx;
-      }
-    }
-  }
-}
-function steps2To3(matrix, dualX, dualY, starsX, starsY) {
-  const X = dualX.length;
-  const Y = dualY.length;
-  const S = Y <= X ? Y : X;
-  let stars = 0;
-  for (let y = 0; y < Y && stars < S; ++y) {
-    const dy = dualY[y];
-    const row = matrix[y];
-    for (let x = 0; x < X; ++x) {
-      if (starsX[x] === -1 && row[x] === (dualX[x] + dy || 0)) {
-        starsX[x] = y;
-        starsY[y] = x;
-        ++stars;
-        break;
-      }
-    }
-  }
-  return stars;
-}
-function step4(unmatched, matrix, dualX, dualY, starsX, starsY) {
-  if (unmatched <= 0) {
-    return;
-  }
-  const X = dualX.length;
-  const slack = new Uint32Array(X);
-  const slackV = new Array(X);
-  const slackY = new Uint32Array(X);
-  for (let y = 0; unmatched > 0; ++y) {
-    if (starsY[y] !== -1) {
-      continue;
-    }
-    const N = match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
-    --unmatched;
-    step6(y, N, dualX, dualY, slack, slackV, starsX);
-    step5(slack[N - 1], slackY, starsX, starsY);
-  }
-}
-function step6(y, N, dualX, dualY, slack, slackV, starsX) {
-  const sum = slackV[slack[N - 1]];
-  let min = sum;
-  for (let i = 0; i < N; ++i) {
-    const x = slack[i];
-    dualY[y] = dualY[y] + min || 0;
-    min = sum - slackV[x] || 0;
-    dualX[x] = dualX[x] - min || 0;
-    y = starsX[x];
-  }
-}
-function match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
-  const X = slack.length;
-  let dy = dualY[y];
-  let row = matrix[y];
-  for (let x = 0; x < X; ++x) {
-    slack[x] = x;
-    slackV[x] = row[x] - (dualX[x] + dy || 0) || 0;
-    slackY[x] = y;
-  }
-  let zeros = partitionByMin(slack, slackV, 0);
-  let zero = slackV[slack[0]];
-  let steps = 1;
-  for (let x = slack[0]; starsX[x] !== -1; x = slack[steps++]) {
-    y = starsX[x];
-    dy = dualY[y];
-    row = matrix[y];
-    for (let i = zeros; i < X; ++i) {
-      x = slack[i];
-      const value = (row[x] - (dualX[x] + dy || 0) || 0) + zero || 0;
-      if (value >= slackV[x]) {
-        continue;
-      }
-      slackY[x] = y;
-      slackV[x] = value;
-      if (value === zero) {
-        slack[i] = slack[zeros];
-        slack[zeros++] = x;
-      }
-    }
-    if (steps >= zeros) {
-      zeros = partitionByMin(slack, slackV, zeros);
-      zero = slackV[slack[steps]];
-    }
-  }
-  return steps;
-}
-
-function exec(matrix) {
-  return isBigInt((matrix[0] ?? [])[0]) ? exec$2(matrix) : exec$1(matrix);
+  return isBigInt((matrix[0] ?? [])[0]) ? exec$3(matrix) : exec$2(matrix);
 }
 
 function toPairs(matching) {
@@ -624,8 +622,75 @@ function toPairs(matching) {
   return pairs;
 }
 
+async function exec(matrix, runner) {
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
+  if (Y <= 0 || X <= 0) {
+    return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
+  }
+  const dualX = new Array(X);
+  const dualY = new Array(Y);
+  step1$1(matrix, dualX, dualY);
+  const BPE = Int32Array.BYTES_PER_ELEMENT;
+  const starsX = new Int32Array(new SharedArrayBuffer(X * BPE)).fill(-1);
+  const starsY = new Int32Array(new SharedArrayBuffer(Y * BPE)).fill(-1);
+  const stars = steps2To3$1(matrix, dualX, dualY, starsX, starsY);
+  Y <= X ? (
+    // @ts-expect-error ts(2769)
+    await step4(runner, Y - stars, matrix, dualX, dualY, starsX, starsY)
+  ) : (
+    // @ts-expect-error ts(2769)
+    step4B$1(X - stars, matrix, dualX, dualY, starsX, starsY)
+  );
+  return { dualX, dualY, matrix, starsX, starsY };
+}
+async function step4(runner, unmatched, matrix, dualX, dualY, starsX, starsY) {
+  if (unmatched <= 0) {
+    return;
+  }
+  const tasks = new Array(unmatched);
+  for (let y = 0; unmatched > 0; ++y) {
+    if (starsY[y] === -1) {
+      tasks[--unmatched] = y;
+    }
+  }
+  const matching = { matrix, dualX, dualY, starsX, starsY };
+  while (tasks.length > 0) {
+    const S = Math.min(runner.size, tasks.length);
+    const proms = new Array(S);
+    for (let i = 0; i < S; ++i) {
+      proms[i] = runner.match({ y: tasks.pop(), matching });
+    }
+    const results = await Promise.all(proms);
+    results.sort((a, b) => a.N - b.N);
+    for (let i = 0; i < S; ++i) {
+      const { y, N, slack, slackV, slackY } = results[i];
+      const x = slack[N - 1];
+      if (starsX[x] !== -1) {
+        tasks.push(y);
+        continue;
+      }
+      step6$1(y, N, dualX, dualY, slack, slackV, starsX);
+      step5(x, slackY, starsX, starsY);
+    }
+  }
+}
+function matchAsync(req) {
+  const { y, matching: { matrix, dualX, dualY, starsX } } = req;
+  const X = dualX.length;
+  const B = X * Uint32Array.BYTES_PER_ELEMENT;
+  const slack = new Uint32Array(new SharedArrayBuffer(B));
+  const slackV = new Array(X);
+  const slackY = new Uint32Array(new SharedArrayBuffer(B));
+  const N = match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
+  return { y, N, slack, slackV, slackY };
+}
+
 function munkres(costMatrix) {
-  return toPairs(exec(costMatrix));
+  return toPairs(exec$1(costMatrix));
+}
+async function munkresAsync(costMatrix, matcher) {
+  return toPairs(await exec(costMatrix, matcher));
 }
 
 exports.copyMatrix = copyMatrix;
@@ -635,6 +700,8 @@ exports.genMatrix = genMatrix;
 exports.getMatrixMax = getMatrixMax;
 exports.getMatrixMin = getMatrixMin;
 exports.invertMatrix = invertMatrix;
+exports.matchAsync = matchAsync;
 exports.munkres = munkres;
+exports.munkresAsync = munkresAsync;
 exports.negateMatrix = negateMatrix;
-//# sourceMappingURL=munkres.js.map
+//# sourceMappingURL=munkres.cjs.map
