@@ -1,15 +1,11 @@
+import { RollupOptions } from "rollup";
 import dts from "rollup-plugin-dts";
 import esbuild from "rollup-plugin-esbuild";
-import license from "rollup-plugin-license";
+import license, { Options as LicenseOptions } from "rollup-plugin-license";
 
 import pkg from "./package.json" with { type: "json" };
 
-/**
- * @param {import('rollup').RollupOptions} config
- *
- * @returns {import('rollup').RollupOptions}
- */
-function bundle(config) {
+function bundle(config: RollupOptions): RollupOptions {
   return {
     ...config,
     input: "src/index.ts",
@@ -17,8 +13,7 @@ function bundle(config) {
   };
 }
 
-/** @type {import('rollup-plugin-license').Options} */
-const licenseConfig = {
+const licenseConfig: LicenseOptions = {
   sourcemap: true,
   banner: {
     commentStyle: "ignored",

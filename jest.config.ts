@@ -1,4 +1,5 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
+import { JestConfigWithTsJest } from "ts-jest";
+
 export default {
   preset: "ts-jest",
   testEnvironment: "node",
@@ -9,4 +10,4 @@ export default {
     "<rootDir>/tests/",
   ],
   modulePathIgnorePatterns: ["<rootDir>/src/.private/"],
-};
+} as JestConfigWithTsJest;
