@@ -2,9 +2,11 @@ import { Bench } from "tinybench";
 
 import type { Matrix } from "../src/types/matrix";
 
-import { gen } from "../src/utils/matrix";
-import { Suite } from "./utils/suite";
 import { munkres } from "../src/munkres";
+import { gen } from "../src/utils/matrix";
+import { randomInt } from "../src/utils/number";
+
+import { Suite } from "./utils/suite";
 import { TerminalReporter } from "./utils/terminalReporter";
 
 const MIN_VAL = 1;
@@ -16,10 +18,6 @@ export function genBig(): bigint {
 
 export function genInt(): number {
   return randomInt(MIN_VAL, MAX_VAL);
-}
-
-export function randomInt(min: number, max: number): number {
-  return min + Math.trunc((max - min) * Math.random());
 }
 
 let bench: Bench;

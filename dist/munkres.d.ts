@@ -253,7 +253,7 @@ declare function negateMatrix(matrix: Matrix<bigint>): void;
  * console.log(array); // Output: [1, 5, 3]
  * ```
  */
-interface MutableArrayLike<T> {
+interface MutableArrayLike$1<T> {
   readonly length: number;
   [n: number]: T;
   fill(value: T, start?: number, end?: number): this;
@@ -266,12 +266,12 @@ interface Matching<T> {
   /**
    * An array of dual variables for the columns of the cost matrix.
    */
-  dualX: MutableArrayLike<T>;
+  dualX: MutableArrayLike$1<T>;
 
   /**
    * An array of dual variables for the rows of the cost matrix.
    */
-  dualY: MutableArrayLike<T>;
+  dualY: MutableArrayLike$1<T>;
 
   /**
    * The cost matrix this matching is for.
@@ -282,34 +282,34 @@ interface Matching<T> {
    * An assignment mapping for the cost matrix, from column
    * index to row index. Unassigned columns are mapped to `-1`.
    */
-  starsX: MutableArrayLike<number>;
+  starsX: MutableArrayLike$1<number>;
 
   /**
    * An assignment mapping for the cost matrix, from row
    * index to column index. Unassigned rows are mapped to `-1`.
    */
-  starsY: MutableArrayLike<number>;
+  starsY: MutableArrayLike$1<number>;
 }
 
-interface AsyncMatcher<T> {
-    size: Readonly<number>;
-    match(data: MatchRequest<T>): Promise<MatchResult<T>>;
-}
 interface MatchRequest<T> {
-    y?: number;
-    x?: number;
-    matching: Matching<T>;
+  id: number;
+  y: number;
+  matching: Matching<T>;
+  slack: Uint32Array;
+  slackY: Uint32Array;
 }
+
 interface MatchResult<T> {
-    y?: number;
-    x?: number;
-    N: number;
-    slack: ArrayLike<number>;
-    slackV: ArrayLike<T>;
-    slackY: ArrayLike<number>;
+  id: number;
+  y: number;
+  N: number;
+  slackV: MutableArrayLike<T>;
 }
-declare function matchAsync(req: MatchRequest<number>): MatchResult<number>;
-declare function matchAsync(req: MatchRequest<bigint>): MatchResult<bigint>;
+
+interface Runner<T> {
+  size: Readonly<number>;
+  match: (data: MatchRequest<T>) => Promise<MatchResult<T>>;
+}
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -335,7 +335,10 @@ declare function munkres(costMatrix: MatrixLike<bigint>): Pair<number>[];
  * of workers to jobs. Each pair consists of a worker index `y` and a job
  * index `x`, indicating that worker `y` is assigned to job `x`.
  */
-declare function munkresAsync(costMatrix: MatrixLike<number>, matcher: AsyncMatcher<number>): Promise<Pair<number>[]>;
-declare function munkresAsync(costMatrix: MatrixLike<bigint>, matcher: AsyncMatcher<bigint>): Promise<Pair<number>[]>;
+declare function munkresAsync(costMatrix: MatrixLike<number>, matcher: Runner<number>): Promise<Pair<number>[]>;
+declare function munkresAsync(costMatrix: MatrixLike<bigint>, matcher: Runner<bigint>): Promise<Pair<number>[]>;
+
+declare function matchAsync(req: MatchRequest<number>): MatchResult<number>;
+declare function matchAsync(req: MatchRequest<bigint>): MatchResult<bigint>;
 
 export { type Matrix, type MatrixLike, type Pair, copyMatrix, createMatrix, munkres as default, genMatrix, getMatrixMax, getMatrixMin, invertMatrix, matchAsync, munkres, munkresAsync, negateMatrix };

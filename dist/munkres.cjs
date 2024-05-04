@@ -29,6 +29,8 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+var types = require('util/types');
+
 function getMax(matrix) {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
@@ -283,7 +285,7 @@ function step4$2(unmatched, matrix, dualX, dualY, starsX, starsY) {
     }
     const N = match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
     --unmatched;
-    step6$1(y, N, dualX, dualY, slack, slackV, starsX);
+    step6$2(y, N, dualX, dualY, slack, slackV, starsX);
     step5(slack[N - 1], slackY, starsX, starsY);
   }
 }
@@ -296,7 +298,7 @@ function step5(x, primeX, starsX, starsY) {
     x = sx;
   } while (x !== -1);
 }
-function step6$1(y, N, dualX, dualY, slack, slackV, starsX) {
+function step6$2(y, N, dualX, dualY, slack, slackV, starsX) {
   const sum = slackV[slack[N - 1]];
   let min = sum;
   for (let i = 0; i < N; ++i) {
@@ -494,11 +496,11 @@ function step4$1(unmatched, matrix, dualX, dualY, starsX, starsY) {
     }
     const N = match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
     --unmatched;
-    step6(y, N, dualX, dualY, slack, slackV, starsX);
+    step6$1(y, N, dualX, dualY, slack, slackV, starsX);
     step5(slack[N - 1], slackY, starsX, starsY);
   }
 }
-function step6(y, N, dualX, dualY, slack, slackV, starsX) {
+function step6$1(y, N, dualX, dualY, slack, slackV, starsX) {
   const sum = slackV[slack[N - 1]];
   let min = sum;
   for (let i = 0; i < N; ++i) {
@@ -628,8 +630,17 @@ async function exec(matrix, runner) {
   if (Y <= 0 || X <= 0) {
     return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
   }
-  const dualX = new Array(X);
-  const dualY = new Array(Y);
+  let dualX;
+  let dualY;
+  if (types.isTypedArray(matrix[0])) {
+    const BPE2 = matrix[0].BYTES_PER_ELEMENT;
+    const ctor = matrix[0].constructor;
+    dualX = new ctor(new SharedArrayBuffer(X * BPE2));
+    dualY = new ctor(new SharedArrayBuffer(Y * BPE2));
+  } else {
+    dualX = new Array(X);
+    dualY = new Array(Y);
+  }
   step1$1(matrix, dualX, dualY);
   const BPE = Int32Array.BYTES_PER_ELEMENT;
   const starsX = new Int32Array(new SharedArrayBuffer(X * BPE)).fill(-1);
@@ -654,36 +665,92 @@ async function step4(runner, unmatched, matrix, dualX, dualY, starsX, starsY) {
       tasks[--unmatched] = y;
     }
   }
+  const X = dualX.length;
+  const Y = dualY.length;
+  const zero = isBigInt(matrix[0][0]) ? 0n : 0;
+  const diffX = new Array(X);
+  const diffY = new Array(Y);
+  const B = X * Uint32Array.BYTES_PER_ELEMENT;
+  let S = Math.min(runner.size, tasks.length);
+  const slacks = new Array(S);
+  for (let i = 0; i < S; ++i) {
+    slacks[i] = [
+      new Uint32Array(new SharedArrayBuffer(B)),
+      new Uint32Array(new SharedArrayBuffer(B))
+    ];
+  }
+  const proms = new Array(S);
   const matching = { matrix, dualX, dualY, starsX, starsY };
   while (tasks.length > 0) {
-    const S = Math.min(runner.size, tasks.length);
-    const proms = new Array(S);
+    S = Math.min(runner.size, tasks.length);
+    proms.length = S;
     for (let i = 0; i < S; ++i) {
-      proms[i] = runner.match({ y: tasks.pop(), matching });
+      const y = tasks.pop();
+      const [slack, slackY] = slacks[i];
+      proms[i] = runner.match({ id: i, y, matching, slack, slackY });
     }
     const results = await Promise.all(proms);
     results.sort((a, b) => a.N - b.N);
+    diffX.fill(zero);
+    diffY.fill(zero);
     for (let i = 0; i < S; ++i) {
-      const { y, N, slack, slackV, slackY } = results[i];
+      const { id, y, N, slackV } = results[i];
+      const [slack, slackY] = slacks[id];
       const x = slack[N - 1];
-      if (starsX[x] !== -1) {
+      if (!isAugmentingPath(x, slackY, starsY)) {
         tasks.push(y);
         continue;
       }
-      step6$1(y, N, dualX, dualY, slack, slackV, starsX);
+      step6(y, N, diffX, diffY, slack, slackV, starsX);
       step5(x, slackY, starsX, starsY);
+    }
+    for (let x = 0; x < X; ++x) {
+      dualX[x] -= diffX[x];
+    }
+    for (let y = 0; y < Y; ++y) {
+      dualY[y] += diffY[y];
     }
   }
 }
+function step6(y, N, diffX, diffY, slack, slackV, starsX) {
+  const sum = slackV[slack[N - 1]];
+  let min = sum;
+  for (let i = 0; i < N; ++i) {
+    if (min > diffY[y]) {
+      diffY[y] = min;
+    }
+    const x = slack[i];
+    min = sum - slackV[x];
+    if (min > diffX[x]) {
+      diffX[x] = min;
+    }
+    y = starsX[x];
+  }
+}
+function isAugmentingPath(x, primeY, starsY) {
+  while (x !== -1) {
+    const y = primeY[x];
+    if (starsY[y] === x) {
+      return false;
+    }
+    x = starsY[y];
+  }
+  return true;
+}
 function matchAsync(req) {
-  const { y, matching: { matrix, dualX, dualY, starsX } } = req;
+  const {
+    id,
+    y,
+    matching: { matrix, dualX, dualY, starsX },
+    slack,
+    slackY
+  } = req;
   const X = dualX.length;
-  const B = X * Uint32Array.BYTES_PER_ELEMENT;
-  const slack = new Uint32Array(new SharedArrayBuffer(B));
-  const slackV = new Array(X);
-  const slackY = new Uint32Array(new SharedArrayBuffer(B));
+  const slackV = types.isTypedArray(dualX) ? new dualX.constructor(
+    new SharedArrayBuffer(dualX.byteLength)
+  ) : new Array(X);
   const N = match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
-  return { y, N, slack, slackV, slackY };
+  return { id, y, N, slackV };
 }
 
 function munkres(costMatrix) {

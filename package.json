@@ -31,12 +31,13 @@
     "README.md"
   ],
   "scripts": {
-    "bench:ci": "tsx ./benchmarks/ci.bench.ts",
     "bench": "tsx --max-old-space-size=2560 ./benchmarks/munkres.bench.ts",
+    "bench:async": "tsx --max-old-space-size=2560 ./benchmarks/munkresAsync.bench.ts",
+    "bench:ci": "tsx ./benchmarks/ci.bench.ts",
     "build": "rimraf dist && tsc && rollup -c --configPlugin typescript",
     "build:docs": "typedoc",
     "format": "prettier . --write",
-    "lint": "eslint .",
+    "lint": "eslint",
     "prepare": "husky",
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "test": "jest",

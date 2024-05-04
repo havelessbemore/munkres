@@ -1,9 +1,10 @@
+import type { Runner } from "./types/runner";
 import type { MatrixLike } from "./types/matrixLike";
 import type { Pair } from "./types/pair";
 
 import { exec } from "./core/munkres";
 import { toPairs } from "./utils/matching";
-import { exec as execAsync, AsyncMatcher } from "./core/munkresAsync";
+import { exec as execAsync } from "./core/munkresAsync";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -38,15 +39,15 @@ export function munkres<T extends number | bigint>(
  */
 export function munkresAsync(
   costMatrix: MatrixLike<number>,
-  matcher: AsyncMatcher<number>,
+  matcher: Runner<number>,
 ): Promise<Pair<number>[]>;
 export function munkresAsync(
   costMatrix: MatrixLike<bigint>,
-  matcher: AsyncMatcher<bigint>,
+  matcher: Runner<bigint>,
 ): Promise<Pair<number>[]>;
 export async function munkresAsync<T extends number | bigint>(
   costMatrix: MatrixLike<T>,
-  matcher: AsyncMatcher<T>,
+  matcher: Runner<T>,
 ): Promise<Pair<number>[]> {
   // @ts-expect-error ts(2345)
   return toPairs(await execAsync(costMatrix, matcher));
