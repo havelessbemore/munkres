@@ -281,7 +281,7 @@ function step4$2(unmatched, matrix, dualX, dualY, starsX, starsY) {
     }
     const N = match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
     --unmatched;
-    step6$2(y, N, dualX, dualY, slack, slackV, starsX);
+    step6$1(y, N, dualX, dualY, slack, slackV, starsX);
     step5(slack[N - 1], slackY, starsX, starsY);
   }
 }
@@ -294,7 +294,7 @@ function step5(x, primeX, starsX, starsY) {
     x = sx;
   } while (x !== -1);
 }
-function step6$2(y, N, dualX, dualY, slack, slackV, starsX) {
+function step6$1(y, N, dualX, dualY, slack, slackV, starsX) {
   const sum = slackV[slack[N - 1]];
   let min = sum;
   for (let i = 0; i < N; ++i) {
@@ -492,11 +492,11 @@ function step4$1(unmatched, matrix, dualX, dualY, starsX, starsY) {
     }
     const N = match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
     --unmatched;
-    step6$1(y, N, dualX, dualY, slack, slackV, starsX);
+    step6(y, N, dualX, dualY, slack, slackV, starsX);
     step5(slack[N - 1], slackY, starsX, starsY);
   }
 }
-function step6$1(y, N, dualX, dualY, slack, slackV, starsX) {
+function step6(y, N, dualX, dualY, slack, slackV, starsX) {
   const sum = slackV[slack[N - 1]];
   let min = sum;
   for (let i = 0; i < N; ++i) {
@@ -620,6 +620,77 @@ function toPairs(matching) {
   return pairs;
 }
 
+var __defProp$1 = Object.defineProperty;
+var __defNormalProp$1 = (obj, key, value) => key in obj ? __defProp$1(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField$1 = (obj, key, value) => {
+  __defNormalProp$1(obj, key + "" , value);
+  return value;
+};
+class TimeOutError extends Error {
+  constructor(message, duration) {
+    super(message);
+    /**
+     * Duration in milliseconds after which the timeout error was thrown
+     */
+    __publicField$1(this, "duration");
+    this.duration = duration;
+    this.name = TimeOutError.name;
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, TimeOutError);
+    }
+  }
+}
+
+var __defProp = Object.defineProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+const ATOMICS_TIMED_OUT = "timed-out";
+const ERR_MSG_TIMEOUT = "Timed out acquiring mutex";
+const ERR_MSG_STATE = "Unexpected mutex state";
+const LOCKED = 1;
+const UNLOCKED = 0;
+class Mutex {
+  constructor(sharedBuffer, byteOffset = 0) {
+    __publicField(this, "_lock");
+    __publicField(this, "_hasLock");
+    this._hasLock = false;
+    this._lock = new Int32Array(sharedBuffer, byteOffset, 1);
+  }
+  get buffer() {
+    return this._lock.buffer;
+  }
+  init() {
+    this._hasLock = false;
+    Atomics.store(this._lock, 0, UNLOCKED);
+  }
+  async lock(timeout) {
+    while (!this.tryLock()) {
+      const res = Atomics.waitAsync(this._lock, 0, LOCKED, timeout);
+      const value = res.async ? await res.value : res.value;
+      if (value === ATOMICS_TIMED_OUT) {
+        throw new TimeOutError(ERR_MSG_TIMEOUT, timeout ?? 0);
+      }
+    }
+  }
+  tryLock() {
+    return this._hasLock || (this._hasLock = Atomics.compareExchange(this._lock, 0, UNLOCKED, LOCKED) === UNLOCKED);
+  }
+  unlock() {
+    if (!this._hasLock) {
+      return false;
+    }
+    if (Atomics.compareExchange(this._lock, 0, LOCKED, UNLOCKED) !== LOCKED) {
+      throw new ReferenceError(ERR_MSG_STATE);
+    }
+    this._hasLock = false;
+    Atomics.notify(this._lock, 0, 1);
+    return true;
+  }
+}
+
 async function exec(matrix, runner) {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
@@ -655,73 +726,31 @@ async function step4(runner, unmatched, matrix, dualX, dualY, starsX, starsY) {
   if (unmatched <= 0) {
     return;
   }
-  const tasks = new Array(unmatched);
+  let byteLength = unmatched * Uint32Array.BYTES_PER_ELEMENT;
+  const indices = new Uint32Array(new SharedArrayBuffer(byteLength));
   for (let y = 0; unmatched > 0; ++y) {
     if (starsY[y] === -1) {
-      tasks[--unmatched] = y;
+      indices[--unmatched] = y;
     }
   }
-  const X = dualX.length;
-  const Y = dualY.length;
-  const zero = isBigInt(matrix[0][0]) ? 0n : 0;
-  const diffX = new Array(X);
-  const diffY = new Array(Y);
-  const B = X * Uint32Array.BYTES_PER_ELEMENT;
-  let S = Math.min(runner.size, tasks.length);
-  const slacks = new Array(S);
-  for (let i = 0; i < S; ++i) {
-    slacks[i] = [
-      new Uint32Array(new SharedArrayBuffer(B)),
-      new Uint32Array(new SharedArrayBuffer(B))
-    ];
-  }
-  const proms = new Array(S);
+  byteLength = Uint32Array.BYTES_PER_ELEMENT;
+  const sizeBuffer = new SharedArrayBuffer(byteLength);
+  new Uint32Array(sizeBuffer)[0] = indices.length;
+  byteLength = Int32Array.BYTES_PER_ELEMENT;
+  const mutexBuffer = new SharedArrayBuffer(byteLength);
+  new Mutex(mutexBuffer).init();
+  const P = Math.min(runner.size, indices.length);
+  const promises = new Array(P);
   const matching = { matrix, dualX, dualY, starsX, starsY };
-  while (tasks.length > 0) {
-    S = Math.min(runner.size, tasks.length);
-    proms.length = S;
-    for (let i = 0; i < S; ++i) {
-      const y = tasks.pop();
-      const [slack, slackY] = slacks[i];
-      proms[i] = runner.match({ id: i, y, matching, slack, slackY });
-    }
-    const results = await Promise.all(proms);
-    results.sort((a, b) => a.N - b.N);
-    diffX.fill(zero);
-    diffY.fill(zero);
-    for (let i = 0; i < S; ++i) {
-      const { id, y, N, slackV } = results[i];
-      const [slack, slackY] = slacks[id];
-      const x = slack[N - 1];
-      if (!isAugmentingPath(x, slackY, starsY)) {
-        tasks.push(y);
-        continue;
-      }
-      step6(y, N, diffX, diffY, slack, slackV, starsX);
-      step5(x, slackY, starsX, starsY);
-    }
-    for (let x = 0; x < X; ++x) {
-      dualX[x] -= diffX[x];
-    }
-    for (let y = 0; y < Y; ++y) {
-      dualY[y] += diffY[y];
-    }
+  for (let i = 0; i < P; ++i) {
+    promises[i] = runner.match({
+      indexBuffer: indices.buffer,
+      matching,
+      mutexBuffer,
+      sizeBuffer
+    });
   }
-}
-function step6(y, N, diffX, diffY, slack, slackV, starsX) {
-  const sum = slackV[slack[N - 1]];
-  let min = sum;
-  for (let i = 0; i < N; ++i) {
-    if (min > diffY[y]) {
-      diffY[y] = min;
-    }
-    const x = slack[i];
-    min = sum - slackV[x];
-    if (min > diffX[x]) {
-      diffX[x] = min;
-    }
-    y = starsX[x];
-  }
+  await Promise.all(promises);
 }
 function isAugmentingPath(x, primeY, starsY) {
   while (x !== -1) {
@@ -733,20 +762,42 @@ function isAugmentingPath(x, primeY, starsY) {
   }
   return true;
 }
-function matchAsync(req) {
-  const {
-    id,
-    y,
-    matching: { matrix, dualX, dualY, starsX },
-    slack,
-    slackY
-  } = req;
+async function matchAsync(req) {
+  const { indexBuffer, matching, mutexBuffer, sizeBuffer } = req;
+  const { matrix, dualX, dualY, starsX, starsY } = matching;
   const X = dualX.length;
-  const slackV = isTypedArray(dualX) ? new dualX.constructor(
-    new SharedArrayBuffer(dualX.byteLength)
-  ) : new Array(X);
-  const N = match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
-  return { id, y, N, slackV };
+  const indices = new Uint32Array(indexBuffer);
+  const mutex = new Mutex(mutexBuffer);
+  const size = new Uint32Array(sizeBuffer);
+  const slack = new Uint32Array(X);
+  const slackV = new Array(X);
+  const slackY = new Uint32Array(X);
+  do {
+    let y;
+    await mutex.lock();
+    try {
+      if (size[0] <= 0) {
+        break;
+      }
+      y = indices[--size[0]];
+    } finally {
+      mutex.unlock();
+    }
+    const N = match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
+    await mutex.lock();
+    try {
+      const x = slack[N - 1];
+      if (!isAugmentingPath(x, slackY, starsY)) {
+        indices[size[0]++] = y;
+      } else {
+        step6$1(y, N, dualX, dualY, slack, slackV, starsX);
+        step5(x, slackY, starsX, starsY);
+      }
+    } finally {
+      mutex.unlock();
+    }
+  } while (true);
+  return {};
 }
 
 function munkres(costMatrix) {

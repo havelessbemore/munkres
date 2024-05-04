@@ -253,7 +253,7 @@ declare function negateMatrix(matrix: Matrix<bigint>): void;
  * console.log(array); // Output: [1, 5, 3]
  * ```
  */
-interface MutableArrayLike$1<T> {
+interface MutableArrayLike<T> {
   readonly length: number;
   [n: number]: T;
   fill(value: T, start?: number, end?: number): this;
@@ -266,12 +266,12 @@ interface Matching<T> {
   /**
    * An array of dual variables for the columns of the cost matrix.
    */
-  dualX: MutableArrayLike$1<T>;
+  dualX: MutableArrayLike<T>;
 
   /**
    * An array of dual variables for the rows of the cost matrix.
    */
-  dualY: MutableArrayLike$1<T>;
+  dualY: MutableArrayLike<T>;
 
   /**
    * The cost matrix this matching is for.
@@ -282,29 +282,23 @@ interface Matching<T> {
    * An assignment mapping for the cost matrix, from column
    * index to row index. Unassigned columns are mapped to `-1`.
    */
-  starsX: MutableArrayLike$1<number>;
+  starsX: MutableArrayLike<number>;
 
   /**
    * An assignment mapping for the cost matrix, from row
    * index to column index. Unassigned rows are mapped to `-1`.
    */
-  starsY: MutableArrayLike$1<number>;
+  starsY: MutableArrayLike<number>;
 }
 
 interface MatchRequest<T> {
-  id: number;
-  y: number;
+  indexBuffer: SharedArrayBuffer;
   matching: Matching<T>;
-  slack: Uint32Array;
-  slackY: Uint32Array;
+  mutexBuffer: SharedArrayBuffer;
+  sizeBuffer: SharedArrayBuffer;
 }
 
-interface MatchResult<T> {
-  id: number;
-  y: number;
-  N: number;
-  slackV: MutableArrayLike<T>;
-}
+interface MatchResult {}
 
 interface Runner<T> {
   size: Readonly<number>;
@@ -338,7 +332,7 @@ declare function munkres(costMatrix: MatrixLike<bigint>): Pair<number>[];
 declare function munkresAsync(costMatrix: MatrixLike<number>, matcher: Runner<number>): Promise<Pair<number>[]>;
 declare function munkresAsync(costMatrix: MatrixLike<bigint>, matcher: Runner<bigint>): Promise<Pair<number>[]>;
 
-declare function matchAsync(req: MatchRequest<number>): MatchResult<number>;
-declare function matchAsync(req: MatchRequest<bigint>): MatchResult<bigint>;
+declare function matchAsync(req: MatchRequest<number>): Promise<MatchResult>;
+declare function matchAsync(req: MatchRequest<bigint>): Promise<MatchResult>;
 
 export { type Matrix, type MatrixLike, type Pair, copyMatrix, createMatrix, munkres as default, genMatrix, getMatrixMax, getMatrixMin, invertMatrix, matchAsync, munkres, munkresAsync, negateMatrix };

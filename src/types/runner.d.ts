@@ -1,19 +1,13 @@
 import { Matching } from "./matching";
 
 export interface MatchRequest<T> {
-  id: number;
-  y: number;
+  indexBuffer: SharedArrayBuffer;
   matching: Matching<T>;
-  slack: Uint32Array;
-  slackY: Uint32Array;
+  mutexBuffer: SharedArrayBuffer;
+  sizeBuffer: SharedArrayBuffer;
 }
 
-export interface MatchResult<T> {
-  id: number;
-  y: number;
-  N: number;
-  slackV: MutableArrayLike<T>;
-}
+export interface MatchResult {}
 
 export interface Runner<T> {
   size: Readonly<number>;

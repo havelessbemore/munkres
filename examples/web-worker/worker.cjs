@@ -3,7 +3,7 @@ const { matchAsync } = require("../..");
 
 const fns = { match: matchAsync };
 
-addEventListener("message", (e) => {
+addEventListener("message", async (e) => {
   const { name, args } = e.data;
   try {
     if (name == null) {
@@ -12,7 +12,7 @@ addEventListener("message", (e) => {
     if (fns[name] == null) {
       throw new Error(`Unknown function '${name}'`);
     }
-    const res = fns[name](...args);
+    const res = await Promise.resolve(fns[name](...args));
     postMessage({ name, res });
   } catch (err) {
     postMessage({ name, err });

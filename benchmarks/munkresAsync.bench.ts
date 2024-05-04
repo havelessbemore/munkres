@@ -10,7 +10,7 @@ import { TerminalReporter } from "./utils/terminalReporter";
 import { MatrixLike } from "../src";
 
 const MIN_VAL = 1;
-const MAX_VAL = Number.MAX_SAFE_INTEGER;
+const MAX_VAL = 1e9;
 
 export function getInt(): number {
   return randomInt(MIN_VAL, MAX_VAL);
@@ -34,11 +34,12 @@ export function gen(
 }
 
 let bench: Bench;
-const suite = new Suite({ warmup: true }).addReporter(new TerminalReporter());
+const suite = new Suite({ warmup: false }).addReporter(new TerminalReporter());
 
 const pool = new Piscina({
   filename: "./examples/piscina/worker.js",
   maxThreads: 4,
+  recordTiming: false,
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

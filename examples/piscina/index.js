@@ -11,13 +11,11 @@ const MAX_VAL = Number.MAX_SAFE_INTEGER;
 // END PARAMS
 
 (async function main() {
-  // Create pool
   const pool = new Piscina({
-    filename: new URL("./worker.js", import.meta.url).toString(),
+    filename: "./examples/piscina/worker.js",
     maxThreads: WORKERS,
   });
 
-  // Create matcher
   const matcher = {
     size: pool.maxThreads,
     match: (matching) => pool.run(matching, { name: "match" }),

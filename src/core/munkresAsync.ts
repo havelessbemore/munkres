@@ -2,11 +2,11 @@ import type { MatrixLike } from "../types/matrixLike";
 import type { Matching } from "../types/matching";
 import type { MutableArrayLike } from "../types/mutableArrayLike";
 
-import { match, step1, step4B, step5, steps2To3 } from "./finMunkres";
+import { match, step1, step4B, step5, step6, steps2To3 } from "./finMunkres";
 import { MatchRequest, MatchResult, Runner } from "../types/runner";
 import { isTypedArray } from "util/types";
 import { Constructor } from "../types/constructor";
-import { isBigInt } from "../utils/is";
+import { Mutex } from "../utils/mutex";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -122,137 +122,39 @@ export async function step4<T extends number | bigint>(
     return;
   }
 
-  // Find unmatched rows
-  const tasks: number[] = new Array(unmatched);
+  // Find unmatched indices
+  let byteLength = unmatched * Uint32Array.BYTES_PER_ELEMENT;
+  const indices = new Uint32Array(new SharedArrayBuffer(byteLength));
   for (let y = 0; unmatched > 0; ++y) {
     if (starsY[y] === -1) {
-      tasks[--unmatched] = y;
+      indices[--unmatched] = y;
     }
   }
 
-  const X = dualX.length;
-  const Y = dualY.length;
-  const zero = (isBigInt(matrix[0][0]) ? 0n : 0) as T;
-  const diffX = new Array<T>(X);
-  const diffY = new Array<T>(Y);
+  // Initialize size buffer
+  byteLength = Uint32Array.BYTES_PER_ELEMENT;
+  const sizeBuffer = new SharedArrayBuffer(byteLength);
+  new Uint32Array(sizeBuffer)[0] = indices.length;
 
-  // Initialize slack
-  const B = X * Uint32Array.BYTES_PER_ELEMENT;
-  let S = Math.min(runner.size, tasks.length);
-  const slacks = new Array<[Uint32Array, Uint32Array]>(S);
-  for (let i = 0; i < S; ++i) {
-    slacks[i] = [
-      new Uint32Array(new SharedArrayBuffer(B)),
-      new Uint32Array(new SharedArrayBuffer(B)),
-    ];
-  }
+  // Initialize mutex buffer
+  byteLength = Int32Array.BYTES_PER_ELEMENT;
+  const mutexBuffer = new SharedArrayBuffer(byteLength);
+  new Mutex(mutexBuffer).init();
 
-  // While there are tasks
-  const proms: Promise<MatchResult<T>>[] = new Array(S);
+  // Perform matching
+  const P = Math.min(runner.size, indices.length);
+  const promises = new Array<Promise<MatchResult>>(P);
   const matching: Matching<T> = { matrix, dualX, dualY, starsX, starsY };
-  while (tasks.length > 0) {
-    // Get phase size
-    S = Math.min(runner.size, tasks.length);
-    proms.length = S;
-
-    // Phase 0: Find augmenting paths
-    for (let i = 0; i < S; ++i) {
-      const y = tasks.pop()!;
-      const [slack, slackY] = slacks[i];
-      proms[i] = runner.match({ id: i, y, matching, slack, slackY });
-    }
-    const results = await Promise.all(proms);
-
-    // Sort paths by lengths to reduce conflicts
-    results.sort((a, b) => a.N - b.N);
-
-    // Phase 1: Apply augmenting paths
-    diffX.fill(zero);
-    diffY.fill(zero);
-    for (let i = 0; i < S; ++i) {
-      const { id, y, N, slackV } = results[i];
-      const [slack, slackY] = slacks[id];
-      const x = slack[N - 1];
-
-      // Check if valid augmenting path found. Confirms path is
-      // pairwise disjoint from any previously accepted paths.
-      if (!isAugmentingPath(x, slackY, starsY)) {
-        tasks.push(y);
-        continue;
-      }
-
-      // Update dual variables
-      // @ts-expect-error ts(2769)
-      step6(y, N, diffX, diffY, slack, slackV, starsX);
-
-      // Update matching
-      step5(x, slackY, starsX, starsY);
-    }
-
-    for (let x = 0; x < X; ++x) {
-      // @ts-expect-error ts(2365)
-      dualX[x] -= diffX[x];
-    }
-
-    for (let y = 0; y < Y; ++y) {
-      // @ts-expect-error ts(2365)
-      dualY[y] += diffY[y];
-    }
+  for (let i = 0; i < P; ++i) {
+    promises[i] = runner.match({
+      indexBuffer: indices.buffer as SharedArrayBuffer,
+      matching,
+      mutexBuffer,
+      sizeBuffer,
+    });
   }
-}
 
-/**
- * Adjusts dual variables to uncover more admissible edges.
- *
- * @param N - The number of adjustments to make.
- * @param min - The value to adjust by.
- * @param coveredY - An array indicating whether a row is covered.
- * @param dualX - The dual variables for each matrix column. Modified in place.
- * @param dualY - The dual variables for each matrix row. Modified in place.
- * @param slack - An array of covered column indices.
- * @param slackV - The slack values for each column. Modified in place.
- */
-export function step6(
-  y: number,
-  N: number,
-  diffX: MutableArrayLike<number>,
-  diffY: MutableArrayLike<number>,
-  slack: ArrayLike<number>,
-  slackV: ArrayLike<number>,
-  starsX: ArrayLike<number>,
-): void;
-export function step6(
-  y: number,
-  N: number,
-  diffX: MutableArrayLike<bigint>,
-  diffY: MutableArrayLike<bigint>,
-  slack: ArrayLike<number>,
-  slackV: ArrayLike<bigint>,
-  starsX: ArrayLike<number>,
-): void;
-export function step6<T extends number | bigint>(
-  y: number,
-  N: number,
-  diffX: MutableArrayLike<T>,
-  diffY: MutableArrayLike<T>,
-  slack: ArrayLike<number>,
-  slackV: ArrayLike<T>,
-  starsX: ArrayLike<number>,
-): void {
-  const sum = slackV[slack[N - 1]];
-
-  let min = sum;
-  for (let i = 0; i < N; ++i) {
-    if (min > diffY[y]) {
-      diffY[y] = min;
-    }
-    const x = slack[i];
-    min = (sum - slackV[x]) as T;
-    if (min > diffX[x]) {
-      diffX[x] = min;
-    }
-    y = starsX[x];
-  }
+  await Promise.all(promises);
 }
 
 export function isAugmentingPath(
@@ -270,29 +172,58 @@ export function isAugmentingPath(
   return true;
 }
 
-export function matchAsync(req: MatchRequest<number>): MatchResult<number>;
-export function matchAsync(req: MatchRequest<bigint>): MatchResult<bigint>;
-export function matchAsync<T extends number | bigint>(
+export function matchAsync(req: MatchRequest<number>): Promise<MatchResult>;
+export function matchAsync(req: MatchRequest<bigint>): Promise<MatchResult>;
+export async function matchAsync<T extends number | bigint>(
   req: MatchRequest<T>,
-): MatchResult<T> {
-  const {
-    id,
-    y,
-    matching: { matrix, dualX, dualY, starsX },
-    slack,
-    slackY,
-  } = req;
+): Promise<MatchResult> {
+  const { indexBuffer, matching, mutexBuffer, sizeBuffer } = req;
+  const { matrix, dualX, dualY, starsX, starsY } = matching;
 
   const X = dualX.length;
-  const slackV = isTypedArray(dualX)
-    ? new (dualX.constructor as Constructor<MutableArrayLike<T>>)(
-        new SharedArrayBuffer(dualX.byteLength),
-      )
-    : new Array<T>(X);
+  const indices = new Uint32Array(indexBuffer);
+  const mutex = new Mutex(mutexBuffer);
+  const size = new Uint32Array(sizeBuffer);
+  const slack = new Uint32Array(X);
+  const slackV = new Array<T>(X);
+  const slackY = new Uint32Array(X);
 
-  // @ts-expect-error ts(2769)
-  const N = match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
-  return { id, y, N, slackV };
+  do {
+    let y: number;
+    await mutex.lock();
+    try {
+      if (size[0] <= 0) {
+        break;
+      }
+      y = indices[--size[0]];
+    } finally {
+      mutex.unlock();
+    }
+
+    // @ts-expect-error ts(2769)
+    const N = match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
+
+    await mutex.lock();
+    try {
+      // Check if valid augmenting path found. Confirms path is
+      // pairwise disjoint from any previously accepted paths.
+      const x = slack[N - 1];
+      if (!isAugmentingPath(x, slackY, starsY)) {
+        indices[size[0]++] = y;
+      } else {
+        // Update dual variables
+        // @ts-expect-error ts(2769)
+        step6(y, N, dualX, dualY, slack, slackV, starsX);
+
+        // Update matching
+        step5(x, slackY, starsX, starsY);
+      }
+    } finally {
+      mutex.unlock();
+    }
+  } while (true);
+
+  return {};
 }
 
 // B
