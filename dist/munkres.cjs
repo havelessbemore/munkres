@@ -183,6 +183,12 @@ function getMin(array) {
   return min;
 }
 
+function copy(a, b) {
+  const N = a.length;
+  for (let i = 0; i < N; ++i) {
+    b[i] = a[i];
+  }
+}
 function partitionByMin(indices, values, min = 0, max = indices.length) {
   let mid = min + 1;
   let minIndex = indices[min];
@@ -624,10 +630,10 @@ function toPairs(matching) {
   return pairs;
 }
 
-var __defProp$1 = Object.defineProperty;
-var __defNormalProp$1 = (obj, key, value) => key in obj ? __defProp$1(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$1 = (obj, key, value) => {
-  __defNormalProp$1(obj, key + "" , value);
+var __defProp$2 = Object.defineProperty;
+var __defNormalProp$2 = (obj, key, value) => key in obj ? __defProp$2(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField$2 = (obj, key, value) => {
+  __defNormalProp$2(obj, key + "" , value);
   return value;
 };
 class TimeOutError extends Error {
@@ -636,7 +642,7 @@ class TimeOutError extends Error {
     /**
      * Duration in milliseconds after which the timeout error was thrown
      */
-    __publicField$1(this, "duration");
+    __publicField$2(this, "duration");
     this.duration = duration;
     this.name = TimeOutError.name;
     if (Error.captureStackTrace) {
@@ -645,10 +651,10 @@ class TimeOutError extends Error {
   }
 }
 
-var __defProp = Object.defineProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => {
-  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+var __defProp$1 = Object.defineProperty;
+var __defNormalProp$1 = (obj, key, value) => key in obj ? __defProp$1(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField$1 = (obj, key, value) => {
+  __defNormalProp$1(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
 const ATOMICS_TIMED_OUT = "timed-out";
@@ -658,17 +664,10 @@ const LOCKED = 1;
 const UNLOCKED = 0;
 class Mutex {
   constructor(sharedBuffer, byteOffset = 0) {
-    __publicField(this, "_lock");
-    __publicField(this, "_hasLock");
+    __publicField$1(this, "_hasLock");
+    __publicField$1(this, "_lock");
     this._hasLock = false;
     this._lock = new Int32Array(sharedBuffer, byteOffset, 1);
-  }
-  get buffer() {
-    return this._lock.buffer;
-  }
-  init() {
-    this._hasLock = false;
-    Atomics.store(this._lock, 0, UNLOCKED);
   }
   async lock(timeout) {
     while (!this.tryLock()) {
@@ -687,11 +686,65 @@ class Mutex {
       return false;
     }
     if (Atomics.compareExchange(this._lock, 0, LOCKED, UNLOCKED) !== LOCKED) {
+      console.log("WTF MUTEX");
       throw new ReferenceError(ERR_MSG_STATE);
     }
     this._hasLock = false;
     Atomics.notify(this._lock, 0, 1);
     return true;
+  }
+}
+
+var __defProp = Object.defineProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+class SharedStack {
+  constructor(stackBuffer, sizeBuffer, mutex) {
+    __publicField(this, "_mutex");
+    __publicField(this, "_size");
+    __publicField(this, "_stack");
+    this._mutex = mutex;
+    this._size = new Int32Array(sizeBuffer);
+    this._stack = new Int32Array(stackBuffer);
+  }
+  get size() {
+    return Atomics.load(this._size, 0);
+  }
+  async pop() {
+    await this._mutex.lock();
+    try {
+      const size = Atomics.load(this._size, 0);
+      if (size <= 0) {
+        return void 0;
+      }
+      const act = Atomics.compareExchange(this._size, 0, size, size - 1);
+      if (size !== act) {
+        throw new Error(`[WTF] ${size} != ${act}`);
+      }
+      return Atomics.load(this._stack, size - 1);
+    } finally {
+      this._mutex.unlock();
+    }
+  }
+  async push(value) {
+    await this._mutex.lock();
+    try {
+      const size = Atomics.load(this._size, 0);
+      if (size >= this._stack.length) {
+        return false;
+      }
+      const act = Atomics.compareExchange(this._size, 0, size, size + 1);
+      if (size !== act) {
+        throw new Error(`[WTF 2] ${size} != ${act}`);
+      }
+      Atomics.store(this._stack, size, value);
+      return true;
+    } finally {
+      this._mutex.unlock();
+    }
   }
 }
 
@@ -701,60 +754,75 @@ async function exec(matrix, runner) {
   if (Y <= 0 || X <= 0) {
     return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
   }
-  let dualX;
-  let dualY;
-  if (types.isTypedArray(matrix[0])) {
-    const BPE2 = matrix[0].BYTES_PER_ELEMENT;
-    const ctor = matrix[0].constructor;
-    dualX = new ctor(new SharedArrayBuffer(X * BPE2));
-    dualY = new ctor(new SharedArrayBuffer(Y * BPE2));
-  } else {
-    dualX = new Array(X);
-    dualY = new Array(Y);
-  }
+  const [dualX, dualY] = getDualArrays(matrix);
   step1$1(matrix, dualX, dualY);
-  const BPE = Int32Array.BYTES_PER_ELEMENT;
-  const starsX = new Int32Array(new SharedArrayBuffer(X * BPE)).fill(-1);
-  const starsY = new Int32Array(new SharedArrayBuffer(Y * BPE)).fill(-1);
+  const [starsX, starsY] = getStarArrays(matrix);
   const stars = steps2To3$1(matrix, dualX, dualY, starsX, starsY);
-  Y <= X ? (
-    // @ts-expect-error ts(2769)
-    await step4(runner, Y - stars, matrix, dualX, dualY, starsX, starsY)
-  ) : (
-    // @ts-expect-error ts(2769)
-    step4B$1(X - stars, matrix, dualX, dualY, starsX, starsY)
-  );
+  try {
+    Y <= X ? (
+      // @ts-expect-error ts(2769)
+      await step4(runner, Y - stars, matrix, dualX, dualY, starsX, starsY)
+    ) : (
+      // @ts-expect-error ts(2769)
+      step4B$1(X - stars, matrix, dualX, dualY, starsX, starsY)
+    );
+  } catch (err) {
+    console.error(err);
+  }
   return { dualX, dualY, matrix, starsX, starsY };
 }
 async function step4(runner, unmatched, matrix, dualX, dualY, starsX, starsY) {
   if (unmatched <= 0) {
     return;
   }
-  let byteLength = unmatched * Uint32Array.BYTES_PER_ELEMENT;
-  const indices = new Uint32Array(new SharedArrayBuffer(byteLength));
+  let byteLength = 2 * Int32Array.BYTES_PER_ELEMENT;
+  const mutexBuffer = new SharedArrayBuffer(byteLength);
+  byteLength = Int32Array.BYTES_PER_ELEMENT;
+  const sizeBuffer = new SharedArrayBuffer(byteLength);
+  byteLength = unmatched * Uint32Array.BYTES_PER_ELEMENT;
+  const indexBuffer = new SharedArrayBuffer(byteLength);
+  const mutex = new Mutex(mutexBuffer);
+  const stack = new SharedStack(indexBuffer, sizeBuffer, mutex);
   for (let y = 0; unmatched > 0; ++y) {
     if (starsY[y] === -1) {
-      indices[--unmatched] = y;
+      await stack.push(y);
+      --unmatched;
     }
   }
-  byteLength = Uint32Array.BYTES_PER_ELEMENT;
-  const sizeBuffer = new SharedArrayBuffer(byteLength);
-  new Uint32Array(sizeBuffer)[0] = indices.length;
-  byteLength = Int32Array.BYTES_PER_ELEMENT;
-  const mutexBuffer = new SharedArrayBuffer(byteLength);
-  new Mutex(mutexBuffer).init();
-  const P = Math.min(runner.size, indices.length);
+  const P = Math.min(runner.size, stack.size);
   const promises = new Array(P);
   const matching = { matrix, dualX, dualY, starsX, starsY };
   for (let i = 0; i < P; ++i) {
     promises[i] = runner.match({
-      indexBuffer: indices.buffer,
+      indexBuffer,
       matching,
       mutexBuffer,
       sizeBuffer
     });
   }
   await Promise.all(promises);
+}
+function getDualArrays(matrix) {
+  const Y = matrix.length;
+  const X = matrix[0].length;
+  if (!types.isTypedArray(matrix[0])) {
+    return [new Array(X), new Array(Y)];
+  }
+  const BPE = matrix[0].BYTES_PER_ELEMENT;
+  const ctor = matrix[0].constructor;
+  return [
+    new ctor(new SharedArrayBuffer(X * BPE)),
+    new ctor(new SharedArrayBuffer(Y * BPE))
+  ];
+}
+function getStarArrays(matrix) {
+  const Y = matrix.length;
+  const X = matrix[0].length;
+  const BPE = Int32Array.BYTES_PER_ELEMENT;
+  return [
+    new Int32Array(new SharedArrayBuffer(X * BPE)).fill(-1),
+    new Int32Array(new SharedArrayBuffer(Y * BPE)).fill(-1)
+  ];
 }
 function isAugmentingPath(x, primeY, starsY) {
   while (x !== -1) {
@@ -769,38 +837,40 @@ function isAugmentingPath(x, primeY, starsY) {
 async function matchAsync(req) {
   const { indexBuffer, matching, mutexBuffer, sizeBuffer } = req;
   const { matrix, dualX, dualY, starsX, starsY } = matching;
+  const mutex = new Mutex(mutexBuffer, Int32Array.BYTES_PER_ELEMENT);
+  const stack = new SharedStack(indexBuffer, sizeBuffer, new Mutex(mutexBuffer));
   const X = dualX.length;
-  const indices = new Uint32Array(indexBuffer);
-  const mutex = new Mutex(mutexBuffer);
-  const size = new Uint32Array(sizeBuffer);
+  const dx = new Array(X);
+  const dy = new Array(dualY.length);
   const slack = new Uint32Array(X);
   const slackV = new Array(X);
   const slackY = new Uint32Array(X);
-  do {
-    let y;
-    await mutex.lock();
+  const sx = new Int32Array(X);
+  let y;
+  while ((y = await stack.pop()) != null) {
+    await mutex.lock(5e3);
     try {
-      if (size[0] <= 0) {
-        break;
-      }
-      y = indices[--size[0]];
+      copy(dualX, dx);
+      copy(dualY, dy);
+      copy(starsX, sx);
     } finally {
       mutex.unlock();
     }
-    const N = match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
-    await mutex.lock();
+    const N = match$1(y, matrix, dx, dy, sx, slack, slackV, slackY);
+    await mutex.lock(5e3);
     try {
       const x = slack[N - 1];
       if (!isAugmentingPath(x, slackY, starsY)) {
-        indices[size[0]++] = y;
+        await stack.push(y);
+        continue;
       } else {
-        step6$1(y, N, dualX, dualY, slack, slackV, starsX);
+        step6$1(y, N, dualX, dualY, slack, slackV, sx);
         step5(x, slackY, starsX, starsY);
       }
     } finally {
       mutex.unlock();
     }
-  } while (true);
+  }
   return {};
 }
 

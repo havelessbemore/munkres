@@ -38,7 +38,7 @@ const suite = new Suite({ warmup: false }).addReporter(new TerminalReporter());
 
 const pool = new Piscina({
   filename: "./examples/piscina/worker.js",
-  maxThreads: 4,
+  maxThreads: 8,
   recordTiming: false,
 });
 
@@ -49,7 +49,7 @@ const runner: Runner<any> = {
 };
 
 suite.add(`number`, (bench = new Bench({ iterations: 50 })));
-for (let i = 1; i <= 10; ++i) {
+for (let i = 8; i <= 12; ++i) {
   const N = 1 << i;
   let mat: MatrixLike<number>;
   bench.add(`${N}x${N}`, async () => await munkresAsync(mat, runner), {

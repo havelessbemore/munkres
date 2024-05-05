@@ -1,5 +1,12 @@
 import type { MutableArrayLike } from "../types/mutableArrayLike";
 
+export function copy<T>(a: ArrayLike<T>, b: MutableArrayLike<T>): void {
+  const N = a.length;
+  for (let i = 0; i < N; ++i) {
+    b[i] = a[i];
+  }
+}
+
 /**
  * Partitions an array of indices based on the minimum value of the indices in another array.
  *

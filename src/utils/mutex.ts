@@ -7,21 +7,12 @@ const LOCKED = 1;
 const UNLOCKED = 0;
 
 export class Mutex {
-  private _lock: Int32Array;
   private _hasLock: boolean;
+  private _lock: Int32Array;
 
   constructor(sharedBuffer: SharedArrayBuffer, byteOffset = 0) {
     this._hasLock = false;
     this._lock = new Int32Array(sharedBuffer, byteOffset, 1);
-  }
-
-  get buffer(): SharedArrayBuffer {
-    return this._lock.buffer as SharedArrayBuffer;
-  }
-
-  init(): void {
-    this._hasLock = false;
-    Atomics.store(this._lock, 0, UNLOCKED);
   }
 
   async lock(timeout?: number): Promise<void> {
@@ -44,7 +35,7 @@ export class Mutex {
       return false;
     }
     if (Atomics.compareExchange(this._lock, 0, LOCKED, UNLOCKED) !== LOCKED) {
-      throw new ReferenceError(ERR_MSG_STATE);
+      throw new ReferenceError(ERR_MSG_STATE); // Sanity check
     }
     this._hasLock = false;
     Atomics.notify(this._lock, 0, 1);
