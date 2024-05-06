@@ -292,10 +292,12 @@ interface Matching<T> {
 }
 
 interface MatchRequest<T> {
-  indexBuffer: SharedArrayBuffer;
+  id: number,
   matching: Matching<T>;
   mutexBuffer: SharedArrayBuffer;
-  sizeBuffer: SharedArrayBuffer;
+  stackMutexBuffer: SharedArrayBuffer;
+  stackSizeBuffer: SharedArrayBuffer;
+  stackValueBuffer: SharedArrayBuffer;
 }
 
 interface MatchResult {}

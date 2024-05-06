@@ -24,9 +24,8 @@ export class SharedStack {
     return Atomics.load(this._size, 0);
   }
 
-  async pop(): Promise<number | undefined> {
-    await this._mutex.lock();
-    try {
+  async pop(timeout?: number): Promise<number | undefined> {
+    return this._mutex.request(() => {
       const size = Atomics.load(this._size, 0);
       if (size <= 0) {
         return undefined;
@@ -36,14 +35,11 @@ export class SharedStack {
         throw new Error(ERR_MSG_POP);
       }
       return Atomics.load(this._stack, size - 1);
-    } finally {
-      this._mutex.unlock();
-    }
+    }, timeout);
   }
 
-  async push(value: number): Promise<boolean> {
-    await this._mutex.lock();
-    try {
+  async push(value: number, timeout?: number): Promise<boolean> {
+    return this._mutex.request(() => {
       const size = Atomics.load(this._size, 0);
       if (size >= this._stack.length) {
         return false;
@@ -54,8 +50,6 @@ export class SharedStack {
       }
       Atomics.store(this._stack, size, value);
       return true;
-    } finally {
-      this._mutex.unlock();
-    }
+    }, timeout);
   }
 }
