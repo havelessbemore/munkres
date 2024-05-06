@@ -298,7 +298,7 @@ interface MatchRequest<T> {
     mutexBuffer: SharedArrayBuffer;
     sizeBuffer: SharedArrayBuffer;
     valueBuffer: SharedArrayBuffer;
-  }
+  };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
