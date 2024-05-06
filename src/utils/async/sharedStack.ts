@@ -8,16 +8,16 @@ const ERR_MSG_PUSH =
 export class SharedStack {
   private _mutex: Mutex;
   private _size: Int32Array;
-  private _stack: Int32Array;
+  private _values: Int32Array;
 
   constructor(
-    stackBuffer: SharedArrayBuffer,
+    valueBuffer: SharedArrayBuffer,
     sizeBuffer: SharedArrayBuffer,
     mutex: Mutex,
   ) {
     this._mutex = mutex;
     this._size = new Int32Array(sizeBuffer);
-    this._stack = new Int32Array(stackBuffer);
+    this._values = new Int32Array(valueBuffer);
   }
 
   get size(): number {
@@ -34,21 +34,21 @@ export class SharedStack {
       if (size !== act) {
         throw new Error(ERR_MSG_POP);
       }
-      return Atomics.load(this._stack, size - 1);
+      return Atomics.load(this._values, size - 1);
     }, timeout);
   }
 
   async push(value: number, timeout?: number): Promise<boolean> {
     return this._mutex.request(() => {
       const size = Atomics.load(this._size, 0);
-      if (size >= this._stack.length) {
+      if (size >= this._values.length) {
         return false;
       }
       const act = Atomics.compareExchange(this._size, 0, size, size + 1);
       if (size !== act) {
         throw new Error(ERR_MSG_PUSH);
       }
-      Atomics.store(this._stack, size, value);
+      Atomics.store(this._values, size, value);
       return true;
     }, timeout);
   }

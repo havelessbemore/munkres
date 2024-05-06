@@ -668,15 +668,13 @@ class Mutex {
     this._hasLock = false;
     this._lock = new Int32Array(sharedBuffer, byteOffset, 1);
   }
+  get buffer() {
+    return this._lock.buffer;
+  }
   async request(callbackfn, timeout) {
     try {
-      if (this._hasLock) {
-        throw new Error("ALREADY HAS LOCK WTF THIS SHOULD NOT HAPPEN");
-      }
       await this.lock(timeout);
       return await callbackfn();
-    } catch (err) {
-      throw err;
     } finally {
       this.unlock();
     }
@@ -700,38 +698,6 @@ class Mutex {
       Atomics.notify(this._lock, 0);
     }
   }
-  /*
-    get hasLock(): boolean {
-      return this._hasLock;
-    }
-  
-    async lock(timeout?: number): Promise<void> {
-      while (!this.tryLock()) {
-        const res = Atomics.waitAsync(this._lock, 0, LOCKED, timeout);
-        const value = res.async ? await res.value : res.value;
-        if (value === ATOMICS_TIMED_OUT) {
-          throw new TimeOutError(ERR_MSG_TIMEOUT, timeout ?? 0);
-        }
-      }
-    }
-  
-    tryLock(): boolean {
-      return (this._hasLock ||=
-        Atomics.compareExchange(this._lock, 0, UNLOCKED, LOCKED) === UNLOCKED);
-    }
-  
-    unlock(): boolean {
-      if (!this._hasLock) {
-        return false;
-      }
-      if (Atomics.compareExchange(this._lock, 0, LOCKED, UNLOCKED) !== LOCKED) {
-        throw new ReferenceError(ERR_MSG_STATE); // Sanity check
-      }
-      this._hasLock = false;
-      Atomics.notify(this._lock, 0, 1);
-      return true;
-    }
-    */
 }
 
 var __defProp = Object.defineProperty;
@@ -743,13 +709,13 @@ var __publicField = (obj, key, value) => {
 const ERR_MSG_POP = "Unexpected update during pop. Check push / pop operations are awaited on and mutex is shared properly";
 const ERR_MSG_PUSH = "Unexpected update during push. Check push / pop operations are awaited on and mutex is shared properly";
 class SharedStack {
-  constructor(stackBuffer, sizeBuffer, mutex) {
+  constructor(valueBuffer, sizeBuffer, mutex) {
     __publicField(this, "_mutex");
     __publicField(this, "_size");
-    __publicField(this, "_stack");
+    __publicField(this, "_values");
     this._mutex = mutex;
     this._size = new Int32Array(sizeBuffer);
-    this._stack = new Int32Array(stackBuffer);
+    this._values = new Int32Array(valueBuffer);
   }
   get size() {
     return Atomics.load(this._size, 0);
@@ -764,20 +730,20 @@ class SharedStack {
       if (size !== act) {
         throw new Error(ERR_MSG_POP);
       }
-      return Atomics.load(this._stack, size - 1);
+      return Atomics.load(this._values, size - 1);
     }, timeout);
   }
   async push(value, timeout) {
     return this._mutex.request(() => {
       const size = Atomics.load(this._size, 0);
-      if (size >= this._stack.length) {
+      if (size >= this._values.length) {
         return false;
       }
       const act = Atomics.compareExchange(this._size, 0, size, size + 1);
       if (size !== act) {
         throw new Error(ERR_MSG_PUSH);
       }
-      Atomics.store(this._stack, size, value);
+      Atomics.store(this._values, size, value);
       return true;
     }, timeout);
   }
@@ -811,6 +777,7 @@ async function step4(runner, unmatched, matrix, dualX, dualY, starsX, starsY) {
     return;
   }
   const bInt32 = Int32Array.BYTES_PER_ELEMENT;
+  const mutexBuffer = new SharedArrayBuffer(bInt32);
   const stackMutexBuffer = new SharedArrayBuffer(bInt32);
   const stackSizeBuffer = new SharedArrayBuffer(bInt32);
   const stackValueBuffer = new SharedArrayBuffer(unmatched * bInt32);
@@ -826,17 +793,17 @@ async function step4(runner, unmatched, matrix, dualX, dualY, starsX, starsY) {
   const promises = new Array(P);
   const matching = { matrix, dualX, dualY, starsX, starsY };
   for (let i = 0; i < P; ++i) {
-    const id = i;
     promises[i] = runner.match({
-      id,
       matching,
-      mutexBuffer: stackMutexBuffer,
-      stackMutexBuffer,
-      stackSizeBuffer,
-      stackValueBuffer
+      mutexBuffer,
+      stack: {
+        mutexBuffer: stackMutexBuffer,
+        sizeBuffer: stackSizeBuffer,
+        valueBuffer: stackValueBuffer
+      }
     });
   }
-  await Promise.all(promises);
+  await Promise.allSettled(promises);
 }
 function getDualArrays(matrix) {
   const Y = matrix.length;
@@ -863,7 +830,7 @@ function getStarArrays(matrix) {
 function isAugmentingPath(x, primeY, starsX, starsY, sx) {
   while (x !== -1) {
     const y = primeY[x];
-    if (starsX[x] === y || starsY[y] === x || starsX[x] !== sx[x]) {
+    if (starsY[y] === x || starsX[x] !== sx[x]) {
       return false;
     }
     x = starsY[y];
@@ -871,52 +838,43 @@ function isAugmentingPath(x, primeY, starsX, starsY, sx) {
   return true;
 }
 async function matchAsync(req) {
-  const { id, matching, mutexBuffer } = req;
-  const { matrix, dualX, dualY, starsX, starsY } = matching;
+  const { matching, mutexBuffer } = req;
+  const { matrix: mat, dualX, dualY, starsX, starsY } = matching;
   const mutex = new Mutex(mutexBuffer);
   const stack = new SharedStack(
-    req.stackValueBuffer,
-    req.stackSizeBuffer,
-    new Mutex(req.stackMutexBuffer)
+    req.stack.valueBuffer,
+    req.stack.sizeBuffer,
+    new Mutex(req.stack.mutexBuffer)
   );
   const X = dualX.length;
-  const dx = new Array(X);
-  const dy = new Array(dualY.length);
+  const LDualX = new Array(X);
+  const LDualY = new Array(dualY.length);
   const slack = new Uint32Array(X);
   const slackV = new Array(X);
   const slackY = new Uint32Array(X);
-  const sx = new Int32Array(X);
-  const TIMEOUT = 1e3;
+  const LStarsX = new Int32Array(X);
   while (stack.size > 0) {
-    const y = await stack.pop(TIMEOUT).catch(() => void 0);
-    if (y != null) {
-      await matchAsync2(id, y, mutex, matrix, dualX, dualY, dx, dy, starsX, sx, starsY, slack, slackV, slackY);
+    const y = await stack.pop(500).catch(() => void 0);
+    if (y == null) {
+      continue;
     }
-  }
-  return {};
-}
-async function matchAsync2(_id, y, mutex, matrix, dualX, dualY, dx, dy, starsX, sx, starsY, slack, slackV, slackY) {
-  const TIMEOUT = 1e3;
-  let N = 0;
-  let cont = true;
-  while (cont) {
     await mutex.request(() => {
-      copy(dualX, dx);
-      copy(dualY, dy);
-      copy(starsX, sx);
-    }, TIMEOUT);
-    N = match$1(y, matrix, dx, dy, sx, slack, slackV, slackY);
-    await mutex.request(() => {
+      copy(dualX, LDualX);
+      copy(dualY, LDualY);
+      copy(starsX, LStarsX);
+    });
+    const N = match$1(y, mat, LDualX, LDualY, LStarsX, slack, slackV, slackY);
+    await mutex.request(async () => {
       const x = slack[N - 1];
-      if (!isAugmentingPath(x, slackY, starsX, starsY, sx)) {
+      if (!isAugmentingPath(x, slackY, starsX, starsY, LStarsX)) {
+        await stack.push(y);
         return;
       }
-      step6$1(y, N, dualX, dualY, slack, slackV, sx);
+      step6$1(y, N, dualX, dualY, slack, slackV, starsX);
       step5(x, slackY, starsX, starsY);
-      cont = false;
-    }, TIMEOUT);
+    });
   }
-  return N;
+  return {};
 }
 
 function munkres(costMatrix) {

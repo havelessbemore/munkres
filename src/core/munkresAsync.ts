@@ -1,14 +1,16 @@
+import { isTypedArray } from "util/types";
+
+import type { Constructor } from "../types/constructor";
 import type { MatrixLike } from "../types/matrixLike";
 import type { Matching } from "../types/matching";
 import type { MutableArrayLike } from "../types/mutableArrayLike";
+import type { MatchRequest, MatchResult, Runner } from "../types/runner";
+
+import { Mutex } from "../utils/async/mutex";
+import { SharedStack } from "../utils/async/sharedStack";
+import { copy } from "../utils/mutableArrayLike";
 
 import { match, step1, step4B, step5, step6, steps2To3 } from "./finMunkres";
-import { MatchRequest, MatchResult, Runner } from "../types/runner";
-import { isTypedArray } from "util/types";
-import { Constructor } from "../types/constructor";
-import { Mutex } from "../utils/mutex";
-import { SharedStack } from "../utils/sharedStack";
-import { copy } from "../utils/mutableArrayLike";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -118,7 +120,7 @@ export async function step4<T extends number | bigint>(
 
   // Initialize mutex
   const bInt32 = Int32Array.BYTES_PER_ELEMENT;
-  //const mutexBuffer = new SharedArrayBuffer(bInt32);
+  const mutexBuffer = new SharedArrayBuffer(bInt32);
 
   // Initialize stack
   const stackMutexBuffer = new SharedArrayBuffer(bInt32);
@@ -140,18 +142,18 @@ export async function step4<T extends number | bigint>(
   const promises = new Array<Promise<void>>(P);
   const matching: Matching<T> = { matrix, dualX, dualY, starsX, starsY };
   for (let i = 0; i < P; ++i) {
-    const id = i;
     promises[i] = runner.match({
-      id,
       matching,
-      mutexBuffer: stackMutexBuffer,
-      stackMutexBuffer,
-      stackSizeBuffer,
-      stackValueBuffer,
+      mutexBuffer,
+      stack: {
+        mutexBuffer: stackMutexBuffer,
+        sizeBuffer: stackSizeBuffer,
+        valueBuffer: stackValueBuffer,
+      },
     });
   }
 
-  await Promise.all(promises);
+  await Promise.allSettled(promises);
 }
 
 export function getDualArrays<T>(matrix: MatrixLike<T>): MutableArrayLike<T>[] {
@@ -189,7 +191,7 @@ export function isAugmentingPath(
 ): boolean {
   while (x !== -1) {
     const y = primeY[x];
-    if (starsX[x] === y || starsY[y] === x || starsX[x] !== sx[x]) {
+    if (starsY[y] === x || starsX[x] !== sx[x]) {
       return false;
     }
     x = starsY[y];
@@ -203,148 +205,56 @@ export async function matchAsync<T extends number | bigint>(
   req: MatchRequest<T>,
 ): Promise<MatchResult> {
   // Shared
-  const { id, matching, mutexBuffer } = req;
-  const { matrix, dualX, dualY, starsX, starsY } = matching;
+  const { matching, mutexBuffer } = req;
+  const { matrix: mat, dualX, dualY, starsX, starsY } = matching;
   const mutex = new Mutex(mutexBuffer);
   const stack = new SharedStack(
-    req.stackValueBuffer,
-    req.stackSizeBuffer,
-    new Mutex(req.stackMutexBuffer),
+    req.stack.valueBuffer,
+    req.stack.sizeBuffer,
+    new Mutex(req.stack.mutexBuffer),
   );
 
   // Local
   const X = dualX.length;
-  const dx = new Array<T>(X);
-  const dy = new Array<T>(dualY.length);
+  const LDualX = new Array<T>(X);
+  const LDualY = new Array<T>(dualY.length);
   const slack = new Uint32Array(X);
   const slackV = new Array<T>(X);
   const slackY = new Uint32Array(X);
-  const sx = new Int32Array(X);
-  const TIMEOUT = 1000;
+  const LStarsX = new Int32Array(X);
 
   while (stack.size > 0) {
-    const y = await stack.pop(TIMEOUT).catch(() => undefined);
-    if (y != null) {
-      await matchAsync2(
-        id,
-        y,
-        mutex,
-        // @ts-expect-error ts(2769)
-        matrix,
-        dualX,
-        dualY,
-        dx,
-        dy,
-        starsX,
-        sx,
-        starsY,
-        slack,
-        slackV,
-        slackY,
-      );
+    const y = await stack.pop(500).catch(() => undefined);
+    if (y == null) {
+      continue;
     }
-  }
 
-  return {};
-}
-
-export function matchAsync2(
-  id: number,
-  y: number,
-  mutex: Mutex,
-  matrix: MatrixLike<number>,
-  dualX: ArrayLike<number>,
-  dualY: ArrayLike<number>,
-  dx: MutableArrayLike<number>,
-  dy: MutableArrayLike<number>,
-  starsX: MutableArrayLike<number>,
-  sx: MutableArrayLike<number>,
-  starsY: MutableArrayLike<number>,
-  slack: MutableArrayLike<number>,
-  slackV: MutableArrayLike<number>,
-  slackY: MutableArrayLike<number>,
-): Promise<number>;
-export function matchAsync2(
-  id: number,
-  y: number,
-  mutex: Mutex,
-  matrix: MatrixLike<bigint>,
-  dualX: ArrayLike<bigint>,
-  dualY: ArrayLike<bigint>,
-  dx: MutableArrayLike<bigint>,
-  dy: MutableArrayLike<bigint>,
-  starsX: MutableArrayLike<number>,
-  sx: MutableArrayLike<number>,
-  starsY: MutableArrayLike<number>,
-  slack: MutableArrayLike<number>,
-  slackV: MutableArrayLike<bigint>,
-  slackY: MutableArrayLike<number>,
-): Promise<number>;
-export async function matchAsync2<T extends number | bigint>(
-  _id: number,
-  y: number,
-  mutex: Mutex,
-  matrix: MatrixLike<T>,
-  dualX: ArrayLike<T>,
-  dualY: ArrayLike<T>,
-  dx: MutableArrayLike<T>,
-  dy: MutableArrayLike<T>,
-  starsX: MutableArrayLike<number>,
-  sx: MutableArrayLike<number>,
-  starsY: MutableArrayLike<number>,
-  slack: MutableArrayLike<number>,
-  slackV: MutableArrayLike<T>,
-  slackY: MutableArrayLike<number>,
-): Promise<number> {
-  const TIMEOUT = 1000;
-
-  let N = 0;
-  let cont = true;
-  while (cont) {
     await mutex.request(() => {
-      copy(dualX, dx);
-      copy(dualY, dy);
-      copy(starsX, sx);
-    }, TIMEOUT);
+      copy(dualX, LDualX);
+      copy(dualY, LDualY);
+      copy(starsX, LStarsX);
+    });
 
     // @ts-expect-error ts(2769)
-    N = match(y, matrix, dx, dy, sx, slack, slackV, slackY);
+    const N = match(y, mat, LDualX, LDualY, LStarsX, slack, slackV, slackY);
 
-    await mutex.request(() => {
+    await mutex.request(async () => {
       // Check if valid augmenting path found. Confirms path is
       // pairwise disjoint from any previously accepted paths.
       const x = slack[N - 1];
-      if (!isAugmentingPath(x, slackY, starsX, starsY, sx)) {
+      if (!isAugmentingPath(x, slackY, starsX, starsY, LStarsX)) {
+        await stack.push(y);
         return;
       }
 
       // Update dual variables
       // @ts-expect-error ts(2769)
-      step6(y, N, dualX, dualY, slack, slackV, sx);
+      step6(y, N, dualX, dualY, slack, slackV, starsX);
 
       // Update matching
       step5(x, slackY, starsX, starsY);
-      cont = false;
-    }, TIMEOUT);
+    });
   }
 
-  return N;
+  return {};
 }
-
-// B
-/*
-export function isAugmentingPathB(
-  y: number,
-  primeX: ArrayLike<number>,
-  starsX: ArrayLike<number>,
-): boolean {
-  while (y !== -1) {
-    const x = primeX[y];
-    if (starsX[x] === y) {
-      return false;
-    }
-    y = starsX[x];
-  }
-  return true;
-}
-*/

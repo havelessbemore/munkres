@@ -1,12 +1,13 @@
 import { Matching } from "./matching";
 
 export interface MatchRequest<T> {
-  id: number;
   matching: Matching<T>;
   mutexBuffer: SharedArrayBuffer;
-  stackMutexBuffer: SharedArrayBuffer;
-  stackSizeBuffer: SharedArrayBuffer;
-  stackValueBuffer: SharedArrayBuffer;
+  stack: {
+    mutexBuffer: SharedArrayBuffer;
+    sizeBuffer: SharedArrayBuffer;
+    valueBuffer: SharedArrayBuffer;
+  };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
