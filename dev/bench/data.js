@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1715014736545,
+  "lastUpdate": 1715014760655,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -2429,6 +2429,44 @@ window.BENCHMARK_DATA = {
             "value": 1347.9224986,
             "unit": "ms",
             "range": "±3.46%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a92b2fc9a0c503b41e3054e183f05463089355b5",
+          "message": "Merge pull request #29 from havelessbemore/dependabot/npm_and_yarn/rollup-4.17.2\n\nnpm: bump rollup from 4.17.1 to 4.17.2",
+          "timestamp": "2024-05-06T12:54:55-04:00",
+          "tree_id": "bf913169f1cc8a4d960ff617105b9578fa0365f1",
+          "url": "https://github.com/havelessbemore/munkres/commit/a92b2fc9a0c503b41e3054e183f05463089355b5"
+        },
+        "date": 1715014759645,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2032.6983837799999,
+            "unit": "ms",
+            "range": "±3.20%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1442.9132998799976,
+            "unit": "ms",
+            "range": "±3.15%",
             "extra": "50 samples"
           }
         ]
