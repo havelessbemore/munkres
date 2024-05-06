@@ -1,3 +1,5 @@
+import Bench, { Task } from "tinybench";
+
 import { Suite } from "./suite";
 
 export interface BenchReporter {

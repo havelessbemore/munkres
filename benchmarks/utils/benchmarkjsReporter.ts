@@ -1,4 +1,5 @@
 import { Task } from "tinybench";
+
 import { SuiteReporter } from "./suiteReporter";
 
 export class BenchmarkjsReporter implements SuiteReporter {

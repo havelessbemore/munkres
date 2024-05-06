@@ -1,4 +1,4 @@
-import type { Runner } from "./types/runner";
+import type { Runner } from "./types/async";
 import type { MatrixLike } from "./types/matrixLike";
 import type { Pair } from "./types/pair";
 

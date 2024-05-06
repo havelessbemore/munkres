@@ -3,13 +3,15 @@ import os from "os";
 import { Bench } from "tinybench";
 import workerpool from "workerpool";
 
+import type { Runner } from "../src/types/async";
+import type { MatrixLike } from "../src/types/matrixLike";
 import { munkresAsync } from "../src/munkres";
+import { gen } from "../src/utils/matrix";
+import { toTypedMatrix } from "../src/utils/matrixLike";
 import { randomInt } from "../src/utils/number";
-import { Runner } from "../src/types/runner";
 
 import { Suite } from "./utils/suite";
 import { TerminalReporter } from "./utils/terminalReporter";
-import { MatrixLike } from "../src";
 
 (async function main(): Promise<void> {
   // Create pool
@@ -24,9 +26,7 @@ import { MatrixLike } from "../src";
   };
 
   let bench: Bench;
-  const suite = new Suite({ warmup: false }).addReporter(
-    new TerminalReporter(),
-  );
+  const suite = new Suite({ warmup: true }).addReporter(new TerminalReporter());
 
   suite.add(`number`, (bench = new Bench({ iterations: 50 })));
   for (let i = 1; i <= 12; ++i) {
@@ -35,7 +35,19 @@ import { MatrixLike } from "../src";
     bench.add(`${N}x${N}`, async () => await munkresAsync(mat, runner), {
       beforeEach: () => {
         mat = [];
-        mat = gen(N, N, getInt);
+        mat = toTypedMatrix(gen(N, N, genInt));
+      },
+    });
+  }
+
+  suite.add(`bigint`, (bench = new Bench({ iterations: 50 })));
+  for (let i = 1; i <= 11; ++i) {
+    const N = 1 << i;
+    let mat: MatrixLike<bigint>;
+    bench.add(`${N}x${N}`, async () => await munkresAsync(mat, runner), {
+      beforeEach: () => {
+        mat = [];
+        mat = toTypedMatrix(gen(N, N, genBig));
       },
     });
   }
@@ -49,25 +61,12 @@ import { MatrixLike } from "../src";
 })();
 
 const MIN_VAL = 1;
-const MAX_VAL = 1e9;
+const MAX_VAL = Number.MAX_SAFE_INTEGER;
 
-export function getInt(): number {
-  return randomInt(MIN_VAL, MAX_VAL);
+export function genBig(): bigint {
+  return BigInt(genInt());
 }
 
-export function gen(
-  Y: number,
-  X: number,
-  callbackfn: () => number,
-): MatrixLike<number> {
-  const matrix = new Array<Float64Array>(Y);
-  const B = X * Float64Array.BYTES_PER_ELEMENT;
-  for (let y = 0; y < Y; ++y) {
-    const row = new Float64Array(new SharedArrayBuffer(B));
-    for (let x = 0; x < X; ++x) {
-      row[x] = callbackfn();
-    }
-    matrix[y] = row;
-  }
-  return matrix;
+export function genInt(): number {
+  return randomInt(MIN_VAL, MAX_VAL);
 }

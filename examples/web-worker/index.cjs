@@ -15,8 +15,8 @@ const MAX_VAL = Number.MAX_SAFE_INTEGER;
   // Create worker
   const worker = new Worker(path.resolve(__dirname, "./worker.cjs"));
 
-  // Create matcher
-  const matcher = {
+  // Create runner
+  const runner = {
     size: 1,
     match: (matching) => run(worker, "match", matching),
   };
@@ -24,7 +24,7 @@ const MAX_VAL = Number.MAX_SAFE_INTEGER;
   // Find optimal matching
   try {
     const costs = genMatrix(M, N, genInt);
-    const res = await munkresAsync(costs, matcher);
+    const res = await munkresAsync(costs, runner);
     console.log(res);
   } finally {
     worker.terminate();

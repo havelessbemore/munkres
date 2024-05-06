@@ -2,9 +2,11 @@ import { munkres } from "./munkres";
 
 import { Options, runSuite } from "../tests/munkres";
 import { toMatrixLike } from "../tests/utils";
-import { MatrixLike } from "./types/matrixLike";
+import { testInfinity, testLong, testSquare, testWide } from "../tests/meta";
 
-let opts: Options = {};
+let opts: Options;
+
+opts = {};
 runSuite("square", munkres, opts);
 runSuite("long", munkres, opts);
 runSuite("wide", munkres, opts);
@@ -21,21 +23,13 @@ runSuite("long", munkres, opts);
 runSuite("wide", munkres, opts);
 runSuite("infinity", munkres, opts);
 
-opts = {
-  matrixTransform: (matrix: MatrixLike<unknown>): MatrixLike<unknown> => {
-    const dupe: ArrayLike<unknown>[] = [];
-    for (let y = 0; y < matrix.length; ++y) {
-      const row = matrix[y];
-      const typed = new Float64Array(row.length);
-      for (let x = 0; x < row.length; ++x) {
-        typed[x] = row[x] as number;
-      }
-      dupe[y] = typed;
-    }
-    return dupe;
-  },
-};
+opts = { isBigInt: true, matrixTransform: (matrix) => toMatrixLike(matrix) };
 runSuite("square", munkres, opts);
 runSuite("long", munkres, opts);
 runSuite("wide", munkres, opts);
-runSuite("infinity", munkres, opts);
+
+// Exhaustive / Meta
+testSquare(munkres);
+testLong(munkres);
+testWide(munkres);
+testInfinity(munkres);

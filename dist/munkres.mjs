@@ -27,6 +27,10 @@
 
 import { isTypedArray } from 'util/types';
 
+function isBigInt(value) {
+  return typeof value === "bigint";
+}
+
 function getMax(matrix) {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
@@ -60,6 +64,32 @@ function getMin$1(matrix) {
     }
   }
   return min;
+}
+function toTypedMatrix(matrix) {
+  if (isTypedArray(matrix[0])) {
+    return matrix;
+  }
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
+  let BPE;
+  let ctor;
+  if (isBigInt(matrix[0][0])) {
+    BPE = X * BigInt64Array.BYTES_PER_ELEMENT;
+    ctor = BigInt64Array;
+  } else {
+    BPE = X * Float64Array.BYTES_PER_ELEMENT;
+    ctor = Float64Array;
+  }
+  const dupe = new Array(Y);
+  for (let y = 0; y < Y; ++y) {
+    const src = matrix[y];
+    const dest = new ctor(new SharedArrayBuffer(BPE));
+    for (let x = 0; x < X; ++x) {
+      dest[x] = src[x];
+    }
+    dupe[y] = dest;
+  }
+  return dupe;
 }
 
 function create(rows, columns, callbackFn) {
@@ -151,10 +181,6 @@ function invertMatrix(matrix, bigVal) {
 }
 function negateMatrix(matrix) {
   negate(matrix);
-}
-
-function isBigInt(value) {
-  return typeof value === "bigint";
 }
 
 function entries(array) {
@@ -753,19 +779,12 @@ async function exec(matrix, runner) {
   }
   const [dualX, dualY] = getDualArrays(matrix);
   step1$1(matrix, dualX, dualY);
-  const [starsX, starsY] = getStarArrays(matrix);
+  const bInt32 = Int32Array.BYTES_PER_ELEMENT;
+  const starsX = new Int32Array(new SharedArrayBuffer(X * bInt32)).fill(-1);
+  const starsY = new Int32Array(new SharedArrayBuffer(Y * bInt32)).fill(-1);
   const stars = steps2To3$1(matrix, dualX, dualY, starsX, starsY);
-  try {
-    Y <= X ? (
-      // @ts-expect-error ts(2769)
-      await step4(runner, Y - stars, matrix, dualX, dualY, starsX, starsY)
-    ) : (
-      // @ts-expect-error ts(2769)
-      step4B$1(X - stars, matrix, dualX, dualY, starsX, starsY)
-    );
-  } catch (err) {
-    console.error(err);
-  }
+  const unmatched = Y <= X ? Y - stars : X - stars;
+  await step4(runner, unmatched, matrix, dualX, dualY, starsX, starsY);
   return { dualX, dualY, matrix, starsX, starsY };
 }
 async function step4(runner, unmatched, matrix, dualX, dualY, starsX, starsY) {
@@ -779,12 +798,14 @@ async function step4(runner, unmatched, matrix, dualX, dualY, starsX, starsY) {
   const stackValueBuffer = new SharedArrayBuffer(unmatched * bInt32);
   const mutex = new Mutex(stackMutexBuffer);
   const stack = new SharedStack(stackValueBuffer, stackSizeBuffer, mutex);
-  for (let y = 0; unmatched > 0; ++y) {
-    if (starsY[y] === -1) {
-      await stack.push(y);
+  const starsZ = dualY.length <= dualX.length ? starsY : starsX;
+  for (let z = 0; unmatched > 0; ++z) {
+    if (starsZ[z] === -1) {
+      await stack.push(z);
       --unmatched;
     }
   }
+  matrix = toTypedMatrix(matrix);
   const P = Math.min(runner.size, stack.size);
   const promises = new Array(P);
   const matching = { matrix, dualX, dualY, starsX, starsY };
@@ -803,27 +824,29 @@ async function step4(runner, unmatched, matrix, dualX, dualY, starsX, starsY) {
 }
 function getDualArrays(matrix) {
   const Y = matrix.length;
-  const X = matrix[0].length;
-  if (!isTypedArray(matrix[0])) {
-    return [new Array(X), new Array(Y)];
+  const X = matrix[0]?.length ?? 0;
+  let BPE;
+  let ctor;
+  if (isTypedArray(matrix[0])) {
+    BPE = matrix[0].BYTES_PER_ELEMENT;
+    ctor = matrix[0].constructor;
+  } else if (isBigInt(matrix[0][0])) {
+    BPE = BigInt64Array.BYTES_PER_ELEMENT;
+    ctor = BigInt64Array;
+  } else {
+    BPE = Float64Array.BYTES_PER_ELEMENT;
+    ctor = Float64Array;
   }
-  const BPE = matrix[0].BYTES_PER_ELEMENT;
-  const ctor = matrix[0].constructor;
   return [
     new ctor(new SharedArrayBuffer(X * BPE)),
     new ctor(new SharedArrayBuffer(Y * BPE))
   ];
 }
-function getStarArrays(matrix) {
-  const Y = matrix.length;
-  const X = matrix[0].length;
-  const BPE = Int32Array.BYTES_PER_ELEMENT;
-  return [
-    new Int32Array(new SharedArrayBuffer(X * BPE)).fill(-1),
-    new Int32Array(new SharedArrayBuffer(Y * BPE)).fill(-1)
-  ];
+async function matchAsync(req) {
+  const { matching: { matrix } } = req;
+  return matrix.length <= (matrix[0]?.length ?? 0) ? await matchAsyncA(req) : await matchAsyncB(req);
 }
-function isAugmentingPath(x, primeY, starsX, starsY, sx) {
+function isAugmentingPathA(x, primeY, starsX, starsY, sx) {
   while (x !== -1) {
     const y = primeY[x];
     if (starsY[y] === x || starsX[x] !== sx[x]) {
@@ -833,7 +856,7 @@ function isAugmentingPath(x, primeY, starsX, starsY, sx) {
   }
   return true;
 }
-async function matchAsync(req) {
+async function matchAsyncA(req) {
   const { matching, mutexBuffer } = req;
   const { matrix: mat, dualX, dualY, starsX, starsY } = matching;
   const mutex = new Mutex(mutexBuffer);
@@ -862,12 +885,61 @@ async function matchAsync(req) {
     const N = match$1(y, mat, LDualX, LDualY, LStarsX, slack, slackV, slackY);
     await mutex.request(async () => {
       const x = slack[N - 1];
-      if (!isAugmentingPath(x, slackY, starsX, starsY, LStarsX)) {
+      if (!isAugmentingPathA(x, slackY, starsX, starsY, LStarsX)) {
         await stack.push(y);
         return;
       }
       step6$1(y, N, dualX, dualY, slack, slackV, starsX);
       step5(x, slackY, starsX, starsY);
+    });
+  }
+  return {};
+}
+function isAugmentingPathB(y, primeX, starsX, starsY, sy) {
+  while (y !== -1) {
+    const x = primeX[y];
+    if (starsX[x] === y || starsY[y] !== sy[y]) {
+      return false;
+    }
+    y = starsX[x];
+  }
+  return true;
+}
+async function matchAsyncB(req) {
+  const { matching, mutexBuffer } = req;
+  const { matrix: mat, dualX, dualY, starsX, starsY } = matching;
+  const mutex = new Mutex(mutexBuffer);
+  const stack = new SharedStack(
+    req.stack.valueBuffer,
+    req.stack.sizeBuffer,
+    new Mutex(req.stack.mutexBuffer)
+  );
+  const Y = dualY.length;
+  const LDualX = new Array(dualX.length);
+  const LDualY = new Array(Y);
+  const slack = new Uint32Array(Y);
+  const slackV = new Array(Y);
+  const slackX = new Uint32Array(Y);
+  const LStarsY = new Int32Array(Y);
+  while (stack.size > 0) {
+    const x = await stack.pop(500).catch(() => void 0);
+    if (x == null) {
+      continue;
+    }
+    await mutex.request(() => {
+      copy(dualX, LDualX);
+      copy(dualY, LDualY);
+      copy(starsY, LStarsY);
+    });
+    const N = matchB$1(x, mat, LDualX, LDualY, LStarsY, slack, slackV, slackX);
+    await mutex.request(async () => {
+      const y = slack[N - 1];
+      if (!isAugmentingPathB(x, slackX, starsX, starsY, LStarsY)) {
+        await stack.push(x);
+        return;
+      }
+      step6B$1(x, N, dualX, dualY, slack, slackV, starsY);
+      step5B(y, slackX, starsX, starsY);
     });
   }
   return {};

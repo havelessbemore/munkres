@@ -306,7 +306,7 @@ interface MatchResult {}
 
 interface Runner<T> {
   size: Readonly<number>;
-  match: (data: MatchRequest<T>) => Promise<MatchResult<T>>;
+  match: (req: MatchRequest<T>) => Promise<MatchResult<T>>;
 }
 
 /**

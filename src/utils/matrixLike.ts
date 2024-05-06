@@ -1,4 +1,7 @@
+import { isTypedArray } from "util/types";
 import type { MatrixLike } from "../types/matrixLike";
+import { isBigInt } from "./is";
+import { MutableArrayLike } from "../types/mutableArrayLike";
 
 /**
  * Finds the maximum value in a given matrix.
@@ -110,4 +113,40 @@ export function getMin<T extends number | bigint | string>(
   }
 
   return min;
+}
+
+export function toTypedMatrix<T>(matrix: MatrixLike<T>): MatrixLike<T> {
+  if (isTypedArray(matrix[0])) {
+    return matrix;
+  }
+
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
+  if (Y <= 0 || X <= 0) {
+    return [];
+  }
+
+  type Ctor<T> = new (buf: SharedArrayBuffer) => MutableArrayLike<T>;
+
+  let BPE: number;
+  let ctor: Ctor<T>;
+  if (isBigInt(matrix[0][0])) {
+    BPE = X * BigInt64Array.BYTES_PER_ELEMENT;
+    ctor = BigInt64Array as unknown as Ctor<T>;
+  } else {
+    BPE = X * Float64Array.BYTES_PER_ELEMENT;
+    ctor = Float64Array as unknown as Ctor<T>;
+  }
+
+  const dupe = new Array<MutableArrayLike<T>>(Y);
+  for (let y = 0; y < Y; ++y) {
+    const src = matrix[y];
+    const dest = new ctor(new SharedArrayBuffer(BPE));
+    for (let x = 0; x < X; ++x) {
+      dest[x] = src[x];
+    }
+    dupe[y] = dest;
+  }
+
+  return dupe;
 }

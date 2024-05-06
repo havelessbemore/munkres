@@ -1,13 +1,15 @@
+import os from "os";
+
 import { afterAll, beforeAll, describe, expect, test } from "@jest/globals";
+import Piscina from "piscina";
+
+import type { Runner } from "../src/types/async";
+import type { MatrixLike } from "../src/types/matrixLike";
 import { map } from "../src/utils/matrix";
 
-import { oneOf } from "./utils";
-
+import type { MunkresAsyncFn, MunkresFn } from "./types";
 import testsJson from "./tests.json";
-import Piscina from "piscina";
-import { Runner } from "../src/types/runner";
-import { MunkresAsyncFn, MunkresFn } from "./types";
-import { MatrixLike } from "../src";
+import { oneOf } from "./utils";
 
 type SuiteName = keyof typeof testsJson.suites;
 
@@ -91,7 +93,7 @@ export function runSuiteAsync(
     beforeAll(() => {
       pool = new Piscina({
         filename: "./examples/piscina/worker.js",
-        maxThreads: 4,
+        maxThreads: os.availableParallelism(),
       });
 
       runner = {

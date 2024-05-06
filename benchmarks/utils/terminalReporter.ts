@@ -1,4 +1,5 @@
 import Bench, { Task } from "tinybench";
+
 import { SuiteReporter } from "./suiteReporter";
 
 export class TerminalReporter implements SuiteReporter {

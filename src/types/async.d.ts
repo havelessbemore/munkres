@@ -11,9 +11,9 @@ export interface MatchRequest<T> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface MatchResult {}
+export interface MatchResponse {}
 
 export interface Runner<T> {
   size: Readonly<number>;
-  match: (data: MatchRequest<T>) => Promise<MatchResult<T>>;
+  match: (req: MatchRequest<T>) => Promise<MatchResponse<T>>;
 }

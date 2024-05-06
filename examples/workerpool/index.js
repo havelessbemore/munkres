@@ -16,8 +16,8 @@ const MAX_VAL = Number.MAX_SAFE_INTEGER;
     maxWorkers: WORKERS,
   });
 
-  // Create matcher
-  const matcher = {
+  // Create runner
+  const runner = {
     size: pool.maxWorkers,
     match: (matching) => pool.exec("match", [matching]),
   };
@@ -25,7 +25,7 @@ const MAX_VAL = Number.MAX_SAFE_INTEGER;
   // Find optimal matching
   try {
     const costs = genMatrix(M, N, genInt);
-    const res = await munkresAsync(costs, matcher);
+    const res = await munkresAsync(costs, runner);
     console.log(res);
   } finally {
     await pool.terminate();
