@@ -39,16 +39,16 @@ export function munkres<T extends number | bigint>(
  */
 export function munkresAsync(
   costMatrix: MatrixLike<number>,
-  matcher: Runner<number>,
+  runner: Runner<number>,
 ): Promise<Pair<number>[]>;
 export function munkresAsync(
   costMatrix: MatrixLike<bigint>,
-  matcher: Runner<bigint>,
+  runner: Runner<bigint>,
 ): Promise<Pair<number>[]>;
 export async function munkresAsync<T extends number | bigint>(
   costMatrix: MatrixLike<T>,
-  matcher: Runner<T>,
+  runner: Runner<T>,
 ): Promise<Pair<number>[]> {
-  // @ts-expect-error ts(2345)
-  return toPairs(await execAsync(costMatrix, matcher));
+  // @ts-expect-error ts(2769)
+  return toPairs(await execAsync(costMatrix, runner));
 }
