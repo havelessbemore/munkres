@@ -50,8 +50,8 @@ export function exec(matrix: MatrixLike<number>): Matching<number> {
  */
 export function step1(
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
+  dualX: MutableArrayLike<number>,
+  dualY: MutableArrayLike<number>,
 ): void {
   const X = dualX.length;
   const Y = dualY.length;
@@ -103,10 +103,10 @@ export function step1(
  */
 export function steps2To3(
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  starsX: number[],
-  starsY: number[],
+  dualX: ArrayLike<number>,
+  dualY: ArrayLike<number>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): number {
   const X = dualX.length;
   const Y = dualY.length;
@@ -144,10 +144,10 @@ export function steps2To3(
 export function step4(
   unmatched: number,
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  starsX: number[],
-  starsY: number[],
+  dualX: MutableArrayLike<number>,
+  dualY: MutableArrayLike<number>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): void {
   // If no unmatched row
   if (unmatched <= 0) {
@@ -190,8 +190,8 @@ export function step4(
 export function step6(
   y: number,
   N: number,
-  dualX: number[],
-  dualY: number[],
+  dualX: MutableArrayLike<number>,
+  dualY: MutableArrayLike<number>,
   slack: ArrayLike<number>,
   slackV: ArrayLike<number>,
   starsX: ArrayLike<number>,
@@ -211,9 +211,9 @@ export function step6(
 export function match(
   y: number,
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  starsX: number[],
+  dualX: ArrayLike<number>,
+  dualY: ArrayLike<number>,
+  starsX: ArrayLike<number>,
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<number>,
   slackY: MutableArrayLike<number>,
@@ -269,10 +269,10 @@ export function match(
 export function step4B(
   unmatched: number,
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  starsX: number[],
-  starsY: number[],
+  dualX: MutableArrayLike<number>,
+  dualY: MutableArrayLike<number>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): void {
   // If no unmatched column
   if (unmatched <= 0) {
@@ -304,8 +304,8 @@ export function step4B(
 export function step6B(
   x: number,
   N: number,
-  dualX: number[],
-  dualY: number[],
+  dualX: MutableArrayLike<number>,
+  dualY: MutableArrayLike<number>,
   slack: ArrayLike<number>,
   slackV: ArrayLike<number>,
   starsY: ArrayLike<number>,
@@ -325,9 +325,9 @@ export function step6B(
 export function matchB(
   x: number,
   matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  starsY: number[],
+  dualX: ArrayLike<number>,
+  dualY: ArrayLike<number>,
+  starsY: ArrayLike<number>,
   slack: MutableArrayLike<number>,
   slackV: MutableArrayLike<number>,
   slackX: MutableArrayLike<number>,
