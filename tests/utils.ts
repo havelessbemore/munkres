@@ -1,6 +1,27 @@
 import { expect } from "@jest/globals";
 
 import { MatrixLike } from "../src";
+import { Options } from "./munkres";
+import { map } from "../src/utils/matrix";
+
+export function initOptions(options?: Options): Options {
+  options ??= {};
+  options.isBigInt ??= false;
+  return options;
+}
+
+export function applyOptions(
+  matrix: MatrixLike<unknown>,
+  options: Options,
+): MatrixLike<unknown> {
+  if (options.isBigInt) {
+    matrix = map(matrix, (v) => BigInt(v as number));
+  }
+  if (options.matrixTransform != null) {
+    matrix = options.matrixTransform(matrix);
+  }
+  return matrix;
+}
 
 export function oneOf<T>(actual: T, expecteds: Iterable<T>): void {
   let error: Error | undefined = undefined;
