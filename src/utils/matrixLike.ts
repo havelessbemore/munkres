@@ -122,15 +122,11 @@ export function toTypedMatrix<T>(matrix: MatrixLike<T>): MatrixLike<T> {
 
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
-  if (Y <= 0 || X <= 0) {
-    return [];
-  }
-
   type Ctor<T> = new (buf: SharedArrayBuffer) => MutableArrayLike<T>;
 
   let BPE: number;
   let ctor: Ctor<T>;
-  if (isBigInt(matrix[0][0])) {
+  if (Y > 0 && X > 0 && isBigInt(matrix[0][0])) {
     BPE = X * BigInt64Array.BYTES_PER_ELEMENT;
     ctor = BigInt64Array as unknown as Ctor<T>;
   } else {

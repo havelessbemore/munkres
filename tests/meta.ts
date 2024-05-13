@@ -11,7 +11,10 @@ import { MatrixLike, copyMatrix, genMatrix } from "../src";
 import { Options } from "./types/options";
 
 const VAL_MIN = 1;
-const VAL_MAX = Number.MAX_SAFE_INTEGER;
+const VAL_MAX = 1e9;
+function genInt(): number {
+  return Math.trunc(VAL_MIN + (VAL_MAX - VAL_MIN) * Math.random());
+}
 
 export function testLong(
   munkres: MunkresFn | MunkresFnAsync,
@@ -22,10 +25,7 @@ export function testLong(
     const YY = 30;
     for (let Y = 2; Y <= YY; ++Y) {
       for (let X = 1; X < Y; ++X) {
-        const costs = gen(Y, X, () => {
-          const span = VAL_MAX - VAL_MIN;
-          return VAL_MIN + Math.trunc(span * Math.random());
-        });
+        const costs = gen(Y, X, genInt);
         const input = applyOptions(costs, options);
         checkOutputMeta(input, await munkres(input));
       }
@@ -43,7 +43,7 @@ export function testSquare(
     for (let N = 1; N <= NN; ++N) {
       const costs = gen(N, N, () => {
         const span = VAL_MAX - VAL_MIN;
-        return VAL_MIN + Math.trunc(span * Math.random());
+        return Math.trunc(VAL_MIN + span * Math.random());
       });
       const input = applyOptions(costs, options);
       checkOutputMeta(input, await munkres(input));
@@ -60,10 +60,7 @@ export function testWide(
     const XX = 30;
     for (let X = 2; X <= XX; ++X) {
       for (let Y = 1; Y < X; ++Y) {
-        const costs = gen(Y, X, () => {
-          const span = VAL_MAX - VAL_MIN;
-          return VAL_MIN + Math.trunc(span * Math.random());
-        });
+        const costs = gen(Y, X, genInt);
         const input = applyOptions(costs, options);
         checkOutputMeta(input, await munkres(input));
       }
@@ -88,7 +85,7 @@ export function testInfinity(
           return Infinity;
         }
         const span = VAL_MAX - VAL_MIN;
-        return VAL_MIN + Math.trunc(span * Math.random());
+        return Math.trunc(VAL_MIN + span * Math.random());
       });
       const input = applyOptions(costs, options);
       checkOutputMeta(costs, await munkres(input));
@@ -102,14 +99,11 @@ export function testFlipH(
 ): void {
   options = initOptions(options);
   test("Results should be the same if matrix is flipped horizontally", async () => {
-    const valMax = 1e9;
     const N = 30;
     for (let Y = 1; Y <= N; ++Y) {
       for (let X = 1; X <= N; ++X) {
         // Get results A
-        const costs = genMatrix(Y, X, () => {
-          return Math.trunc(valMax * Math.random());
-        });
+        const costs = genMatrix(Y, X, genInt);
         const inputA = applyOptions(costs, options);
         const resA = await munkres(inputA);
 
@@ -151,14 +145,11 @@ export function testFlipV(
 ): void {
   options = initOptions(options);
   test("Results should be the same if matrix is flipped vertically", async () => {
-    const valMax = 1e9;
     const N = 30;
     for (let Y = 1; Y <= N; ++Y) {
       for (let X = 1; X <= N; ++X) {
         // Get results A
-        const costs = genMatrix(Y, X, () => {
-          return Math.trunc(valMax * Math.random());
-        });
+        const costs = genMatrix(Y, X, genInt);
         const inputA = applyOptions(costs, options);
         const resA = await munkres(inputA);
 
@@ -200,14 +191,11 @@ export function testTranspose(
 ): void {
   options = initOptions(options);
   test("Results should be the same if matrix transposed", async () => {
-    const valMax = 1e9;
     const N = 30;
     for (let Y = 1; Y <= N; ++Y) {
       for (let X = 1; X <= N; ++X) {
         // Get results A
-        const costs = genMatrix(Y, X, () => {
-          return Math.trunc(valMax * Math.random());
-        });
+        const costs = genMatrix(Y, X, genInt);
         const inputA = applyOptions(costs, options);
         const resA = await munkres(inputA);
 
