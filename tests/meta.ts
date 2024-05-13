@@ -2,10 +2,13 @@ import { expect, test } from "@jest/globals";
 
 import { flipH, flipV, gen, transpose } from "../src/utils/matrix";
 
-import { applyOptions, checkOutputMeta, initOptions } from "./utils";
-import { MunkresFn, MunkresFnAsync } from "./types";
+import { checkOutputMeta } from "./utils/checkOutputMeta";
+import { applyOptions } from "./utils/applyOptions";
+import { initOptions } from "./utils/initOptions";
+import { MunkresFn } from "./types/munkresFn";
+import { MunkresFnAsync } from "./types/munkresFnAsync";
 import { MatrixLike, copyMatrix, genMatrix } from "../src";
-import { Options } from "./munkres";
+import { Options } from "./types/options";
 
 const VAL_MIN = 1;
 const VAL_MAX = Number.MAX_SAFE_INTEGER;

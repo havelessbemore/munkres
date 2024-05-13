@@ -1,11 +1,15 @@
 import { describe, expect, test } from "@jest/globals";
 
-import type { MatrixLike } from "../src/types/matrixLike";
-import { map } from "../src/utils/matrix";
+import type { MatrixLike } from "../../src/types/matrixLike";
+import { map } from "../../src/utils/matrix";
 
-import type { MunkresFn, MunkresFnAsync } from "./types";
-import testsJson from "./tests.json";
-import { applyOptions, initOptions, oneOf } from "./utils";
+import type { MunkresFn } from "../types/munkresFn";
+import type { MunkresFnAsync } from "../types/munkresFnAsync";
+import type { Options } from "../types/options";
+import testsJson from "../tests.json";
+import { oneOf } from "./oneOf";
+import { applyOptions } from "./applyOptions";
+import { initOptions } from "./initOptions";
 
 type SuiteName = keyof typeof testsJson.suites;
 
@@ -23,12 +27,6 @@ interface Test {
   input: number[][];
   output?: [number, number][];
   outputs?: [number, number][][];
-}
-
-export interface Options {
-  isBigInt?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  matrixTransform?: (matrix: MatrixLike<any>) => MatrixLike<any>;
 }
 
 export function runSuite(

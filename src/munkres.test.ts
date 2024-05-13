@@ -2,8 +2,6 @@ import { describe } from "@jest/globals";
 
 import { munkres } from "./munkres";
 
-import { Options, runSuite } from "../tests/munkres";
-import { toMatrixLike } from "../tests/utils";
 import {
   testFlipH,
   testFlipV,
@@ -13,6 +11,9 @@ import {
   testTranspose,
   testWide,
 } from "../tests/meta";
+import { Options } from "../tests/types/options";
+import { runSuite } from "../tests/utils/runSuite";
+import { toMatrixLike } from "../tests/utils/toMatrixLike";
 
 describe(`${munkres.name}`, () => {
   let opts: Options;
