@@ -3,7 +3,7 @@ import { describe, expect, test } from "@jest/globals";
 import type { MatrixLike } from "../src/types/matrixLike";
 import { map } from "../src/utils/matrix";
 
-import type { MunkresFn } from "./types";
+import type { MunkresFn, MunkresFnAsync } from "./types";
 import testsJson from "./tests.json";
 import { applyOptions, initOptions, oneOf } from "./utils";
 
@@ -33,7 +33,7 @@ export interface Options {
 
 export function runSuite(
   suiteName: SuiteName,
-  munkres: MunkresFn,
+  munkres: MunkresFn | MunkresFnAsync,
   options?: Options,
 ): void {
   options = initOptions(options);
@@ -45,11 +45,11 @@ export function runSuite(
   }
   describe(`${munkres.name} | ${suite.name}`, () => {
     for (const tst of suite.tests) {
-      test(tst.name, () => {
+      test(tst.name, async () => {
         let matrix: MatrixLike<unknown> = map(tst.input, (v) => Number(v));
         matrix = applyOptions(matrix, options);
 
-        const actual = munkres(matrix);
+        const actual = await munkres(matrix);
         if (tst.output) {
           expect(new Map(actual)).toEqual(new Map(tst.output));
         } else if (tst.outputs) {
