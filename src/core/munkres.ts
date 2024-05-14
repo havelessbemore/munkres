@@ -5,6 +5,8 @@ import { isBigInt } from "../utils/is";
 
 import { exec as finExec } from "./finMunkres";
 import { exec as infExec } from "./infMunkres";
+import { exec as asyncExec } from "./munkresAsync";
+import { Runner } from "../types/async";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -38,4 +40,30 @@ export function exec<T extends number | bigint>(
       ? finExec(matrix as MatrixLike<bigint>)
       : infExec(matrix as MatrixLike<number>)
   ) as Matching<T>;
+}
+
+/**
+ * Find the optimal assignments of `y` workers to `x` jobs to
+ * minimize total cost.
+ *
+ * @param costMatrix - The cost matrix, where `mat[y][x]` represents the cost
+ * of assigning worker `y` to job `x`.
+ *
+ * @param runner - An adapter for managing communication with web workers.
+ *
+ * @returns An array of pairs `[y, x]` representing the optimal assignment
+ * of workers to jobs. Each pair consists of a worker index `y` and a job
+ * index `x`, indicating that worker `y` is assigned to job `x`.
+ *
+ * @privateRemarks
+ * Citations:
+ * 1. {@link https://dl.acm.org/doi/pdf/10.1145/115234.115349 | Balas, E., Miller, D., Pekny, J., & Toth, P. (1991). A parallel shortest augmenting path algorithm for the assignment problem. Journal of the Association for Computing Machinery, 38(4), 985-1004.}
+ *
+ * 1. {@link https://www.sciencedirect.com/science/article/abs/pii/S016781911630045X | Date, K., & Nagi, R. (2016). GPU-accelerated Hungarian algorithms for the Linear Assignment Problem. Parallel Computing, 57, 52-72.}
+ */
+export function execAsync(
+  matrix: MatrixLike<number>,
+  runner: Runner<number>,
+): Promise<Matching<number>> {
+  return asyncExec(matrix, runner);
 }
