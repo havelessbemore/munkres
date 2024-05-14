@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1715661152045,
+  "lastUpdate": 1715661184108,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -2695,6 +2695,44 @@ window.BENCHMARK_DATA = {
             "value": 1415.4792791600007,
             "unit": "ms",
             "range": "±3.32%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "087f03efaf3fe0fb537a64970a80e722e9aec510",
+          "message": "Merge pull request #35 from havelessbemore/dependabot/npm_and_yarn/esbuild-0.21.2\n\nnpm: bump esbuild from 0.20.2 to 0.21.2",
+          "timestamp": "2024-05-14T00:28:18-04:00",
+          "tree_id": "2d68b7388271a9fec2abd57c2bcb4d1646d741ac",
+          "url": "https://github.com/havelessbemore/munkres/commit/087f03efaf3fe0fb537a64970a80e722e9aec510"
+        },
+        "date": 1715661183722,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2104.0555936799988,
+            "unit": "ms",
+            "range": "±2.66%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1454.5914302000008,
+            "unit": "ms",
+            "range": "±3.34%",
             "extra": "50 samples"
           }
         ]
