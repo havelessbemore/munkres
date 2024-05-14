@@ -7,13 +7,25 @@ import { applyOptions } from "./utils/applyOptions";
 import { initOptions } from "./utils/initOptions";
 import { MunkresFn } from "./types/munkresFn";
 import { MunkresFnAsync } from "./types/munkresFnAsync";
-import { MatrixLike, copyMatrix, genMatrix } from "../src";
+import { MatrixLike, Pair, copyMatrix, genMatrix } from "../src";
 import { Options } from "./types/options";
+import { isBigInt } from "../src/utils/is";
 
 const VAL_MIN = 1;
 const VAL_MAX = 1e9;
 function genInt(): number {
   return Math.trunc(VAL_MIN + (VAL_MAX - VAL_MIN) * Math.random());
+}
+
+export function getSum(
+  matrix: MatrixLike<unknown>,
+  pairs: Pair<number>[],
+): number | bigint {
+  return pairs.reduce(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (sum, [y, x]) => (sum as any) + matrix[y][x],
+    isBigInt(matrix[0][0]) ? 0n : 0,
+  );
 }
 
 export function testLong(
@@ -111,29 +123,8 @@ export function testFlipH(
         const inputB = copyMatrix(inputA as MatrixLike<number>);
         flipH(inputB);
         const resB = await munkres(inputB);
-        resB.map((pair) => (pair[1] = X - pair[1] - 1));
 
-        // Compare pairs
-        try {
-          expect(new Map(resA)).toEqual(resB);
-          continue;
-        } catch (_) {
-          // Do nothing
-        }
-
-        // Compare minimum
-        const zero = options.isBigInt ? 0n : 0;
-        const sumA = resA.reduce(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (sum, [y, x]) => (sum as any) + inputA[y][x],
-          zero,
-        );
-        const sumB = resB.reduce(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (sum, [y, x]) => (sum as any) + inputB[y][X - x - 1],
-          zero,
-        );
-        expect(sumB).toBe(sumA);
+        expect(getSum(inputB, resB)).toBe(getSum(inputA, resA));
       }
     }
   });
@@ -157,29 +148,8 @@ export function testFlipV(
         const inputB = copyMatrix(inputA as MatrixLike<number>);
         flipV(inputB);
         const resB = await munkres(inputB);
-        resB.map((pair) => (pair[0] = Y - pair[0] - 1));
 
-        // Compare pairs
-        try {
-          expect(new Map(resA)).toEqual(resB);
-          continue;
-        } catch (_) {
-          // Do nothing
-        }
-
-        // Compare minimum
-        const zero = options.isBigInt ? 0n : 0;
-        const sumA = resA.reduce(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (sum, [y, x]) => (sum as any) + inputA[y][x],
-          zero,
-        );
-        const sumB = resB.reduce(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (sum, [y, x]) => (sum as any) + inputB[Y - y - 1][x],
-          zero,
-        );
-        expect(sumB).toBe(sumA);
+        expect(getSum(inputB, resB)).toBe(getSum(inputA, resA));
       }
     }
   });
@@ -203,29 +173,8 @@ export function testTranspose(
         const inputB = copyMatrix(inputA as MatrixLike<number>);
         transpose(inputB);
         const resB = await munkres(inputB);
-        flipH(resB);
 
-        // Compare pairs
-        try {
-          expect(new Map(resA)).toEqual(resB);
-          continue;
-        } catch (_) {
-          // Do nothing
-        }
-
-        // Compare minimum
-        const zero = options.isBigInt ? 0n : 0;
-        const sumA = resA.reduce(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (sum, [y, x]) => (sum as any) + inputA[y][x],
-          zero,
-        );
-        const sumB = resB.reduce(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (sum, [x, y]) => (sum as any) + inputB[y][x],
-          zero,
-        );
-        expect(sumB).toBe(sumA);
+        expect(getSum(inputB, resB)).toBe(getSum(inputA, resA));
       }
     }
   });

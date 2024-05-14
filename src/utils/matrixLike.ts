@@ -1,7 +1,8 @@
 import { isTypedArray } from "util/types";
+
 import type { MatrixLike } from "../types/matrixLike";
+import type { MutableArrayLike } from "../types/mutableArrayLike";
 import { isBigInt } from "./is";
-import { MutableArrayLike } from "../types/mutableArrayLike";
 
 /**
  * Finds the maximum value in a given matrix.
