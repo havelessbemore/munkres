@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1715661133764,
+  "lastUpdate": 1715661143568,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -2619,6 +2619,44 @@ window.BENCHMARK_DATA = {
             "value": 1451.3590840199997,
             "unit": "ms",
             "range": "±4.12%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cb083ee38ef70899a4e4f94246a310d435ef7cd4",
+          "message": "Merge pull request #36 from havelessbemore/dependabot/npm_and_yarn/rimraf-5.0.7\n\nnpm: bump rimraf from 5.0.5 to 5.0.7",
+          "timestamp": "2024-05-14T00:27:55-04:00",
+          "tree_id": "361351a8591efbdbf6c1597bbe274413ad433594",
+          "url": "https://github.com/havelessbemore/munkres/commit/cb083ee38ef70899a4e4f94246a310d435ef7cd4"
+        },
+        "date": 1715661142564,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2061.321675420001,
+            "unit": "ms",
+            "range": "±2.56%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1378.993276479995,
+            "unit": "ms",
+            "range": "±3.26%",
             "extra": "50 samples"
           }
         ]
