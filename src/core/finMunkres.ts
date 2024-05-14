@@ -275,7 +275,7 @@ export function step6(
   dualX: MutableArrayLike<number>,
   dualY: MutableArrayLike<number>,
   slack: ArrayLike<number>,
-  slackV: ArrayLike<number>,
+  slackV: MutableArrayLike<number>,
   starsX: ArrayLike<number>,
 ): void;
 export function step6(
@@ -284,7 +284,7 @@ export function step6(
   dualX: MutableArrayLike<bigint>,
   dualY: MutableArrayLike<bigint>,
   slack: ArrayLike<number>,
-  slackV: ArrayLike<bigint>,
+  slackV: MutableArrayLike<bigint>,
   starsX: ArrayLike<number>,
 ): void;
 export function step6<T extends number | bigint>(
@@ -293,20 +293,21 @@ export function step6<T extends number | bigint>(
   dualX: MutableArrayLike<T>,
   dualY: MutableArrayLike<T>,
   slack: ArrayLike<number>,
-  slackV: ArrayLike<T>,
+  slackV: MutableArrayLike<T>,
   starsX: ArrayLike<number>,
 ): void {
-  const sum = slackV[slack[N - 1]];
+  const sum = slackV[slack[--N]];
 
-  let min = sum;
+  // @ts-expect-error ts(2365)
+  dualY[y] += sum;
+
   for (let i = 0; i < N; ++i) {
     const x = slack[i];
-    // @ts-expect-error ts(2365)
-    dualY[y] += min;
-    min = (sum - slackV[x]) as T;
+    slackV[x] = (sum - slackV[x]) as T;
     // @ts-expect-error ts(2322)
-    dualX[x] -= min;
-    y = starsX[x];
+    dualX[x] -= slackV[x];
+    // @ts-expect-error ts(2365)
+    dualY[starsX[x]] += slackV[x];
   }
 }
 

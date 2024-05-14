@@ -193,18 +193,18 @@ export function step6(
   dualX: MutableArrayLike<number>,
   dualY: MutableArrayLike<number>,
   slack: ArrayLike<number>,
-  slackV: ArrayLike<number>,
+  slackV: MutableArrayLike<number>,
   starsX: ArrayLike<number>,
 ): void {
-  const sum = slackV[slack[N - 1]];
+  const sum = slackV[slack[--N]];
+  dualY[y] = dualY[y] + sum || 0;
 
-  let min = sum;
   for (let i = 0; i < N; ++i) {
     const x = slack[i];
-    dualY[y] = dualY[y] + min || 0;
-    min = sum - slackV[x] || 0;
-    dualX[x] = dualX[x] - min || 0;
+    slackV[x] = sum - slackV[x] || 0;
+    dualX[x] = dualX[x] - slackV[x] || 0;
     y = starsX[x];
+    dualY[y] = dualY[y] + slackV[x] || 0;
   }
 }
 
