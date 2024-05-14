@@ -39,7 +39,8 @@ export function testLong(
       for (let X = 1; X < Y; ++X) {
         const costs = gen(Y, X, genInt);
         const input = applyOptions(costs, options);
-        checkOutputMeta(input, await munkres(input));
+        const res = munkres(input);
+        checkOutputMeta(input, res instanceof Promise ? await res : res);
       }
     }
   });
@@ -58,7 +59,8 @@ export function testSquare(
         return Math.trunc(VAL_MIN + span * Math.random());
       });
       const input = applyOptions(costs, options);
-      checkOutputMeta(input, await munkres(input));
+      const res = munkres(input);
+      checkOutputMeta(input, res instanceof Promise ? await res : res);
     }
   });
 }
@@ -74,7 +76,8 @@ export function testWide(
       for (let Y = 1; Y < X; ++Y) {
         const costs = gen(Y, X, genInt);
         const input = applyOptions(costs, options);
-        checkOutputMeta(input, await munkres(input));
+        const res = munkres(input);
+        checkOutputMeta(input, res instanceof Promise ? await res : res);
       }
     }
   });
@@ -100,7 +103,8 @@ export function testInfinity(
         return Math.trunc(VAL_MIN + span * Math.random());
       });
       const input = applyOptions(costs, options);
-      checkOutputMeta(costs, await munkres(input));
+      const res = munkres(input);
+      checkOutputMeta(input, res instanceof Promise ? await res : res);
     }
   });
 }
