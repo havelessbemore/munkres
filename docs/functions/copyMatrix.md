@@ -28,4 +28,4 @@ A copy of the given matrix.
 
 ## Source
 
-[helpers.ts:14](https://github.com/havelessbemore/munkres/blob/8a47bb771bc09e489d433204d9422a435c3c97fd/src/helpers.ts#L14)
+[helpers.ts:14](https://github.com/havelessbemore/munkres/blob/060a8661a885e5038600b41154e49913efb81117/src/helpers.ts#L14)

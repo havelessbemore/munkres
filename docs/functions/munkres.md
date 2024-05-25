@@ -30,7 +30,7 @@ index `x`, indicating that worker `y` is assigned to job `x`.
 
 ### Source
 
-[munkres.ts:18](https://github.com/havelessbemore/munkres/blob/8a47bb771bc09e489d433204d9422a435c3c97fd/src/munkres.ts#L18)
+[munkres.ts:18](https://github.com/havelessbemore/munkres/blob/060a8661a885e5038600b41154e49913efb81117/src/munkres.ts#L18)
 
 ## munkres(costMatrix)
 
@@ -46,4 +46,4 @@ index `x`, indicating that worker `y` is assigned to job `x`.
 
 ### Source
 
-[munkres.ts:19](https://github.com/havelessbemore/munkres/blob/8a47bb771bc09e489d433204d9422a435c3c97fd/src/munkres.ts#L19)
+[munkres.ts:19](https://github.com/havelessbemore/munkres/blob/060a8661a885e5038600b41154e49913efb81117/src/munkres.ts#L19)

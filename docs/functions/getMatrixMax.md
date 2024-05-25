@@ -26,7 +26,7 @@ The maximum value, or `undefined` if the matrix is empty.
 
 ### Source
 
-[helpers.ts:93](https://github.com/havelessbemore/munkres/blob/8a47bb771bc09e489d433204d9422a435c3c97fd/src/helpers.ts#L93)
+[helpers.ts:93](https://github.com/havelessbemore/munkres/blob/060a8661a885e5038600b41154e49913efb81117/src/helpers.ts#L93)
 
 ## getMatrixMax(matrix)
 
@@ -42,4 +42,4 @@ The maximum value, or `undefined` if the matrix is empty.
 
 ### Source
 
-[helpers.ts:94](https://github.com/havelessbemore/munkres/blob/8a47bb771bc09e489d433204d9422a435c3c97fd/src/helpers.ts#L94)
+[helpers.ts:94](https://github.com/havelessbemore/munkres/blob/060a8661a885e5038600b41154e49913efb81117/src/helpers.ts#L94)

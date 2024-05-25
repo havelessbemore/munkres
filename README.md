@@ -47,13 +47,15 @@ Yarn:
 yarn add munkres
 ```
 
-Using jsr:
+JSR:
 
 ```bash
 jsr add @munkres/munkres
 ```
 
 ## Usage
+
+With a cost matrix:
 
 ```javascript
 import munkres from "munkres";
@@ -65,6 +67,30 @@ const costMatrix = [
   [2, 4, 6],
   [3, 6, 9],
 ];
+
+// Find a set of optimal assignments pairs (y, x).
+const assignments = munkres(costMatrix);
+
+console.log(assignments);
+// Output: [[0, 2], [1, 1], [2, 0]]
+```
+
+With a profit matrix:
+
+```javascript
+import { munkres, copyMatrix, invertMatrix } from "munkres";
+
+// Create a profit matrix. Cell [y, x] is the
+// profit of assigning the y-th worker to the x-th job.
+const profitMatrix = [
+  [9, 8, 7],
+  [8, 6, 4],
+  [7, 4, 1],
+];
+
+// Covert the profit matrix into a cost matrix.
+const costMatrix = copyMatrix(profitMatrix);
+invertMatrix(costMatrix);
 
 // Find a set of optimal assignments pairs (y, x).
 const assignments = munkres(costMatrix);
@@ -108,9 +134,17 @@ console.log(assignments);
 
 ## Community and Support
 
-Any feedback, bug reports, feature requests, etc. are welcomed!
+Contributions are welcome!
 
-Feel free to [submit an issue](https://github.com/havelessbemore/munkres/issues), pull request, or reach out via [GitHub discussions](https://github.com/havelessbemore/munkres/discussions).
+- **Questions / Dicussions**: Please contact us via [GitHub discussions](https://github.com/havelessbemore/munkres/discussions).
+
+- **Bug Reports**: Please use the [GitHub issue tracker](https://github.com/havelessbemore/munkres/issues) to report any bugs. Include a detailed description and any relevant code snippets or logs.
+
+- **Feature Requests**: Please submit feature requests as issues, clearly describing the feature and its potential benefits.
+
+- **Pull Requests**: Please ensure your code adheres to the existing style of the project and include any necessary tests and documentation.
+
+For more information, check out the [contributor's guide](https://github.com/havelessbemore/munkres/CONTRIBUTING.md).
 
 ## Build
 
@@ -133,7 +167,7 @@ npm install
 npm run build
 ```
 
-This will build ESM and CommonJS outputs in the dist/ folder.
+This will output ECMAScript (`.mjs`) and CommonJS (`.js`) modules in the `dist/` directory.
 
 ## Format
 
