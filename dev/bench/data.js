@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1716678030479,
+  "lastUpdate": 1716678821559,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -3037,6 +3037,44 @@ window.BENCHMARK_DATA = {
             "value": 1431.0379701399977,
             "unit": "ms",
             "range": "±3.75%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "12c5284e1c85a5c6103121c116d00f800aa74707",
+          "message": "Update README.md",
+          "timestamp": "2024-05-25T19:09:19-04:00",
+          "tree_id": "9e28a9e19c2ae14ea8772e7ac657b3fc8b89592e",
+          "url": "https://github.com/havelessbemore/munkres/commit/12c5284e1c85a5c6103121c116d00f800aa74707"
+        },
+        "date": 1716678821233,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2108.95016848,
+            "unit": "ms",
+            "range": "±2.70%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1384.4139031199995,
+            "unit": "ms",
+            "range": "±3.14%",
             "extra": "50 samples"
           }
         ]
