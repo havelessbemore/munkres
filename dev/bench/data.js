@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1716652641068,
+  "lastUpdate": 1716652657782,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -2771,6 +2771,44 @@ window.BENCHMARK_DATA = {
             "value": 1411.0643744999998,
             "unit": "ms",
             "range": "±4.06%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1e64fadec8cb900173a2f4a6c87f6011d4f499d9",
+          "message": "Merge pull request #42 from havelessbemore/dependabot/npm_and_yarn/typedoc-plugin-markdown-4.0.2\n\nnpm: bump typedoc-plugin-markdown from 4.0.0 to 4.0.2",
+          "timestamp": "2024-05-25T11:53:06-04:00",
+          "tree_id": "4ed5af669296343562f0df6e2255954d69edcea6",
+          "url": "https://github.com/havelessbemore/munkres/commit/1e64fadec8cb900173a2f4a6c87f6011d4f499d9"
+        },
+        "date": 1716652656821,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2172.4439693999993,
+            "unit": "ms",
+            "range": "±3.15%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1464.0974121400022,
+            "unit": "ms",
+            "range": "±2.54%",
             "extra": "50 samples"
           }
         ]
