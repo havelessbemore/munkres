@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1716652676108,
+  "lastUpdate": 1716652698236,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -2847,6 +2847,44 @@ window.BENCHMARK_DATA = {
             "value": 1415.58343436,
             "unit": "ms",
             "range": "±3.48%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "911e7ca5bf951023ac29afdd505d650ba8e7e42f",
+          "message": "Merge pull request #40 from havelessbemore/dependabot/npm_and_yarn/types/node-20.12.12\n\nnpm: bump @types/node from 20.12.11 to 20.12.12",
+          "timestamp": "2024-05-25T11:53:47-04:00",
+          "tree_id": "c3c77539cbf14bfb83673fd4ba42192998679631",
+          "url": "https://github.com/havelessbemore/munkres/commit/911e7ca5bf951023ac29afdd505d650ba8e7e42f"
+        },
+        "date": 1716652697693,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2154.0195597799993,
+            "unit": "ms",
+            "range": "±3.36%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1450.6456550400005,
+            "unit": "ms",
+            "range": "±3.50%",
             "extra": "50 samples"
           }
         ]
