@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1716652657782,
+  "lastUpdate": 1716652676108,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -2809,6 +2809,44 @@ window.BENCHMARK_DATA = {
             "value": 1464.0974121400022,
             "unit": "ms",
             "range": "±2.54%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d2c1c966354782994a1846dda3b7a9ad2481f9fd",
+          "message": "Merge pull request #41 from havelessbemore/dependabot/npm_and_yarn/rollup-plugin-dts-6.1.1\n\nnpm: bump rollup-plugin-dts from 6.1.0 to 6.1.1",
+          "timestamp": "2024-05-25T11:53:34-04:00",
+          "tree_id": "959b5d8b70729a5cd97434e2b8a1edfc058ed2af",
+          "url": "https://github.com/havelessbemore/munkres/commit/d2c1c966354782994a1846dda3b7a9ad2481f9fd"
+        },
+        "date": 1716652675172,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2027.2500580199985,
+            "unit": "ms",
+            "range": "±3.36%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1415.58343436,
+            "unit": "ms",
+            "range": "±3.48%",
             "extra": "50 samples"
           }
         ]
