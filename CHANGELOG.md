@@ -1,5 +1,19 @@
 # Change Log
 
+## [2.0.3](https://github.com/havelessbemore/munkres/compare/v2.0.2...v2.0.3) (2024-05-25)
+
+### Updates
+
+- Update documentation
+
+### Misc
+
+- Update dev dependencies
+- Add support for [jsr](https://jsr.io/@munkres/munkres):
+```
+jsr add @munkres/munkres
+```
+
 ## [2.0.2](https://github.com/havelessbemore/munkres/compare/v2.0.1...v2.0.2) (2024-04-30)
 
 ### Updates
