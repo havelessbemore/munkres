@@ -16,7 +16,6 @@ A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm
    - Use `number` or `bigint` matrices.
    - Use square (_NxN_) or rectangular (_MxN_) matrices.
    - Works with any [MatrixLike](src/types/matrixLike.d.ts) input. Use arrays, typed arrays, custom objects, etc.
-   - Compatible with Node and browser web workers.
 
 1. Fast ([benchmarks](#results))
 
@@ -56,8 +55,6 @@ jsr add @munkres/munkres
 
 ## Usage
 
-### Sync
-
 ```javascript
 import munkres from "munkres";
 
@@ -76,21 +73,11 @@ console.log(assignments);
 // Output: [[0, 2], [1, 1], [2, 0]]
 ```
 
-### Async
-
-See the [examples directory](./examples/) for using `munkres` and `munkresAsync` with one or more web workers.
-
 ## API
 
 - `munkres(costMatrix)`
 
   Executes the Munkres algorithm on the given cost matrix and returns a set of optimal assignment pairs. Even if there are multiple optimal assignment sets, only one is returned.
-
-- `munkresAsync(costMatrix, runner)`
-
-  Utilize one or more web workers to execute a parallel version of the Munkres algorithm. Compatible with any web workers or web worker library by implementing the [`Runner` interface](./src/types/async.d.ts). See the [examples directory](./examples/) for sample usage.
-
-  **Note**: Due to the nature of sharing memory between the main thread and web workers,
 
 ### Types
 
@@ -180,7 +167,9 @@ A coverage report is generated at `./coverage/index.html`.
 
 ## Benchmarks
 
-To run benchmarks:
+[Run benchmarks in your browser](https://jsbm.dev/QHoz2G2XHQknL).
+
+To run locally:
 
 ```bash
 npm run bench
@@ -188,29 +177,31 @@ npm run bench
 
 ### CI / CD
 
-[Click here](https://havelessbemore.github.io/munkres/dev/bench/) for historical results.
-
 Benchmarks are integrated into our CI/CD pipeline and automatically run with each commit to the `main` branch. This helps monitor the performance impacts of development, preventing regressions and verifying changes maintain performance standards.
+
+[View historical results](https://havelessbemore.github.io/munkres/dev/bench/).
 
 Specs:
 
 - Package version: latest
-- OS: [ubuntu-latest](https://github.com/actions/runner-images)
 - Runtime: NodeJS v20
 - Benchmarking Tool: tinybench v2.6.0
+- OS: [ubuntu-latest](https://github.com/actions/runner-images)
 
 ### Results
-
-[Run benchmarks in your browser](https://jsbm.dev/0cGxrCXjFTpeR).
 
 Below are the latest results from running locally.
 
 Specs:
 
 - Package version: v2.0.2
-- OS: M2 Macbook Air, Sonoma v14.4.1
 - Runtime: NodeJS v20.12.2
 - Benchmarking Tool: tinybench v2.6.0
+- Machine:
+  - Model: MacBook Air
+  - Chip: Apple M2
+  - Memory: 8 GB
+  - OS: MacOS Sonoma
 
 #### `number[][]`
 

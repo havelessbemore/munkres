@@ -26,7 +26,7 @@ The minimum value, or `undefined` if the matrix is empty.
 
 ### Source
 
-[helpers.ts:108](https://github.com/havelessbemore/munkres/blob/4d89bac3d5658e12f9dc1e494aaf85eb041ad532/src/helpers.ts#L108)
+[helpers.ts:108](https://github.com/havelessbemore/munkres/blob/8a47bb771bc09e489d433204d9422a435c3c97fd/src/helpers.ts#L108)
 
 ## getMatrixMin(matrix)
 
@@ -42,4 +42,4 @@ The minimum value, or `undefined` if the matrix is empty.
 
 ### Source
 
-[helpers.ts:109](https://github.com/havelessbemore/munkres/blob/4d89bac3d5658e12f9dc1e494aaf85eb041ad532/src/helpers.ts#L109)
+[helpers.ts:109](https://github.com/havelessbemore/munkres/blob/8a47bb771bc09e489d433204d9422a435c3c97fd/src/helpers.ts#L109)

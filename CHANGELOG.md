@@ -10,6 +10,7 @@
 
 - Update dev dependencies
 - Add support for [jsr](https://jsr.io/@munkres/munkres):
+
 ```
 jsr add @munkres/munkres
 ```

@@ -58,4 +58,4 @@ const costs = createMatrix(workers, jobs, costFn);
 
 ## Source
 
-[helpers.ts:44](https://github.com/havelessbemore/munkres/blob/4d89bac3d5658e12f9dc1e494aaf85eb041ad532/src/helpers.ts#L44)
+[helpers.ts:44](https://github.com/havelessbemore/munkres/blob/8a47bb771bc09e489d433204d9422a435c3c97fd/src/helpers.ts#L44)

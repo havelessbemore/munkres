@@ -47,7 +47,7 @@ negateMatrix(matrix);
 
 ### Source
 
-[helpers.ts:191](https://github.com/havelessbemore/munkres/blob/4d89bac3d5658e12f9dc1e494aaf85eb041ad532/src/helpers.ts#L191)
+[helpers.ts:191](https://github.com/havelessbemore/munkres/blob/8a47bb771bc09e489d433204d9422a435c3c97fd/src/helpers.ts#L191)
 
 ## negateMatrix(matrix)
 
@@ -63,4 +63,4 @@ negateMatrix(matrix);
 
 ### Source
 
-[helpers.ts:192](https://github.com/havelessbemore/munkres/blob/4d89bac3d5658e12f9dc1e494aaf85eb041ad532/src/helpers.ts#L192)
+[helpers.ts:192](https://github.com/havelessbemore/munkres/blob/8a47bb771bc09e489d433204d9422a435c3c97fd/src/helpers.ts#L192)

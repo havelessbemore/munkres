@@ -40,4 +40,4 @@ const divMatrix: MatrixLike<HTMLElement> = document.querySelectorAll('.foo');
 
 ## Source
 
-[types/matrixLike.ts:28](https://github.com/havelessbemore/munkres/blob/4d89bac3d5658e12f9dc1e494aaf85eb041ad532/src/types/matrixLike.ts#L28)
+[types/matrixLike.ts:28](https://github.com/havelessbemore/munkres/blob/8a47bb771bc09e489d433204d9422a435c3c97fd/src/types/matrixLike.ts#L28)
