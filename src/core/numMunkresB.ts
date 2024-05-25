@@ -5,6 +5,18 @@ import { partitionByMin } from "../utils/mutableArrayLike.ts";
 
 import { step5B } from "./bigMunkresB.ts";
 
+/**
+ * This step iteratively improves upon an initial matching until a complete
+ * matching is found. This involves updating dual variables and managing
+ * slack values to uncover new opportunities for optimal assignments.
+ *
+ * @param unmatched - The number of missing matches.
+ * @param mat - An MxN cost matrix.
+ * @param dualX - The dual variables for each matrix column. Modified in place.
+ * @param dualY - The dual variables for each matrix row. Modified in place.
+ * @param starsX - An array mapping star columns to row. Modified in place.
+ * @param starsY - An array mapping star rows to columns. Modified in place.
+ */
 export function step4B(
   unmatched: number,
   matrix: MatrixLike<number>,
@@ -40,6 +52,17 @@ export function step4B(
   }
 }
 
+/**
+ * Adjusts dual variables to uncover more admissible edges.
+ *
+ * @param x - The starting node's column.
+ * @param N - The number of adjustments to make.
+ * @param dualX - The dual variables for each matrix column. Modified in place.
+ * @param dualY - The dual variables for each matrix row. Modified in place.
+ * @param slack - An array of covered row indices.
+ * @param slackV - The slack values for each row.
+ * @param starsY - An array mapping star rows to columns.
+ */
 export function step6B(
   x: number,
   N: number,
@@ -61,6 +84,18 @@ export function step6B(
   }
 }
 
+/**
+ * Matches a given unmatched column to an unmatched row.
+ *
+ * @param x - An unmatched column.
+ * @param matrix - An MxN cost matrix.
+ * @param dualX - The dual variables for each matrix column.
+ * @param dualY - The dual variables for each matrix row.
+ * @param starsY - An array mapping star rows to columns.
+ * @param slack - An array of covered row indices. Modified in place.
+ * @param slackV - The slack values for each row. Modified in place.
+ * @param slackX - An array mapping a slack row to column. Modified in place.
+ */
 export function matchB(
   x: number,
   matrix: MatrixLike<number>,

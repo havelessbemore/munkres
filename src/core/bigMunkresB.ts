@@ -3,6 +3,18 @@ import type { MutableArrayLike } from "../types/mutableArrayLike.ts";
 
 import { partitionByMin } from "../utils/mutableArrayLike.ts";
 
+/**
+ * This step iteratively improves upon an initial matching until a complete
+ * matching is found. This involves updating dual variables and managing
+ * slack values to uncover new opportunities for optimal assignments.
+ *
+ * @param unmatched - The number of missing matches.
+ * @param mat - An MxN cost matrix.
+ * @param dualX - The dual variables for each matrix column. Modified in place.
+ * @param dualY - The dual variables for each matrix row. Modified in place.
+ * @param starsX - An array mapping star columns to row. Modified in place.
+ * @param starsY - An array mapping star rows to columns. Modified in place.
+ */
 export function step4B(
   unmatched: number,
   matrix: MatrixLike<number>,
@@ -56,6 +68,21 @@ export function step4B<T extends number | bigint>(
   }
 }
 
+/**
+ * Augments the current matching.
+ *
+ * This step effectively increases the number of matches (stars)
+ * by 1, bringing the algorithm closer to an optimal assignment.
+ *
+ * Augmentation is performed by flipping matched and unmatched edges along
+ * an augmenting path, starting from an unmatched node / edge and
+ * continuing until no matched edge can be found.
+ *
+ * @param y - The starting node's row.
+ * @param primeY - An array mapping primed rows to columns.
+ * @param starsX - An array mapping star columns to row. Modified in place.
+ * @param starsY - An array mapping star rows to columns. Modified in place.
+ */
 export function step5B(
   y: number,
   primeY: ArrayLike<number>,
@@ -71,6 +98,17 @@ export function step5B(
   } while (y !== -1);
 }
 
+/**
+ * Adjusts dual variables to uncover more admissible edges.
+ *
+ * @param x - The starting node's column.
+ * @param N - The number of adjustments to make.
+ * @param dualX - The dual variables for each matrix column. Modified in place.
+ * @param dualY - The dual variables for each matrix row. Modified in place.
+ * @param slack - An array of covered row indices.
+ * @param slackV - The slack values for each row.
+ * @param starsY - An array mapping star rows to columns.
+ */
 export function step6B(
   x: number,
   N: number,
@@ -112,6 +150,18 @@ export function step6B<T extends number | bigint>(
   }
 }
 
+/**
+ * Matches a given unmatched column to an unmatched row.
+ *
+ * @param x - An unmatched column.
+ * @param matrix - An MxN cost matrix.
+ * @param dualX - The dual variables for each matrix column.
+ * @param dualY - The dual variables for each matrix row.
+ * @param starsY - An array mapping star rows to columns.
+ * @param slack - An array of covered row indices. Modified in place.
+ * @param slackV - The slack values for each row. Modified in place.
+ * @param slackX - An array mapping a slack row to column. Modified in place.
+ */
 export function matchB(
   x: number,
   matrix: MatrixLike<number>,

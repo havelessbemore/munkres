@@ -97,6 +97,8 @@ export function step1(
  * Finds an initial matching for the munkres algorithm.
  *
  * @param matrix - The cost matrix.
+ * @param dualX - The dual variables for each matrix column.
+ * @param dualY - The dual variables for each matrix row.
  * @param starsX - An array mapping star columns to row. Modified in place.
  * @param starsY - An array mapping star rows to columns. Modified in place.
  *
@@ -178,15 +180,15 @@ export function step4(
 }
 
 /**
- * Adjusts dual variables and slack to uncover more admissible edges.
+ * Adjusts dual variables to uncover more admissible edges.
  *
- * @param pivot - The value to adjust by.
- * @param covV - The value indicating a row is covered.
- * @param coveredY - An array indicating whether a row is covered.
+ * @param y - The starting node's row.
+ * @param N - The number of adjustments to make.
  * @param dualX - The dual variables for each matrix column. Modified in place.
  * @param dualY - The dual variables for each matrix row. Modified in place.
- * @param exposedX - An array indicating uncovered columns.
- * @param slackV - The slack values for each column. Modified in place.
+ * @param slack - An array of covered column indices.
+ * @param slackV - The slack values for each column.
+ * @param starsX - An array mapping star columns to row.
  */
 export function step6(
   y: number,
@@ -209,6 +211,18 @@ export function step6(
   }
 }
 
+/**
+ * Matches a given unmatched row to an unmatched column.
+ *
+ * @param y - An unmatched row.
+ * @param matrix - An MxN cost matrix.
+ * @param dualX - The dual variables for each matrix column.
+ * @param dualY - The dual variables for each matrix row.
+ * @param starsX - An array mapping star columns to row.
+ * @param slack - An array of covered column indices. Modified in place.
+ * @param slackV - The slack values for each column. Modified in place.
+ * @param slackY - An array mapping a slack column to row. Modified in place.
+ */
 export function match(
   y: number,
   matrix: MatrixLike<number>,

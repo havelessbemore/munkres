@@ -3,6 +3,7 @@
 A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm) for optimal assignment.
 
 [![Version](https://img.shields.io/npm/v/munkres.svg)](https://www.npmjs.com/package/munkres)
+[![JSR](https://jsr.io/badges/@munkres/munkres)](https://jsr.io/@munkres/munkres)
 [![Maintenance](https://img.shields.io/maintenance/yes/2024.svg)](https://github.com/havelessbemore/munkres/graphs/commit-activity)
 [![License](https://img.shields.io/github/license/havelessbemore/munkres.svg)](https://github.com/havelessbemore/munkres/blob/master/LICENSE)
 [![codecov](https://codecov.io/gh/havelessbemore/munkres/graph/badge.svg?token=F362G7C9U0)](https://codecov.io/gh/havelessbemore/munkres)
@@ -42,6 +43,12 @@ Using yarn:
 
 ```bash
 yarn add munkres
+```
+
+Using jsr:
+
+```bash
+jsr add @munkres/munkres
 ```
 
 ## Usage
