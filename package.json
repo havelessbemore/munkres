@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/package",
   "name": "munkres",
   "version": "2.0.2",
   "description": "A lightweight and efficient implementation of the Munkres (Hungarian) algorithm for optimal assignment in square and rectangular matrices.",

@@ -1,12 +1,12 @@
-import type { MatrixLike } from "../types/matrixLike";
-import type { Matching } from "../types/matching";
-import type { MutableArrayLike } from "../types/mutableArrayLike";
+import type { MatrixLike } from "../types/matrixLike.ts";
+import type { Matching } from "../types/matching.ts";
+import type { MutableArrayLike } from "../types/mutableArrayLike.ts";
 
-import { getMin } from "../utils/arrayLike";
-import { partitionByMin } from "../utils/mutableArrayLike";
+import { getMin } from "../utils/arrayLike.ts";
+import { partitionByMin } from "../utils/mutableArrayLike.ts";
 
-import { step5 } from "./bigMunkres";
-import { step4B } from "./numMunkresB";
+import { step5 } from "./bigMunkres.ts";
+import { step4B } from "./numMunkresB.ts";
 
 export function exec(matrix: MatrixLike<number>): Matching<number> {
   // Get dimensions

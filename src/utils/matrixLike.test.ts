@@ -1,5 +1,6 @@
 import { describe, it, expect } from "@jest/globals";
-import { getMax, getMin } from "./matrixLike";
+
+import { getMax, getMin } from "./matrixLike.ts";
 
 describe(`${getMax.name}()`, () => {
   it("returns undefined for an empty matrix", () => {

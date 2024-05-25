@@ -1,5 +1,5 @@
-import { MatrixLike } from "./matrixLike";
-import { MutableArrayLike } from "./mutableArrayLike";
+import type { MatrixLike } from "./matrixLike.ts";
+import type { MutableArrayLike } from "./mutableArrayLike.ts";
 
 /**
  * Defines the result of the Munkres algorithm.

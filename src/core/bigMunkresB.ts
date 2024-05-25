@@ -1,7 +1,7 @@
-import type { MatrixLike } from "../types/matrixLike";
-import type { MutableArrayLike } from "../types/mutableArrayLike";
+import type { MatrixLike } from "../types/matrixLike.ts";
+import type { MutableArrayLike } from "../types/mutableArrayLike.ts";
 
-import { partitionByMin } from "../utils/mutableArrayLike";
+import { partitionByMin } from "../utils/mutableArrayLike.ts";
 
 export function step4B(
   unmatched: number,

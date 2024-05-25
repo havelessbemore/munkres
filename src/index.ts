@@ -1,7 +1,7 @@
 // Types
-export type { Matrix } from "./types/matrix";
-export type { MatrixLike } from "./types/matrixLike";
-export type { Pair } from "./types/pair";
+export type { Matrix } from "./types/matrix.ts";
+export type { MatrixLike } from "./types/matrixLike.ts";
+export type { Pair } from "./types/pair.ts";
 
 // Cost Matrix Helpers
 export {
@@ -12,11 +12,11 @@ export {
   getMatrixMin,
   invertMatrix,
   negateMatrix,
-} from "./helpers";
+} from "./helpers.ts";
 
 // Algorithm
-export { munkres } from "./munkres";
+export { munkres } from "./munkres.ts";
 
 // Default
-import { munkres } from "./munkres";
+import { munkres } from "./munkres.ts";
 export default munkres;

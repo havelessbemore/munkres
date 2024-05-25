@@ -4,9 +4,9 @@ import {
   testMatrixLike,
   testSquare,
   testWide,
-} from "../tests/munkres";
+} from "../tests/munkres.ts";
 
-import { munkres } from "./munkres";
+import { munkres } from "./munkres.ts";
 
 testSquare(munkres);
 testSquare(munkres, true);

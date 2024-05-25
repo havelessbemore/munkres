@@ -1,0 +1,8 @@
+{
+    "$schema": "https://jsr.io/schema/config-file.v1.json",
+    "name": "@munkres/munkres",
+    "version": "2.0.2",
+    "exports": {
+        ".": "./src/index.ts"
+    }
+  }

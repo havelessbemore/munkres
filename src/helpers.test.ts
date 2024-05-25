@@ -1,6 +1,6 @@
 import { describe, it, expect } from "@jest/globals";
 
-import type { Matrix } from "./types/matrix";
+import type { Matrix } from "./types/matrix.ts";
 
 import {
   createMatrix,
@@ -10,7 +10,7 @@ import {
   getMatrixMin,
   invertMatrix,
   negateMatrix,
-} from "./helpers";
+} from "./helpers.ts";
 
 describe(`${copyMatrix.name}()`, () => {
   it("returns an empty matrix when copying an empty matrix", () => {

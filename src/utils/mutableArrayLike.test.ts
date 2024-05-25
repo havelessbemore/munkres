@@ -1,5 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
-import { partitionByMin } from "./mutableArrayLike";
+
+import { partitionByMin } from "./mutableArrayLike.ts";
 
 describe(`${partitionByMin.name}()`, () => {
   it("should not change the array when min equals max", () => {

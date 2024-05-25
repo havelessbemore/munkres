@@ -1,11 +1,11 @@
 import { Bench } from "tinybench";
 
-import type { Matrix } from "../src/types/matrix";
+import type { Matrix } from "../src/types/matrix.ts";
+import { gen } from "../src/utils/matrix.ts";
+import { munkres } from "../src/munkres.ts";
 
-import { gen } from "../src/utils/matrix";
-import { Suite } from "./utils/suite";
-import { munkres } from "../src/munkres";
-import { TerminalReporter } from "./utils/terminalReporter";
+import { Suite } from "./utils/suite.ts";
+import { TerminalReporter } from "./utils/terminalReporter.ts";
 
 const MIN_VAL = 1;
 const MAX_VAL = Number.MAX_SAFE_INTEGER;

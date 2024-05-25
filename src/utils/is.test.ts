@@ -1,6 +1,6 @@
 import { describe, it, expect } from "@jest/globals";
 
-import { isBigInt, isNumber } from "./is";
+import { isBigInt, isNumber } from "./is.ts";
 
 describe(`${isBigInt.name}()`, () => {
   it("returns true for bigint values", () => {

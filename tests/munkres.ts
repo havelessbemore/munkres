@@ -1,10 +1,10 @@
 import { describe, expect, test } from "@jest/globals";
 
-import type { Matrix } from "../src/types/matrix";
-import type { Pair } from "../src/types/pair";
+import type { Matrix } from "../src/types/matrix.ts";
+import type { MatrixLike } from "../src/types/matrixLike.ts";
+import type { Pair } from "../src/types/pair.ts";
 
-import { gen, map } from "../src/utils/matrix";
-import { MatrixLike } from "../src";
+import { gen, map } from "../src/utils/matrix.ts";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type MunkresFn = (costMatrix: MatrixLike<any>) => Pair<number>[];

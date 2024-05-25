@@ -1,7 +1,7 @@
-import type { Matrix } from "../types/matrix";
-import type { MatrixLike } from "../types/matrixLike";
+import type { Matrix } from "../types/matrix.ts";
+import type { MatrixLike } from "../types/matrixLike.ts";
 
-import { getMax } from "./matrixLike";
+import { getMax } from "./matrixLike.ts";
 
 /**
  * Creates a matrix with specified rows and columns.

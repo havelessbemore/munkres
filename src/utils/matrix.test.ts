@@ -1,7 +1,7 @@
 import { describe, it, expect, jest } from "@jest/globals";
 
-import type { Matrix } from "../types/matrix";
-import type { Pair } from "../types/pair";
+import type { Matrix } from "../types/matrix.ts";
+import type { Pair } from "../types/pair.ts";
 
 import {
   create,
@@ -19,8 +19,8 @@ import {
   rotNeg90,
   toString,
   transpose,
-} from "./matrix";
-import { getMax } from "./matrixLike";
+} from "./matrix.ts";
+import { getMax } from "./matrixLike.ts";
 
 describe(`${create.name}()`, () => {
   it("handles empty rows and columns", () => {

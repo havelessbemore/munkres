@@ -1,5 +1,6 @@
 import Bench, { Task } from "tinybench";
-import { SuiteReporter } from "./suiteReporter";
+
+import type { SuiteReporter } from "../types/suiteReporter.ts";
 
 export class TerminalReporter implements SuiteReporter {
   protected results: Map<string, Record<string, unknown>>;

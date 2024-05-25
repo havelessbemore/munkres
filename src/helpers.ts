@@ -1,8 +1,8 @@
-import type { Matrix } from "./types/matrix";
-import type { MatrixLike } from "./types/matrixLike";
+import type { Matrix } from "./types/matrix.ts";
+import type { MatrixLike } from "./types/matrixLike.ts";
 
-import { create, from, gen, invert, negate } from "./utils/matrix";
-import { getMax, getMin } from "./utils/matrixLike";
+import { create, from, gen, invert, negate } from "./utils/matrix.ts";
+import { getMax, getMin } from "./utils/matrixLike.ts";
 
 /**
  * Creates a copy from a given matrix or matrix-like input.

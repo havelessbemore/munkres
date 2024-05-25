@@ -1,9 +1,7 @@
 import Bench, { Task } from "tinybench";
-import { SuiteReporter } from "./suiteReporter";
 
-export interface SuiteConfig {
-  warmup?: boolean;
-}
+import type { SuiteConfig } from "../types/suiteConfig.ts";
+import type { SuiteReporter } from "../types/suiteReporter.ts";
 
 export class Suite extends EventTarget {
   protected benches: Map<string, Bench>;

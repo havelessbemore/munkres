@@ -1,10 +1,10 @@
-import type { MatrixLike } from "../types/matrixLike";
-import type { Matching } from "../types/matching";
+import type { MatrixLike } from "../types/matrixLike.ts";
+import type { Matching } from "../types/matching.ts";
 
-import { isBigInt } from "../utils/is";
+import { isBigInt } from "../utils/is.ts";
 
-import { exec as bigExec } from "./bigMunkres";
-import { exec as numExec } from "./numMunkres";
+import { exec as bigExec } from "./bigMunkres.ts";
+import { exec as numExec } from "./numMunkres.ts";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to

@@ -1,8 +1,8 @@
-import type { MatrixLike } from "./types/matrixLike";
-import type { Pair } from "./types/pair";
+import type { MatrixLike } from "./types/matrixLike.ts";
+import type { Pair } from "./types/pair.ts";
 
-import { exec } from "./core/munkres";
-import { toPairs } from "./utils/matching";
+import { exec } from "./core/munkres.ts";
+import { toPairs } from "./utils/matching.ts";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to

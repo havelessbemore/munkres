@@ -1,10 +1,10 @@
-import fs from "fs";
+import fs from "node:fs";
 
 import Bench, { Task } from "tinybench";
 
-import { SuiteReporter } from "./suiteReporter";
+import type { SuiteReporter } from "../types/suiteReporter.ts";
 
-export interface Result {
+interface Result {
   name: string;
   unit: string;
   value: number;

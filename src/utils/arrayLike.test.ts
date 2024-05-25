@@ -1,6 +1,6 @@
 import { describe, it, expect } from "@jest/globals";
 
-import { entries, getMin } from "./arrayLike";
+import { entries, getMin } from "./arrayLike.ts";
 
 describe(`${entries.name}()`, () => {
   it("should return an empty array for an empty input array", () => {

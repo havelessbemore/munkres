@@ -1,5 +1,6 @@
 import { Task } from "tinybench";
-import { SuiteReporter } from "./suiteReporter";
+
+import type { SuiteReporter } from "../types/suiteReporter.ts";
 
 export class BenchmarkjsReporter implements SuiteReporter {
   onTaskComplete(task: Task): void {

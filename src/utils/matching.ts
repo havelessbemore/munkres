@@ -1,8 +1,8 @@
-import type { Matching } from "../types/matching";
-import type { Pair } from "../types/pair";
+import type { Matching } from "../types/matching.ts";
+import type { Pair } from "../types/pair.ts";
 
-import { entries } from "./arrayLike";
-import { flipH } from "./matrix";
+import { entries } from "./arrayLike.ts";
+import { flipH } from "./matrix.ts";
 
 /**
  * Converts a matching object into an array of matched indices.

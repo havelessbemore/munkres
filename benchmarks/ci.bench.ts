@@ -1,14 +1,14 @@
-import path from "path";
+import path from "node:path";
 
 import { program } from "commander";
 import { Bench } from "tinybench";
 
-import type { Matrix } from "../src/types/matrix";
+import type { Matrix } from "../src/types/matrix.ts";
+import { gen } from "../src/utils/matrix.ts";
+import { munkres } from "../src/munkres.ts";
 
-import { gen } from "../src/utils/matrix";
-import { Suite } from "./utils/suite";
-import { munkres } from "../src/munkres";
-import { CIReporter } from "./utils/ciReporter";
+import { Suite } from "./utils/suite.ts";
+import { CIReporter } from "./utils/ciReporter.ts";
 
 // Define and get parameters
 program.option("-o, --output <filepath>", "output file path");
