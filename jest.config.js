@@ -2,11 +2,12 @@
 export default {
   preset: "ts-jest",
   coverageDirectory: "<rootDir>/coverage/",
-  coveragePathIgnorePatterns: [
-    "<rootDir>/benchmarks/",
-    "<rootDir>/src/index.ts",
-    "<rootDir>/tests/",
+  collectCoverageFrom: [
+    "src/**/*.{js,jsx,ts,tsx}",
+    "!**/node_modules/**",
+    "!**/vendor/**",
   ],
+  coveragePathIgnorePatterns: ["<rootDir>/src/index.ts"],
   passWithNoTests: true,
   testEnvironment: "node",
 };

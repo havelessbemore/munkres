@@ -1,10 +1,13 @@
-munkres / [Exports](modules.md)
+**munkres** • [**Docs**](globals.md)
+
+***
 
 # Munkres
 
 A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm](https://en.wikipedia.org/wiki/Hungarian_algorithm) for optimal assignment.
 
 [![Version](https://img.shields.io/npm/v/munkres.svg)](https://www.npmjs.com/package/munkres)
+[![JSR](https://jsr.io/badges/@munkres/munkres)](https://jsr.io/@munkres/munkres)
 [![Maintenance](https://img.shields.io/maintenance/yes/2024.svg)](https://github.com/havelessbemore/munkres/graphs/commit-activity)
 [![License](https://img.shields.io/github/license/havelessbemore/munkres.svg)](https://github.com/havelessbemore/munkres/blob/master/LICENSE)
 [![codecov](https://codecov.io/gh/havelessbemore/munkres/graph/badge.svg?token=F362G7C9U0)](https://codecov.io/gh/havelessbemore/munkres)
@@ -12,43 +15,52 @@ A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm
 
 ## Features
 
-1. Supports `number` and `bigint` matrices.
+1. Flexible
 
-1. Supports square (_NxN_) and rectangular (_MxN_) matrices.
+   - Use `number` or `bigint` matrices.
+   - Use square (_NxN_) or rectangular (_MxN_) matrices.
+   - Works with any [MatrixLike](src/types/matrixLike.d.ts) input. Use arrays, typed arrays, custom objects, etc.
+   - Compatible with Node and browser web workers.
 
-1. Fast ([benchmarks](#results)):
+1. Fast ([benchmarks](#results))
 
    - _O(M<sup>2</sup>N)_ when _M <= N_
 
    - _O(MN<sup>2</sup>)_ when _M > N_
 
-1. Efficient: Uses _O(M + N)_ memory.
+1. Efficient
 
-1. Accepts any [MatrixLike](src/types/matrixLike.d.ts) matrix. Use arrays, typed arrays, objects, etc.
+   - _O(M + N)_ memory
 
-1. Supports `-Infinity` and `Infinity` values.
-
-1. [Helper methods](#helpers) for creating and modifying matrices.
+1. Robust
+   - Supports `-Infinity` and `Infinity` values.
+   - [Helper methods](#helpers) provided for creating and modifying matrices.
 
 ## Getting Started
 
 ### Install
 
-Using npm:
+NPM:
 
 ```bash
 npm install munkres
 ```
 
-Using yarn:
+Yarn:
 
 ```bash
 yarn add munkres
 ```
 
+Using jsr:
+
+```bash
+jsr add @munkres/munkres
+```
+
 ## Usage
 
-Example 1: Using a cost matrix
+### Sync
 
 ```javascript
 import munkres from "munkres";
@@ -68,33 +80,21 @@ console.log(assignments);
 // Output: [[0, 2], [1, 1], [2, 0]]
 ```
 
-Example 2: Using a profit matrix
+### Async
 
-```javascript
-import { munkres, copyMatrix, invertMatrix } from "munkres";
-
-// Create a profit matrix. Cell [y, x] is the
-// profit of assigning the y-th worker to the x-th job.
-const profitMatrix = [
-  [9, 8, 7],
-  [8, 6, 4],
-  [7, 4, 1],
-];
-
-// Covert the profit matrix into a cost matrix.
-const costMatrix = copyMatrix(profitMatrix);
-invertMatrix(costMatrix);
-
-// Find a set of optimal assignments pairs (y, x).
-const assignments = munkres(costMatrix);
-
-console.log(assignments);
-// Output: [[0, 2], [1, 1], [2, 0]]
-```
+See the [examples directory](./examples/) for using `munkres` and `munkresAsync` with one or more web workers.
 
 ## API
 
-- `munkres(costMatrix)`: Executes the Munkres algorithm on the given cost matrix and returns a set of optimal assignment pairs. Even if there are multiple optimal assignment sets, only one is returned.
+- `munkres(costMatrix)`
+
+  Executes the Munkres algorithm on the given cost matrix and returns a set of optimal assignment pairs. Even if there are multiple optimal assignment sets, only one is returned.
+
+- `munkresAsync(costMatrix, runner)`
+
+  Utilize one or more web workers to execute a parallel version of the Munkres algorithm. Compatible with any web workers or web worker library by implementing the [`Runner` interface](./src/types/async.d.ts). See the [examples directory](./examples/) for sample usage.
+
+  **Note**: Due to the nature of sharing memory between the main thread and web workers,
 
 ### Types
 
@@ -205,13 +205,13 @@ Specs:
 
 ### Results
 
-[Run benchmarks in your browser](https://jsbm.dev/R7plQcHOIBp6H).
+[Run benchmarks in your browser](https://jsbm.dev/0cGxrCXjFTpeR).
 
 Below are the latest results from running locally.
 
 Specs:
 
-- Package version: v2.0.1
+- Package version: v2.0.2
 - OS: M2 Macbook Air, Sonoma v14.4.1
 - Runtime: NodeJS v20.12.2
 - Benchmarking Tool: tinybench v2.6.0
