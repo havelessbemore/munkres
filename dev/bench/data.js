@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1716652704991,
+  "lastUpdate": 1716677039992,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -2923,6 +2923,44 @@ window.BENCHMARK_DATA = {
             "value": 1345.0569302200013,
             "unit": "ms",
             "range": "±3.40%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "ad7cbc523299d958d1d8a85945c3d3e0af7c9a56",
+          "message": "Update CHANGELOG.md, Update CI/CD publish workflow",
+          "timestamp": "2024-05-25T18:39:38-04:00",
+          "tree_id": "9a88e7182f3c4206473ada5782adac5471bcc723",
+          "url": "https://github.com/havelessbemore/munkres/commit/ad7cbc523299d958d1d8a85945c3d3e0af7c9a56"
+        },
+        "date": 1716677039586,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2019.8468267999997,
+            "unit": "ms",
+            "range": "±2.82%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1406.7439304000018,
+            "unit": "ms",
+            "range": "±3.32%",
             "extra": "50 samples"
           }
         ]
