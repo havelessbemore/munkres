@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1716678997646,
+  "lastUpdate": 1716934097519,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -3113,6 +3113,44 @@ window.BENCHMARK_DATA = {
             "value": 1390.387568199999,
             "unit": "ms",
             "range": "±3.58%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "917daebb09879f7dd47ff5771183be521642305b",
+          "message": "Merge pull request #44 from havelessbemore/dependabot/npm_and_yarn/eslint-plugin-promise-6.2.0\n\nnpm: bump eslint-plugin-promise from 6.1.1 to 6.2.0",
+          "timestamp": "2024-05-28T18:03:56-04:00",
+          "tree_id": "89f2d935583a3bf2c7200c75cbbd8d4ebc86279a",
+          "url": "https://github.com/havelessbemore/munkres/commit/917daebb09879f7dd47ff5771183be521642305b"
+        },
+        "date": 1716934097177,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2067.1981601800003,
+            "unit": "ms",
+            "range": "±2.58%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1403.613840459996,
+            "unit": "ms",
+            "range": "±4.03%",
             "extra": "50 samples"
           }
         ]
