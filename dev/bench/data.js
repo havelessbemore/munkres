@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1717800109310,
+  "lastUpdate": 1717800127089,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -3265,6 +3265,44 @@ window.BENCHMARK_DATA = {
             "value": 1359.952710080003,
             "unit": "ms",
             "range": "±3.21%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a489ae3e20294014dd3c9cfc23b25307f288c409",
+          "message": "Merge pull request #46 from havelessbemore/dependabot/npm_and_yarn/ts-jest-29.1.4\n\nnpm: bump ts-jest from 29.1.3 to 29.1.4",
+          "timestamp": "2024-06-07T18:37:38-04:00",
+          "tree_id": "bfd823dd4eda499441ca8716423edae270d72eb2",
+          "url": "https://github.com/havelessbemore/munkres/commit/a489ae3e20294014dd3c9cfc23b25307f288c409"
+        },
+        "date": 1717800126135,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2121.962595900001,
+            "unit": "ms",
+            "range": "±2.75%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1451.7098284199985,
+            "unit": "ms",
+            "range": "±3.68%",
             "extra": "50 samples"
           }
         ]
