@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719070214325,
+  "lastUpdate": 1719070222710,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -3379,6 +3379,44 @@ window.BENCHMARK_DATA = {
             "value": 1389.8337436400022,
             "unit": "ms",
             "range": "±2.98%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d0cae5ae4c960b56cb59e8cb505d64cfc3baaa1b",
+          "message": "Merge pull request #57 from havelessbemore/dependabot/npm_and_yarn/prettier-3.3.2\n\nnpm: bump prettier from 3.3.0 to 3.3.2",
+          "timestamp": "2024-06-22T11:26:09-04:00",
+          "tree_id": "7047d043fd0f13a8ca2e4bc57eecb274c228444d",
+          "url": "https://github.com/havelessbemore/munkres/commit/d0cae5ae4c960b56cb59e8cb505d64cfc3baaa1b"
+        },
+        "date": 1719070222374,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2021.4328888999994,
+            "unit": "ms",
+            "range": "±2.96%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1396.9704145999992,
+            "unit": "ms",
+            "range": "±3.31%",
             "extra": "50 samples"
           }
         ]
