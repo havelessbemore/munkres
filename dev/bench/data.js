@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1717800142134,
+  "lastUpdate": 1719070214325,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -3341,6 +3341,44 @@ window.BENCHMARK_DATA = {
             "value": 1380.4124839399994,
             "unit": "ms",
             "range": "±3.31%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b7b7d660587ac620a13f53af68a2e98f4e94b2f4",
+          "message": "Merge pull request #58 from havelessbemore/dependabot/npm_and_yarn/eslint/js-9.5.0\n\nnpm: bump @eslint/js from 9.3.0 to 9.5.0",
+          "timestamp": "2024-06-22T11:25:57-04:00",
+          "tree_id": "897e848d26147d0d860c34a5050ea13d7ffb07d1",
+          "url": "https://github.com/havelessbemore/munkres/commit/b7b7d660587ac620a13f53af68a2e98f4e94b2f4"
+        },
+        "date": 1719070213996,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2009.3815876199997,
+            "unit": "ms",
+            "range": "±2.94%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1389.8337436400022,
+            "unit": "ms",
+            "range": "±2.98%",
             "extra": "50 samples"
           }
         ]
