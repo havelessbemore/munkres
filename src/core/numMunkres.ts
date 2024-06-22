@@ -209,19 +209,6 @@ export function step6(
     dualX[x] = dualX[x] - min || 0;
     dualY[y] = dualY[y] + min || 0;
   }
-
-  /*
-  const sum = slackV[slack[N - 1]];
-
-  let min = sum;
-  for (let i = 0; i < N; ++i) {
-    const x = slack[i];
-    dualY[y] = dualY[y] + min || 0;
-    min = sum - slackV[x] || 0;
-    dualX[x] = dualX[x] - min || 0;
-    y = starsX[x];
-  }
-  */
 }
 
 /**
