@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719070254685,
+  "lastUpdate": 1719073233545,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -3493,6 +3493,44 @@ window.BENCHMARK_DATA = {
             "value": 1339.8669081600017,
             "unit": "ms",
             "range": "±3.44%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "abaeee0ac49182371e546c3e6bfc28485c1f48d1",
+          "message": "Add exaples directory, Update CommonJS build extension from .js to .cjs",
+          "timestamp": "2024-06-22T12:16:12-04:00",
+          "tree_id": "333ad44ef9f29e4d8464df2a2efe45b62ecd2faf",
+          "url": "https://github.com/havelessbemore/munkres/commit/abaeee0ac49182371e546c3e6bfc28485c1f48d1"
+        },
+        "date": 1719073233175,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2014.85101918,
+            "unit": "ms",
+            "range": "±2.76%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1377.9891286599973,
+            "unit": "ms",
+            "range": "±3.58%",
             "extra": "50 samples"
           }
         ]
