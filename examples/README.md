@@ -11,6 +11,7 @@ This directory contains various examples demonstrating how to use the project. E
 Demonstrates the basic usage of the project.
 
 For CommonJS:
+
 ```bash
 node run src/basic/index.cjs
 ```

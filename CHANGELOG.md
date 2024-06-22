@@ -1,5 +1,15 @@
 # Change Log
 
+## [2.0.4](https://github.com/havelessbemore/munkres/compare/v2.0.3...v2.0.4) (2024-06-22)
+
+### Misc
+
+- Update the CommonJS build file's extension from `.js` to `.cjs`
+  - Should mitigate issues importing the package in CommonJS environments.
+- Update dev dependencies
+- Refactor and add tests
+- Add `examples/` directory
+
 ## [2.0.3](https://github.com/havelessbemore/munkres/compare/v2.0.2...v2.0.3) (2024-05-25)
 
 ### Updates
@@ -10,9 +20,9 @@
 
 - Update dev dependencies
 - Add support for [JSR](https://jsr.io/@munkres/munkres):
-    ```
-    jsr add @munkres/munkres
-    ```
+  ```
+  jsr add @munkres/munkres
+  ```
 
 ## [2.0.2](https://github.com/havelessbemore/munkres/compare/v2.0.1...v2.0.2) (2024-04-30)
 
