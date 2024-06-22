@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1719070222710,
+  "lastUpdate": 1719070234876,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -3417,6 +3417,44 @@ window.BENCHMARK_DATA = {
             "value": 1396.9704145999992,
             "unit": "ms",
             "range": "±3.31%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "efa87effdc01a91060efaf8e20b867d394e5208d",
+          "message": "Merge pull request #56 from havelessbemore/dependabot/npm_and_yarn/tsx-4.15.6\n\nnpm: bump tsx from 4.11.2 to 4.15.6",
+          "timestamp": "2024-06-22T11:26:23-04:00",
+          "tree_id": "8c3fb09b8daebbe1cd308e5e7fc921009954a936",
+          "url": "https://github.com/havelessbemore/munkres/commit/efa87effdc01a91060efaf8e20b867d394e5208d"
+        },
+        "date": 1719070234515,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2000.4222276800006,
+            "unit": "ms",
+            "range": "±2.80%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1340.6585198999999,
+            "unit": "ms",
+            "range": "±3.70%",
             "extra": "50 samples"
           }
         ]
