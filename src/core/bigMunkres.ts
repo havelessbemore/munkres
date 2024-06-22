@@ -298,17 +298,18 @@ export function step6<T extends number | bigint>(
   slackV: ArrayLike<T>,
   starsX: ArrayLike<number>,
 ): void {
-  const sum = slackV[slack[N - 1]];
+  const sum = slackV[slack[--N]];
+  // @ts-expect-error ts(2365)
+  dualY[y] += sum;
 
-  let min = sum;
   for (let i = 0; i < N; ++i) {
     const x = slack[i];
-    // @ts-expect-error ts(2365)
-    dualY[y] += min;
-    min = (sum - slackV[x]) as T;
+    y = starsX[x];
+    const min = sum - slackV[x];
     // @ts-expect-error ts(2322)
     dualX[x] -= min;
-    y = starsX[x];
+    // @ts-expect-error ts(2365)
+    dualY[y] += min;
   }
 }
 

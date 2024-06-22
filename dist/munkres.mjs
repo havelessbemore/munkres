@@ -366,14 +366,14 @@ function step5(x, primeX, starsX, starsY) {
   } while (x !== -1);
 }
 function step6$1(y, N, dualX, dualY, slack, slackV, starsX) {
-  const sum = slackV[slack[N - 1]];
-  let min = sum;
+  const sum = slackV[slack[--N]];
+  dualY[y] += sum;
   for (let i = 0; i < N; ++i) {
     const x = slack[i];
-    dualY[y] += min;
-    min = sum - slackV[x];
-    dualX[x] -= min;
     y = starsX[x];
+    const min = sum - slackV[x];
+    dualX[x] -= min;
+    dualY[y] += min;
   }
 }
 function match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
@@ -560,14 +560,14 @@ function step4(unmatched, matrix, dualX, dualY, starsX, starsY) {
   }
 }
 function step6(y, N, dualX, dualY, slack, slackV, starsX) {
-  const sum = slackV[slack[N - 1]];
-  let min = sum;
+  const sum = slackV[slack[--N]];
+  dualY[y] = dualY[y] + sum || 0;
   for (let i = 0; i < N; ++i) {
     const x = slack[i];
-    dualY[y] = dualY[y] + min || 0;
-    min = sum - slackV[x] || 0;
-    dualX[x] = dualX[x] - min || 0;
     y = starsX[x];
+    const min = sum - slackV[x] || 0;
+    dualX[x] = dualX[x] - min || 0;
+    dualY[y] = dualY[y] + min || 0;
   }
 }
 function match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
