@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1720460857088,
+  "lastUpdate": 1720461411459,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -3759,6 +3759,44 @@ window.BENCHMARK_DATA = {
             "value": 1494.554817719998,
             "unit": "ms",
             "range": "±3.38%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b15c9dfee16807b0ae37901465115b50ea0143a3",
+          "message": "Update main.yml\n\nRemove node version 21",
+          "timestamp": "2024-07-08T13:52:27-04:00",
+          "tree_id": "fdfe1f9cc6d066e2ff42bbbf875cd990b7b12712",
+          "url": "https://github.com/havelessbemore/munkres/commit/b15c9dfee16807b0ae37901465115b50ea0143a3"
+        },
+        "date": 1720461410936,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2107.59952082,
+            "unit": "ms",
+            "range": "±2.74%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1411.0412205600028,
+            "unit": "ms",
+            "range": "±3.07%",
             "extra": "50 samples"
           }
         ]
