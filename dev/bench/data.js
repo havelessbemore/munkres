@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1721324577459,
+  "lastUpdate": 1721324903780,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -3949,6 +3949,44 @@ window.BENCHMARK_DATA = {
             "value": 1400.6905208200008,
             "unit": "ms",
             "range": "±2.93%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "232a75212a1b4a06574428765fad51dcd6ea3488",
+          "message": "Update rimraf dev dependency",
+          "timestamp": "2024-07-18T13:43:52-04:00",
+          "tree_id": "c9e40e1c114fdab2b93056b01f106f8c8ccfbf44",
+          "url": "https://github.com/havelessbemore/munkres/commit/232a75212a1b4a06574428765fad51dcd6ea3488"
+        },
+        "date": 1721324903451,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2114.7908420799995,
+            "unit": "ms",
+            "range": "±3.02%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1427.2829751799995,
+            "unit": "ms",
+            "range": "±3.60%",
             "extra": "50 samples"
           }
         ]
