@@ -55,4 +55,4 @@ const booleanMatrix: Matrix<boolean> = [
 
 ## Defined in
 
-[types/matrix.ts:37](https://github.com/havelessbemore/munkres/blob/113202b0c1b467d28937703cda450103cdf776b4/src/types/matrix.ts#L37)
+[types/matrix.ts:37](https://github.com/havelessbemore/munkres/blob/fc5da44f86c5eaa709ab282574feb1e91e030644/src/types/matrix.ts#L37)

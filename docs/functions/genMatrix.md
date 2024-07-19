@@ -54,4 +54,4 @@ const costs = createMatrix(workers.length, jobs.length, costFn);
 
 ## Defined in
 
-[helpers.ts:78](https://github.com/havelessbemore/munkres/blob/113202b0c1b467d28937703cda450103cdf776b4/src/helpers.ts#L78)
+[helpers.ts:78](https://github.com/havelessbemore/munkres/blob/fc5da44f86c5eaa709ab282574feb1e91e030644/src/helpers.ts#L78)

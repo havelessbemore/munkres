@@ -37,4 +37,4 @@ const keyValue: Pair<string, number> = ['age', 30];
 
 ## Defined in
 
-types/pair.ts:23
+[types/pair.ts:23](https://github.com/havelessbemore/munkres/blob/fc5da44f86c5eaa709ab282574feb1e91e030644/src/types/pair.ts#L23)

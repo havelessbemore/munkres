@@ -1,6 +1,8 @@
+import presets from "ts-jest/presets/index.js";
+
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 export default {
-  preset: "ts-jest",
+  ...presets.jsWithTsESM,
   coverageDirectory: "<rootDir>/coverage/",
   collectCoverageFrom: [
     "src/**/*.{js,jsx,ts,tsx}",

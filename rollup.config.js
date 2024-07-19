@@ -1,8 +1,10 @@
+import { createRequire } from "node:module";
+
 import dts from "rollup-plugin-dts";
 import esbuild from "rollup-plugin-esbuild";
 import license from "rollup-plugin-license";
 
-import pkg from "./package.json" with { type: "json" };
+const pkg = createRequire(import.meta.url)("./package.json");
 
 /**
  * @param {import('rollup').RollupOptions} config
