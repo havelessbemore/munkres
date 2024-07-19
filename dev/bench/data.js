@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1721360275707,
+  "lastUpdate": 1721360338231,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -4025,6 +4025,44 @@ window.BENCHMARK_DATA = {
             "value": 1434.6438422399992,
             "unit": "ms",
             "range": "±3.33%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "fc5da44f86c5eaa709ab282574feb1e91e030644",
+          "message": "Remove node v22 from main workflow",
+          "timestamp": "2024-07-18T23:34:23-04:00",
+          "tree_id": "ad264d2aa75971bc886760912099e415b0438cc5",
+          "url": "https://github.com/havelessbemore/munkres/commit/fc5da44f86c5eaa709ab282574feb1e91e030644"
+        },
+        "date": 1721360337712,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2178.8389782599997,
+            "unit": "ms",
+            "range": "±3.09%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1415.3257083800015,
+            "unit": "ms",
+            "range": "±3.04%",
             "extra": "50 samples"
           }
         ]
