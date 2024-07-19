@@ -4,7 +4,7 @@
 
 [munkres](../globals.md) / Pair
 
-# Type alias: Pair\<A, B\>
+# Type Alias: Pair\<A, B\>
 
 > **Pair**\<`A`, `B`\>: [`A`, `B`]
 
@@ -16,6 +16,12 @@ type.
 
 This is useful for scenarios such as key-value pairs, coordinates, and
 other dual-element structures.
+
+## Type Parameters
+
+• **A**
+
+• **B** = `A`
 
 ## Examples
 
@@ -29,12 +35,6 @@ const coordinate: Pair<number> = [15, 20];
 const keyValue: Pair<string, number> = ['age', 30];
 ```
 
-## Type parameters
+## Defined in
 
-• **A**
-
-• **B** = `A`
-
-## Source
-
-[types/pair.d.ts:23](https://github.com/havelessbemore/munkres/blob/5ace585f0cdcff36ea78e3571791e71f76cf4bc5/src/types/pair.d.ts#L23)
+types/pair.ts:23

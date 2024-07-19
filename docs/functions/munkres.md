@@ -28,9 +28,9 @@ An array of pairs `[y, x]` representing the optimal assignment
 of workers to jobs. Each pair consists of a worker index `y` and a job
 index `x`, indicating that worker `y` is assigned to job `x`.
 
-### Source
+### Defined in
 
-[munkres.ts:18](https://github.com/havelessbemore/munkres/blob/5ace585f0cdcff36ea78e3571791e71f76cf4bc5/src/munkres.ts#L18)
+[munkres.ts:18](https://github.com/havelessbemore/munkres/blob/113202b0c1b467d28937703cda450103cdf776b4/src/munkres.ts#L18)
 
 ## munkres(costMatrix)
 
@@ -44,6 +44,6 @@ index `x`, indicating that worker `y` is assigned to job `x`.
 
 [`Pair`](../type-aliases/Pair.md)\<`number`\>[]
 
-### Source
+### Defined in
 
-[munkres.ts:19](https://github.com/havelessbemore/munkres/blob/5ace585f0cdcff36ea78e3571791e71f76cf4bc5/src/munkres.ts#L19)
+[munkres.ts:19](https://github.com/havelessbemore/munkres/blob/113202b0c1b467d28937703cda450103cdf776b4/src/munkres.ts#L19)

@@ -4,6 +4,12 @@
 
 # munkres
 
+## References
+
+### default
+
+Renames and re-exports [munkres](functions/munkres.md)
+
 ## Type Aliases
 
 - [Matrix](type-aliases/Matrix.md)
@@ -20,9 +26,3 @@
 - [invertMatrix](functions/invertMatrix.md)
 - [munkres](functions/munkres.md)
 - [negateMatrix](functions/negateMatrix.md)
-
-## References
-
-### default
-
-Renames and re-exports [munkres](functions/munkres.md)

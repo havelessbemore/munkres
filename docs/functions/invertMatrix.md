@@ -65,9 +65,9 @@ invertMatrix(matrix, 50);
 // ]
 ```
 
-### Source
+### Defined in
 
-[helpers.ts:157](https://github.com/havelessbemore/munkres/blob/5ace585f0cdcff36ea78e3571791e71f76cf4bc5/src/helpers.ts#L157)
+[helpers.ts:157](https://github.com/havelessbemore/munkres/blob/113202b0c1b467d28937703cda450103cdf776b4/src/helpers.ts#L157)
 
 ## invertMatrix(matrix, bigVal)
 
@@ -83,6 +83,6 @@ invertMatrix(matrix, 50);
 
 `void`
 
-### Source
+### Defined in
 
-[helpers.ts:158](https://github.com/havelessbemore/munkres/blob/5ace585f0cdcff36ea78e3571791e71f76cf4bc5/src/helpers.ts#L158)
+[helpers.ts:158](https://github.com/havelessbemore/munkres/blob/113202b0c1b467d28937703cda450103cdf776b4/src/helpers.ts#L158)

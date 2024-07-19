@@ -4,7 +4,7 @@
 
 [munkres](../globals.md) / Matrix
 
-# Type alias: Matrix\<T\>
+# Type Alias: Matrix\<T\>
 
 > **Matrix**\<`T`\>: `T`[][]
 
@@ -14,6 +14,10 @@ The matrix is represented as a double array. The outer array represents
 the rows of the matrix, and each inner array represents the columns in a
 row. This type is generic and can be used to create matrices of any
 given type, including `number`, `string`, `boolean`, `bigint`, etc.
+
+## Type Parameters
+
+• **T**
 
 ## Examples
 
@@ -49,10 +53,6 @@ const booleanMatrix: Matrix<boolean> = [
 ];
 ```
 
-## Type parameters
+## Defined in
 
-• **T**
-
-## Source
-
-[types/matrix.ts:37](https://github.com/havelessbemore/munkres/blob/5ace585f0cdcff36ea78e3571791e71f76cf4bc5/src/types/matrix.ts#L37)
+[types/matrix.ts:37](https://github.com/havelessbemore/munkres/blob/113202b0c1b467d28937703cda450103cdf776b4/src/types/matrix.ts#L37)

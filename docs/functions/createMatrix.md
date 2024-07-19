@@ -11,7 +11,7 @@
 Constructs a matrix from a set of row
 and column objects using a provided callback function.
 
-## Type parameters
+## Type Parameters
 
 • **R**
 
@@ -56,6 +56,6 @@ const costs = createMatrix(workers, jobs, costFn);
 // ]
 ```
 
-## Source
+## Defined in
 
-[helpers.ts:44](https://github.com/havelessbemore/munkres/blob/5ace585f0cdcff36ea78e3571791e71f76cf4bc5/src/helpers.ts#L44)
+[helpers.ts:44](https://github.com/havelessbemore/munkres/blob/113202b0c1b467d28937703cda450103cdf776b4/src/helpers.ts#L44)

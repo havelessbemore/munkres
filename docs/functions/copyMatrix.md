@@ -10,7 +10,7 @@
 
 Creates a copy from a given matrix or matrix-like input.
 
-## Type parameters
+## Type Parameters
 
 • **T**
 
@@ -26,6 +26,6 @@ The matrix to be copied.
 
 A copy of the given matrix.
 
-## Source
+## Defined in
 
-[helpers.ts:14](https://github.com/havelessbemore/munkres/blob/5ace585f0cdcff36ea78e3571791e71f76cf4bc5/src/helpers.ts#L14)
+[helpers.ts:14](https://github.com/havelessbemore/munkres/blob/113202b0c1b467d28937703cda450103cdf776b4/src/helpers.ts#L14)

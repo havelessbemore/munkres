@@ -11,7 +11,7 @@
 Constructs a matrix with given dimensions
 using a provided callback function.
 
-## Type parameters
+## Type Parameters
 
 • **T**
 
@@ -52,6 +52,6 @@ const costs = createMatrix(workers.length, jobs.length, costFn);
 // ]
 ```
 
-## Source
+## Defined in
 
-[helpers.ts:78](https://github.com/havelessbemore/munkres/blob/5ace585f0cdcff36ea78e3571791e71f76cf4bc5/src/helpers.ts#L78)
+[helpers.ts:78](https://github.com/havelessbemore/munkres/blob/113202b0c1b467d28937703cda450103cdf776b4/src/helpers.ts#L78)

@@ -4,7 +4,7 @@
 
 [munkres](../globals.md) / MatrixLike
 
-# Type alias: MatrixLike\<T\>
+# Type Alias: MatrixLike\<T\>
 
 > **MatrixLike**\<`T`\>: `ArrayLike`\<`ArrayLike`\<`T`\>\>
 
@@ -17,6 +17,10 @@ with typed arrays or other sequence-like objects.
 The outer array represents the rows of the matrix, and each inner array
 represents the columns in a row. This type is generic and can be used to
 create matrices of any given type.
+
+## Type Parameters
+
+• **T**
 
 ## Examples
 
@@ -34,10 +38,6 @@ const matrix: MatrixLike<number> = {
 const divMatrix: MatrixLike<HTMLElement> = document.querySelectorAll('.foo');
 ```
 
-## Type parameters
+## Defined in
 
-• **T**
-
-## Source
-
-[types/matrixLike.ts:28](https://github.com/havelessbemore/munkres/blob/5ace585f0cdcff36ea78e3571791e71f76cf4bc5/src/types/matrixLike.ts#L28)
+[types/matrixLike.ts:28](https://github.com/havelessbemore/munkres/blob/113202b0c1b467d28937703cda450103cdf776b4/src/types/matrixLike.ts#L28)

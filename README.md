@@ -15,7 +15,7 @@ A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm
 
    - Use `number` or `bigint` matrices.
    - Use square (_NxN_) or rectangular (_MxN_) matrices.
-   - Works with any [MatrixLike](src/types/matrixLike.d.ts) input. Use arrays, typed arrays, custom objects, etc.
+   - Works with any [MatrixLike](src/types/matrixLike.ts) input. Use arrays, typed arrays, custom objects, etc.
 
 1. Fast ([benchmarks](#results))
 
@@ -107,14 +107,14 @@ console.log(assignments);
 
 ### Types
 
-- [`Matrix<T>`](src/types/matrix.d.ts): A generic 2D matrix (i.e. `T[][]`).
+- [`Matrix<T>`](src/types/matrix.ts): A generic 2D matrix (i.e. `T[][]`).
 
-- [`MatrixLike<T>`](src/types/matrixLike.d.ts): A generic read-only 2D matrix.
+- [`MatrixLike<T>`](src/types/matrixLike.ts): A generic read-only 2D matrix.
 
   - Can be made from any `ArrayLike` objects (i.e. any indexable object with a numeric `length` property). This
     allows for more flexibility, such as matrices made with typed arrays or objects.
 
-- [`Pair<A, B = A>`](src/types/pair.d.ts): A generic pair (i.e. `[A, B]`).
+- [`Pair<A, B = A>`](src/types/pair.ts): A generic pair (i.e. `[A, B]`).
 
 ### Helpers
 
