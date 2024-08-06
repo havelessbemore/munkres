@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1722959080858,
+  "lastUpdate": 1722959328097,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -4215,6 +4215,44 @@ window.BENCHMARK_DATA = {
             "value": 1346.2610281599977,
             "unit": "ms",
             "range": "±3.41%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "2bca77bc19fdfcfa233ab72272d7e1cb2cdab5ce",
+          "message": "Add node v22 to main workflow",
+          "timestamp": "2024-08-06T11:44:27-04:00",
+          "tree_id": "5f51b5f959170d7971a43d082164e54ddb89c582",
+          "url": "https://github.com/havelessbemore/munkres/commit/2bca77bc19fdfcfa233ab72272d7e1cb2cdab5ce"
+        },
+        "date": 1722959327783,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2047.6735834,
+            "unit": "ms",
+            "range": "±3.01%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1366.1846379200015,
+            "unit": "ms",
+            "range": "±3.13%",
             "extra": "50 samples"
           }
         ]
