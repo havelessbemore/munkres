@@ -280,13 +280,11 @@ function exec$2(matrix) {
   const starsX = new Array(X).fill(-1);
   const starsY = new Array(Y).fill(-1);
   const stars = steps2To3$1(matrix, dualX, dualY, starsX, starsY);
-  Y <= X ? (
-    // @ts-expect-error ts(2769)
-    step4$1(Y - stars, matrix, dualX, dualY, starsX, starsY)
-  ) : (
-    // @ts-expect-error ts(2769)
-    step4B$1(X - stars, matrix, dualX, dualY, starsX, starsY)
-  );
+  if (Y <= X) {
+    step4$1(Y - stars, matrix, dualX, dualY, starsX, starsY);
+  } else {
+    step4B$1(X - stars, matrix, dualX, dualY, starsX, starsY);
+  }
   return { dualX, dualY, matrix, starsX, starsY };
 }
 function step1$1(matrix, dualX, dualY) {
@@ -489,7 +487,11 @@ function exec$1(matrix) {
   const starsX = new Array(X).fill(-1);
   const starsY = new Array(Y).fill(-1);
   const stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
-  Y <= X ? step4(Y - stars, matrix, dualX, dualY, starsX, starsY) : step4B(X - stars, matrix, dualX, dualY, starsX, starsY);
+  if (Y <= X) {
+    step4(Y - stars, matrix, dualX, dualY, starsX, starsY);
+  } else {
+    step4B(X - stars, matrix, dualX, dualY, starsX, starsY);
+  }
   return { dualX, dualY, matrix, starsX, starsY };
 }
 function step1(matrix, dualX, dualY) {

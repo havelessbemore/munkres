@@ -35,11 +35,13 @@ export function exec<T extends number | bigint>(
   const stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
 
   // Step 4: Find complete matching
-  Y <= X
-    ? // @ts-expect-error ts(2769)
-      step4(Y - stars, matrix, dualX, dualY, starsX, starsY)
-    : // @ts-expect-error ts(2769)
-      step4B(X - stars, matrix, dualX, dualY, starsX, starsY);
+  if (Y <= X) {
+    // @ts-expect-error ts(2769)
+    step4(Y - stars, matrix, dualX, dualY, starsX, starsY);
+  } else {
+    // @ts-expect-error ts(2769)
+    step4B(X - stars, matrix, dualX, dualY, starsX, starsY);
+  }
 
   // Return matching
   return { dualX, dualY, matrix, starsX, starsY };

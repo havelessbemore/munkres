@@ -28,4 +28,4 @@ A copy of the given matrix.
 
 ## Defined in
 
-[helpers.ts:14](https://github.com/havelessbemore/munkres/blob/1a41104a2d067b3df1a0b5e9aecaaada88bbf79b/src/helpers.ts#L14)
+[helpers.ts:14](https://github.com/havelessbemore/munkres/blob/96ca8c3d8a7149b86376a9ca1eea1dab78a6109c/src/helpers.ts#L14)

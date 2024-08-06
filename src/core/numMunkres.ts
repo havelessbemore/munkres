@@ -29,9 +29,11 @@ export function exec(matrix: MatrixLike<number>): Matching<number> {
   const stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
 
   // Step 4: Find complete matching
-  Y <= X
-    ? step4(Y - stars, matrix, dualX, dualY, starsX, starsY)
-    : step4B(X - stars, matrix, dualX, dualY, starsX, starsY);
+  if (Y <= X) {
+    step4(Y - stars, matrix, dualX, dualY, starsX, starsY);
+  } else {
+    step4B(X - stars, matrix, dualX, dualY, starsX, starsY);
+  }
 
   // Return matching
   return { dualX, dualY, matrix, starsX, starsY };
