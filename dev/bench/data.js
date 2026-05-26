@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1724106132668,
+  "lastUpdate": 1779801835958,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -4329,6 +4329,42 @@ window.BENCHMARK_DATA = {
             "value": 1373.5886793200025,
             "unit": "ms",
             "range": "±3.70%",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Michael Rojas",
+            "username": "havelessbemore",
+            "email": "dev.michael.rojas@gmail.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "a5125617bbab3c0b8922b4083349c03c2e836eb9",
+          "message": "Merge pull request #118 from havelessbemore/worktree-v2.1.0-dev\n\nRelease 2.0.5: property-test safety net + NaN fix",
+          "timestamp": "2026-05-26T05:20:39Z",
+          "url": "https://github.com/havelessbemore/munkres/commit/a5125617bbab3c0b8922b4083349c03c2e836eb9"
+        },
+        "date": 1779801835497,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1630.0374192600007,
+            "range": "±2.91%",
+            "unit": "ms",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1303.0955026399972,
+            "range": "±3.80%",
+            "unit": "ms",
             "extra": "50 samples"
           }
         ]
