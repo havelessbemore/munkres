@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779823387269,
+  "lastUpdate": 1779824420606,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -4514,6 +4514,44 @@ window.BENCHMARK_DATA = {
             "name": "bigint[2048][2048]",
             "value": 4463.139423999999,
             "range": "±3.53%",
+            "unit": "ms",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0cde65a8937337a544d9d7273a0eeead415c6b89",
+          "message": "Merge pull request #125 from havelessbemore/migrate-to-tsup\n\nbuild: migrate from rollup to tsup",
+          "timestamp": "2026-05-26T15:34:53-04:00",
+          "tree_id": "131ef0ac291e0c0b04dc2d43f103c495fdf593d0",
+          "url": "https://github.com/havelessbemore/munkres/commit/0cde65a8937337a544d9d7273a0eeead415c6b89"
+        },
+        "date": 1779824420106,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1032.2428806000007,
+            "range": "±2.37%",
+            "unit": "ms",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 3959.2808608800015,
+            "range": "±3.15%",
             "unit": "ms",
             "extra": "50 samples"
           }
