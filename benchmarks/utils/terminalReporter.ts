@@ -1,6 +1,24 @@
-import Bench, { Task } from "tinybench";
+import { Bench, type Task } from "tinybench";
 
 import type { SuiteReporter } from "../types/suiteReporter.ts";
+
+// In tinybench 6 only "completed" / "aborted-with-statistics" results carry
+// the WithStatistics fields (latency, throughput, period, totalTime). Treat
+// other states as not-yet-measured.
+function withStats(task: Task) {
+  const r = task.result;
+  if (
+    r &&
+    (r.state === "completed" || r.state === "aborted-with-statistics")
+  ) {
+    return r;
+  }
+  return undefined;
+}
+
+function stats(task: Task) {
+  return withStats(task)?.latency;
+}
 
 export class TerminalReporter implements SuiteReporter {
   protected results: Map<string, Record<string, unknown>>;
@@ -10,13 +28,34 @@ export class TerminalReporter implements SuiteReporter {
     this.results = new Map();
     this.columns = [
       ["Name", (task) => task.name],
-      ["Min (ms)", (task) => (task.result ? +task.result.min.toFixed(5) : NaN)],
-      ["Max (ms)", (task) => (task.result ? +task.result.max.toFixed(5) : NaN)],
+      [
+        "Min (ms)",
+        (task) => {
+          const s = stats(task);
+          return s ? +s.min.toFixed(5) : NaN;
+        },
+      ],
+      [
+        "Max (ms)",
+        (task) => {
+          const s = stats(task);
+          return s ? +s.max.toFixed(5) : NaN;
+        },
+      ],
       [
         "Avg (ms)",
-        (task) => (task.result ? +task.result.mean.toFixed(5) : NaN),
+        (task) => {
+          const s = stats(task);
+          return s ? +s.mean.toFixed(5) : NaN;
+        },
       ],
-      ["Samples", (task) => (task.result ? +task.result.samples.length : NaN)],
+      [
+        "Samples",
+        (task) => {
+          const s = stats(task);
+          return s ? s.samplesCount : NaN;
+        },
+      ],
     ];
   }
 
@@ -34,7 +73,10 @@ export class TerminalReporter implements SuiteReporter {
   }
 
   onBenchComplete(bench: Bench, name?: string): void {
-    const time = bench.tasks.reduce((sum, t) => sum + t.result!.totalTime, 0);
+    const time = bench.tasks.reduce((sum, t) => {
+      const r = withStats(t);
+      return r ? sum + r.totalTime : sum;
+    }, 0);
     const dy = 6 + this.results.size;
     process.stdout.write(`Total time: ${time}ms\n`);
     process.stdout.moveCursor(0, -dy);

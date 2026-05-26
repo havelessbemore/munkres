@@ -22,9 +22,9 @@ function genBig(): bigint {
 }
 
 let bench: Bench;
-const suite = new Suite({ warmup: true }).addReporter(new TerminalReporter());
+const suite = new Suite().addReporter(new TerminalReporter());
 
-suite.add(`number`, (bench = new Bench({ iterations: 50 })));
+suite.add(`number`, (bench = new Bench({ iterations: 50, warmup: true, retainSamples: true })));
 for (let i = 1; i <= 12; ++i) {
   const N = 1 << i;
   let mat: Matrix<number>;
@@ -36,7 +36,7 @@ for (let i = 1; i <= 12; ++i) {
   });
 }
 
-suite.add(`bigint`, (bench = new Bench({ iterations: 50 })));
+suite.add(`bigint`, (bench = new Bench({ iterations: 50, warmup: true, retainSamples: true })));
 for (let i = 1; i <= 11; ++i) {
   const N = 1 << i;
   let mat: Matrix<bigint>;
