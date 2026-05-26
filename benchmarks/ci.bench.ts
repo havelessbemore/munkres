@@ -47,6 +47,19 @@ const outputPath = path.resolve(options.output);
 mkdirSync(path.dirname(outputPath), { recursive: true });
 suite.addReporter(new CIReporter(outputPath));
 
+// Force a synchronous GC between iterations. tinybench's `afterEach` runs
+// after the iteration's timing window closes, so the GC pause does not
+// count against the measurement. With per-iteration allocations on the
+// order of 32-96 MB (the bigint matrix dominates), letting GC run on its
+// own schedule across 50+ iterations introduces 2-3× per-iteration noise
+// that swamps the algorithm's intrinsic cost. Forcing GC here pins each
+// iteration to roughly the same heap state and gives the dashboard a
+// stable signal. The optional-chain keeps the script working without
+// `--expose-gc` (just with the prior noise level).
+const sweep = () => {
+  globalThis.gc?.();
+};
+
 // Create number[][] benchmark
 (() => {
   const N = 4096; // 2**12
@@ -57,6 +70,7 @@ suite.addReporter(new CIReporter(outputPath));
     {
       afterEach: () => {
         mat = [];
+        sweep();
       },
       beforeEach: () => {
         mat = gen(N, N, () => genNum(MIN_VAL, MAX_VAL));
@@ -76,6 +90,7 @@ suite.addReporter(new CIReporter(outputPath));
     {
       afterEach: () => {
         mat = [];
+        sweep();
       },
       beforeEach: () => {
         mat = gen(N, N, () => genBig(MIN_VAL, MAX_VAL));

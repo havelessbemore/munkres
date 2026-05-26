@@ -38,8 +38,8 @@
     "README.md"
   ],
   "scripts": {
-    "bench:ci": "tsx ./benchmarks/ci.bench.ts",
-    "bench": "tsx --max-old-space-size=2560 ./benchmarks/munkres.bench.ts",
+    "bench:ci": "tsx --expose-gc ./benchmarks/ci.bench.ts",
+    "bench": "tsx --expose-gc --max-old-space-size=2560 ./benchmarks/munkres.bench.ts",
     "build": "tsc --noEmit && tsup",
     "build:docs": "typedoc",
     "format": "prettier . --write",

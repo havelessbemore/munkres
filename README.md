@@ -248,9 +248,21 @@ Benchmarks are integrated into our CI/CD pipeline and automatically run with eac
 Specs:
 
 - Package version: latest
-- Runtime: NodeJS v20
-- Benchmarking Tool: tinybench v2.6.0
+- Runtime: NodeJS v24
+- Benchmarking Tool: tinybench v6
 - OS: [ubuntu-latest](https://github.com/actions/runner-images)
+
+#### What the dashboard measures
+
+Each datapoint is **per-iteration wall time**, averaged across 50 iterations after a warmup pass. Per-iteration cost is dominated by the bench harness itself for large inputs:
+
+- The benchmark generates a fresh cost matrix on every iteration (`beforeEach`), runs `munkres()` (the timed window), then clears it (`afterEach`). Tinybench measures only the `munkres()` call, but the allocator/GC state at the start of each iteration is shaped by what happened across the surrounding 50 iterations.
+- For `bigint[2048][2048]`, the input matrix alone is ~96 MB of boxed BigInts. The algorithm itself completes in ~800 ms (measurable via a one-shot timed call). The dashboard reports ~3 s under the same conditions — the additional ~2 s is per-iteration allocator/GC overhead that compounds across the run.
+- For `number[4096][4096]`, the matrix is ~32 MB of doubles (smaller, denser, often SMI-optimized by V8), so the harness overhead is a smaller share.
+
+To stabilize the per-iteration signal, the bench scripts force a synchronous GC between iterations (via `globalThis.gc()`, enabled by `--expose-gc`). This pins each iteration to a comparable heap state and reduces run-to-run variance on shared CI runners. The forced GC happens inside `afterEach`, after the timing window has already closed, so it does not bias the measurement.
+
+**Use the dashboard for relative regression detection across commits, not as a measure of algorithm speed in isolation.**
 
 ### Results
 
