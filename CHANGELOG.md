@@ -1,5 +1,20 @@
 # Change Log
 
+## [2.1.0](https://github.com/havelessbemore/munkres/compare/v2.0.5...v2.1.0) (2026-05-26)
+
+### Added
+
+- New `MunkresOptions { finite?: boolean }` accepted as an optional second argument to `munkres()`. Pass `{ finite: true }` to promise that the matrix contains only finite values; the library will skip its O(Y*X) NaN/Infinity scan and dispatch directly to the faster all-finite arithmetic path. If a non-finite value is present despite the promise, the result is undefined.
+
+### Changed
+
+- Internal dispatcher now routes finite number matrices through the same arithmetic path used for bigint, bypassing the `|| 0` NaN-coercion overhead in `numMunkres.ts`'s hot loop. Infinity-bearing matrices continue to route to the existing `numMunkres` path with no change in behavior. The routing decision is based on a single-pass O(Y*X) scan (`src/utils/inspectNumeric.ts`).
+- The NaN-input `TypeError` is now thrown from the dispatcher rather than from inside `numMunkres.exec`. Error message and coordinates are unchanged.
+
+### Fixed
+
+- `number` cost matrices with `max(c) - min(c) > Number.MAX_VALUE / 2` now throw `RangeError` instead of silently producing an `Infinity`-corrupted result. The library's worst-case intermediate arithmetic magnitude is `2 * (max - min)`; over-range inputs were previously overflowing internally and returning undefined output. The bound is on the input *range*, not the maximum absolute value; `scripts/overflow-smt-search.py` confirms tightness via Z3. Pass `{ finite: true }` to skip this check at the caller's risk. `bigint` matrices are unaffected.
+
 ## [2.0.5](https://github.com/havelessbemore/munkres/compare/v2.0.4...v2.0.5) (2026-05-26)
 
 ### Fixed
