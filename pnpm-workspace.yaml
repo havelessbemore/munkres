@@ -1,0 +1,7 @@
+# pnpm settings — see https://pnpm.io/settings
+# Allow esbuild's postinstall to run. esbuild downloads platform-native
+# binaries during install; without explicit approval pnpm refuses to
+# execute the postinstall script and the binary is missing, breaking
+# the build.
+allowBuilds:
+  esbuild: true
