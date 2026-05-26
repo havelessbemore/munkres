@@ -71,19 +71,15 @@ const setMode = (_: unknown, mode: "run" | "warmup") => {
   inMeasurement = mode === "run";
 };
 
-// tinybench's defaults are designed for hot-loop microbenchmarks: it
-// keeps running iterations until *both* an accumulated-time budget and
-// an iteration-count floor are exceeded. The defaults `time: 1000` and
-// `warmupTime: 250` cause a fast task at ~1us/iter to run millions of
-// iterations (filling the time budget) — predictably blowing up wall
-// time, especially with a forced GC after each iter.
-//
-// We want exactly `iterations` measured samples per task (and one
-// warmup iter for JIT priming), so we zero out both time budgets and
-// fix the warmup count to 1.
+// `time: 1000` (tinybench default) lets fast tasks accumulate dense
+// sample counts; the 50-iter floor pins slow tasks. `warmupIterations:
+// 1, warmupTime: 0` keeps warmup to a single priming iteration per
+// task — V8 only needs one to enter the optimized tier, and a
+// non-zero warmup time combined with per-iter GC was the original
+// source of the observed "warmup hangs" (fast tasks would otherwise
+// run millions of warmup iters to fill `warmupTime: 250`).
 const BENCH_OPTS = {
   iterations: 50,
-  time: 0,
   warmup: true,
   warmupIterations: 1,
   warmupTime: 0,

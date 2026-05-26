@@ -31,19 +31,27 @@ const setMode = (_: unknown, mode: "run" | "warmup") => {
   inMeasurement = mode === "run";
 };
 
-// tinybench's defaults are designed for hot-loop microbenchmarks: it
-// keeps running iterations until *both* an accumulated-time budget and
-// an iteration-count floor are exceeded. The defaults `time: 1000` and
-// `warmupTime: 250` cause a fast task at ~1us/iter to run millions of
-// iterations (filling the time budget) — predictably blowing up wall
-// time, especially with a forced GC after each iter.
-//
-// We want exactly `iterations` measured samples per task (and one
-// warmup iter for JIT priming), so we zero out both time budgets and
-// fix the warmup count to 1.
+// Per-iteration GC is only worthwhile when the matrix allocation is
+// large enough to push the V8 generational GC into noticeable churn.
+// For small N, the allocation is in the KB range and built-in GC keeps
+// up cheaply — but a forced `gc()` still costs ~1ms per call, which
+// dominates the iteration time and (with tinybench's time-based sample
+// floor) blocks the bench from collecting the dense sample counts
+// that give fast tasks their statistical robustness. The threshold
+// below is roughly "matrix is over 1MB of raw allocation", which is
+// where forced-GC stabilization starts paying for itself.
+const HEAVY_CELLS = 1 << 14; // 16384 cells; N >= 128 for square matrices
+const sweepIfHeavy = (cells: number) => (cells >= HEAVY_CELLS ? sweep : undefined);
+
+// `time: 1000` (tinybench default) gives fast tasks the sample density
+// they need; the 50-iter floor pins slow tasks. `warmupIterations: 1,
+// warmupTime: 0` keeps warmup to a single priming iteration per task
+// (V8 only needs one to enter the optimized tier, and warmup with a
+// non-zero time budget plus per-iter GC was the original source of the
+// observed "warmup hangs" — fast tasks would otherwise run millions of
+// warmup iters to fill `warmupTime: 250`).
 const BENCH_OPTS = {
   iterations: 50,
-  time: 0,
   warmup: true,
   warmupIterations: 1,
   warmupTime: 0,
@@ -55,8 +63,10 @@ const BENCH_OPTS = {
 let bench: Bench;
 const suite = new Suite().addReporter(new TerminalReporter());
 
+// Number suite: 2x2 through 8192x8192 (13 sizes). 8192 takes ~5min at 50
+// samples; smaller sizes complete in well under a second each.
 suite.add(`number`, (bench = new Bench(BENCH_OPTS)));
-for (let i = 1; i <= 12; ++i) {
+for (let i = 1; i <= 13; ++i) {
   const N = 1 << i;
   let mat: Matrix<number>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
@@ -64,12 +74,14 @@ for (let i = 1; i <= 12; ++i) {
       mat = [];
       mat = gen(N, N, genInt);
     },
-    afterEach: sweep,
+    afterEach: sweepIfHeavy(N * N),
   });
 }
 
+// Bigint suite, regular sizes: 2x2 through 4096x4096 with the standard
+// 50-sample floor.
 suite.add(`bigint`, (bench = new Bench(BENCH_OPTS)));
-for (let i = 1; i <= 11; ++i) {
+for (let i = 1; i <= 12; ++i) {
   const N = 1 << i;
   let mat: Matrix<bigint>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
@@ -77,7 +89,27 @@ for (let i = 1; i <= 11; ++i) {
       mat = [];
       mat = gen(N, N, genBig);
     },
-    afterEach: sweep,
+    afterEach: sweepIfHeavy(N * N),
+  });
+}
+
+// Bigint 8192: ~21 seconds per iteration; 50 samples would be ~17min.
+// Split it into a separate Bench with a 10-sample floor to keep total
+// runtime in line with the historical README, which reports 10 samples
+// for this size for the same reason.
+suite.add(
+  `bigint (huge)`,
+  (bench = new Bench({ ...BENCH_OPTS, iterations: 10 })),
+);
+{
+  const N = 8192;
+  let mat: Matrix<bigint>;
+  bench.add(`${N}x${N}`, () => munkres(mat), {
+    beforeEach: () => {
+      mat = [];
+      mat = gen(N, N, genBig);
+    },
+    afterEach: sweepIfHeavy(N * N),
   });
 }
 
