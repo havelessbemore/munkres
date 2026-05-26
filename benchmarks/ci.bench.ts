@@ -1,3 +1,4 @@
+import { mkdirSync } from "node:fs";
 import path from "node:path";
 
 import { program } from "commander";
@@ -11,8 +12,15 @@ import { Suite } from "./utils/suite.ts";
 import { CIReporter } from "./utils/ciReporter.ts";
 import { BENCHMARK_SEED, mulberry32 } from "./utils/seededRandom.ts";
 
-// Define and get parameters
-program.option("-o, --output <filepath>", "output file path");
+// Define and get parameters. The default is set so the script runs without
+// arguments — pnpm 10's `run` semantics forward `--` to the script command,
+// which commander treats as end-of-options, dropping `--output X` to
+// positional args. Defaulting the option here sidesteps that entirely.
+program.option(
+  "-o, --output <filepath>",
+  "output file path",
+  "benchmark_results/ci.txt",
+);
 program.parse(process.argv);
 const options = program.opts();
 
@@ -35,7 +43,9 @@ let bench: Bench;
 const suite = new Suite({ warmup: true });
 
 // Add reporters
-suite.addReporter(new CIReporter(path.resolve(options.output)));
+const outputPath = path.resolve(options.output);
+mkdirSync(path.dirname(outputPath), { recursive: true });
+suite.addReporter(new CIReporter(outputPath));
 
 // Create number[][] benchmark
 (() => {
