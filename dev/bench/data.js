@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779818775973,
+  "lastUpdate": 1779823387269,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -4475,6 +4475,44 @@ window.BENCHMARK_DATA = {
           {
             "name": "bigint[2048][2048]",
             "value": 4581.185241219996,
+            "range": "±3.53%",
+            "unit": "ms",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ebfab08ad923aea609e3553a4e70d843d6854495",
+          "message": "Merge pull request #124 from havelessbemore/fix-bench-cli-args\n\nfix(bench): default --output and self-create dir; works under pnpm 10's `--` forwarding",
+          "timestamp": "2026-05-26T15:16:59-04:00",
+          "tree_id": "5b034e9ce934992d76b82b8aa08b761694dd0bc5",
+          "url": "https://github.com/havelessbemore/munkres/commit/ebfab08ad923aea609e3553a4e70d843d6854495"
+        },
+        "date": 1779823386893,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1286.2776147600002,
+            "range": "±2.68%",
+            "unit": "ms",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 4463.139423999999,
             "range": "±3.53%",
             "unit": "ms",
             "extra": "50 samples"
