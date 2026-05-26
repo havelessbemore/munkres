@@ -48,17 +48,16 @@ export function exec(
 ): Matching<bigint>;
 export function exec<T extends number | bigint>(
   costMatrix: MatrixLike<T>,
-  options: ExecOptions = {},
+  options?: ExecOptions,
 ): Matching<T> {
   // If bigint (i.e. finite) matrix
-  const first = (costMatrix[0] ?? [])[0];
-  if (isBigInt(first)) {
+  if (isBigInt((costMatrix[0] ?? [])[0])) {
     return bigExec(costMatrix as MatrixLike<bigint>) as Matching<T>;
   }
 
   // If caller promises finite values
   const numMatrix = costMatrix as MatrixLike<number>;
-  if (options.finite) {
+  if (options?.finite) {
     return bigExec(numMatrix) as Matching<T>;
   }
 
