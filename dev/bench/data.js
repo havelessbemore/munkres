@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779830064814,
+  "lastUpdate": 1779833069212,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -4628,6 +4628,44 @@ window.BENCHMARK_DATA = {
             "name": "bigint[2048][2048]",
             "value": 3973.0741636599982,
             "range": "±3.09%",
+            "unit": "ms",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "20658184a1ebb250e675b1b5817afc08cf037391",
+          "message": "Merge pull request #128 from havelessbemore/bench/stable-gc\n\nbench: force GC between iterations + document harness semantics",
+          "timestamp": "2026-05-26T17:57:09-04:00",
+          "tree_id": "e82854c50cf8a6d8fc0d611a83769e33864ce677",
+          "url": "https://github.com/havelessbemore/munkres/commit/20658184a1ebb250e675b1b5817afc08cf037391"
+        },
+        "date": 1779833068149,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1223.8808314199998,
+            "range": "±2.80%",
+            "unit": "ms",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 4661.680271399996,
+            "range": "±3.37%",
             "unit": "ms",
             "extra": "50 samples"
           }
