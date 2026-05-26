@@ -47,24 +47,52 @@ const outputPath = path.resolve(options.output);
 mkdirSync(path.dirname(outputPath), { recursive: true });
 suite.addReporter(new CIReporter(outputPath));
 
-// Force a synchronous GC between iterations. tinybench's `afterEach` runs
-// after the iteration's timing window closes, so the GC pause does not
-// count against the measurement. With per-iteration allocations on the
-// order of 32-96 MB (the bigint matrix dominates), letting GC run on its
-// own schedule across 50+ iterations introduces 2-3× per-iteration noise
-// that swamps the algorithm's intrinsic cost. Forcing GC here pins each
-// iteration to roughly the same heap state and gives the dashboard a
-// stable signal. The optional-chain keeps the script working without
-// `--expose-gc` (just with the prior noise level).
+// Force a synchronous GC between iterations during the measurement phase
+// only. tinybench's `afterEach` runs after the iteration's timing window
+// closes, so the GC pause does not count against the measurement. With
+// per-iteration allocations on the order of 32-96 MB (the bigint matrix
+// dominates), letting GC run on its own schedule across 50+ iterations
+// introduces 2-3× per-iteration noise that swamps the algorithm's
+// intrinsic cost. Forcing GC here pins each iteration to roughly the
+// same heap state and gives the dashboard a stable signal.
+//
+// Bench-level `setup`/`teardown` gives us the `mode` ('warmup' | 'run'),
+// letting us flip a flag and only sweep during measurement. This is
+// load-bearing: tinybench's warmup loop exits on accumulated *task
+// time*, not wall time, so for a fast task at ~1us/iter, hitting
+// `warmupTime: 250ms` requires ~250,000 iterations. A 1ms
+// `globalThis.gc()` on every one would stretch warmup to ~250 seconds
+// of wall time per task.
+let inMeasurement = false;
 const sweep = () => {
-  globalThis.gc?.();
+  if (inMeasurement) globalThis.gc?.();
 };
+const setMode = (_: unknown, mode: "run" | "warmup") => {
+  inMeasurement = mode === "run";
+};
+
+// `time: 1000` (tinybench default) lets fast tasks accumulate dense
+// sample counts; the 50-iter floor pins slow tasks. `warmupIterations:
+// 1, warmupTime: 0` keeps warmup to a single priming iteration per
+// task — V8 only needs one to enter the optimized tier, and a
+// non-zero warmup time combined with per-iter GC was the original
+// source of the observed "warmup hangs" (fast tasks would otherwise
+// run millions of warmup iters to fill `warmupTime: 250`).
+const BENCH_OPTS = {
+  iterations: 50,
+  warmup: true,
+  warmupIterations: 1,
+  warmupTime: 0,
+  retainSamples: true,
+  setup: setMode,
+  teardown: setMode,
+} as const;
 
 // Create number[][] benchmark
 (() => {
   const N = 4096; // 2**12
   let mat: Matrix<number>;
-  bench = new Bench({ iterations: 50, warmup: true, retainSamples: true }).add(
+  bench = new Bench(BENCH_OPTS).add(
     `number[${N}][${N}]`,
     () => munkres(mat),
     {
@@ -84,7 +112,7 @@ const sweep = () => {
 (() => {
   const N = 2048; // 2**11
   let mat: Matrix<bigint>;
-  bench = new Bench({ iterations: 50, warmup: true, retainSamples: true }).add(
+  bench = new Bench(BENCH_OPTS).add(
     `bigint[${N}][${N}]`,
     () => munkres(mat),
     {
