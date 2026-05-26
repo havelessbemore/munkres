@@ -6,20 +6,19 @@ import { munkres } from "../src/munkres.ts";
 
 import { Suite } from "./utils/suite.ts";
 import { TerminalReporter } from "./utils/terminalReporter.ts";
+import { BENCHMARK_SEED, mulberry32 } from "./utils/seededRandom.ts";
 
 const MIN_VAL = 1;
 const MAX_VAL = Number.MAX_SAFE_INTEGER;
 
-export function genBig(): bigint {
+const rng = mulberry32(BENCHMARK_SEED);
+
+function genInt(): number {
+  return MIN_VAL + Math.trunc((MAX_VAL - MIN_VAL) * rng());
+}
+
+function genBig(): bigint {
   return BigInt(genInt());
-}
-
-export function genInt(): number {
-  return randomInt(MIN_VAL, MAX_VAL);
-}
-
-export function randomInt(min: number, max: number): number {
-  return min + Math.trunc((max - min) * Math.random());
 }
 
 let bench: Bench;

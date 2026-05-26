@@ -9,6 +9,7 @@ import { munkres } from "../src/munkres.ts";
 
 import { Suite } from "./utils/suite.ts";
 import { CIReporter } from "./utils/ciReporter.ts";
+import { BENCHMARK_SEED, mulberry32 } from "./utils/seededRandom.ts";
 
 // Define and get parameters
 program.option("-o, --output <filepath>", "output file path");
@@ -19,12 +20,14 @@ const options = program.opts();
 const MIN_VAL = 1;
 const MAX_VAL = Number.MAX_SAFE_INTEGER;
 
-function genBig(min: number, max: number): bigint {
-  return BigInt(genNum(min, max));
-}
+const rng = mulberry32(BENCHMARK_SEED);
 
 function genNum(min: number, max: number): number {
-  return min + Math.trunc((max - min) * Math.random());
+  return min + Math.trunc((max - min) * rng());
+}
+
+function genBig(min: number, max: number): bigint {
+  return BigInt(genNum(min, max));
 }
 
 // Create benchmark suite
