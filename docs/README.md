@@ -1,4 +1,4 @@
-**munkres** • [**Docs**](globals.md)
+**munkres**
 
 ***
 

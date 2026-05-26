@@ -254,4 +254,5 @@ declare function negateMatrix(matrix: Matrix<bigint>): void;
 declare function munkres(costMatrix: MatrixLike<number>): Pair<number>[];
 declare function munkres(costMatrix: MatrixLike<bigint>): Pair<number>[];
 
-export { type Matrix, type MatrixLike, type Pair, copyMatrix, createMatrix, munkres as default, genMatrix, getMatrixMax, getMatrixMin, invertMatrix, munkres, negateMatrix };
+export { copyMatrix, createMatrix, munkres as default, genMatrix, getMatrixMax, getMatrixMin, invertMatrix, munkres, negateMatrix };
+export type { Matrix, MatrixLike, Pair };

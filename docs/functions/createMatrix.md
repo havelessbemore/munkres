@@ -1,4 +1,4 @@
-[**munkres**](../README.md) • **Docs**
+[**munkres**](../README.md)
 
 ***
 
@@ -8,28 +8,42 @@
 
 > **createMatrix**\<`R`, `C`, `T`\>(`rows`, `cols`, `callbackFn`): [`Matrix`](../type-aliases/Matrix.md)\<`T`\>
 
+Defined in: [helpers.ts:44](https://github.com/havelessbemore/munkres/blob/40b2e813ddbf553c3dca1e2c6416306e26df6f6c/src/helpers.ts#L44)
+
 Constructs a matrix from a set of row
 and column objects using a provided callback function.
 
 ## Type Parameters
 
-• **R**
+### R
 
-• **C**
+`R`
 
-• **T**
+### C
+
+`C`
+
+### T
+
+`T`
 
 ## Parameters
 
-• **rows**: `ArrayLike`\<`R`\>
+### rows
+
+`ArrayLike`\<`R`\>
 
 An array of row objects (such as workers).
 
-• **cols**: `ArrayLike`\<`C`\>
+### cols
+
+`ArrayLike`\<`C`\>
 
 An array of column objects (such as jobs).
 
-• **callbackFn**
+### callbackFn
+
+(`row`, `col`) => `T`
 
 Given a row and a column, returns a value.
 
@@ -55,7 +69,3 @@ const costs = createMatrix(workers, jobs, costFn);
 //   [7, 7]  // [  'Bob' + 'Job1',   'Bob' + 'Job2']
 // ]
 ```
-
-## Defined in
-
-[helpers.ts:44](https://github.com/havelessbemore/munkres/blob/eaf56415da666c8098716c88966089276f8d68fc/src/helpers.ts#L44)

@@ -1,4 +1,4 @@
-[**munkres**](../README.md) • **Docs**
+[**munkres**](../README.md)
 
 ***
 
@@ -6,15 +6,19 @@
 
 # Function: getMatrixMin()
 
-## getMatrixMin(matrix)
+## Call Signature
 
 > **getMatrixMin**(`matrix`): `number` \| `undefined`
+
+Defined in: [helpers.ts:108](https://github.com/havelessbemore/munkres/blob/40b2e813ddbf553c3dca1e2c6416306e26df6f6c/src/helpers.ts#L108)
 
 Finds the minimum value in a given matrix.
 
 ### Parameters
 
-• **matrix**: [`MatrixLike`](../type-aliases/MatrixLike.md)\<`number`\>
+#### matrix
+
+[`MatrixLike`](../type-aliases/MatrixLike.md)\<`number`\>
 
 The matrix.
 
@@ -24,22 +28,24 @@ The matrix.
 
 The minimum value, or `undefined` if the matrix is empty.
 
-### Defined in
-
-[helpers.ts:108](https://github.com/havelessbemore/munkres/blob/eaf56415da666c8098716c88966089276f8d68fc/src/helpers.ts#L108)
-
-## getMatrixMin(matrix)
+## Call Signature
 
 > **getMatrixMin**(`matrix`): `bigint` \| `undefined`
 
+Defined in: [helpers.ts:109](https://github.com/havelessbemore/munkres/blob/40b2e813ddbf553c3dca1e2c6416306e26df6f6c/src/helpers.ts#L109)
+
+Finds the minimum value in a given matrix.
+
 ### Parameters
 
-• **matrix**: [`MatrixLike`](../type-aliases/MatrixLike.md)\<`bigint`\>
+#### matrix
+
+[`MatrixLike`](../type-aliases/MatrixLike.md)\<`bigint`\>
+
+The matrix.
 
 ### Returns
 
 `bigint` \| `undefined`
 
-### Defined in
-
-[helpers.ts:109](https://github.com/havelessbemore/munkres/blob/eaf56415da666c8098716c88966089276f8d68fc/src/helpers.ts#L109)
+The minimum value, or `undefined` if the matrix is empty.
