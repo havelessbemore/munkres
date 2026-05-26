@@ -2,9 +2,18 @@ import type { MatrixLike } from "../types/matrixLike.ts";
 import type { Matching } from "../types/matching.ts";
 
 import { isBigInt } from "../utils/is.ts";
+import { inspectNumeric } from "../utils/inspectNumeric.ts";
 
 import { exec as bigExec } from "./bigMunkres.ts";
 import { exec as numExec } from "./numMunkres.ts";
+
+/**
+ * Internal options for the dispatcher. The public-facing
+ * `MunkresOptions` (in `src/munkres.options.ts`) is shaped to match.
+ */
+interface ExecOptions {
+  finite?: boolean;
+}
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to
@@ -12,6 +21,7 @@ import { exec as numExec } from "./numMunkres.ts";
  *
  * @param costMatrix - The cost matrix, where `mat[y][x]` represents the cost
  * of assigning worker `y` to job `x`.
+ * @param options - Internal dispatch options. See {@link ExecOptions}.
  *
  * @returns An array of pairs `[y, x]` representing the optimal assignment
  * of workers to jobs. Each pair consists of a worker index `y` and a job
@@ -28,14 +38,63 @@ import { exec as numExec } from "./numMunkres.ts";
  * 1. {@link https://public.websites.umich.edu/~murty/612/612slides4.pdf | Murty, K. G.. Primal-Dual Algorithms. [IOE 612, Lecture slides 4]. Department of Industrial and Operations Engineering, University of Michigan.}
  *     - Used to implement primal-dual and slack variables.
  */
-export function exec(matrix: MatrixLike<number>): Matching<number>;
-export function exec(matrix: MatrixLike<bigint>): Matching<bigint>;
+export function exec(
+  costMatrix: MatrixLike<number>,
+  options?: ExecOptions,
+): Matching<number>;
+export function exec(
+  costMatrix: MatrixLike<bigint>,
+  options?: ExecOptions,
+): Matching<bigint>;
 export function exec<T extends number | bigint>(
-  matrix: MatrixLike<T>,
+  costMatrix: MatrixLike<T>,
+  options: ExecOptions = {},
 ): Matching<T> {
-  return (
-    isBigInt((matrix[0] ?? [])[0])
-      ? bigExec(matrix as MatrixLike<bigint>)
-      : numExec(matrix as MatrixLike<number>)
-  ) as Matching<T>;
+  // If bigint (i.e. finite) matrix
+  const first = (costMatrix[0] ?? [])[0];
+  if (isBigInt(first)) {
+    return bigExec(costMatrix as MatrixLike<bigint>) as Matching<T>;
+  }
+
+  // If caller promises finite values
+  const numMatrix = costMatrix as MatrixLike<number>;
+  if (options.finite) {
+    return bigExec(numMatrix) as Matching<T>;
+  }
+
+  // Inspect the matrix
+  const inspection = inspectNumeric(numMatrix);
+
+  // If the matrix contains NaN
+  if (inspection.nanAt) {
+    throw new TypeError(
+      `munkres: cost matrix contains NaN at ` +
+        `[${inspection.nanAt[0]}][${inspection.nanAt[1]}]. ` +
+        `Use Infinity to mark forbidden assignments.`,
+    );
+  }
+
+  // If the matrix contains ±Infinity
+  if (inspection.infinityAt) {
+    // Use route with Infinity-handling logic
+    return numExec(numMatrix) as Matching<T>;
+  }
+
+  // Check the input range is safe. The algorithm's worst-case intermediate
+  // values is 2 * (max - min). If 2 * (max - min) > MAX_VALUE, overflow
+  // may occur. Enforcement ensures safe inputs and representable values.
+  if (
+    inspection.rangeMin != null &&
+    inspection.rangeMax != null &&
+    inspection.rangeMax - inspection.rangeMin > Number.MAX_VALUE / 2
+  ) {
+    throw new RangeError(
+      `munkres: cost matrix range (max - min = ${
+        inspection.rangeMax - inspection.rangeMin
+      }) exceeds Number.MAX_VALUE / 2; intermediate arithmetic may overflow. ` +
+        `Scale your cost matrix down, or use a bigint cost matrix.`,
+    );
+  }
+
+  return bigExec(numMatrix) as Matching<T>;
 }

@@ -17,19 +17,6 @@ export function exec(matrix: MatrixLike<number>): Matching<number> {
     return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
   }
 
-  // Validate: NaN is never a meaningful cost.
-  for (let y = 0; y < Y; ++y) {
-    const row = matrix[y];
-    for (let x = 0; x < X; ++x) {
-      if (row[x] !== row[x]) {
-        throw new TypeError(
-          `munkres: cost matrix contains NaN at [${y}][${x}]. ` +
-            `Use Infinity to mark forbidden assignments.`,
-        );
-      }
-    }
-  }
-
   // Step 1: Reduce
   const dualX = new Array<number>(X);
   const dualY = new Array<number>(Y);
