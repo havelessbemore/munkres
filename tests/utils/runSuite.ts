@@ -1,4 +1,4 @@
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test } from "vitest";
 
 import type { MatrixLike } from "../../src/types/matrixLike";
 import { map } from "../../src/utils/matrix";

@@ -1,4 +1,4 @@
-import { describe } from "@jest/globals";
+import { describe } from "vitest";
 
 import { munkres } from "./munkres";
 
@@ -10,7 +10,7 @@ import {
   testSquare,
   testTranspose,
   testWide,
-} from "../tests/meta";
+} from "../tests/utils/invariants";
 import { Options } from "../tests/types/options";
 
 describe(`${munkres.name}`, () => {
