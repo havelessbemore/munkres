@@ -37,10 +37,11 @@ const setMode = (_: unknown, mode: "run" | "warmup") => {
 // up cheaply — but a forced `gc()` still costs ~1ms per call, which
 // dominates the iteration time and (with tinybench's time-based sample
 // floor) blocks the bench from collecting the dense sample counts
-// that give fast tasks their statistical robustness. The threshold
-// below is roughly "matrix is over 1MB of raw allocation", which is
-// where forced-GC stabilization starts paying for itself.
-const HEAVY_CELLS = 1 << 14; // 16384 cells; N >= 128 for square matrices
+// that give fast tasks their statistical robustness. For square
+// power-of-2 matrices, `cells >= 32768` excludes N=128 (16384 cells)
+// and includes N=256 (65536 cells) and up — the point where matrices
+// start landing in V8's old generation rather than nursery.
+const HEAVY_CELLS = 1 << 15; // 32768 cells; N >= 256 for square matrices
 const sweepIfHeavy = (cells: number) => (cells >= HEAVY_CELLS ? sweep : undefined);
 
 // `time: 1000` (tinybench default) gives fast tasks the sample density
