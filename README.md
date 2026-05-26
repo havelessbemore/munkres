@@ -118,14 +118,22 @@ const assignments = munkres(largeFiniteCostMatrix, { finite: true });
 
   **Parameters**
 
-  - `costMatrix`: a `MatrixLike<number>` or `MatrixLike<bigint>` where `costMatrix[y][x]` is the cost of assigning worker `y` to job `x`. Use `Infinity` / `-Infinity` to mark forbidden assignments.
+  - `costMatrix`: a `MatrixLike<number>` or `MatrixLike<bigint>` where `costMatrix[y][x]` is the cost of assigning worker `y` to job `x`. Use `Infinity` / `-Infinity` to mark forbidden assignments. The matrix is treated as `costMatrix.length` × `costMatrix[0].length`; cells beyond row 0's width are ignored.
   - `options` (optional):
-    - `finite: boolean` — when `true`, promises that the matrix contains no `NaN` or `Infinity`. Skips the input-validation scan and dispatches straight to the fast all-finite arithmetic path. If a non-finite value is present despite the promise, the result is undefined.
+    - `finite: boolean` — when `true`, promises that the matrix contains no `NaN` or `Infinity` **and** that its range is in-bounds (`max(c) - min(c) <= Number.MAX_VALUE / 2`). Skips both the finiteness scan and the range check, dispatching straight to the fast all-finite path. If either promise is violated, the result is undefined (may produce a wrong assignment or `Infinity` / `NaN` cells; never throws `RangeError` / `TypeError` from this path).
+
+  **Returns**
+
+  An array of `[y, x]` pairs. The result length is `min(rows, cols)` and pairs are always `[y, x]` (row, column) regardless of shape. When `rows > cols`, the unmatched rows are simply absent from the result; when `cols > rows`, the unmatched columns are absent.
 
   **Throws**
 
   - `TypeError`: if a `number` cost matrix contains `NaN`. The error message includes the coordinates of the first NaN encountered. Use `Infinity` for forbidden assignments instead. Skipped under `{ finite: true }`.
   - `RangeError`: if a `number` cost matrix has `max(c) - min(c) > Number.MAX_VALUE / 2`. The algorithm's worst-case intermediate arithmetic magnitude is `2 * (max - min)`; this guard keeps all intermediates representable in IEEE-754 double precision. Scale your matrix down, or use a `bigint` matrix. Skipped under `{ finite: true }`. `bigint` matrices are exempt entirely.
+
+  **Numeric precision**
+
+  The `number` path uses IEEE 754 double-precision arithmetic. For matrices of *integer* costs where exact optima are required (especially when values approach or exceed `Number.MAX_SAFE_INTEGER`), pass a `bigint` cost matrix to use the arbitrary-precision path. Floating-point inputs are inherently approximate; the `number` path may return a valid but suboptimal assignment when precision is lost in slack comparisons.
 
 ### Types
 

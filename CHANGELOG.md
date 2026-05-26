@@ -4,7 +4,9 @@
 
 ### Added
 
-- New `MunkresOptions { finite?: boolean }` accepted as an optional second argument to `munkres()`. Pass `{ finite: true }` to promise that the matrix contains only finite values; the library will skip its O(Y*X) NaN/Infinity scan and dispatch directly to the faster all-finite arithmetic path. If a non-finite value is present despite the promise, the result is undefined.
+- New `MunkresOptions { finite?: boolean }` accepted as an optional second argument to `munkres()`. Pass `{ finite: true }` to promise that the matrix contains only finite values and is in-range; the library will skip both its O(Y*X) NaN/Infinity scan and the range check (see _Fixed_ below), and dispatch directly to the faster all-finite arithmetic path. If either promise is violated, the result is undefined.
+- New public type `MunkresOptions` exported from the package root for TypeScript consumers building thin wrappers (`import type { MunkresOptions } from "munkres";`).
+- Documentation now states explicitly that the result has length `min(rows, cols)`, pairs are always `[y, x]` regardless of matrix shape, and the `number` path is IEEE 754 floating-point (use `bigint` for exact optima on integer costs).
 
 ### Changed
 

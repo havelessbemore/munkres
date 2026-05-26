@@ -137,6 +137,28 @@ describe("munkres range-bound enforcement", () => {
     ).not.toThrow();
   });
 
+  test("throws RangeError when range exceeds MAX_VALUE / 2 by one ULP", () => {
+    // Pin the strict-inequality threshold bidirectionally. The at-boundary
+    // test above verifies `range == MAX_VALUE/2` does NOT throw; this test
+    // verifies the very next representable value above MAX_VALUE/2 DOES
+    // throw. Together they pin the `>` semantics tightly enough that a
+    // refactor which shifts the bound up by even a single ULP would
+    // be caught.
+    //
+    // `HALF * (1 + Number.EPSILON)` is exactly `nextUp(HALF)` — the next
+    // representable double above MAX_VALUE / 2 — because `1 + EPSILON` is
+    // the next double after 1.0 and multiplication preserves the
+    // single-ULP relative step at this magnitude.
+    const nextUpHalf = HALF * (1 + Number.EPSILON);
+    // Self-check: catches a hypothetical future float-model change.
+    expect(nextUpHalf > HALF).toBe(true);
+    const matrix = [
+      [0, nextUpHalf],
+      [nextUpHalf, 0],
+    ];
+    expect(() => munkres(matrix)).toThrow(RangeError);
+  });
+
   test("does NOT throw for typical inputs (well under the bound)", () => {
     expect(() =>
       munkres([

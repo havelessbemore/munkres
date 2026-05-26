@@ -25,6 +25,7 @@
  * SOFTWARE.
  */
 
+// src/utils/matrixLike.ts
 function getMax(matrix) {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
@@ -42,7 +43,7 @@ function getMax(matrix) {
   }
   return max;
 }
-function getMin$1(matrix) {
+function getMin(matrix) {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
   if (Y <= 0 || X <= 0) {
@@ -60,6 +61,7 @@ function getMin$1(matrix) {
   return min;
 }
 
+// src/utils/matrix.ts
 function create(rows, columns, callbackFn) {
   const Y = rows.length;
   const X = columns.length;
@@ -129,6 +131,7 @@ function negate(matrix) {
   }
 }
 
+// src/helpers.ts
 function copyMatrix(matrix) {
   return from(matrix);
 }
@@ -142,7 +145,7 @@ function getMatrixMax(matrix) {
   return getMax(matrix);
 }
 function getMatrixMin(matrix) {
-  return getMin$1(matrix);
+  return getMin(matrix);
 }
 function invertMatrix(matrix, bigVal) {
   invert(matrix, bigVal);
@@ -151,10 +154,37 @@ function negateMatrix(matrix) {
   negate(matrix);
 }
 
+// src/utils/is.ts
 function isBigInt(value) {
   return typeof value === "bigint";
 }
 
+// src/utils/inspectNumeric.ts
+function inspectNumeric(matrix) {
+  const Y = matrix.length;
+  if (Y === 0) return {};
+  const X = matrix[0]?.length ?? 0;
+  if (X === 0) return {};
+  let infinityAt;
+  let rangeMin = Infinity;
+  let rangeMax = -Infinity;
+  for (let y = 0; y < Y; ++y) {
+    const row = matrix[y];
+    for (let x = 0; x < X; ++x) {
+      const v = row[x];
+      if (v !== v) return { nanAt: [y, x] };
+      if (v === Infinity || v === -Infinity) {
+        if (!infinityAt) infinityAt = [y, x];
+        continue;
+      }
+      if (v < rangeMin) rangeMin = v;
+      if (v > rangeMax) rangeMax = v;
+    }
+  }
+  return { infinityAt, rangeMin, rangeMax };
+}
+
+// src/utils/arrayLike.ts
 function entries(array) {
   const N = array.length;
   const out = new Array(N);
@@ -163,7 +193,7 @@ function entries(array) {
   }
   return out;
 }
-function getMin(array) {
+function getMin2(array) {
   const N = array.length;
   if (N <= 0) {
     return void 0;
@@ -177,6 +207,7 @@ function getMin(array) {
   return min;
 }
 
+// src/utils/mutableArrayLike.ts
 function partitionByMin(indices, values, min = 0, max = indices.length) {
   let mid = min + 1;
   let minIndex = indices[min];
@@ -195,7 +226,8 @@ function partitionByMin(indices, values, min = 0, max = indices.length) {
   return mid;
 }
 
-function step4B$1(unmatched, matrix, dualX, dualY, starsX, starsY) {
+// src/core/bigMunkresB.ts
+function step4B(unmatched, matrix, dualX, dualY, starsX, starsY) {
   if (unmatched <= 0) {
     return;
   }
@@ -207,9 +239,9 @@ function step4B$1(unmatched, matrix, dualX, dualY, starsX, starsY) {
     if (starsX[x] !== -1) {
       continue;
     }
-    const N = matchB$1(x, matrix, dualX, dualY, starsY, slack, slackV, slackX);
+    const N = matchB(x, matrix, dualX, dualY, starsY, slack, slackV, slackX);
     --unmatched;
-    step6B$1(x, N, dualX, dualY, slack, slackV, starsY);
+    step6B(x, N, dualX, dualY, slack, slackV, starsY);
     step5B(slack[N - 1], slackX, starsX, starsY);
   }
 }
@@ -222,7 +254,7 @@ function step5B(y, primeY, starsX, starsY) {
     y = sy;
   } while (y !== -1);
 }
-function step6B$1(x, N, dualX, dualY, slack, slackV, starsY) {
+function step6B(x, N, dualX, dualY, slack, slackV, starsY) {
   const sum = slackV[slack[N - 1]];
   let min = sum;
   for (let i = 0; i < N; ++i) {
@@ -233,7 +265,7 @@ function step6B$1(x, N, dualX, dualY, slack, slackV, starsY) {
     x = starsY[y];
   }
 }
-function matchB$1(x, matrix, dualX, dualY, starsY, slack, slackV, slackX) {
+function matchB(x, matrix, dualX, dualY, starsY, slack, slackV, slackX) {
   const Y = slack.length;
   let dx = dualX[x];
   for (let y = 0; y < Y; ++y) {
@@ -268,7 +300,8 @@ function matchB$1(x, matrix, dualX, dualY, starsY, slack, slackV, slackX) {
   return steps;
 }
 
-function exec$2(matrix) {
+// src/core/bigMunkres.ts
+function exec(matrix) {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
   if (Y <= 0 || X <= 0) {
@@ -276,25 +309,25 @@ function exec$2(matrix) {
   }
   const dualX = new Array(X);
   const dualY = new Array(Y);
-  step1$1(matrix, dualX, dualY);
+  step1(matrix, dualX, dualY);
   const starsX = new Array(X).fill(-1);
   const starsY = new Array(Y).fill(-1);
-  const stars = steps2To3$1(matrix, dualX, dualY, starsX, starsY);
+  const stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
   if (Y <= X) {
-    step4$1(Y - stars, matrix, dualX, dualY, starsX, starsY);
+    step4(Y - stars, matrix, dualX, dualY, starsX, starsY);
   } else {
-    step4B$1(X - stars, matrix, dualX, dualY, starsX, starsY);
+    step4B(X - stars, matrix, dualX, dualY, starsX, starsY);
   }
   return { dualX, dualY, matrix, starsX, starsY };
 }
-function step1$1(matrix, dualX, dualY) {
+function step1(matrix, dualX, dualY) {
   const X = dualX.length;
   const Y = dualY.length;
   if (Y > X) {
     dualY.fill(isBigInt(matrix[0][0]) ? 0n : 0);
   } else {
     for (let y = 0; y < Y; ++y) {
-      dualY[y] = getMin(matrix[y]);
+      dualY[y] = getMin2(matrix[y]);
     }
   }
   if (Y < X) {
@@ -317,7 +350,7 @@ function step1$1(matrix, dualX, dualY) {
     }
   }
 }
-function steps2To3$1(matrix, dualX, dualY, starsX, starsY) {
+function steps2To3(matrix, dualX, dualY, starsX, starsY) {
   const X = dualX.length;
   const Y = dualY.length;
   const S = Y <= X ? Y : X;
@@ -336,7 +369,7 @@ function steps2To3$1(matrix, dualX, dualY, starsX, starsY) {
   }
   return stars;
 }
-function step4$1(unmatched, matrix, dualX, dualY, starsX, starsY) {
+function step4(unmatched, matrix, dualX, dualY, starsX, starsY) {
   if (unmatched <= 0) {
     return;
   }
@@ -348,13 +381,13 @@ function step4$1(unmatched, matrix, dualX, dualY, starsX, starsY) {
     if (starsY[y] !== -1) {
       continue;
     }
-    const N = match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
+    const N = match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
     --unmatched;
-    step6$1(y, N, dualX, dualY, slack, slackV, starsX);
-    step5$1(slack[N - 1], slackY, starsX, starsY);
+    step6(y, N, dualX, dualY, slack, slackV, starsX);
+    step5(slack[N - 1], slackY, starsX, starsY);
   }
 }
-function step5$1(x, primeX, starsX, starsY) {
+function step5(x, primeX, starsX, starsY) {
   do {
     const y = primeX[x];
     const sx = starsY[y];
@@ -363,7 +396,7 @@ function step5$1(x, primeX, starsX, starsY) {
     x = sx;
   } while (x !== -1);
 }
-function step6$1(y, N, dualX, dualY, slack, slackV, starsX) {
+function step6(y, N, dualX, dualY, slack, slackV, starsX) {
   const sum = slackV[slack[--N]];
   dualY[y] += sum;
   for (let i = 0; i < N; ++i) {
@@ -374,7 +407,7 @@ function step6$1(y, N, dualX, dualY, slack, slackV, starsX) {
     dualY[y] += min;
   }
 }
-function match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
+function match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
   const X = slack.length;
   let dy = dualY[y];
   let row = matrix[y];
@@ -411,7 +444,8 @@ function match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
   return steps;
 }
 
-function step4B(unmatched, matrix, dualX, dualY, starsX, starsY) {
+// src/core/numMunkresB.ts
+function step4B2(unmatched, matrix, dualX, dualY, starsX, starsY) {
   if (unmatched <= 0) {
     return;
   }
@@ -423,13 +457,13 @@ function step4B(unmatched, matrix, dualX, dualY, starsX, starsY) {
     if (starsX[x] !== -1) {
       continue;
     }
-    const N = matchB(x, matrix, dualX, dualY, starsY, slack, slackV, slackX);
+    const N = matchB2(x, matrix, dualX, dualY, starsY, slack, slackV, slackX);
     --unmatched;
-    step6B(x, N, dualX, dualY, slack, slackV, starsY);
+    step6B2(x, N, dualX, dualY, slack, slackV, starsY);
     step5B(slack[N - 1], slackX, starsX, starsY);
   }
 }
-function step6B(x, N, dualX, dualY, slack, slackV, starsY) {
+function step6B2(x, N, dualX, dualY, slack, slackV, starsY) {
   const sum = slackV[slack[N - 1]];
   let min = sum;
   for (let i = 0; i < N; ++i) {
@@ -440,7 +474,7 @@ function step6B(x, N, dualX, dualY, slack, slackV, starsY) {
     x = starsY[y];
   }
 }
-function matchB(x, matrix, dualX, dualY, starsY, slack, slackV, slackX) {
+function matchB2(x, matrix, dualX, dualY, starsY, slack, slackV, slackX) {
   const Y = slack.length;
   let dx = dualX[x];
   for (let y = 0; y < Y; ++y) {
@@ -475,43 +509,34 @@ function matchB(x, matrix, dualX, dualY, starsY, slack, slackV, slackX) {
   return steps;
 }
 
-function exec$1(matrix) {
+// src/core/numMunkres.ts
+function exec2(matrix) {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
   if (Y <= 0 || X <= 0) {
     return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
   }
-  for (let y = 0; y < Y; ++y) {
-    const row = matrix[y];
-    for (let x = 0; x < X; ++x) {
-      if (row[x] !== row[x]) {
-        throw new TypeError(
-          `munkres: cost matrix contains NaN at [${y}][${x}]. Use Infinity to mark forbidden assignments.`
-        );
-      }
-    }
-  }
   const dualX = new Array(X);
   const dualY = new Array(Y);
-  step1(matrix, dualX, dualY);
+  step12(matrix, dualX, dualY);
   const starsX = new Array(X).fill(-1);
   const starsY = new Array(Y).fill(-1);
-  const stars = steps2To3(matrix, dualX, dualY, starsX, starsY);
+  const stars = steps2To32(matrix, dualX, dualY, starsX, starsY);
   if (Y <= X) {
-    step4(Y - stars, matrix, dualX, dualY, starsX, starsY);
+    step42(Y - stars, matrix, dualX, dualY, starsX, starsY);
   } else {
-    step4B(X - stars, matrix, dualX, dualY, starsX, starsY);
+    step4B2(X - stars, matrix, dualX, dualY, starsX, starsY);
   }
   return { dualX, dualY, matrix, starsX, starsY };
 }
-function step1(matrix, dualX, dualY) {
+function step12(matrix, dualX, dualY) {
   const X = dualX.length;
   const Y = dualY.length;
   if (Y > X) {
     dualY.fill(0);
   } else {
     for (let y = 0; y < Y; ++y) {
-      dualY[y] = getMin(matrix[y]);
+      dualY[y] = getMin2(matrix[y]);
     }
   }
   if (Y < X) {
@@ -534,7 +559,7 @@ function step1(matrix, dualX, dualY) {
     }
   }
 }
-function steps2To3(matrix, dualX, dualY, starsX, starsY) {
+function steps2To32(matrix, dualX, dualY, starsX, starsY) {
   const X = dualX.length;
   const Y = dualY.length;
   const S = Y <= X ? Y : X;
@@ -553,7 +578,7 @@ function steps2To3(matrix, dualX, dualY, starsX, starsY) {
   }
   return stars;
 }
-function step4(unmatched, matrix, dualX, dualY, starsX, starsY) {
+function step42(unmatched, matrix, dualX, dualY, starsX, starsY) {
   if (unmatched <= 0) {
     return;
   }
@@ -565,13 +590,13 @@ function step4(unmatched, matrix, dualX, dualY, starsX, starsY) {
     if (starsY[y] !== -1) {
       continue;
     }
-    const N = match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
+    const N = match2(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
     --unmatched;
-    step6(y, N, dualX, dualY, slack, slackV, starsX);
-    step5(slack[N - 1], slackY, starsX, starsY);
+    step62(y, N, dualX, dualY, slack, slackV, starsX);
+    step52(slack[N - 1], slackY, starsX, starsY);
   }
 }
-function step6(y, N, dualX, dualY, slack, slackV, starsX) {
+function step62(y, N, dualX, dualY, slack, slackV, starsX) {
   const sum = slackV[slack[--N]];
   dualY[y] = dualY[y] + sum || 0;
   for (let i = 0; i < N; ++i) {
@@ -582,7 +607,7 @@ function step6(y, N, dualX, dualY, slack, slackV, starsX) {
     dualY[y] = dualY[y] + min || 0;
   }
 }
-function step5(x, primeX, starsX, starsY) {
+function step52(x, primeX, starsX, starsY) {
   do {
     const y = primeX[x];
     const sx = starsY[y];
@@ -591,7 +616,7 @@ function step5(x, primeX, starsX, starsY) {
     x = sx;
   } while (x !== -1);
 }
-function match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
+function match2(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
   const X = slack.length;
   let dy = dualY[y];
   let row = matrix[y];
@@ -628,10 +653,33 @@ function match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
   return steps;
 }
 
-function exec(matrix) {
-  return isBigInt((matrix[0] ?? [])[0]) ? exec$2(matrix) : exec$1(matrix);
+// src/core/munkres.ts
+function exec3(costMatrix, options) {
+  if (isBigInt((costMatrix[0] ?? [])[0])) {
+    return exec(costMatrix);
+  }
+  const numMatrix = costMatrix;
+  if (options?.finite) {
+    return exec(numMatrix);
+  }
+  const inspection = inspectNumeric(numMatrix);
+  if (inspection.nanAt) {
+    throw new TypeError(
+      `munkres: cost matrix contains NaN at [${inspection.nanAt[0]}][${inspection.nanAt[1]}]. Use Infinity to mark forbidden assignments.`
+    );
+  }
+  if (inspection.infinityAt) {
+    return exec2(numMatrix);
+  }
+  if (inspection.rangeMin != null && inspection.rangeMax != null && inspection.rangeMax - inspection.rangeMin > Number.MAX_VALUE / 2) {
+    throw new RangeError(
+      `munkres: cost matrix range (max - min = ${inspection.rangeMax - inspection.rangeMin}) exceeds Number.MAX_VALUE / 2; intermediate arithmetic may overflow. Scale your cost matrix down, or use a bigint cost matrix.`
+    );
+  }
+  return exec(numMatrix);
 }
 
+// src/utils/matching.ts
 function toPairs(matching) {
   if (matching.starsY.length <= matching.starsX.length) {
     return entries(matching.starsY);
@@ -641,9 +689,22 @@ function toPairs(matching) {
   return pairs;
 }
 
-function munkres(costMatrix) {
-  return toPairs(exec(costMatrix));
+// src/munkres.ts
+function munkres(costMatrix, options) {
+  return toPairs(exec3(costMatrix, options));
 }
 
-export { copyMatrix, createMatrix, munkres as default, genMatrix, getMatrixMax, getMatrixMin, invertMatrix, munkres, negateMatrix };
+// src/index.ts
+var src_default = munkres;
+export {
+  copyMatrix,
+  createMatrix,
+  src_default as default,
+  genMatrix,
+  getMatrixMax,
+  getMatrixMin,
+  invertMatrix,
+  munkres,
+  negateMatrix
+};
 //# sourceMappingURL=munkres.mjs.map
