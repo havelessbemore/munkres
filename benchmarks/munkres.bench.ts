@@ -21,6 +21,13 @@ function genBig(): bigint {
   return BigInt(genInt());
 }
 
+// Force a synchronous GC between iterations to keep per-iteration heap
+// state stable across the 50+ samples. See benchmarks/ci.bench.ts for
+// the longer rationale. No-op when `--expose-gc` is not passed.
+const sweep = () => {
+  globalThis.gc?.();
+};
+
 let bench: Bench;
 const suite = new Suite().addReporter(new TerminalReporter());
 
@@ -33,6 +40,7 @@ for (let i = 1; i <= 12; ++i) {
       mat = [];
       mat = gen(N, N, genInt);
     },
+    afterEach: sweep,
   });
 }
 
@@ -45,6 +53,7 @@ for (let i = 1; i <= 11; ++i) {
       mat = [];
       mat = gen(N, N, genBig);
     },
+    afterEach: sweep,
   });
 }
 
