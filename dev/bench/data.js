@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779824420606,
+  "lastUpdate": 1779827202409,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -4552,6 +4552,44 @@ window.BENCHMARK_DATA = {
             "name": "bigint[2048][2048]",
             "value": 3959.2808608800015,
             "range": "±3.15%",
+            "unit": "ms",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8cd02bb868ceae3ae749ded9771a738dd189a0a6",
+          "message": "Merge pull request #126 from havelessbemore/bump/eslint-v10-drop-esbuild\n\nbuild: bump devDependencies (eslint v10, tinybench v6, ts v6, others); drop esbuild",
+          "timestamp": "2026-05-26T16:19:33-04:00",
+          "tree_id": "ae6ac16fb886d90133bd4759d76e7eecf131d157",
+          "url": "https://github.com/havelessbemore/munkres/commit/8cd02bb868ceae3ae749ded9771a738dd189a0a6"
+        },
+        "date": 1779827202053,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1330.34997476,
+            "range": "±2.78%",
+            "unit": "ms",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 4475.220745199998,
+            "range": "±3.46%",
             "unit": "ms",
             "extra": "50 samples"
           }
