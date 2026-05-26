@@ -23,10 +23,8 @@ jobs:
           cache: "pnpm"
       - name: Clean install
         run: pnpm install --frozen-lockfile
-      - name: Create results directory
-        run: mkdir -p benchmark_results
       - name: Run benchmarks
-        run: pnpm run bench:ci -- --output benchmark_results/ci.txt
+        run: pnpm run bench:ci
       - name: Store results
         uses: benchmark-action/github-action-benchmark@v1
         with:
