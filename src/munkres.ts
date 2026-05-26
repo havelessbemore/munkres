@@ -50,7 +50,7 @@ export function munkres(
 ): Pair<number>[];
 export function munkres<T extends number | bigint>(
   costMatrix: MatrixLike<T>,
-  options: MunkresOptions = {},
+  options?: MunkresOptions,
 ): Pair<number>[] {
   return toPairs(exec(costMatrix as MatrixLike<number>, options));
 }
