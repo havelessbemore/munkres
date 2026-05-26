@@ -14,7 +14,7 @@
  * Uses `exec` directly (rather than `munkres`) where access to the
  * internal `Matching.dualX` / `dualY` is needed.
  */
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test } from "vitest";
 
 import { exec } from "./core/munkres";
 import { munkres } from "./munkres";

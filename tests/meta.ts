@@ -1,4 +1,4 @@
-import { expect, test } from "@jest/globals";
+import { expect, test } from "vitest";
 
 import { flipH, flipV, gen, transpose } from "../src/utils/matrix";
 

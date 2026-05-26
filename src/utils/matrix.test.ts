@@ -1,4 +1,4 @@
-import { describe, it, expect, jest } from "@jest/globals";
+import { describe, expect, it, vi } from "vitest";
 
 import type { Matrix } from "../types/matrix.ts";
 import type { Pair } from "../types/pair.ts";
@@ -26,7 +26,7 @@ describe(`${create.name}()`, () => {
   it("handles empty rows and columns", () => {
     const rows: number[] = [];
     const cols: number[] = [];
-    const callbackFn = jest.fn();
+    const callbackFn = vi.fn();
     const expectedMatrix: number[][] = [];
 
     expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);
@@ -36,7 +36,7 @@ describe(`${create.name}()`, () => {
   it("handles empty rows", () => {
     const rows: string[] = [];
     const cols = ["a", "b", "c"];
-    const callbackFn = jest.fn();
+    const callbackFn = vi.fn();
     const expectedMatrix: Matrix<string> = [];
 
     expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);
@@ -46,7 +46,7 @@ describe(`${create.name}()`, () => {
   it("handles empty columns", () => {
     const rows = [1, 2];
     const cols: number[] = [];
-    const callbackFn = jest.fn();
+    const callbackFn = vi.fn();
     const expectedMatrix: Matrix<number> = [[], []];
 
     expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);

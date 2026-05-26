@@ -1,4 +1,4 @@
-import { describe, expect, test } from "@jest/globals";
+import { describe, expect, test } from "vitest";
 import fc from "fast-check";
 
 import { munkres } from "./munkres";
