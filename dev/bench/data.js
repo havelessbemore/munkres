@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779827202409,
+  "lastUpdate": 1779830064814,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -4590,6 +4590,44 @@ window.BENCHMARK_DATA = {
             "name": "bigint[2048][2048]",
             "value": 4475.220745199998,
             "range": "±3.46%",
+            "unit": "ms",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "74817ff823a4e9c80d66b077d7db1a2b26dbaf13",
+          "message": "Merge pull request #127 from havelessbemore/v2.1.0-hardening\n\nv2.1.0 hardening: docs, CI gates, and coverage gaps",
+          "timestamp": "2026-05-26T17:08:03-04:00",
+          "tree_id": "7f2e0c36db3466801c9dea06b057c2ef0aa6c9db",
+          "url": "https://github.com/havelessbemore/munkres/commit/74817ff823a4e9c80d66b077d7db1a2b26dbaf13"
+        },
+        "date": 1779830064083,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1046.58740754,
+            "range": "±2.40%",
+            "unit": "ms",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 3973.0741636599982,
+            "range": "±3.09%",
             "unit": "ms",
             "extra": "50 samples"
           }
