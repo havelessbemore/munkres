@@ -1,4 +1,4 @@
-import { describe, it, expect } from "@jest/globals";
+import { describe, test, expect } from "vitest";
 
 import type { Matrix } from "./types/matrix.ts";
 
@@ -13,7 +13,7 @@ import {
 } from "./helpers.ts";
 
 describe(`${copyMatrix.name}()`, () => {
-  it("returns an empty matrix when copying an empty matrix", () => {
+  test("returns an empty matrix when copying an empty matrix", () => {
     const original: unknown[][] = [];
     const duplicate = copyMatrix(original);
 
@@ -22,7 +22,7 @@ describe(`${copyMatrix.name}()`, () => {
     expect(duplicate).not.toBe(original);
   });
 
-  it("creates a copy of a matrix of numbers", () => {
+  test("creates a copy of a matrix of numbers", () => {
     const original = [
       [1, 2, 3],
       [4, 5, 6],
@@ -42,7 +42,7 @@ describe(`${copyMatrix.name}()`, () => {
     expect(original[0][0]).toBe(1);
   });
 
-  it("creates a copy of a matrix containing objects", () => {
+  test("creates a copy of a matrix containing objects", () => {
     const original = [
       [{ value: 1 }, { value: 2 }],
       [{ value: 3 }, { value: 4 }],
@@ -64,7 +64,7 @@ describe(`${copyMatrix.name}()`, () => {
     expect(duplicate[1][1]).toBe(original[1][1]);
   });
 
-  it("handles matrices with mixed data types", () => {
+  test("handles matrices with mixed data types", () => {
     const original = [
       [1, "a", true],
       [{}, [], null],
@@ -85,7 +85,7 @@ describe(`${copyMatrix.name}()`, () => {
 });
 
 describe(`${createMatrix.name}()`, () => {
-  it("handles empty arrays of workers and jobs", () => {
+  test("handles empty arrays of workers and jobs", () => {
     const workers: string[] = [];
     const jobs: string[] = [];
     const costFn = (worker: string, job: string) => worker.length + job.length;
@@ -97,7 +97,7 @@ describe(`${createMatrix.name}()`, () => {
     expect(matrix).toEqual(expectedMatrix);
   });
 
-  it("correctly computes a cost matrix for workers and jobs", () => {
+  test("correctly computes a cost matrix for workers and jobs", () => {
     const workers = ["Alice", "Bob"];
     const jobs = ["Job1", "Job2"];
     const costFn = (worker: string, job: string) => worker.length + job.length;
@@ -112,7 +112,7 @@ describe(`${createMatrix.name}()`, () => {
     expect(matrix).toEqual(expectedMatrix);
   });
 
-  it("computes correct costs with a more complex cost function", () => {
+  test("computes correct costs with a more complex cost function", () => {
     const workers = ["Alice", "Bob"];
     const jobs = ["Job1", "Job2"];
     const costFn = (worker: string, job: string) =>
@@ -128,7 +128,7 @@ describe(`${createMatrix.name}()`, () => {
     expect(matrix).toEqual(expectedMatrix);
   });
 
-  it("creates a matrix with varying costs", () => {
+  test("creates a matrix with varying costs", () => {
     const workers = ["John", "Doe"];
     const jobs = ["Cleaning", "Coding"];
     const costFn = (worker: string, job: string) => worker.length * job.length;
@@ -145,7 +145,7 @@ describe(`${createMatrix.name}()`, () => {
 });
 
 describe(`${genMatrix.name}()`, () => {
-  it("handles empty arrays of workers and jobs", () => {
+  test("handles empty arrays of workers and jobs", () => {
     const workers: string[] = [];
     const jobs: string[] = [];
     const costFn = (w: number, j: number) => workers[w].length + jobs[j].length;
@@ -157,7 +157,7 @@ describe(`${genMatrix.name}()`, () => {
     expect(matrix).toEqual(expectedMatrix);
   });
 
-  it("correctly computes a cost matrix for workers and jobs", () => {
+  test("correctly computes a cost matrix for workers and jobs", () => {
     const workers = ["Alice", "Bob"];
     const jobs = ["Job1", "Job2"];
     const costFn = (w: number, j: number) => workers[w].length + jobs[j].length;
@@ -172,7 +172,7 @@ describe(`${genMatrix.name}()`, () => {
     expect(matrix).toEqual(expectedMatrix);
   });
 
-  it("computes correct costs with a more complex cost function", () => {
+  test("computes correct costs with a more complex cost function", () => {
     const workers = ["Alice", "Bob"];
     const jobs = ["Job1", "Job2"];
     const costFn = (w: number, j: number) =>
@@ -188,7 +188,7 @@ describe(`${genMatrix.name}()`, () => {
     expect(matrix).toEqual(expectedMatrix);
   });
 
-  it("creates a matrix with varying costs", () => {
+  test("creates a matrix with varying costs", () => {
     const workers = ["John", "Doe"];
     const jobs = ["Cleaning", "Coding"];
     const costFn = (w: number, j: number) => workers[w].length * jobs[j].length;
@@ -205,32 +205,32 @@ describe(`${genMatrix.name}()`, () => {
 });
 
 describe(`${getMatrixMax.name}()`, () => {
-  it("returns undefined for an empty matrix", () => {
+  test("returns undefined for an empty matrix", () => {
     const mat: Matrix<number> = [];
     expect(getMatrixMax(mat)).toBeUndefined();
   });
 
-  it("returns undefined for a matrix with empty rows", () => {
+  test("returns undefined for a matrix with empty rows", () => {
     const mat = [[], []];
     expect(getMatrixMax(mat)).toBeUndefined();
   });
 
-  it("handles a matrix with a single element", () => {
+  test("handles a matrix with a single element", () => {
     const mat = [[42]];
     expect(getMatrixMax(mat)).toBe(42);
   });
 
-  it("finds the maximum value in a matrix with a single row", () => {
+  test("finds the maximum value in a matrix with a single row", () => {
     const mat = [[1, 2, 3, 4, 5]];
     expect(getMatrixMax(mat)).toBe(5);
   });
 
-  it("finds the maximum value in a matrix with a single column", () => {
+  test("finds the maximum value in a matrix with a single column", () => {
     const mat = [[1], [2], [3], [4], [5]];
     expect(getMatrixMax(mat)).toBe(5);
   });
 
-  it("finds the maximum value in a matrix of positive numbers", () => {
+  test("finds the maximum value in a matrix of positive numbers", () => {
     const mat = [
       [1, 2, 3],
       [4, 5, 6],
@@ -239,7 +239,7 @@ describe(`${getMatrixMax.name}()`, () => {
     expect(getMatrixMax(mat)).toBe(9);
   });
 
-  it("finds the maximum value in a matrix with negative numbers", () => {
+  test("finds the maximum value in a matrix with negative numbers", () => {
     const mat = [
       [-1, -2, -3],
       [-4, -5, -6],
@@ -248,7 +248,7 @@ describe(`${getMatrixMax.name}()`, () => {
     expect(getMatrixMax(mat)).toBe(-1);
   });
 
-  it("finds the maximum value in a matrix containing both positive and negative numbers", () => {
+  test("finds the maximum value in a matrix containing both positive and negative numbers", () => {
     const mat = [
       [-11, 22],
       [33, -44],
@@ -258,32 +258,32 @@ describe(`${getMatrixMax.name}()`, () => {
 });
 
 describe(`${getMatrixMin.name}()`, () => {
-  it("returns undefined for an empty matrix", () => {
+  test("returns undefined for an empty matrix", () => {
     const mat: Matrix<number> = [];
     expect(getMatrixMin(mat)).toBeUndefined();
   });
 
-  it("returns undefined for a matrix with empty rows", () => {
+  test("returns undefined for a matrix with empty rows", () => {
     const mat = [[], []];
     expect(getMatrixMin(mat)).toBeUndefined();
   });
 
-  it("handles a matrix with a single element", () => {
+  test("handles a matrix with a single element", () => {
     const mat = [[42]];
     expect(getMatrixMin(mat)).toBe(42);
   });
 
-  it("finds the minimum value in a matrix with a single row", () => {
+  test("finds the minimum value in a matrix with a single row", () => {
     const mat = [[3, 2, 1, 4, 5]];
     expect(getMatrixMin(mat)).toBe(1);
   });
 
-  it("finds the minimum value in a matrix with a single column", () => {
+  test("finds the minimum value in a matrix with a single column", () => {
     const mat = [[2], [3], [1], [4], [5]];
     expect(getMatrixMin(mat)).toBe(1);
   });
 
-  it("finds the minimum value in a matrix of positive numbers", () => {
+  test("finds the minimum value in a matrix of positive numbers", () => {
     const mat = [
       [5, 2, 3],
       [4, 1, 6],
@@ -292,7 +292,7 @@ describe(`${getMatrixMin.name}()`, () => {
     expect(getMatrixMin(mat)).toBe(1);
   });
 
-  it("finds the minimum value in a matrix with negative numbers", () => {
+  test("finds the minimum value in a matrix with negative numbers", () => {
     const mat = [
       [-1, -2, -3],
       [-4, -5, -6],
@@ -301,7 +301,7 @@ describe(`${getMatrixMin.name}()`, () => {
     expect(getMatrixMin(mat)).toBe(-9);
   });
 
-  it("finds the minimum value in a matrix containing both positive and negative numbers", () => {
+  test("finds the minimum value in a matrix containing both positive and negative numbers", () => {
     const mat = [
       [-11, 22],
       [33, -44],
@@ -311,31 +311,31 @@ describe(`${getMatrixMin.name}()`, () => {
 });
 
 describe(`${invertMatrix.name}()`, () => {
-  it("handles an empty matrix", () => {
+  test("handles an empty matrix", () => {
     const mat: Matrix<number> = [];
     invertMatrix(mat);
     expect(mat).toEqual([]);
   });
 
-  it("handles a matrix with a single element", () => {
+  test("handles a matrix with a single element", () => {
     const mat = [[42]];
     invertMatrix(mat);
     expect(mat).toEqual([[0]]);
   });
 
-  it("handles a matrix with a single row", () => {
+  test("handles a matrix with a single row", () => {
     const mat = [[3, 2, 1, 4, 5]];
     invertMatrix(mat);
     expect(mat).toEqual([[2, 3, 4, 1, 0]]);
   });
 
-  it("handles a matrix with a single column", () => {
+  test("handles a matrix with a single column", () => {
     const mat = [[2], [3], [1], [4], [5]];
     invertMatrix(mat);
     expect(mat).toEqual([[3], [2], [4], [1], [0]]);
   });
 
-  it("inverts a matrix correctly using the maximum value in the matrix by default", () => {
+  test("inverts a matrix correctly using the maximum value in the matrix by default", () => {
     const mat = [
       [1, 2, 3],
       [4, 5, 6],
@@ -348,7 +348,7 @@ describe(`${invertMatrix.name}()`, () => {
     ]);
   });
 
-  it("inverts a matrix correctly with a specified bigVal", () => {
+  test("inverts a matrix correctly with a specified bigVal", () => {
     const mat = [
       [10, 20],
       [30, 40],
@@ -361,7 +361,7 @@ describe(`${invertMatrix.name}()`, () => {
     ]);
   });
 
-  it("handles matrices with negative values, using the default maximum value for inversion", () => {
+  test("handles matrices with negative values, using the default maximum value for inversion", () => {
     const mat = [
       [-1, -2, -3],
       [-4, -5, -6],
@@ -374,7 +374,7 @@ describe(`${invertMatrix.name}()`, () => {
     ]);
   });
 
-  it("correctly inverts a matrix with all elements being the same value", () => {
+  test("correctly inverts a matrix with all elements being the same value", () => {
     const mat = [
       [5, 5],
       [5, 5],
@@ -387,7 +387,7 @@ describe(`${invertMatrix.name}()`, () => {
     ]);
   });
 
-  it("correctly inverts a matrix when bigVal is less than the maximum value in the matrix", () => {
+  test("correctly inverts a matrix when bigVal is less than the maximum value in the matrix", () => {
     const mat = [
       [1, 2, 3],
       [4, 5, 6],
@@ -402,35 +402,35 @@ describe(`${invertMatrix.name}()`, () => {
 });
 
 describe(`${negateMatrix.name}()`, () => {
-  it("does nothing to an empty matrix", () => {
+  test("does nothing to an empty matrix", () => {
     const mat: number[][] = [];
     const expected: number[][] = [];
     negateMatrix(mat);
     expect(mat).toEqual(expected);
   });
 
-  it("correctly negates a matrix with a single element", () => {
+  test("correctly negates a matrix with a single element", () => {
     const mat = [[1]];
     const expected = [[-1]];
     negateMatrix(mat);
     expect(mat).toEqual(expected);
   });
 
-  it("correctly negates a matrix with a single row", () => {
+  test("correctly negates a matrix with a single row", () => {
     const mat = [[1, -2, 3]];
     const expected = [[-1, 2, -3]];
     negateMatrix(mat);
     expect(mat).toEqual(expected);
   });
 
-  it("correctly negates a matrix with a single column", () => {
+  test("correctly negates a matrix with a single column", () => {
     const mat = [[1], [-2], [3]];
     const expected = [[-1], [2], [-3]];
     negateMatrix(mat);
     expect(mat).toEqual(expected);
   });
 
-  it("negates all elements in a matrix of positive numbers", () => {
+  test("negates all elements in a matrix of positive numbers", () => {
     const mat = [
       [1, 2, 3],
       [4, 5, 6],
@@ -445,7 +445,7 @@ describe(`${negateMatrix.name}()`, () => {
     expect(mat).toEqual(expected);
   });
 
-  it("negates all elements in a matrix of negative numbers", () => {
+  test("negates all elements in a matrix of negative numbers", () => {
     const mat = [
       [-1, -2, -3],
       [-4, -5, -6],
@@ -460,7 +460,7 @@ describe(`${negateMatrix.name}()`, () => {
     expect(mat).toEqual(expected);
   });
 
-  it("handles matrices with zero values correctly", () => {
+  test("handles matrices with zero values correctly", () => {
     const mat = [
       [0, -2, 3],
       [-4, -0, 6],
