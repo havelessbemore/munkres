@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779801835958,
+  "lastUpdate": 1779817176267,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -4364,6 +4364,44 @@ window.BENCHMARK_DATA = {
             "name": "bigint[2048][2048]",
             "value": 1303.0955026399972,
             "range": "±3.80%",
+            "unit": "ms",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "edf7295c49a6c30e5618539356236a4384fb8f20",
+          "message": "Merge pull request #119 from havelessbemore/v2.1.0-dev\n\nRelease 2.1.0: add finite option + smarter dispatch",
+          "timestamp": "2026-05-26T13:33:33-04:00",
+          "tree_id": "80bf993f0c9f2b6f84797723d2c1c6049f3b0188",
+          "url": "https://github.com/havelessbemore/munkres/commit/edf7295c49a6c30e5618539356236a4384fb8f20"
+        },
+        "date": 1779817175769,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1224.5460375200005,
+            "range": "±2.66%",
+            "unit": "ms",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 4405.083421399999,
+            "range": "±3.50%",
             "unit": "ms",
             "extra": "50 samples"
           }
