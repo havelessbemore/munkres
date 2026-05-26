@@ -13,11 +13,11 @@ This project is governed by the [Code of Conduct](./CODE_OF_CONDUCT.md). By cont
 
 ## Developing
 
-- `npm run test`: Run tests
-- `npm run test:coverage`: Create coverage reports
-- `npm run lint`: Check styleguide adherence
-- `npm run format`: Automatically adjust your code to the styleguide.
-- `npm run build`: Build the source
+- `pnpm run test`: Run tests
+- `pnpm run test:coverage`: Create coverage reports
+- `pnpm run lint`: Check styleguide adherence
+- `pnpm run format`: Automatically adjust your code to the styleguide.
+- `pnpm run build`: Build the source
 
 ### Reporting Issues
 
@@ -60,8 +60,8 @@ Please follow [conventional commits](https://www.conventionalcommits.org/en/v1.0
 
 Styling is enforced by [ESLint](https://eslint.org/), [Prettier](https://prettier.io/docs/en/integrating-with-linters.html) and [typescript-eslint](https://typescript-eslint.io/).
 
-- Run `npm run lint` to test styleguide adherence.
-- Run `npm run format` to automatically adjust your code to the styleguide.
+- Run `pnpm run lint` to test styleguide adherence.
+- Run `pnpm run format` to automatically adjust your code to the styleguide.
 
 ---
 

@@ -177,16 +177,16 @@ git clone git@github.com:havelessbemore/munkres.git
 cd munkres
 ```
 
-2. Install dependencies
+2. Install dependencies (this project uses [pnpm](https://pnpm.io/))
 
 ```bash
-npm install
+pnpm install
 ```
 
 3. Build the project
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 This will output ECMAScript (`.mjs`) and CommonJS (`.js`) modules in the `dist/` directory.
@@ -196,13 +196,13 @@ This will output ECMAScript (`.mjs`) and CommonJS (`.js`) modules in the `dist/`
 To run the code linter:
 
 ```bash
-npm run lint
+pnpm run lint
 ```
 
 To automatically fix linting issues, run:
 
 ```bash
-npm run format
+pnpm run format
 ```
 
 ## Test
@@ -210,13 +210,13 @@ npm run format
 To run tests:
 
 ```bash
-npm test
+pnpm test
 ```
 
 To run tests with a coverage report:
 
 ```bash
-npm run test:coverage
+pnpm run test:coverage
 ```
 
 A coverage report is generated at `./coverage/index.html`.
@@ -228,7 +228,7 @@ A coverage report is generated at `./coverage/index.html`.
 To run locally:
 
 ```bash
-npm run bench
+pnpm run bench
 ```
 
 ### CI / CD

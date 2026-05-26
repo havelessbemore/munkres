@@ -13,17 +13,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
           node-version: 24
           registry-url: "https://registry.npmjs.org"
+          cache: "pnpm"
       - name: Clean install
-        run: npm ci
+        run: pnpm install --frozen-lockfile
       - name: Publish to npm
-        run: npm publish
+        run: pnpm publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish to jsr
-        run: npx jsr publish
+        run: pnpm dlx jsr publish

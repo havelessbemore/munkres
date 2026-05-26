@@ -13,18 +13,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
           node-version: 24
-          cache: "npm"
+          cache: "pnpm"
       - name: Clean install
-        run: npm ci
+        run: pnpm install --frozen-lockfile
       - name: Create results directory
         run: mkdir -p benchmark_results
       - name: Run benchmarks
-        run: npm run bench:ci -- --output benchmark_results/ci.txt
+        run: pnpm run bench:ci -- --output benchmark_results/ci.txt
       - name: Store results
         uses: benchmark-action/github-action-benchmark@v1
         with:
