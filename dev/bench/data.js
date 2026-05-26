@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779817842595,
+  "lastUpdate": 1779818775973,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -4438,6 +4438,44 @@ window.BENCHMARK_DATA = {
             "name": "bigint[2048][2048]",
             "value": 4491.499418879997,
             "range": "±3.49%",
+            "unit": "ms",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3b2135b1e49aba79df9529277b1b46d42bd2b4ac",
+          "message": "Merge pull request #121 from havelessbemore/perf/avoid-options-allocation\n\nperf: avoid per-call empty-options allocation in dispatcher",
+          "timestamp": "2026-05-26T13:59:53-04:00",
+          "tree_id": "213815d3f011058474d57a1643dffdf2893ec3a9",
+          "url": "https://github.com/havelessbemore/munkres/commit/3b2135b1e49aba79df9529277b1b46d42bd2b4ac"
+        },
+        "date": 1779818775460,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1345.3212531600004,
+            "range": "±2.85%",
+            "unit": "ms",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 4581.185241219996,
+            "range": "±3.53%",
             "unit": "ms",
             "extra": "50 samples"
           }
