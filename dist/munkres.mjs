@@ -4,7 +4,7 @@
  *
  * MIT License
  *
- * Copyright (C) 2024-2024 Michael Rojas <dev.michael.rojas@gmail.com> (https://github.com/havelessbemore)
+ * Copyright (C) 2024-2026 Michael Rojas <dev.michael.rojas@gmail.com> (https://github.com/havelessbemore)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -351,10 +351,10 @@ function step4$1(unmatched, matrix, dualX, dualY, starsX, starsY) {
     const N = match$1(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
     --unmatched;
     step6$1(y, N, dualX, dualY, slack, slackV, starsX);
-    step5(slack[N - 1], slackY, starsX, starsY);
+    step5$1(slack[N - 1], slackY, starsX, starsY);
   }
 }
-function step5(x, primeX, starsX, starsY) {
+function step5$1(x, primeX, starsX, starsY) {
   do {
     const y = primeX[x];
     const sx = starsY[y];
@@ -481,6 +481,16 @@ function exec$1(matrix) {
   if (Y <= 0 || X <= 0) {
     return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
   }
+  for (let y = 0; y < Y; ++y) {
+    const row = matrix[y];
+    for (let x = 0; x < X; ++x) {
+      if (row[x] !== row[x]) {
+        throw new TypeError(
+          `munkres: cost matrix contains NaN at [${y}][${x}]. Use Infinity to mark forbidden assignments.`
+        );
+      }
+    }
+  }
   const dualX = new Array(X);
   const dualY = new Array(Y);
   step1(matrix, dualX, dualY);
@@ -571,6 +581,15 @@ function step6(y, N, dualX, dualY, slack, slackV, starsX) {
     dualX[x] = dualX[x] - min || 0;
     dualY[y] = dualY[y] + min || 0;
   }
+}
+function step5(x, primeX, starsX, starsY) {
+  do {
+    const y = primeX[x];
+    const sx = starsY[y];
+    starsX[x] = y;
+    starsY[y] = x;
+    x = sx;
+  } while (x !== -1);
 }
 function match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
   const X = slack.length;

@@ -5,7 +5,6 @@ import type { MutableArrayLike } from "../types/mutableArrayLike.ts";
 import { getMin } from "../utils/arrayLike.ts";
 import { partitionByMin } from "../utils/mutableArrayLike.ts";
 
-import { step5 } from "./bigMunkres.ts";
 import { step4B } from "./numMunkresB.ts";
 
 export function exec(matrix: MatrixLike<number>): Matching<number> {
@@ -16,6 +15,19 @@ export function exec(matrix: MatrixLike<number>): Matching<number> {
   // Check if empty matrix
   if (Y <= 0 || X <= 0) {
     return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
+  }
+
+  // Validate: NaN is never a meaningful cost.
+  for (let y = 0; y < Y; ++y) {
+    const row = matrix[y];
+    for (let x = 0; x < X; ++x) {
+      if (row[x] !== row[x]) {
+        throw new TypeError(
+          `munkres: cost matrix contains NaN at [${y}][${x}]. ` +
+            `Use Infinity to mark forbidden assignments.`,
+        );
+      }
+    }
   }
 
   // Step 1: Reduce
@@ -211,6 +223,36 @@ export function step6(
     dualX[x] = dualX[x] - min || 0;
     dualY[y] = dualY[y] + min || 0;
   }
+}
+
+/**
+ * Augments the current matching.
+ *
+ * This step effectively increases the number of matches (stars)
+ * by 1, bringing the algorithm closer to an optimal assignment.
+ *
+ * Augmentation is performed by flipping matched and unmatched edges along
+ * an augmenting path, starting from an unmatched node / edge and
+ * continuing until no matched edge can be found.
+ *
+ * @param x - The starting node's column.
+ * @param primeX - An array mapping primed columns to rows.
+ * @param starsX - An array mapping star columns to row. Modified in place.
+ * @param starsY - An array mapping star rows to columns. Modified in place.
+ */
+export function step5(
+  x: number,
+  primeX: ArrayLike<number>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
+): void {
+  do {
+    const y = primeX[x];
+    const sx = starsY[y];
+    starsX[x] = y;
+    starsY[y] = x;
+    x = sx;
+  } while (x !== -1);
 }
 
 /**

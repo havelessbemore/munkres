@@ -1,5 +1,21 @@
 # Change Log
 
+## [2.0.5](https://github.com/havelessbemore/munkres/compare/v2.0.4...v2.0.5) (2026-05-26)
+
+### Fixed
+
+- `NaN` in a number cost matrix now throws `TypeError` instead of silently producing a wrong assignment. (Infinity continues to work as before.)
+- Removed cross-variant `step5` import in `src/core/numMunkres.ts`. The number variant was importing from the bigint variant; no behavior change, decouples the two variants for future refactors.
+
+### Internal
+
+- Added property-based test suite (`src/munkres.property.test.ts`) using fast-check, with a brute-force oracle (`tests/utils/bruteForce.ts`) validating optimality on small matrices across 200+ random runs per property.
+- Benchmarks now use a seeded PRNG (`mulberry32`, seed `0xc0ffee01`) for reproducible inputs — eliminates input noise in regression detection.
+
+### Misc
+
+- Add `fast-check@^3` as a dev dependency.
+
 ## [2.0.4](https://github.com/havelessbemore/munkres/compare/v2.0.3...v2.0.4) (2024-06-22)
 
 ### Misc

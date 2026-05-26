@@ -1,4 +1,4 @@
-[**munkres**](../README.md) • **Docs**
+[**munkres**](../README.md)
 
 ***
 
@@ -6,7 +6,9 @@
 
 # Type Alias: MatrixLike\<T\>
 
-> **MatrixLike**\<`T`\>: `ArrayLike`\<`ArrayLike`\<`T`\>\>
+> **MatrixLike**\<`T`\> = `ArrayLike`\<`ArrayLike`\<`T`\>\>
+
+Defined in: [types/matrixLike.ts:28](https://github.com/havelessbemore/munkres/blob/40b2e813ddbf553c3dca1e2c6416306e26df6f6c/src/types/matrixLike.ts#L28)
 
 Defines a two-dimensional, read-only matrix with elements of type `T`.
 
@@ -20,7 +22,9 @@ create matrices of any given type.
 
 ## Type Parameters
 
-• **T**
+### T
+
+`T`
 
 ## Examples
 
@@ -37,7 +41,3 @@ const matrix: MatrixLike<number> = {
 // Using MatrixLike with NodeList in DOM manipulation
 const divMatrix: MatrixLike<HTMLElement> = document.querySelectorAll('.foo');
 ```
-
-## Defined in
-
-[types/matrixLike.ts:28](https://github.com/havelessbemore/munkres/blob/eaf56415da666c8098716c88966089276f8d68fc/src/types/matrixLike.ts#L28)

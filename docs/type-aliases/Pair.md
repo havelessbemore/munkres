@@ -1,4 +1,4 @@
-[**munkres**](../README.md) • **Docs**
+[**munkres**](../README.md)
 
 ***
 
@@ -6,7 +6,9 @@
 
 # Type Alias: Pair\<A, B\>
 
-> **Pair**\<`A`, `B`\>: [`A`, `B`]
+> **Pair**\<`A`, `B`\> = \[`A`, `B`\]
+
+Defined in: [types/pair.ts:23](https://github.com/havelessbemore/munkres/blob/40b2e813ddbf553c3dca1e2c6416306e26df6f6c/src/types/pair.ts#L23)
 
 Represents a pair of elements.
 
@@ -19,9 +21,13 @@ other dual-element structures.
 
 ## Type Parameters
 
-• **A**
+### A
 
-• **B** = `A`
+`A`
+
+### B
+
+`B` = `A`
 
 ## Examples
 
@@ -34,7 +40,3 @@ const coordinate: Pair<number> = [15, 20];
 // A pair of a string and a number
 const keyValue: Pair<string, number> = ['age', 30];
 ```
-
-## Defined in
-
-[types/pair.ts:23](https://github.com/havelessbemore/munkres/blob/eaf56415da666c8098716c88966089276f8d68fc/src/types/pair.ts#L23)

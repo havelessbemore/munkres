@@ -1,14 +1,8 @@
-[**munkres**](README.md) • **Docs**
+[**munkres**](README.md)
 
 ***
 
 # munkres
-
-## References
-
-### default
-
-Renames and re-exports [munkres](functions/munkres.md)
 
 ## Type Aliases
 
@@ -26,3 +20,9 @@ Renames and re-exports [munkres](functions/munkres.md)
 - [invertMatrix](functions/invertMatrix.md)
 - [munkres](functions/munkres.md)
 - [negateMatrix](functions/negateMatrix.md)
+
+## References
+
+### default
+
+Renames and re-exports [munkres](functions/munkres.md)

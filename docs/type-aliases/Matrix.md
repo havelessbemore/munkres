@@ -1,4 +1,4 @@
-[**munkres**](../README.md) • **Docs**
+[**munkres**](../README.md)
 
 ***
 
@@ -6,7 +6,9 @@
 
 # Type Alias: Matrix\<T\>
 
-> **Matrix**\<`T`\>: `T`[][]
+> **Matrix**\<`T`\> = `T`[][]
+
+Defined in: [types/matrix.ts:37](https://github.com/havelessbemore/munkres/blob/40b2e813ddbf553c3dca1e2c6416306e26df6f6c/src/types/matrix.ts#L37)
 
 Defines a two-dimensional matrix with elements of type `T`.
 
@@ -17,7 +19,9 @@ given type, including `number`, `string`, `boolean`, `bigint`, etc.
 
 ## Type Parameters
 
-• **T**
+### T
+
+`T`
 
 ## Examples
 
@@ -52,7 +56,3 @@ const booleanMatrix: Matrix<boolean> = [
   [true, true, false]
 ];
 ```
-
-## Defined in
-
-[types/matrix.ts:37](https://github.com/havelessbemore/munkres/blob/eaf56415da666c8098716c88966089276f8d68fc/src/types/matrix.ts#L37)

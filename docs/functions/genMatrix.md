@@ -1,4 +1,4 @@
-[**munkres**](../README.md) • **Docs**
+[**munkres**](../README.md)
 
 ***
 
@@ -8,24 +8,34 @@
 
 > **genMatrix**\<`T`\>(`rows`, `cols`, `callbackFn`): [`Matrix`](../type-aliases/Matrix.md)\<`T`\>
 
+Defined in: [helpers.ts:78](https://github.com/havelessbemore/munkres/blob/40b2e813ddbf553c3dca1e2c6416306e26df6f6c/src/helpers.ts#L78)
+
 Constructs a matrix with given dimensions
 using a provided callback function.
 
 ## Type Parameters
 
-• **T**
+### T
+
+`T`
 
 ## Parameters
 
-• **rows**: `number`
+### rows
+
+`number`
 
 The number of rows in the matrix.
 
-• **cols**: `number`
+### cols
+
+`number`
 
 The number of columns in the matrix.
 
-• **callbackFn**
+### callbackFn
+
+(`row`, `col`) => `T`
 
 Given row and column indices, returns a value.
 
@@ -51,7 +61,3 @@ const costs = createMatrix(workers.length, jobs.length, costFn);
 //   [7, 7]  // [  'Bob' + 'Job1',   'Bob' + 'Job2']
 // ]
 ```
-
-## Defined in
-
-[helpers.ts:78](https://github.com/havelessbemore/munkres/blob/eaf56415da666c8098716c88966089276f8d68fc/src/helpers.ts#L78)
