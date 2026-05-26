@@ -1,6 +1,7 @@
 // Types
 export type { Matrix } from "./types/matrix.ts";
 export type { MatrixLike } from "./types/matrixLike.ts";
+export type { MunkresOptions } from "./munkres.options.ts";
 export type { Pair } from "./types/pair.ts";
 
 // Cost Matrix Helpers

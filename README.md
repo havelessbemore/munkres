@@ -4,7 +4,7 @@ A lightweight and efficient implementation of the [Munkres (Hungarian) algorithm
 
 [![Version](https://img.shields.io/npm/v/munkres.svg)](https://www.npmjs.com/package/munkres)
 [![JSR](https://jsr.io/badges/@munkres/munkres)](https://jsr.io/@munkres/munkres)
-[![Maintenance](https://img.shields.io/maintenance/yes/2024.svg)](https://github.com/havelessbemore/munkres/graphs/commit-activity)
+[![Maintenance](https://img.shields.io/maintenance/yes/2026.svg)](https://github.com/havelessbemore/munkres/graphs/commit-activity)
 [![License](https://img.shields.io/github/license/havelessbemore/munkres.svg)](https://github.com/havelessbemore/munkres/blob/master/LICENSE)
 [![codecov](https://codecov.io/gh/havelessbemore/munkres/graph/badge.svg?token=F362G7C9U0)](https://codecov.io/gh/havelessbemore/munkres)
 ![npm bundle size](https://img.shields.io/bundlephobia/minzip/munkres)
@@ -99,11 +99,33 @@ console.log(assignments);
 // Output: [[0, 2], [1, 1], [2, 0]]
 ```
 
+Skipping input validation on large guaranteed-finite matrices:
+
+```javascript
+import { munkres } from "munkres";
+
+// When you know the matrix contains no Infinity or NaN, `{ finite: true }`
+// skips the O(Y*X) validation scan and dispatches straight to the
+// all-finite arithmetic path. Faster for large matrices.
+const assignments = munkres(largeFiniteCostMatrix, { finite: true });
+```
+
 ## API
 
-- `munkres(costMatrix)`
+- `munkres(costMatrix, options?)`
 
   Executes the Munkres algorithm on the given cost matrix and returns a set of optimal assignment pairs. Even if there are multiple optimal assignment sets, only one is returned.
+
+  **Parameters**
+
+  - `costMatrix`: a `MatrixLike<number>` or `MatrixLike<bigint>` where `costMatrix[y][x]` is the cost of assigning worker `y` to job `x`. Use `Infinity` / `-Infinity` to mark forbidden assignments.
+  - `options` (optional):
+    - `finite: boolean` — when `true`, promises that the matrix contains no `NaN` or `Infinity`. Skips the input-validation scan and dispatches straight to the fast all-finite arithmetic path. If a non-finite value is present despite the promise, the result is undefined.
+
+  **Throws**
+
+  - `TypeError`: if a `number` cost matrix contains `NaN`. The error message includes the coordinates of the first NaN encountered. Use `Infinity` for forbidden assignments instead. Skipped under `{ finite: true }`.
+  - `RangeError`: if a `number` cost matrix has `max(c) - min(c) > Number.MAX_VALUE / 2`. The algorithm's worst-case intermediate arithmetic magnitude is `2 * (max - min)`; this guard keeps all intermediates representable in IEEE-754 double precision. Scale your matrix down, or use a `bigint` matrix. Skipped under `{ finite: true }`. `bigint` matrices are exempt entirely.
 
 ### Types
 

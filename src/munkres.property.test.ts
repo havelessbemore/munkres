@@ -29,7 +29,7 @@ function permute<T>(arr: readonly T[], perm: readonly number[]): T[] {
   return perm.map((i) => arr[i]);
 }
 
-describe("munkres — property: valid assignment", () => {
+describe("munkres property: valid assignment", () => {
   test("result has correct length, unique rows, unique columns, in-bounds indices", () => {
     fc.assert(
       fc.property(smallMatrix, (matrix) => {
@@ -58,7 +58,7 @@ describe("munkres — property: valid assignment", () => {
   });
 });
 
-describe("munkres — property: optimality vs brute force", () => {
+describe("munkres property: optimality vs brute force", () => {
   test("total cost equals brute-force minimum (n ≤ 6, integer costs)", () => {
     fc.assert(
       fc.property(smallMatrix, (matrix) => {
@@ -72,7 +72,7 @@ describe("munkres — property: optimality vs brute force", () => {
   });
 });
 
-describe("munkres — property: row-permutation invariance", () => {
+describe("munkres property: row-permutation invariance", () => {
   test("permuting rows does not change the optimal total cost", () => {
     fc.assert(
       fc.property(

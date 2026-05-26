@@ -1,7 +1,7 @@
 import { describe, expect, test } from "@jest/globals";
 import { munkres } from "./munkres";
 
-describe("munkres — NaN validation", () => {
+describe("munkres NaN validation", () => {
   test("throws TypeError when input contains NaN", () => {
     const m = [
       [1, 2],
