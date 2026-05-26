@@ -40,7 +40,7 @@ function genBig(min: number, max: number): bigint {
 
 // Create benchmark suite
 let bench: Bench;
-const suite = new Suite({ warmup: true });
+const suite = new Suite();
 
 // Add reporters
 const outputPath = path.resolve(options.output);
@@ -51,7 +51,7 @@ suite.addReporter(new CIReporter(outputPath));
 (() => {
   const N = 4096; // 2**12
   let mat: Matrix<number>;
-  bench = new Bench({ iterations: 50 }).add(
+  bench = new Bench({ iterations: 50, warmup: true, retainSamples: true }).add(
     `number[${N}][${N}]`,
     () => munkres(mat),
     {
@@ -70,7 +70,7 @@ suite.addReporter(new CIReporter(outputPath));
 (() => {
   const N = 2048; // 2**11
   let mat: Matrix<bigint>;
-  bench = new Bench({ iterations: 50 }).add(
+  bench = new Bench({ iterations: 50, warmup: true, retainSamples: true }).add(
     `bigint[${N}][${N}]`,
     () => munkres(mat),
     {

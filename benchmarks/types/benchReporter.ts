@@ -1,4 +1,4 @@
-import Bench, { Task } from "tinybench";
+import { Bench, type Task } from "tinybench";
 
 export interface BenchReporter {
   onBenchWarmup?: (bench: Bench, name?: string) => void;

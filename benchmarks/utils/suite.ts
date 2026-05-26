@@ -1,18 +1,18 @@
-import Bench, { Task } from "tinybench";
+import { Bench, type Task } from "tinybench";
 
-import type { SuiteConfig } from "../types/suiteConfig.ts";
 import type { SuiteReporter } from "../types/suiteReporter.ts";
 
 export class Suite extends EventTarget {
   protected benches: Map<string, Bench>;
   protected reporters: Set<SuiteReporter>;
-  protected warmup: boolean;
 
-  constructor(config: SuiteConfig = {}) {
+  constructor() {
     super();
     this.benches = new Map();
     this.reporters = new Set();
-    this.warmup = config.warmup === true;
+    // The previous `SuiteConfig.warmup` option is gone as of tinybench 6:
+    // warmup is now a Bench-level option set at construction. Callers
+    // should pass `warmup: true` to each `new Bench(...)` directly.
   }
 
   add(name: string, bench: Bench): this {
@@ -31,9 +31,8 @@ export class Suite extends EventTarget {
     }
     this.dispatchEvent(new Event("start"));
     for (const bench of this.benches.values()) {
-      if (this.warmup) {
-        await bench.warmup();
-      }
+      // `bench.run()` handles warmup internally when the Bench was
+      // constructed with `warmup: true`.
       await bench.run();
       process.stdout.write(`\n`);
     }

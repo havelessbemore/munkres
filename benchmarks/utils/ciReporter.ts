@@ -1,6 +1,6 @@
 import fs from "node:fs";
 
-import Bench, { Task } from "tinybench";
+import { Bench, type Task } from "tinybench";
 
 import type { SuiteReporter } from "../types/suiteReporter.ts";
 
@@ -53,13 +53,26 @@ export class CIReporter implements SuiteReporter {
   }
 
   private _toResult(task: Task): Result {
-    const res = task.result!;
-    const samples = res.samples.length;
+    const res = task.result;
+    if (
+      !res ||
+      (res.state !== "completed" && res.state !== "aborted-with-statistics")
+    ) {
+      return {
+        name: task.name,
+        value: NaN,
+        unit: "ms",
+        range: "n/a",
+        extra: `state=${res?.state ?? "unknown"}`,
+      };
+    }
+    // tinybench 6 moves stats onto latency/throughput sub-objects.
+    const samples = res.latency.samplesCount;
     return {
       name: task.name,
-      value: res.mean,
+      value: res.latency.mean,
       unit: "ms",
-      range: `±${res.rme.toFixed(2)}%`,
+      range: `±${res.latency.rme.toFixed(2)}%`,
       extra: `${samples} sample${samples === 1 ? "" : "s"}`,
     };
   }
