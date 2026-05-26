@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 import type { Matrix } from "../types/matrix.ts";
 import type { Pair } from "../types/pair.ts";
@@ -23,7 +23,7 @@ import {
 import { getMax } from "./matrixLike.ts";
 
 describe(`${create.name}()`, () => {
-  it("handles empty rows and columns", () => {
+  test("handles empty rows and columns", () => {
     const rows: number[] = [];
     const cols: number[] = [];
     const callbackFn = vi.fn();
@@ -33,7 +33,7 @@ describe(`${create.name}()`, () => {
     expect(callbackFn).not.toHaveBeenCalled();
   });
 
-  it("handles empty rows", () => {
+  test("handles empty rows", () => {
     const rows: string[] = [];
     const cols = ["a", "b", "c"];
     const callbackFn = vi.fn();
@@ -43,7 +43,7 @@ describe(`${create.name}()`, () => {
     expect(callbackFn).not.toHaveBeenCalled();
   });
 
-  it("handles empty columns", () => {
+  test("handles empty columns", () => {
     const rows = [1, 2];
     const cols: number[] = [];
     const callbackFn = vi.fn();
@@ -53,7 +53,7 @@ describe(`${create.name}()`, () => {
     expect(callbackFn).not.toHaveBeenCalled();
   });
 
-  it("creates a matrix with specified rows and columns", () => {
+  test("creates a matrix with specified rows and columns", () => {
     const rows = [1, 2];
     const cols = ["a", "b", "c"];
     const callbackFn = (row: number, col: string) => `${row}${col}`;
@@ -65,7 +65,7 @@ describe(`${create.name}()`, () => {
     expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);
   });
 
-  it("populates matrix based on callback logic", () => {
+  test("populates matrix based on callback logic", () => {
     const rows = [1, 2];
     const cols = [10, 20];
     const callbackFn = (row: number, col: number) => row * col;
@@ -77,7 +77,7 @@ describe(`${create.name}()`, () => {
     expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);
   });
 
-  it("populates matrix based on callback logic 2", () => {
+  test("populates matrix based on callback logic 2", () => {
     const rows = ["Alice", "Bob"];
     const cols = ["Job1", "Job2"];
     const callbackFn = (row: string, col: string) => row.length + col.length;
@@ -89,7 +89,7 @@ describe(`${create.name}()`, () => {
     expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);
   });
 
-  it("supports complex data types for rows and columns", () => {
+  test("supports complex data types for rows and columns", () => {
     interface Obj {
       id: number;
     }
@@ -104,7 +104,7 @@ describe(`${create.name}()`, () => {
     expect(create(rows, cols, callbackFn)).toEqual(expectedMatrix);
   });
 
-  it("creates a matrix with boolean values", () => {
+  test("creates a matrix with boolean values", () => {
     const rows = [true, false];
     const cols = [1, 0];
     const callbackFn = (row: boolean, col: number) => row && col > 0;
@@ -118,37 +118,37 @@ describe(`${create.name}()`, () => {
 });
 
 describe(`${flipH.name}()`, () => {
-  it("handles an empty matrix", () => {
+  test("handles an empty matrix", () => {
     const mat: Matrix<number> = [];
     flipH(mat);
     expect(mat).toEqual([]);
   });
 
-  it("handles a matrix with empty rows", () => {
+  test("handles a matrix with empty rows", () => {
     const mat = [[], [], []];
     flipH(mat);
     expect(mat).toEqual([[], [], []]);
   });
 
-  it("flips a 1x1 matrix", () => {
+  test("flips a 1x1 matrix", () => {
     const matrix = [[2]];
     flipH(matrix);
     expect(matrix).toEqual([[2]]);
   });
 
-  it("flips a matrix with a single row", () => {
+  test("flips a matrix with a single row", () => {
     const singleRowMatrix = [[1, 2, 3, 4]];
     flipH(singleRowMatrix);
     expect(singleRowMatrix).toEqual([[4, 3, 2, 1]]);
   });
 
-  it("flips a matrix with a single column", () => {
+  test("flips a matrix with a single column", () => {
     const singleColumnMatrix = [[1], [2], [3]];
     flipH(singleColumnMatrix);
     expect(singleColumnMatrix).toEqual([[1], [2], [3]]);
   });
 
-  it("flips a 2x2 matrix", () => {
+  test("flips a 2x2 matrix", () => {
     const matrix = [
       [1, 2],
       [3, 4],
@@ -160,7 +160,7 @@ describe(`${flipH.name}()`, () => {
     ]);
   });
 
-  it("flips a 3x3 matrix", () => {
+  test("flips a 3x3 matrix", () => {
     const matrix = [
       [1, 2, 3],
       [4, 5, 6],
@@ -176,37 +176,37 @@ describe(`${flipH.name}()`, () => {
 });
 
 describe(`${flipV.name}()`, () => {
-  it("handles an empty matrix", () => {
+  test("handles an empty matrix", () => {
     const mat: Matrix<number> = [];
     flipV(mat);
     expect(mat).toEqual([]);
   });
 
-  it("handles a matrix with empty rows", () => {
+  test("handles a matrix with empty rows", () => {
     const mat = [[], [], []];
     flipV(mat);
     expect(mat).toEqual([[], [], []]);
   });
 
-  it("flips a 1x1 matrix", () => {
+  test("flips a 1x1 matrix", () => {
     const matrix = [[2]];
     flipV(matrix);
     expect(matrix).toEqual([[2]]);
   });
 
-  it("flips a matrix with a single row", () => {
+  test("flips a matrix with a single row", () => {
     const singleRowMatrix = [[1, 2, 3, 4]];
     flipV(singleRowMatrix);
     expect(singleRowMatrix).toEqual([[1, 2, 3, 4]]);
   });
 
-  it("flips a matrix with a single column", () => {
+  test("flips a matrix with a single column", () => {
     const singleColumnMatrix = [[1], [2], [3]];
     flipV(singleColumnMatrix);
     expect(singleColumnMatrix).toEqual([[3], [2], [1]]);
   });
 
-  it("flips a 2x2 matrix", () => {
+  test("flips a 2x2 matrix", () => {
     const matrix = [
       [1, 2],
       [3, 4],
@@ -218,7 +218,7 @@ describe(`${flipV.name}()`, () => {
     ]);
   });
 
-  it("flips a 3x3 matrix", () => {
+  test("flips a 3x3 matrix", () => {
     const matrix = [
       [1, 2, 3],
       [4, 5, 6],
@@ -234,7 +234,7 @@ describe(`${flipV.name}()`, () => {
 });
 
 describe(`${from.name}()`, () => {
-  it("returns an empty matrix when copying an empty matrix", () => {
+  test("returns an empty matrix when copying an empty matrix", () => {
     const original: unknown[][] = [];
     const duplicate = from(original);
 
@@ -243,7 +243,7 @@ describe(`${from.name}()`, () => {
     expect(duplicate).not.toBe(original);
   });
 
-  it("creates a copy of a matrix of numbers", () => {
+  test("creates a copy of a matrix of numbers", () => {
     const original = [
       [1, 2, 3],
       [4, 5, 6],
@@ -263,7 +263,7 @@ describe(`${from.name}()`, () => {
     expect(original[0][0]).toBe(1);
   });
 
-  it("creates a copy of a matrix containing objects", () => {
+  test("creates a copy of a matrix containing objects", () => {
     const original = [
       [{ value: 1 }, { value: 2 }],
       [{ value: 3 }, { value: 4 }],
@@ -285,7 +285,7 @@ describe(`${from.name}()`, () => {
     expect(duplicate[1][1]).toBe(original[1][1]);
   });
 
-  it("handles matrices with mixed data types", () => {
+  test("handles matrices with mixed data types", () => {
     const original = [
       [1, "a", true],
       [{}, [], null],
@@ -306,12 +306,12 @@ describe(`${from.name}()`, () => {
 });
 
 describe(`${gen.name}()`, () => {
-  it("should generate an empty matrix when rows and columns are 0", () => {
+  test("should generate an empty matrix when rows and columns are 0", () => {
     const result = gen(0, 0, () => 0);
     expect(result).toEqual([]);
   });
 
-  it("should generate a matrix with the correct dimensions", () => {
+  test("should generate a matrix with the correct dimensions", () => {
     const rows = 2;
     const cols = 3;
     const result = gen(rows, cols, () => 0);
@@ -321,7 +321,7 @@ describe(`${gen.name}()`, () => {
     });
   });
 
-  it("should populate the matrix according to the callback function", () => {
+  test("should populate the matrix according to the callback function", () => {
     const rows = 2;
     const cols = 3;
     const callbackFn = (row: number, col: number) => `(${row},${col})`;
@@ -333,7 +333,7 @@ describe(`${gen.name}()`, () => {
     expect(result).toEqual(expectedMatrix);
   });
 
-  it("should handle generating a matrix with non-string types", () => {
+  test("should handle generating a matrix with non-string types", () => {
     const rows = 3;
     const cols = 1;
     const callbackFn = (row: number, col: number) => row + col;
@@ -342,7 +342,7 @@ describe(`${gen.name}()`, () => {
     expect(result).toEqual(expectedMatrix);
   });
 
-  it("should correctly apply complex operations in the callback", () => {
+  test("should correctly apply complex operations in the callback", () => {
     const rows = 2;
     const cols = 2;
     const callbackFn = (row: number, col: number) => row * col;
@@ -354,7 +354,7 @@ describe(`${gen.name}()`, () => {
     expect(result).toEqual(expectedMatrix);
   });
 
-  it("should support generating a matrix with custom objects", () => {
+  test("should support generating a matrix with custom objects", () => {
     const rows = 1;
     const cols = 2;
     const callbackFn = (row: number, col: number) => ({ row, col });
@@ -370,31 +370,31 @@ describe(`${gen.name}()`, () => {
 });
 
 describe(`${invert.name}()`, () => {
-  it("handles an empty matrix", () => {
+  test("handles an empty matrix", () => {
     const mat: Matrix<number> = [];
     invert(mat);
     expect(mat).toEqual([]);
   });
 
-  it("handles a matrix with a single element", () => {
+  test("handles a matrix with a single element", () => {
     const mat = [[42]];
     invert(mat);
     expect(mat).toEqual([[0]]);
   });
 
-  it("handles a matrix with a single row", () => {
+  test("handles a matrix with a single row", () => {
     const mat = [[3, 2, 1, 4, 5]];
     invert(mat);
     expect(mat).toEqual([[2, 3, 4, 1, 0]]);
   });
 
-  it("handles a matrix with a single column", () => {
+  test("handles a matrix with a single column", () => {
     const mat = [[2], [3], [1], [4], [5]];
     invert(mat);
     expect(mat).toEqual([[3], [2], [4], [1], [0]]);
   });
 
-  it("inverts a matrix correctly using the maximum value in the matrix by default", () => {
+  test("inverts a matrix correctly using the maximum value in the matrix by default", () => {
     const mat = [
       [1, 2, 3],
       [4, 5, 6],
@@ -407,7 +407,7 @@ describe(`${invert.name}()`, () => {
     ]);
   });
 
-  it("inverts a matrix correctly with a specified bigVal", () => {
+  test("inverts a matrix correctly with a specified bigVal", () => {
     const mat = [
       [10, 20],
       [30, 40],
@@ -420,7 +420,7 @@ describe(`${invert.name}()`, () => {
     ]);
   });
 
-  it("handles matrices with negative values, using the default maximum value for inversion", () => {
+  test("handles matrices with negative values, using the default maximum value for inversion", () => {
     const mat = [
       [-1, -2, -3],
       [-4, -5, -6],
@@ -433,7 +433,7 @@ describe(`${invert.name}()`, () => {
     ]);
   });
 
-  it("correctly inverts a matrix with all elements being the same value", () => {
+  test("correctly inverts a matrix with all elements being the same value", () => {
     const mat = [
       [5, 5],
       [5, 5],
@@ -446,7 +446,7 @@ describe(`${invert.name}()`, () => {
     ]);
   });
 
-  it("correctly inverts a matrix when bigVal is less than the maximum value in the matrix", () => {
+  test("correctly inverts a matrix when bigVal is less than the maximum value in the matrix", () => {
     const mat = [
       [1, 2, 3],
       [4, 5, 6],
@@ -461,7 +461,7 @@ describe(`${invert.name}()`, () => {
 });
 
 describe(`${map.name}()`, () => {
-  it("handles an empty matrix", () => {
+  test("handles an empty matrix", () => {
     const matrix: number[][] = [];
     const result = map(matrix, (value) => value * 2);
     const expected: number[][] = [];
@@ -469,7 +469,7 @@ describe(`${map.name}()`, () => {
     expect(result).toEqual(expected);
   });
 
-  it("applies a function to every element of a numeric matrix", () => {
+  test("applies a function to every element of a numeric matrix", () => {
     const matrix = [
       [1, 2],
       [3, 4],
@@ -483,7 +483,7 @@ describe(`${map.name}()`, () => {
     expect(result).toEqual(expected);
   });
 
-  it("passes the correct coordinates to the callback function", () => {
+  test("passes the correct coordinates to the callback function", () => {
     const matrix = [
       ["a", "b"],
       ["c", "d"],
@@ -504,7 +504,7 @@ describe(`${map.name}()`, () => {
     expect(coords).toEqual(expectedCoords);
   });
 
-  it("correctly transforms a matrix of strings", () => {
+  test("correctly transforms a matrix of strings", () => {
     const matrix = [
       ["hello", "world"],
       ["foo", "bar"],
@@ -518,7 +518,7 @@ describe(`${map.name}()`, () => {
     expect(result).toEqual(expected);
   });
 
-  it("transforms a matrix with mixed data types", () => {
+  test("transforms a matrix with mixed data types", () => {
     const matrix: (number | string)[][] = [
       [1, "a"],
       ["b", 2],
@@ -536,35 +536,35 @@ describe(`${map.name}()`, () => {
 });
 
 describe(`${negate.name}()`, () => {
-  it("does nothing to an empty matrix", () => {
+  test("does nothing to an empty matrix", () => {
     const mat: number[][] = [];
     const expected: number[][] = [];
     negate(mat);
     expect(mat).toEqual(expected);
   });
 
-  it("correctly negates a matrix with a single element", () => {
+  test("correctly negates a matrix with a single element", () => {
     const mat = [[1]];
     const expected = [[-1]];
     negate(mat);
     expect(mat).toEqual(expected);
   });
 
-  it("correctly negates a matrix with a single row", () => {
+  test("correctly negates a matrix with a single row", () => {
     const mat = [[1, -2, 3]];
     const expected = [[-1, 2, -3]];
     negate(mat);
     expect(mat).toEqual(expected);
   });
 
-  it("correctly negates a matrix with a single column", () => {
+  test("correctly negates a matrix with a single column", () => {
     const mat = [[1], [-2], [3]];
     const expected = [[-1], [2], [-3]];
     negate(mat);
     expect(mat).toEqual(expected);
   });
 
-  it("negates all elements in a matrix of positive numbers", () => {
+  test("negates all elements in a matrix of positive numbers", () => {
     const mat = [
       [1, 2, 3],
       [4, 5, 6],
@@ -579,7 +579,7 @@ describe(`${negate.name}()`, () => {
     expect(mat).toEqual(expected);
   });
 
-  it("negates all elements in a matrix of negative numbers", () => {
+  test("negates all elements in a matrix of negative numbers", () => {
     const mat = [
       [-1, -2, -3],
       [-4, -5, -6],
@@ -594,7 +594,7 @@ describe(`${negate.name}()`, () => {
     expect(mat).toEqual(expected);
   });
 
-  it("handles matrices with zero values correctly", () => {
+  test("handles matrices with zero values correctly", () => {
     const mat = [
       [0, -2, 3],
       [-4, -0, 6],
@@ -611,7 +611,7 @@ describe(`${negate.name}()`, () => {
 });
 
 describe(`${pad.name}()`, () => {
-  it("correctly pads a matrix to the specified width and height", () => {
+  test("correctly pads a matrix to the specified width and height", () => {
     const matrix = [
       [1, 2],
       [3, 4],
@@ -625,7 +625,7 @@ describe(`${pad.name}()`, () => {
     expect(matrix).toEqual(expectedMatrix);
   });
 
-  it("pads width only when height already meets the specified value", () => {
+  test("pads width only when height already meets the specified value", () => {
     const matrix = [
       [1, 2, 3],
       [4, 5, 6],
@@ -638,7 +638,7 @@ describe(`${pad.name}()`, () => {
     expect(matrix).toEqual(expectedMatrix);
   });
 
-  it("pads height only when width already meets the specified value", () => {
+  test("pads height only when width already meets the specified value", () => {
     const matrix = [
       [1, 2, 3, 4],
       [5, 6, 7, 8],
@@ -653,7 +653,7 @@ describe(`${pad.name}()`, () => {
     expect(matrix).toEqual(expectedMatrix);
   });
 
-  it("does not modify the matrix if it already meets the specified dimensions", () => {
+  test("does not modify the matrix if it already meets the specified dimensions", () => {
     const matrix = [
       [1, 2, 3],
       [4, 5, 6],
@@ -668,7 +668,7 @@ describe(`${pad.name}()`, () => {
     expect(matrix).toEqual(expectedMatrix);
   });
 
-  it("handles an empty matrix by padding it to the specified dimensions", () => {
+  test("handles an empty matrix by padding it to the specified dimensions", () => {
     const matrix: Matrix<string> = [];
     pad(matrix, 2, 3, "c"); // Pad an empty matrix to 2x3 with 'c'
     const expectedMatrix = [
@@ -680,7 +680,7 @@ describe(`${pad.name}()`, () => {
 });
 
 describe(`${padHeight.name}()`, () => {
-  it("adds rows to meet the specified height with fill value", () => {
+  test("adds rows to meet the specified height with fill value", () => {
     const matrix = [
       [1, 2],
       [3, 4],
@@ -695,7 +695,7 @@ describe(`${padHeight.name}()`, () => {
     expect(matrix).toEqual(expectedMatrix);
   });
 
-  it("does not modify matrix if it already meets the specified height", () => {
+  test("does not modify matrix if it already meets the specified height", () => {
     const originalMatrix = [
       [1, 2],
       [3, 4],
@@ -709,7 +709,7 @@ describe(`${padHeight.name}()`, () => {
     ]);
   });
 
-  it("does not modify matrix if it already exceeds the specified height", () => {
+  test("does not modify matrix if it already exceeds the specified height", () => {
     const originalMatrix = [
       [1, 2],
       [3, 4],
@@ -723,7 +723,7 @@ describe(`${padHeight.name}()`, () => {
     ]);
   });
 
-  it("handles empty matrix by filling up to the specified height", () => {
+  test("handles empty matrix by filling up to the specified height", () => {
     const matrix: Matrix<string> = [];
     padHeight(matrix, 2, "empty");
     const expectedMatrix = [[], []];
@@ -732,7 +732,7 @@ describe(`${padHeight.name}()`, () => {
 });
 
 describe(`${padWidth.name}()`, () => {
-  it("adds columns to meet the specified width with fill value", () => {
+  test("adds columns to meet the specified width with fill value", () => {
     const matrix = [
       [1, 2],
       [3, 4],
@@ -745,7 +745,7 @@ describe(`${padWidth.name}()`, () => {
     expect(matrix).toEqual(expectedMatrix);
   });
 
-  it("does not modify matrix if it already meets the specified width", () => {
+  test("does not modify matrix if it already meets the specified width", () => {
     const originalMatrix = [
       [1, 2, 3],
       [4, 5, 6],
@@ -757,7 +757,7 @@ describe(`${padWidth.name}()`, () => {
     ]);
   });
 
-  it("does not modify matrix if it already exceeds the specified width", () => {
+  test("does not modify matrix if it already exceeds the specified width", () => {
     const originalMatrix = [
       [1, 2, 3],
       [4, 5, 6],
@@ -769,7 +769,7 @@ describe(`${padWidth.name}()`, () => {
     ]);
   });
 
-  it("does not modify an empty matrix", () => {
+  test("does not modify an empty matrix", () => {
     const matrix: Matrix<string> = [];
     padWidth(matrix, 2, "empty");
     const expectedMatrix: Matrix<string> = [];
@@ -778,19 +778,19 @@ describe(`${padWidth.name}()`, () => {
 });
 
 describe(`${rot90.name}()`, () => {
-  it("handles an empty matrix", () => {
+  test("handles an empty matrix", () => {
     const mat: Matrix<number> = [];
     rot90(mat);
     expect(mat).toEqual([]);
   });
 
-  it("handles a 1x1 matrix", () => {
+  test("handles a 1x1 matrix", () => {
     const mat = [[2]];
     rot90(mat);
     expect(mat).toEqual([[2]]);
   });
 
-  it("rotates a 2x2 matrix by 90 degrees clockwise", () => {
+  test("rotates a 2x2 matrix by 90 degrees clockwise", () => {
     const mat = [
       [1, 2],
       [3, 4],
@@ -802,7 +802,7 @@ describe(`${rot90.name}()`, () => {
     ]);
   });
 
-  it("rotates a 2x3 matrix by 90 degrees clockwise", () => {
+  test("rotates a 2x3 matrix by 90 degrees clockwise", () => {
     const mat = [
       [1, 2, 3],
       [4, 5, 6],
@@ -815,7 +815,7 @@ describe(`${rot90.name}()`, () => {
     ]);
   });
 
-  it("rotates a 3x2 matrix by 90 degrees clockwise", () => {
+  test("rotates a 3x2 matrix by 90 degrees clockwise", () => {
     const mat = [
       [1, 2],
       [3, 4],
@@ -828,7 +828,7 @@ describe(`${rot90.name}()`, () => {
     ]);
   });
 
-  it("rotates a 3x3 matrix by 90 degrees clockwise", () => {
+  test("rotates a 3x3 matrix by 90 degrees clockwise", () => {
     const mat = [
       [1, 2, 3],
       [4, 5, 6],
@@ -842,13 +842,13 @@ describe(`${rot90.name}()`, () => {
     ]);
   });
 
-  it("correctly rotates a 4x1 matrix by 90 degrees clockwise", () => {
+  test("correctly rotates a 4x1 matrix by 90 degrees clockwise", () => {
     const mat = [[1], [2], [3], [4]];
     rot90(mat);
     expect(mat).toEqual([[4, 3, 2, 1]]);
   });
 
-  it("correctly rotates a 1x4 matrix by 90 degrees clockwise", () => {
+  test("correctly rotates a 1x4 matrix by 90 degrees clockwise", () => {
     const mat = [[1, 2, 3, 4]];
     rot90(mat);
     expect(mat).toEqual([[1], [2], [3], [4]]);
@@ -856,19 +856,19 @@ describe(`${rot90.name}()`, () => {
 });
 
 describe(`${rotNeg90.name}()`, () => {
-  it("handles an empty matrix", () => {
+  test("handles an empty matrix", () => {
     const mat: Matrix<number> = [];
     rotNeg90(mat);
     expect(mat).toEqual([]);
   });
 
-  it("handles a 1x1 matrix", () => {
+  test("handles a 1x1 matrix", () => {
     const mat = [[2]];
     rotNeg90(mat);
     expect(mat).toEqual([[2]]);
   });
 
-  it("rotates a 2x2 matrix by 90 degrees counterclockwise", () => {
+  test("rotates a 2x2 matrix by 90 degrees counterclockwise", () => {
     const mat = [
       [1, 2],
       [3, 4],
@@ -880,7 +880,7 @@ describe(`${rotNeg90.name}()`, () => {
     ]);
   });
 
-  it("rotates a 2x3 matrix by 90 degrees counterclockwise", () => {
+  test("rotates a 2x3 matrix by 90 degrees counterclockwise", () => {
     const mat = [
       [1, 2, 3],
       [4, 5, 6],
@@ -893,7 +893,7 @@ describe(`${rotNeg90.name}()`, () => {
     ]);
   });
 
-  it("rotates a 3x2 matrix by 90 degrees counterclockwise", () => {
+  test("rotates a 3x2 matrix by 90 degrees counterclockwise", () => {
     const mat = [
       [1, 2],
       [3, 4],
@@ -906,7 +906,7 @@ describe(`${rotNeg90.name}()`, () => {
     ]);
   });
 
-  it("rotates a 3x3 matrix by 90 degrees counterclockwise", () => {
+  test("rotates a 3x3 matrix by 90 degrees counterclockwise", () => {
     const mat = [
       [1, 2, 3],
       [4, 5, 6],
@@ -920,13 +920,13 @@ describe(`${rotNeg90.name}()`, () => {
     ]);
   });
 
-  it("rotates a 1x4 matrix by 90 degrees counterclockwise", () => {
+  test("rotates a 1x4 matrix by 90 degrees counterclockwise", () => {
     const mat = [[1, 2, 3, 4]];
     rotNeg90(mat);
     expect(mat).toEqual([[4], [3], [2], [1]]);
   });
 
-  it("rotates a 4x1 matrix by 90 degrees counterclockwise", () => {
+  test("rotates a 4x1 matrix by 90 degrees counterclockwise", () => {
     const mat = [[1], [2], [3], [4]];
     rotNeg90(mat);
     expect(mat).toEqual([[1, 2, 3, 4]]);
@@ -934,31 +934,31 @@ describe(`${rotNeg90.name}()`, () => {
 });
 
 describe(`${toString.name}()`, () => {
-  it("handles an empty matrix", () => {
+  test("handles an empty matrix", () => {
     const mat: Matrix<number> = [];
     const expectedString = "";
     expect(toString(mat)).toEqual(expectedString);
   });
 
-  it("handles a 1x1 matrix", () => {
+  test("handles a 1x1 matrix", () => {
     const mat = [[2]];
     const expectedString = "[2]";
     expect(toString(mat)).toEqual(expectedString);
   });
 
-  it("processes a single row matrix", () => {
+  test("processes a single row matrix", () => {
     const mat = [[1, 2, 3]];
     const expectedString = "[1, 2, 3]";
     expect(toString(mat)).toEqual(expectedString);
   });
 
-  it("processes a single column matrix", () => {
+  test("processes a single column matrix", () => {
     const mat = [[1], [2], [3]];
     const expectedString = "[1],\n" + "[2],\n" + "[3]";
     expect(toString(mat)).toEqual(expectedString);
   });
 
-  it("converts a numeric matrix to a string representation", () => {
+  test("converts a numeric matrix to a string representation", () => {
     const mat = [
       [1, 2, 3],
       [4, 5, 6],
@@ -967,7 +967,7 @@ describe(`${toString.name}()`, () => {
     expect(toString(mat)).toEqual(expectedString);
   });
 
-  it("converts a matrix with mixed types to a string representation", () => {
+  test("converts a matrix with mixed types to a string representation", () => {
     const mat = [
       ["a", 2, true],
       [null, undefined, 5],
@@ -977,7 +977,7 @@ describe(`${toString.name}()`, () => {
     expect(toString(mat)).toEqual(expectedString);
   });
 
-  it("aligns values properly in columns when converting to string", () => {
+  test("aligns values properly in columns when converting to string", () => {
     const mat = [
       [1, 100, 1000],
       [20, 200, 20000],
@@ -990,35 +990,35 @@ describe(`${toString.name}()`, () => {
 });
 
 describe(`${transpose.name}()`, () => {
-  it("handles an empty matrix", () => {
+  test("handles an empty matrix", () => {
     const original: Matrix<number> = [];
     const expected: Matrix<number> = [];
     transpose(original);
     expect(original).toEqual(expected);
   });
 
-  it("handles a 1x1 matrix", () => {
+  test("handles a 1x1 matrix", () => {
     const original = [[2]];
     const expected = [[2]];
     transpose(original);
     expect(original).toEqual(expected);
   });
 
-  it("handles a matrix with one row", () => {
+  test("handles a matrix with one row", () => {
     const original = [[1, 2, 3]];
     const expected = [[1], [2], [3]];
     transpose(original);
     expect(original).toEqual(expected);
   });
 
-  it("handles a matrix with one column", () => {
+  test("handles a matrix with one column", () => {
     const original = [[1], [2], [3]];
     const expected = [[1, 2, 3]];
     transpose(original);
     expect(original).toEqual(expected);
   });
 
-  it("transposes a 2x3 matrix", () => {
+  test("transposes a 2x3 matrix", () => {
     const original = [
       [1, 2, 3],
       [4, 5, 6],
@@ -1032,7 +1032,7 @@ describe(`${transpose.name}()`, () => {
     expect(original).toEqual(expected);
   });
 
-  it("transposes a 3x2 matrix", () => {
+  test("transposes a 3x2 matrix", () => {
     const original = [
       [1, 4],
       [2, 5],
@@ -1046,7 +1046,7 @@ describe(`${transpose.name}()`, () => {
     expect(original).toEqual(expected);
   });
 
-  it("transposes a square matrix", () => {
+  test("transposes a square matrix", () => {
     const original = [
       [1, 2],
       [3, 4],

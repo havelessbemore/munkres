@@ -10,7 +10,7 @@ import {
   testSquare,
   testTranspose,
   testWide,
-} from "../tests/meta";
+} from "../tests/utils/invariants";
 import { Options } from "../tests/types/options";
 
 describe(`${munkres.name}`, () => {

@@ -1,15 +1,15 @@
 import { expect, test } from "vitest";
 
-import { flipH, flipV, gen, transpose } from "../src/utils/matrix";
+import { flipH, flipV, gen, transpose } from "../../src/utils/matrix";
 
-import { checkOutputMeta } from "./utils/checkOutputMeta";
-import { applyOptions } from "./utils/applyOptions";
-import { initOptions } from "./utils/initOptions";
-import { MunkresFn } from "./types/munkresFn";
-import { MunkresFnAsync } from "./types/munkresFnAsync";
-import { MatrixLike, Pair, copyMatrix, genMatrix } from "../src";
-import { Options } from "./types/options";
-import { isBigInt } from "../src/utils/is";
+import { checkOutputMeta } from "./checkOutputMeta";
+import { applyOptions } from "./applyOptions";
+import { initOptions } from "./initOptions";
+import { MunkresFn } from "../types/munkresFn";
+import { MunkresFnAsync } from "../types/munkresFnAsync";
+import { MatrixLike, Pair, copyMatrix, genMatrix } from "../../src";
+import { Options } from "../types/options";
+import { isBigInt } from "../../src/utils/is";
 
 const VAL_MIN = 1;
 const VAL_MAX = 1e9;
