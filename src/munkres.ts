@@ -11,12 +11,15 @@ import type { MunkresOptions } from "./munkres.options.ts";
  * minimize total cost.
  *
  * @param costMatrix - The cost matrix, where `mat[y][x]` represents the cost
- * of assigning worker `y` to job `x`.
+ * of assigning worker `y` to job `x`. Treated as an `mat.length` by
+ * `mat[0].length` rectangle; cells beyond row 0's width are ignored.
  * @param options - Optional behavior modifiers. See {@link MunkresOptions}.
  *
  * @returns An array of pairs `[y, x]` representing the optimal assignment
- * of workers to jobs. Each pair consists of a worker index `y` and a job
- * index `x`, indicating that worker `y` is assigned to job `x`.
+ * of workers to jobs. The result has length `min(rows, cols)` and pairs
+ * are always `[y, x]` (row, then column) regardless of matrix shape.
+ * When `rows > cols`, the unmatched rows are simply absent from the
+ * result; when `cols > rows`, the unmatched columns are absent.
  *
  * @throws TypeError if a `number` cost matrix contains `NaN`. Pass
  *   `Infinity` to mark forbidden assignments instead.
@@ -27,9 +30,19 @@ import type { MunkresOptions } from "./munkres.options.ts";
  *   matrix down or use `bigint`. Typical assignment-problem inputs
  *   have ranges well below this threshold.
  *
- *   Pass `{ finite: true }` to skip this validation when the caller
- *   has already established the input is in-range; mis-using that
- *   option can produce undefined output but never throws.
+ *   Pass `{ finite: true }` to skip BOTH the finiteness scan AND this
+ *   range check, when the caller has already established the input is
+ *   well-formed; mis-using that option can produce undefined output but
+ *   never throws.
+ *
+ * @remarks
+ * The `number` path uses IEEE 754 double-precision arithmetic. For
+ * matrices of *integer* costs where exact optima are required (e.g.
+ * values approaching or exceeding `Number.MAX_SAFE_INTEGER`), pass a
+ * `bigint` cost matrix to use the arbitrary-precision path. Floating
+ * point inputs are inherently approximate; the `number` path may
+ * return a valid but suboptimal assignment when precision is lost in
+ * slack comparisons.
  *
  * @example
  *   munkres([[1, 2], [3, 4]]);

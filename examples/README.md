@@ -13,11 +13,11 @@ Demonstrates the basic usage of the project.
 For CommonJS:
 
 ```bash
-node run src/basic/index.cjs
+node src/basic/index.cjs
 ```
 
 For ESM:
 
 ```bash
-node run src/basic/index.mjs
+node src/basic/index.mjs
 ```
