@@ -477,7 +477,7 @@ function match(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
   return steps;
 }
 
-// src/core/numMunkresB.ts
+// src/core/numFiniteMunkresB.ts
 function step4B2(unmatched, matrix, dualX, dualY, starsX, starsY) {
   if (unmatched <= 0) {
     return;
@@ -493,17 +493,26 @@ function step4B2(unmatched, matrix, dualX, dualY, starsX, starsY) {
     const N = matchB2(x, matrix, dualX, dualY, starsY, slack, slackV, slackX);
     --unmatched;
     step6B2(x, N, dualX, dualY, slack, slackV, starsY);
-    step5B(slack[N - 1], slackX, starsX, starsY);
+    step5B2(slack[N - 1], slackX, starsX, starsY);
   }
+}
+function step5B2(y, primeY, starsX, starsY) {
+  do {
+    const x = primeY[y];
+    const sy = starsX[x];
+    starsX[x] = y;
+    starsY[y] = x;
+    y = sy;
+  } while (y !== -1);
 }
 function step6B2(x, N, dualX, dualY, slack, slackV, starsY) {
   const sum = slackV[slack[N - 1]];
   let min = sum;
   for (let i = 0; i < N; ++i) {
     const y = slack[i];
-    dualX[x] = dualX[x] + min || 0;
-    min = sum - slackV[y] || 0;
-    dualY[y] = dualY[y] - min || 0;
+    dualX[x] += min;
+    min = sum - slackV[y];
+    dualY[y] -= min;
     x = starsY[y];
   }
 }
@@ -512,7 +521,7 @@ function matchB2(x, matrix, dualX, dualY, starsY, slack, slackV, slackX) {
   let dx = dualX[x];
   for (let y = 0; y < Y; ++y) {
     slack[y] = y;
-    slackV[y] = matrix[y][x] - (dx + dualY[y] || 0) || 0;
+    slackV[y] = matrix[y][x] - dualY[y] - dx;
     slackX[y] = x;
   }
   let zeros = partitionByMin(slack, slackV, 0);
@@ -520,10 +529,10 @@ function matchB2(x, matrix, dualX, dualY, starsY, slack, slackV, slackX) {
   let steps = 1;
   for (let y = slack[0]; starsY[y] !== -1; y = slack[steps++]) {
     x = starsY[y];
-    dx = dualX[x];
+    dx = dualX[x] - zero;
     for (let i = zeros; i < Y; ++i) {
       y = slack[i];
-      const value = (matrix[y][x] - (dx + dualY[y] || 0) || 0) + zero || 0;
+      const value = matrix[y][x] - dualY[y] - dx;
       if (value >= slackV[y]) {
         continue;
       }
@@ -542,7 +551,7 @@ function matchB2(x, matrix, dualX, dualY, starsY, slack, slackV, slackX) {
   return steps;
 }
 
-// src/core/numMunkres.ts
+// src/core/numFiniteMunkres.ts
 function exec2(matrix) {
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
@@ -579,13 +588,13 @@ function step12(matrix, dualX, dualY) {
   let dy = dualY[0];
   let row = matrix[0];
   for (let x = 0; x < X; ++x) {
-    dualX[x] = row[x] - dy || 0;
+    dualX[x] = row[x] - dy;
   }
   for (let y = 1; y < Y; ++y) {
     dy = dualY[y];
     row = matrix[y];
     for (let x = 0; x < X; ++x) {
-      const dx = row[x] - dy || 0;
+      const dx = row[x] - dy;
       if (dx < dualX[x]) {
         dualX[x] = dx;
       }
@@ -601,7 +610,7 @@ function steps2To32(matrix, dualX, dualY, starsX, starsY) {
     const dy = dualY[y];
     const row = matrix[y];
     for (let x = 0; x < X; ++x) {
-      if (starsX[x] === -1 && row[x] === (dualX[x] + dy || 0)) {
+      if (starsX[x] === -1 && dy === row[x] - dualX[x]) {
         starsX[x] = y;
         starsY[y] = x;
         ++stars;
@@ -629,7 +638,216 @@ function step42(unmatched, matrix, dualX, dualY, starsX, starsY) {
     step52(slack[N - 1], slackY, starsX, starsY);
   }
 }
+function step52(x, primeX, starsX, starsY) {
+  do {
+    const y = primeX[x];
+    const sx = starsY[y];
+    starsX[x] = y;
+    starsY[y] = x;
+    x = sx;
+  } while (x !== -1);
+}
 function step62(y, N, dualX, dualY, slack, slackV, starsX) {
+  const sum = slackV[slack[--N]];
+  dualY[y] += sum;
+  for (let i = 0; i < N; ++i) {
+    const x = slack[i];
+    y = starsX[x];
+    const min = sum - slackV[x];
+    dualX[x] -= min;
+    dualY[y] += min;
+  }
+}
+function match2(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
+  const X = slack.length;
+  let dy = dualY[y];
+  let row = matrix[y];
+  for (let x = 0; x < X; ++x) {
+    slack[x] = x;
+    slackV[x] = row[x] - dualX[x] - dy;
+    slackY[x] = y;
+  }
+  let zeros = partitionByMin(slack, slackV, 0);
+  let zero = slackV[slack[0]];
+  let steps = 1;
+  for (let x = slack[0]; starsX[x] !== -1; x = slack[steps++]) {
+    y = starsX[x];
+    dy = dualY[y] - zero;
+    row = matrix[y];
+    for (let i = zeros; i < X; ++i) {
+      x = slack[i];
+      const value = row[x] - dualX[x] - dy;
+      if (value >= slackV[x]) {
+        continue;
+      }
+      slackY[x] = y;
+      slackV[x] = value;
+      if (value === zero) {
+        slack[i] = slack[zeros];
+        slack[zeros++] = x;
+      }
+    }
+    if (steps >= zeros) {
+      zeros = partitionByMin(slack, slackV, zeros);
+      zero = slackV[slack[steps]];
+    }
+  }
+  return steps;
+}
+
+// src/core/numMunkresB.ts
+function step4B3(unmatched, matrix, dualX, dualY, starsX, starsY) {
+  if (unmatched <= 0) {
+    return;
+  }
+  const Y = dualY.length;
+  const slack = new Uint32Array(Y);
+  const slackV = new Array(Y);
+  const slackX = new Uint32Array(Y);
+  for (let x = 0; unmatched > 0; ++x) {
+    if (starsX[x] !== -1) {
+      continue;
+    }
+    const N = matchB3(x, matrix, dualX, dualY, starsY, slack, slackV, slackX);
+    --unmatched;
+    step6B3(x, N, dualX, dualY, slack, slackV, starsY);
+    step5B(slack[N - 1], slackX, starsX, starsY);
+  }
+}
+function step6B3(x, N, dualX, dualY, slack, slackV, starsY) {
+  const sum = slackV[slack[N - 1]];
+  let min = sum;
+  for (let i = 0; i < N; ++i) {
+    const y = slack[i];
+    dualX[x] = dualX[x] + min || 0;
+    min = sum - slackV[y] || 0;
+    dualY[y] = dualY[y] - min || 0;
+    x = starsY[y];
+  }
+}
+function matchB3(x, matrix, dualX, dualY, starsY, slack, slackV, slackX) {
+  const Y = slack.length;
+  let dx = dualX[x];
+  for (let y = 0; y < Y; ++y) {
+    slack[y] = y;
+    slackV[y] = matrix[y][x] - (dx + dualY[y] || 0) || 0;
+    slackX[y] = x;
+  }
+  let zeros = partitionByMin(slack, slackV, 0);
+  let zero = slackV[slack[0]];
+  let steps = 1;
+  for (let y = slack[0]; starsY[y] !== -1; y = slack[steps++]) {
+    x = starsY[y];
+    dx = dualX[x];
+    for (let i = zeros; i < Y; ++i) {
+      y = slack[i];
+      const value = (matrix[y][x] - (dx + dualY[y] || 0) || 0) + zero || 0;
+      if (value >= slackV[y]) {
+        continue;
+      }
+      slackX[y] = x;
+      slackV[y] = value;
+      if (value === zero) {
+        slack[i] = slack[zeros];
+        slack[zeros++] = y;
+      }
+    }
+    if (steps >= zeros) {
+      zeros = partitionByMin(slack, slackV, zeros);
+      zero = slackV[slack[steps]];
+    }
+  }
+  return steps;
+}
+
+// src/core/numMunkres.ts
+function exec3(matrix) {
+  const Y = matrix.length;
+  const X = matrix[0]?.length ?? 0;
+  if (Y <= 0 || X <= 0) {
+    return { dualX: [], dualY: [], matrix, starsX: [], starsY: [] };
+  }
+  const dualX = new Array(X);
+  const dualY = new Array(Y);
+  step13(matrix, dualX, dualY);
+  const starsX = new Array(X).fill(-1);
+  const starsY = new Array(Y).fill(-1);
+  const stars = steps2To33(matrix, dualX, dualY, starsX, starsY);
+  if (Y <= X) {
+    step43(Y - stars, matrix, dualX, dualY, starsX, starsY);
+  } else {
+    step4B3(X - stars, matrix, dualX, dualY, starsX, starsY);
+  }
+  return { dualX, dualY, matrix, starsX, starsY };
+}
+function step13(matrix, dualX, dualY) {
+  const X = dualX.length;
+  const Y = dualY.length;
+  if (Y > X) {
+    dualY.fill(0);
+  } else {
+    for (let y = 0; y < Y; ++y) {
+      dualY[y] = getMin2(matrix[y]);
+    }
+  }
+  if (Y < X) {
+    dualX.fill(0);
+    return;
+  }
+  let dy = dualY[0];
+  let row = matrix[0];
+  for (let x = 0; x < X; ++x) {
+    dualX[x] = row[x] - dy || 0;
+  }
+  for (let y = 1; y < Y; ++y) {
+    dy = dualY[y];
+    row = matrix[y];
+    for (let x = 0; x < X; ++x) {
+      const dx = row[x] - dy || 0;
+      if (dx < dualX[x]) {
+        dualX[x] = dx;
+      }
+    }
+  }
+}
+function steps2To33(matrix, dualX, dualY, starsX, starsY) {
+  const X = dualX.length;
+  const Y = dualY.length;
+  const S = Y <= X ? Y : X;
+  let stars = 0;
+  for (let y = 0; y < Y && stars < S; ++y) {
+    const dy = dualY[y];
+    const row = matrix[y];
+    for (let x = 0; x < X; ++x) {
+      if (starsX[x] === -1 && row[x] === (dualX[x] + dy || 0)) {
+        starsX[x] = y;
+        starsY[y] = x;
+        ++stars;
+        break;
+      }
+    }
+  }
+  return stars;
+}
+function step43(unmatched, matrix, dualX, dualY, starsX, starsY) {
+  if (unmatched <= 0) {
+    return;
+  }
+  const X = dualX.length;
+  const slack = new Uint32Array(X);
+  const slackV = new Array(X);
+  const slackY = new Uint32Array(X);
+  for (let y = 0; unmatched > 0; ++y) {
+    if (starsY[y] !== -1) {
+      continue;
+    }
+    const N = match3(y, matrix, dualX, dualY, starsX, slack, slackV, slackY);
+    --unmatched;
+    step63(y, N, dualX, dualY, slack, slackV, starsX);
+    step53(slack[N - 1], slackY, starsX, starsY);
+  }
+}
+function step63(y, N, dualX, dualY, slack, slackV, starsX) {
   const sum = slackV[slack[--N]];
   dualY[y] = dualY[y] + sum || 0;
   for (let i = 0; i < N; ++i) {
@@ -640,7 +858,7 @@ function step62(y, N, dualX, dualY, slack, slackV, starsX) {
     dualY[y] = dualY[y] + min || 0;
   }
 }
-function step52(x, primeX, starsX, starsY) {
+function step53(x, primeX, starsX, starsY) {
   do {
     const y = primeX[x];
     const sx = starsY[y];
@@ -649,7 +867,7 @@ function step52(x, primeX, starsX, starsY) {
     x = sx;
   } while (x !== -1);
 }
-function match2(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
+function match3(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
   const X = slack.length;
   let dy = dualY[y];
   let row = matrix[y];
@@ -687,13 +905,13 @@ function match2(y, matrix, dualX, dualY, starsX, slack, slackV, slackY) {
 }
 
 // src/core/munkres.ts
-function exec3(costMatrix, options) {
+function exec4(costMatrix, options) {
   if (isBigInt((costMatrix[0] ?? [])[0])) {
     return exec(costMatrix);
   }
   const numMatrix = costMatrix;
   if (options?.finite) {
-    return exec(numMatrix);
+    return exec2(numMatrix);
   }
   const inspection = inspectNumeric(numMatrix);
   if (inspection.nanAt) {
@@ -702,14 +920,14 @@ function exec3(costMatrix, options) {
     );
   }
   if (inspection.infinityAt) {
-    return exec2(numMatrix);
+    return exec3(numMatrix);
   }
   if (inspection.rangeMin != null && inspection.rangeMax != null && inspection.rangeMax - inspection.rangeMin > Number.MAX_VALUE / 2) {
     throw new RangeError(
       `munkres: cost matrix range (max - min = ${inspection.rangeMax - inspection.rangeMin}) exceeds Number.MAX_VALUE / 2; intermediate arithmetic may overflow. Scale your cost matrix down, or use a bigint cost matrix.`
     );
   }
-  return exec(numMatrix);
+  return exec2(numMatrix);
 }
 
 // src/utils/matching.ts
@@ -724,7 +942,7 @@ function toPairs(matching) {
 
 // src/munkres.ts
 function munkres(costMatrix, options) {
-  return toPairs(exec3(costMatrix, options));
+  return toPairs(exec4(costMatrix, options));
 }
 
 // src/index.ts

@@ -1,6 +1,6 @@
 # Change Log
 
-## [2.1.0](https://github.com/havelessbemore/munkres/compare/v2.0.5...v2.1.0) (2026-05-26)
+## [2.1.0](https://github.com/havelessbemore/munkres/compare/v2.0.5...v2.1.0) (2026-05-27)
 
 ### Added
 
@@ -10,12 +10,16 @@
 
 ### Changed
 
-- Internal dispatcher now routes finite number matrices through the same arithmetic path used for bigint, bypassing the `|| 0` NaN-coercion overhead in `numMunkres.ts`'s hot loop. Infinity-bearing matrices continue to route to the existing `numMunkres` path with no change in behavior. The routing decision is based on a single-pass O(Y*X) scan (`src/utils/inspectNumeric.ts`).
+- Internal dispatcher now routes finite number matrices through a dedicated, type-monomorphic finite-number path (`src/core/numFiniteMunkres.ts`), bypassing the `|| 0` NaN-coercion overhead in `numMunkres.ts`'s hot loop. Infinity-bearing matrices continue to route to the existing `numMunkres` path with no change in behavior. The routing decision is based on a single-pass O(Y*X) scan (`src/utils/inspectNumeric.ts`).
 - The NaN-input `TypeError` is now thrown from the dispatcher rather than from inside `numMunkres.exec`. Error message and coordinates are unchanged.
 
 ### Fixed
 
 - `number` cost matrices with `max(c) - min(c) > Number.MAX_VALUE / 2` now throw `RangeError` instead of silently producing an `Infinity`-corrupted result. The library's worst-case intermediate arithmetic magnitude is `2 * (max - min)`; over-range inputs were previously overflowing internally and returning undefined output. The bound is on the input *range*, not the maximum absolute value; `scripts/overflow-smt-search.py` confirms tightness via Z3. Pass `{ finite: true }` to skip this check at the caller's risk. `bigint` matrices are unaffected.
+
+### Performance
+
+- The original v2.1.0 dispatch shape routed finite `number` matrices through the same `bigExec` function that bigint matrices used, so V8 saw both type domains at every hot site in `step1`/`match`/`step6`/`step5` and `getMin`/`partitionByMin`. Inline-cache pollution collapsed those sites to generic code and slowed the bigint hot path by ~1.5–2.3× across all sizes (e.g. 2048×2048 from ~1100 ms to ~2300 ms on Node 24). The shipped v2.1.0 dispatcher splits the two domains: bigint inputs go to `bigMunkres.ts` (monomorphic over bigint, restoring its v2.0.5 speed), and finite number inputs go to the new `numFiniteMunkres.ts` (monomorphic over number, retaining the v2.1.0 finite-path speedup). The cost is ~640 lines of intentional duplication across `bigMunkres.ts` ↔ `numFiniteMunkres.ts` and their `*B.ts` siblings; both pairs carry a "Keep in sync" comment as the maintenance contract.
 
 ## [2.0.5](https://github.com/havelessbemore/munkres/compare/v2.0.4...v2.0.5) (2026-05-26)
 
