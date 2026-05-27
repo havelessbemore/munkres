@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779857290466,
+  "lastUpdate": 1779859558756,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -4780,6 +4780,44 @@ window.BENCHMARK_DATA = {
             "name": "bigint[2048][2048]",
             "value": 1356.237514299999,
             "range": "±3.71%",
+            "unit": "ms",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6208dd50d003923527076500c6a0e8d1959ec197",
+          "message": "Merge pull request #132 from havelessbemore/release/v2.1.0-prep\n\nrelease: prep v2.1.0 — refresh dist, fix CHANGELOG narrative",
+          "timestamp": "2026-05-27T01:23:11-04:00",
+          "tree_id": "2b4a7be35617c42595c56057cc844b195e67acfa",
+          "url": "https://github.com/havelessbemore/munkres/commit/6208dd50d003923527076500c6a0e8d1959ec197"
+        },
+        "date": 1779859558388,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1132.2174895399999,
+            "range": "±2.61%",
+            "unit": "ms",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1358.0025746000006,
+            "range": "±3.80%",
             "unit": "ms",
             "extra": "50 samples"
           }
