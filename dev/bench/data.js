@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779857249263,
+  "lastUpdate": 1779857290466,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -4742,6 +4742,44 @@ window.BENCHMARK_DATA = {
             "name": "bigint[2048][2048]",
             "value": 1345.9009032799997,
             "range": "±3.64%",
+            "unit": "ms",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5f928160186e0eebef2d3fe49de44ddcd2f2d6d1",
+          "message": "Merge pull request #130 from havelessbemore/bench/stable-gc\n\nbench: free matrix in afterEach to bound heap to one at a time",
+          "timestamp": "2026-05-27T00:45:19-04:00",
+          "tree_id": "78b5051db1d9d860f3a3475a257cc7edfe710832",
+          "url": "https://github.com/havelessbemore/munkres/commit/5f928160186e0eebef2d3fe49de44ddcd2f2d6d1"
+        },
+        "date": 1779857289933,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1144.506155260001,
+            "range": "±2.63%",
+            "unit": "ms",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1356.237514299999,
+            "range": "±3.71%",
             "unit": "ms",
             "extra": "50 samples"
           }
