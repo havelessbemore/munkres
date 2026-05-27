@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779837646598,
+  "lastUpdate": 1779857249263,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -4704,6 +4704,44 @@ window.BENCHMARK_DATA = {
             "name": "bigint[2048][2048]",
             "value": 4573.348033039998,
             "range": "±3.71%",
+            "unit": "ms",
+            "extra": "50 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "034ce423bd7b8e1900669e99422106cf6c27a6c9",
+          "message": "Merge pull request #131 from havelessbemore/perf/specialize-finite-num-path\n\nperf(core): restore bigint speed by type-specializing the finite-number path",
+          "timestamp": "2026-05-27T00:44:39-04:00",
+          "tree_id": "1100b343b6fd8ac439bc92ef440344cad125b586",
+          "url": "https://github.com/havelessbemore/munkres/commit/034ce423bd7b8e1900669e99422106cf6c27a6c9"
+        },
+        "date": 1779857248313,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 1125.2904154799996,
+            "range": "±2.75%",
+            "unit": "ms",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1345.9009032799997,
+            "range": "±3.64%",
             "unit": "ms",
             "extra": "50 samples"
           }
