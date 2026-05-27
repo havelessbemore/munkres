@@ -5,6 +5,7 @@ import { isBigInt } from "../utils/is.ts";
 import { inspectNumeric } from "../utils/inspectNumeric.ts";
 
 import { exec as bigExec } from "./bigMunkres.ts";
+import { exec as numFiniteExec } from "./numFiniteMunkres.ts";
 import { exec as numExec } from "./numMunkres.ts";
 
 /**
@@ -50,7 +51,12 @@ export function exec<T extends number | bigint>(
   costMatrix: MatrixLike<T>,
   options?: ExecOptions,
 ): Matching<T> {
-  // If bigint (i.e. finite) matrix
+  // If bigint matrix, route to the bigint-specialized core. `bigExec` is
+  // type-monomorphic over bigint, which lets V8 fully specialize its hot
+  // inner loops. Finite number matrices go through `numFiniteExec`
+  // (same algorithm, type-monomorphic over number) — keeping the two
+  // type domains in separate function instances avoids polluting V8's
+  // type feedback on either side.
   if (isBigInt((costMatrix[0] ?? [])[0])) {
     return bigExec(costMatrix as MatrixLike<bigint>) as Matching<T>;
   }
@@ -58,7 +64,7 @@ export function exec<T extends number | bigint>(
   // If caller promises finite values
   const numMatrix = costMatrix as MatrixLike<number>;
   if (options?.finite) {
-    return bigExec(numMatrix) as Matching<T>;
+    return numFiniteExec(numMatrix) as Matching<T>;
   }
 
   // Inspect the matrix
@@ -95,5 +101,5 @@ export function exec<T extends number | bigint>(
     );
   }
 
-  return bigExec(numMatrix) as Matching<T>;
+  return numFiniteExec(numMatrix) as Matching<T>;
 }
