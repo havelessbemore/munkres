@@ -6,6 +6,11 @@ on:
 permissions:
   contents: write
   deployments: write
+# Serialize bench runs so the gh-pages push (force-write of `dev/bench/data.js`)
+# cannot race against itself when two main pushes land in quick succession.
+concurrency:
+  group: benchmark
+  cancel-in-progress: false
 jobs:
   benchmark:
     name: Run benchmarks
@@ -18,21 +23,30 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-          node-version: 24
+          # Pinned to a specific Node 24 patch so V8 updates in newer 24.x
+          # patches cannot drift the baseline without an intentional bump
+          # here. See supported Node.js release schedule at
+          # https://nodejs.org/en/about/releases/
+          node-version: 24.16.0
           cache: "pnpm"
       - name: Clean install
         run: pnpm install --frozen-lockfile
       - name: Run benchmarks
         run: pnpm run bench:ci
       - name: Store results
-        uses: benchmark-action/github-action-benchmark@v1
+        # Pinned to the v1.22.1 commit SHA. Floating `@v1` would let
+        # behavior change underneath us between runs; the SHA is bumped
+        # explicitly when we want the new behavior.
+        uses: benchmark-action/github-action-benchmark@52576c92bccf6ac60c8223ec7eb2565637cae9ba
         with:
           name: Munkres Benchmarks
           tool: "customSmallerIsBetter"
           output-file-path: benchmark_results/ci.txt
           github-token: ${{ secrets.BENCHMARK_TOKEN }}
           auto-push: true
+          # Cap chart history; older datapoints are still in `data.js` but
+          # the rendered chart shows only the most recent 100 entries.
+          max-items-in-chart: 100
           # Show alert with commit comment on detecting possible performance regression
           alert-threshold: "150%"
           comment-on-alert: true
