@@ -1,9 +1,9 @@
-<%= pkg.name %>
-<%= pkg.homepage %>
+munkres
+https://github.com/havelessbemore/munkres
 
 MIT License
 
-Copyright (C) 2024-<%= moment().format('YYYY') %> <%= pkg.author %>
+Copyright (C) 2024-2026 Michael Rojas <dev.michael.rojas@gmail.com> (https://github.com/havelessbemore)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -16,8 +16,8 @@ import type { Pair } from "../types/pair.ts";
  *
  * `rangeMin` / `rangeMax` are present only in the all-finite non-empty
  * variant. They let the dispatcher enforce the overflow-safety bound
- * `max - min <= Number.MAX_VALUE / 2` (see
- * `docs/proofs/dual-magnitude-bound.md`).
+ * `max - min <= Number.MAX_VALUE / 2` (tightness verified via the Z3
+ * SMT search in `scripts/overflow-smt-search.py`).
  */
 export type NumericInspection =
   | {
