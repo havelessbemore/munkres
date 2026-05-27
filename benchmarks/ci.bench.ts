@@ -50,11 +50,11 @@ suite.addReporter(new CIReporter(outputPath));
 // Force a synchronous GC between iterations during the measurement phase
 // only. tinybench's `afterEach` runs after the iteration's timing window
 // closes, so the GC pause does not count against the measurement. With
-// per-iteration allocations on the order of 32-96 MB (the bigint matrix
-// dominates), letting GC run on its own schedule across 50+ iterations
-// introduces 2-3× per-iteration noise that swamps the algorithm's
-// intrinsic cost. Forcing GC here pins each iteration to roughly the
-// same heap state and gives the dashboard a stable signal.
+// per-iteration allocations on the order of tens-to-hundreds of MB (the
+// bigint matrix dominates), letting GC run on its own schedule across
+// many iterations introduces 2-3× per-iteration noise that swamps the
+// algorithm's intrinsic cost. Forcing GC here pins each iteration to
+// roughly the same heap state and gives the dashboard a stable signal.
 //
 // Bench-level `setup`/`teardown` gives us the `mode` ('warmup' | 'run'),
 // letting us flip a flag and only sweep during measurement. This is
@@ -72,14 +72,15 @@ const setMode = (_: unknown, mode: "run" | "warmup") => {
 };
 
 // `time: 1000` (tinybench default) lets fast tasks accumulate dense
-// sample counts; the 50-iter floor pins slow tasks. `warmupIterations:
-// 1, warmupTime: 0` keeps warmup to a single priming iteration per
-// task — V8 only needs one to enter the optimized tier, and a
-// non-zero warmup time combined with per-iter GC was the original
-// source of the observed "warmup hangs" (fast tasks would otherwise
-// run millions of warmup iters to fill `warmupTime: 250`).
+// sample counts; the 10-iter floor pins slow tasks (~5-12 sec/iter on a
+// GitHub-hosted runner for the largest sizes). `warmupIterations: 1,
+// warmupTime: 0` keeps warmup to a single priming iteration per task
+// — V8 only needs one to enter the optimized tier, and a non-zero
+// warmup time combined with per-iter GC was the original source of
+// the observed "warmup hangs" (fast tasks would otherwise run millions
+// of warmup iters to fill `warmupTime: 250`).
 const BENCH_OPTS = {
-  iterations: 50,
+  iterations: 10,
   warmup: true,
   warmupIterations: 1,
   warmupTime: 0,
@@ -88,45 +89,42 @@ const BENCH_OPTS = {
   teardown: setMode,
 } as const;
 
-// Create number[][] benchmark
-(() => {
-  const N = 4096; // 2**12
-  let mat: Matrix<number>;
-  bench = new Bench(BENCH_OPTS).add(
-    `number[${N}][${N}]`,
-    () => munkres(mat),
-    {
-      afterEach: () => {
-        mat = [];
-        sweep();
-      },
-      beforeEach: () => {
-        mat = gen(N, N, () => genNum(MIN_VAL, MAX_VAL));
-      },
-    },
-  );
-  suite.add("number[][]", bench);
-})();
+// ---- Number benchmarks ----------------------------------------------------
+//
+// Each task gets its own dashboard chart (the `name` field is keyed
+// per-chart by github-action-benchmark).
 
-// Create bigint[][] benchmark
-(() => {
-  const N = 2048; // 2**11
-  let mat: Matrix<bigint>;
-  bench = new Bench(BENCH_OPTS).add(
-    `bigint[${N}][${N}]`,
-    () => munkres(mat),
-    {
-      afterEach: () => {
-        mat = [];
-        sweep();
-      },
-      beforeEach: () => {
-        mat = gen(N, N, () => genBig(MIN_VAL, MAX_VAL));
-      },
+bench = new Bench(BENCH_OPTS);
+for (const N of [2048, 4096] as const) {
+  let mat: Matrix<number>;
+  bench.add(`number[${N}][${N}]`, () => munkres(mat), {
+    afterEach: () => {
+      mat = [];
+      sweep();
     },
-  );
-  suite.add("bigint[][]", bench);
-})();
+    beforeEach: () => {
+      mat = gen(N, N, () => genNum(MIN_VAL, MAX_VAL));
+    },
+  });
+}
+suite.add("number[][]", bench);
+
+// ---- Bigint benchmarks ----------------------------------------------------
+
+bench = new Bench(BENCH_OPTS);
+for (const N of [2048, 4096] as const) {
+  let mat: Matrix<bigint>;
+  bench.add(`bigint[${N}][${N}]`, () => munkres(mat), {
+    afterEach: () => {
+      mat = [];
+      sweep();
+    },
+    beforeEach: () => {
+      mat = gen(N, N, () => genBig(MIN_VAL, MAX_VAL));
+    },
+  });
+}
+suite.add("bigint[][]", bench);
 
 // Run benchmarks and report results
 await suite.run();
