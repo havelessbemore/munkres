@@ -42,7 +42,24 @@ const setMode = (_: unknown, mode: "run" | "warmup") => {
 // and includes N=256 (65536 cells) and up — the point where matrices
 // start landing in V8's old generation rather than nursery.
 const HEAVY_CELLS = 1 << 15; // 32768 cells; N >= 256 for square matrices
-const sweepIfHeavy = (cells: number) => (cells >= HEAVY_CELLS ? sweep : undefined);
+
+// `afterEach` hook for heavy tasks: drop the matrix reference AND force
+// a sync GC before the next iteration's `beforeEach` allocates a fresh
+// matrix. Without the explicit clear-then-GC sequence, the JS
+// expression `mat = gen(...)` keeps the old matrix referenced until
+// `gen()` returns — which means BOTH matrices coexist briefly during
+// allocation of the new one. For 8192x8192 bigint that's 2 × ~1.6 GB
+// of boxed BigInts, exceeding any reasonable `--max-old-space-size`.
+function makeAfterEach(
+  cells: number,
+  clear: () => void,
+): (() => void) | undefined {
+  if (cells < HEAVY_CELLS) return undefined;
+  return () => {
+    clear();
+    sweep();
+  };
+}
 
 // `time: 1000` (tinybench default) gives fast tasks the sample density
 // they need; the 50-iter floor pins slow tasks. `warmupIterations: 1,
@@ -72,10 +89,11 @@ for (let i = 1; i <= 13; ++i) {
   let mat: Matrix<number>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
     beforeEach: () => {
-      mat = [];
       mat = gen(N, N, genInt);
     },
-    afterEach: sweepIfHeavy(N * N),
+    afterEach: makeAfterEach(N * N, () => {
+      mat = [];
+    }),
   });
 }
 
@@ -87,10 +105,11 @@ for (let i = 1; i <= 12; ++i) {
   let mat: Matrix<bigint>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
     beforeEach: () => {
-      mat = [];
       mat = gen(N, N, genBig);
     },
-    afterEach: sweepIfHeavy(N * N),
+    afterEach: makeAfterEach(N * N, () => {
+      mat = [];
+    }),
   });
 }
 
@@ -107,10 +126,11 @@ suite.add(
   let mat: Matrix<bigint>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
     beforeEach: () => {
-      mat = [];
       mat = gen(N, N, genBig);
     },
-    afterEach: sweepIfHeavy(N * N),
+    afterEach: makeAfterEach(N * N, () => {
+      mat = [];
+    }),
   });
 }
 
