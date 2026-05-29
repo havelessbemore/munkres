@@ -130,9 +130,9 @@
           function collectBenchesPerTestCase(entries) {
             const map = new Map();
             for (const entry of entries) {
-              const {commit, date, tool, benches} = entry;
+              const {commit, date, tool, benches, tag} = entry;
               for (const bench of benches) {
-                const result = { commit, date, tool, bench };
+                const result = { commit, date, tool, bench, tag };
                 const arr = map.get(bench.name);
                 if (arr === undefined) {
                   map.set(bench.name, [result]);
