@@ -1,46 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780063957673,
+  "lastUpdate": 1780065692798,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
-      {
-        "commit": {
-          "author": {
-            "email": "dev.michael.rojas@gmail.com",
-            "name": "havelessbemore",
-            "username": "havelessbemore"
-          },
-          "committer": {
-            "email": "dev.michael.rojas@gmail.com",
-            "name": "havelessbemore",
-            "username": "havelessbemore"
-          },
-          "distinct": true,
-          "id": "9301d5205549fa4ad9729e8d3fb95850b4346b6f",
-          "message": "Remove type UintArray",
-          "timestamp": "2024-04-19T10:44:35-04:00",
-          "tree_id": "a93e3a192f42cdcda5048cb15cf0bf932320f76f",
-          "url": "https://github.com/havelessbemore/munkres/commit/9301d5205549fa4ad9729e8d3fb95850b4346b6f"
-        },
-        "date": 1713538149964,
-        "tool": "customSmallerIsBetter",
-        "benches": [
-          {
-            "name": "number[4096][4096]",
-            "value": 2186.93137348,
-            "unit": "ms",
-            "range": "±2.87%",
-            "extra": "50 samples"
-          },
-          {
-            "name": "bigint[2048][2048]",
-            "value": 1392.2529464000008,
-            "unit": "ms",
-            "range": "±3.57%",
-            "extra": "50 samples"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -3892,6 +3854,58 @@ window.BENCHMARK_DATA = {
             "name": "bigint[4096][4096]",
             "value": 7790.122900199998,
             "range": "±8.23%",
+            "unit": "ms",
+            "extra": "10 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f718a660b25f1fc1a4159a9d4ec641b3231cc263",
+          "message": "Merge pull request #145 from havelessbemore/docs/fix-infinity-semantics\n\ndocs: correct Infinity assignment semantics",
+          "timestamp": "2026-05-29T10:38:56-04:00",
+          "tree_id": "4e60f836ab5c56fc8da70dabceaff03bd74bbac3",
+          "url": "https://github.com/havelessbemore/munkres/commit/f718a660b25f1fc1a4159a9d4ec641b3231cc263"
+        },
+        "date": 1780065692428,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[2048][2048]",
+            "value": 196.56905010000003,
+            "range": "±4.82%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "number[4096][4096]",
+            "value": 1081.2448654000002,
+            "range": "±5.86%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1271.1062174999995,
+            "range": "±7.47%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 7824.997563099998,
+            "range": "±7.98%",
             "unit": "ms",
             "extra": "10 samples"
           }
