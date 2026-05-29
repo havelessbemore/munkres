@@ -85,6 +85,15 @@ export function exec<T extends number | bigint>(
     return numExec(numMatrix) as Matching<T>;
   }
 
+  // INVARIANT: this point is reached only for all-finite matrices.
+  // `inspectNumeric` computes rangeMin/rangeMax over finite cells only,
+  // so for an all-Infinity matrix it returns rangeMin=Infinity,
+  // rangeMax=-Infinity and `rangeMax - rangeMin = -Infinity` — which is
+  // NOT > MAX_VALUE/2 and would slip past this guard. The `infinityAt`
+  // short-circuit above is what keeps that case out; do not reorder or
+  // remove it without making rangeMin/rangeMax robust to the empty-finite
+  // set on their own.
+  //
   // Check the input range is safe. The algorithm's worst-case intermediate
   // values is 2 * (max - min). If 2 * (max - min) > MAX_VALUE, overflow
   // may occur. Enforcement ensures safe inputs and representable values.

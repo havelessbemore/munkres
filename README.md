@@ -129,7 +129,7 @@ const assignments = munkres(largeFiniteCostMatrix, { finite: true });
   **Throws**
 
   - `TypeError`: if a `number` cost matrix contains `NaN`. The error message includes the coordinates of the first NaN encountered. Use `Infinity` for forbidden assignments instead. Skipped under `{ finite: true }`.
-  - `RangeError`: if a `number` cost matrix has `max(c) - min(c) > Number.MAX_VALUE / 2`. The algorithm's worst-case intermediate arithmetic magnitude is `2 * (max - min)`; this guard keeps all intermediates representable in IEEE-754 double precision. Scale your matrix down, or use a `bigint` matrix. Skipped under `{ finite: true }`. `bigint` matrices are exempt entirely.
+  - `RangeError`: if a `number` cost matrix has `max(c) - min(c) > Number.MAX_VALUE / 2`. The algorithm's worst-case intermediate arithmetic magnitude is `2 * (max - min)`; this guard keeps all intermediates representable in IEEE-754 double precision. Scale your matrix down, or use a `bigint` matrix. Skipped under `{ finite: true }`. `bigint` matrices are exempt entirely. The check applies **only to all-finite matrices** — a `number` matrix containing `Infinity` / `-Infinity` routes to the Infinity-handling path before the range check and is never range-checked (forbidden cells are saturated, not summed, so they cannot overflow the same way).
 
   **Numeric precision**
 

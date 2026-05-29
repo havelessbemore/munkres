@@ -3,10 +3,28 @@
 
 version: 2
 updates:
-  # Maintain dependencies for npm
+  # JavaScript dependencies. This project uses pnpm; Dependabot handles
+  # pnpm (v7-v10) under the "npm" ecosystem — there is no standalone
+  # "pnpm" value — and regenerates pnpm-lock.yaml automatically.
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
     commit-message:
-      prefix: "npm"
+      prefix: "build(deps)"
+    # Collapse the many dev-only bumps into a single weekly PR to cut
+    # noise; the package ships no runtime dependencies, so everything
+    # here is devDependencies anyway.
+    groups:
+      dev-dependencies:
+        patterns:
+          - "*"
+
+  # Keep the GitHub Actions used by the CI / publish / benchmark
+  # workflows up to date (and re-pinned) on the same cadence.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci(deps)"
