@@ -1,20 +1,3 @@
-// Finite-`number` solver. Number-specialized copy of `../big/munkres.ts`.
-//
-// PR #119 routed finite `number` matrices through the bigint `exec` to
-// skip the `|| 0` NaN-coercion overhead in the Infinity path's hot loop
-// (`../inf/munkres.ts`). Number got ~2x faster, but bigint got ~2x
-// slower because the bigint `exec` (and its inner `step1` / `match` /
-// `step6` / `step5` calls) became polymorphic: V8's type-feedback
-// machinery for the comparison and arithmetic sites started seeing both
-// `number` and `bigint` arrays and emitted generic code at each.
-//
-// This file is the finite-`number` half of the split. Functions here
-// are typed concretely for `number`, so each call site stays monomorphic
-// in V8's feedback. `../big/munkres.ts` keeps the `bigint` half.
-//
-// **Keep in sync with `../big/munkres.ts`.** The algorithm is identical;
-// only the types and the type-narrowing scaffolding differ.
-
 import type { MatrixLike } from "../../types/matrixLike.ts";
 import type { Matching } from "../../types/matching.ts";
 import type { MutableArrayLike } from "../../types/mutableArrayLike.ts";

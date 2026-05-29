@@ -1,9 +1,3 @@
-// Number-specialized copy of `../big/munkresB.ts`. See `./munkres.ts`
-// for the rationale.
-//
-// **Keep in sync with `../big/munkresB.ts`.** The algorithm is
-// identical; only the types and the type-narrowing scaffolding differ.
-
 import type { MatrixLike } from "../../types/matrixLike.ts";
 import type { MutableArrayLike } from "../../types/mutableArrayLike.ts";
 
