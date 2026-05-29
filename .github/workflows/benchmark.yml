@@ -1,13 +1,21 @@
 name: Benchmark
 on:
   push:
+    # Every push to main feeds the per-commit dashboard (dev/bench) for
+    # between-release regression detection. Every release tag additionally
+    # feeds a separate release-only dashboard (release/bench) for a clean
+    # release-over-release trend. The data-dir-path is chosen per-ref in
+    # the "Store results" step below.
     branches: [main]
+    tags: ["v*"]
   workflow_dispatch:
 permissions:
   contents: write
   deployments: write
-# Serialize bench runs so the gh-pages push (force-write of `dev/bench/data.js`)
-# cannot race against itself when two main pushes land in quick succession.
+# Serialize bench runs so the gh-pages push (force-write of the dashboard's
+# data.js) cannot race against itself. This matters most at release time,
+# when the main-branch push and the tag push fire within seconds of each
+# other — they share this group and run one after the other.
 concurrency:
   group: benchmark
   cancel-in-progress: false
@@ -44,10 +52,20 @@ jobs:
           output-file-path: benchmark_results/ci.txt
           github-token: ${{ secrets.BENCHMARK_TOKEN }}
           auto-push: true
+          # Tag pushes write to a separate release-only dashboard; every
+          # other push (main, manual) writes to the per-commit dashboard.
+          # The two are independent data.js files under gh-pages, so they
+          # render as separate pages:
+          #   /dev/bench     — per-commit, regression detection
+          #   /release/bench — release-over-release trend
+          benchmark-data-dir-path: ${{ startsWith(github.ref, 'refs/tags/') && 'release/bench' || 'dev/bench' }}
           # Cap chart history; older datapoints are still in `data.js` but
           # the rendered chart shows only the most recent 100 entries.
+          # (Releases are rare, so this never evicts a release point.)
           max-items-in-chart: 100
-          # Show alert with commit comment on detecting possible performance regression
+          # Alert on a >150% slowdown vs the previous datapoint. On the
+          # per-commit dashboard that compares against the prior commit;
+          # on the release dashboard, against the prior release.
           alert-threshold: "150%"
           comment-on-alert: true
           fail-on-alert: true
