@@ -69,3 +69,56 @@ jobs:
           alert-threshold: "150%"
           comment-on-alert: true
           fail-on-alert: true
+
+      # The benchmark action records each datapoint by commit SHA + message,
+      # with no knowledge of the tag. On a tag push, stamp the just-appended
+      # release/bench entry with its tag (e.g. "v2.1.0") so the dashboard
+      # labels points by release rather than SHA. The release/bench
+      # index.html renders `tag || sha`, so this is purely additive — an
+      # unstamped point still shows its SHA.
+      - name: Label release datapoint by tag
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_SHA: ${{ github.sha }}
+          GH_TOKEN: ${{ secrets.BENCHMARK_TOKEN }}
+        run: |
+          set -euo pipefail
+          work="$(mktemp -d)"
+          git clone --branch gh-pages --depth 1 \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$work"
+          cd "$work"
+          node - <<'NODE'
+          const fs = require("fs");
+          const file = "release/bench/data.js";
+          const raw = fs.readFileSync(file, "utf8");
+          // Strip the `window.BENCHMARK_DATA = ` assignment wrapper (and any
+          // trailing `;`) to recover the JSON the action wrote.
+          const data = JSON.parse(raw.replace(/^[^=]*=\s*/, "").replace(/;\s*$/, ""));
+          const tag = process.env.RELEASE_TAG;
+          const sha = process.env.RELEASE_SHA;
+          let changed = 0;
+          for (const list of Object.values(data.entries)) {
+            for (const e of list) {
+              if (e.commit.id === sha && e.tag !== tag) {
+                e.tag = tag;
+                ++changed;
+              }
+            }
+          }
+          if (changed > 0) {
+            // Re-emit in the action's exact format (pretty JSON, no trailing
+            // semicolon/newline) so the diff is just the added `tag` field.
+            fs.writeFileSync(file, "window.BENCHMARK_DATA = " + JSON.stringify(data, null, 2));
+          }
+          console.log(`tagged ${changed} entry/entries as ${tag}`);
+          NODE
+          if git diff --quiet; then
+            echo "No change (entry already tagged, or not yet present)."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add release/bench/data.js
+            git commit -m "Label release datapoint ${RELEASE_SHA} as ${RELEASE_TAG}"
+            git push origin gh-pages
+          fi
