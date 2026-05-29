@@ -113,7 +113,7 @@ Performance is tracked automatically on every release and every commit to `main`
 - **[Run it in your browser →](https://jsbm.dev/QHoz2G2XHQknL)**: try it on your own inputs.
 - **[Run locally →](CONTRIBUTING.md#benchmarks)**: See the contributing guide.
 
-As a ballpark (Apple M2, v2.1.0):
+As a ballpark (Apple M2, v2.1.1):
 | Matrix Size | `number` | `bigint` |
 | --- | --- | --- |
 | 64x64 | ~0.07ms | ~0.17ms |
