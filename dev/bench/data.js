@@ -1,46 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780030094269,
+  "lastUpdate": 1780030814273,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
-      {
-        "commit": {
-          "author": {
-            "email": "dev.michael.rojas@gmail.com",
-            "name": "havelessbemore",
-            "username": "havelessbemore"
-          },
-          "committer": {
-            "email": "dev.michael.rojas@gmail.com",
-            "name": "havelessbemore",
-            "username": "havelessbemore"
-          },
-          "distinct": true,
-          "id": "619992934e7fc520e51dbe517124c5802fad7b5e",
-          "message": "Update README.md",
-          "timestamp": "2024-04-17T15:25:45-04:00",
-          "tree_id": "e987c7ecdf08453b94bc95624395a8618cc94ecd",
-          "url": "https://github.com/havelessbemore/munkres/commit/619992934e7fc520e51dbe517124c5802fad7b5e"
-        },
-        "date": 1713382224247,
-        "tool": "customSmallerIsBetter",
-        "benches": [
-          {
-            "name": "number[4096][4096]",
-            "value": 2214.2220652600004,
-            "unit": "ms",
-            "range": "±2.75%",
-            "extra": "50 samples"
-          },
-          {
-            "name": "bigint[2048][2048]",
-            "value": 1477.1855837600008,
-            "unit": "ms",
-            "range": "±3.79%",
-            "extra": "50 samples"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -3822,6 +3784,58 @@ window.BENCHMARK_DATA = {
             "name": "bigint[4096][4096]",
             "value": 7371.700761400003,
             "range": "±8.41%",
+            "unit": "ms",
+            "extra": "10 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6376780fd376566a722026aad280139ab959fb71",
+          "message": "Merge pull request #140 from havelessbemore/bench/release-dashboard\n\nci(bench): add release-only dashboard via tag trigger",
+          "timestamp": "2026-05-29T00:57:40-04:00",
+          "tree_id": "9b48eafe7ad3e3bbc679fb8b90ae6dc6ec4e6559",
+          "url": "https://github.com/havelessbemore/munkres/commit/6376780fd376566a722026aad280139ab959fb71"
+        },
+        "date": 1780030813749,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[2048][2048]",
+            "value": 196.8896107,
+            "range": "±4.51%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "number[4096][4096]",
+            "value": 1093.9666072000002,
+            "range": "±5.54%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1289.0704620999995,
+            "range": "±7.14%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 7731.4958793000005,
+            "range": "±7.99%",
             "unit": "ms",
             "extra": "10 samples"
           }
