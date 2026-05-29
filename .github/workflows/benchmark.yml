@@ -21,7 +21,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           # Pinned to a specific Node 24 patch so V8 updates in newer 24.x
           # patches cannot drift the baseline without an intentional bump
