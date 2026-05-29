@@ -75,7 +75,7 @@ export function exec<T extends number | bigint>(
     throw new TypeError(
       `munkres: cost matrix contains NaN at ` +
         `[${inspection.nanAt[0]}][${inspection.nanAt[1]}]. ` +
-        `Use Infinity to mark forbidden assignments.`,
+        `Use Infinity to avoid an assignment.`,
     );
   }
 

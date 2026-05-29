@@ -22,7 +22,7 @@ import type { MunkresOptions } from "./munkres.options.ts";
  * result; when `cols > rows`, the unmatched columns are absent.
  *
  * @throws TypeError if a `number` cost matrix contains `NaN`. Pass
- *   `Infinity` to mark forbidden assignments instead.
+ *   `Infinity` to avoid an assignment instead.
  * @throws RangeError if a `number` cost matrix's range
  *   `max(c) - min(c)` exceeds `Number.MAX_VALUE / 2`, the algorithm's
  *   worst-case intermediate magnitude is `2 * range`, and this guard
@@ -33,8 +33,8 @@ import type { MunkresOptions } from "./munkres.options.ts";
  *   The range check applies only to all-finite matrices. A `number`
  *   matrix containing `Infinity` / `-Infinity` routes to a separate
  *   Infinity-handling path *before* the range check and is therefore
- *   never range-checked — those inputs cannot overflow the same way,
- *   since the forbidden cells are saturated rather than summed.
+ *   never range-checked. Those inputs cannot overflow the same way,
+ *   since the `±Infinity` cells are saturated rather than summed.
  *
  *   Pass `{ finite: true }` to skip BOTH the finiteness scan AND this
  *   range check, when the caller has already established the input is
