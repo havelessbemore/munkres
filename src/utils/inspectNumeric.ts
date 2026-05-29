@@ -18,6 +18,15 @@ import type { Pair } from "../types/pair.ts";
  * variant. They let the dispatcher enforce the overflow-safety bound
  * `max - min <= Number.MAX_VALUE / 2` (tightness verified via the Z3
  * SMT search in `scripts/overflow-smt-search.py`).
+ *
+ * CAUTION: `rangeMin` / `rangeMax` track finite cells ONLY. When
+ * `infinityAt` is set they are partial (the min/max of the finite
+ * subset, ignoring the Infinity cells) and for an all-Infinity matrix
+ * they retain their sentinel init values (`rangeMin = +Infinity`,
+ * `rangeMax = -Infinity`, so `rangeMax - rangeMin = -Infinity`).
+ * Callers must branch on `infinityAt` before trusting the range — the
+ * dispatcher does exactly this. See the INVARIANT comment in
+ * `src/core/munkres.ts`.
  */
 export type NumericInspection =
   | {

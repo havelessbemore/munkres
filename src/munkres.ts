@@ -30,6 +30,12 @@ import type { MunkresOptions } from "./munkres.options.ts";
  *   matrix down or use `bigint`. Typical assignment-problem inputs
  *   have ranges well below this threshold.
  *
+ *   The range check applies only to all-finite matrices. A `number`
+ *   matrix containing `Infinity` / `-Infinity` routes to a separate
+ *   Infinity-handling path *before* the range check and is therefore
+ *   never range-checked — those inputs cannot overflow the same way,
+ *   since the forbidden cells are saturated rather than summed.
+ *
  *   Pass `{ finite: true }` to skip BOTH the finiteness scan AND this
  *   range check, when the caller has already established the input is
  *   well-formed; mis-using that option can produce undefined output but
