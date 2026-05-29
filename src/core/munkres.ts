@@ -4,13 +4,13 @@ import type { Matching } from "../types/matching.ts";
 import { isBigInt } from "../utils/is.ts";
 import { inspectNumeric } from "../utils/inspectNumeric.ts";
 
-import { exec as bigExec } from "./bigMunkres.ts";
-import { exec as numFiniteExec } from "./numFiniteMunkres.ts";
-import { exec as numExec } from "./numMunkres.ts";
+import { exec as bigExec } from "./big/munkres.ts";
+import { exec as numFiniteExec } from "./num/munkres.ts";
+import { exec as numExec } from "./inf/munkres.ts";
 
 /**
  * Internal options for the dispatcher. The public-facing
- * `MunkresOptions` (in `src/munkres.options.ts`) is shaped to match.
+ * `MunkresOptions` (in `src/types/munkresOptions.ts`) is shaped to match.
  */
 interface ExecOptions {
   finite?: boolean;

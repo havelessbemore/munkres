@@ -122,7 +122,7 @@ describe("munkres property: row-permutation invariance", () => {
 });
 
 describe("munkres property: column-permutation invariance", () => {
-  // Mirrors the row-perm block above to exercise `step4B` / `numMunkresB`
+  // Mirrors the row-perm block above to exercise `step4B` / `num/munkresB.ts`
   // and the wide-matrix dispatch (`Y > X` vs `Y <= X` flips column-side).
   test("permuting columns does not change the optimal total cost", () => {
     fc.assert(
@@ -157,9 +157,9 @@ describe("munkres property: column-permutation invariance", () => {
 });
 
 describe("munkres property: optimality on bigint matrices", () => {
-  // The bigint hot path (bigMunkres.ts) is reached by both `bigint` inputs
-  // and `{ finite: true }` number inputs. Verify it returns the same
-  // optimal cost as brute force on the equivalent number matrix.
+  // The bigint hot path (big/munkres.ts) is reached by `bigint` inputs.
+  // Verify it returns the same optimal cost as brute force on the
+  // equivalent number matrix.
   test("bigint result equals brute-force minimum (n ≤ 6, integer costs)", () => {
     fc.assert(
       fc.property(smallMatrix, (matrix) => {
@@ -175,7 +175,7 @@ describe("munkres property: optimality on bigint matrices", () => {
 });
 
 describe("munkres property: optimality with Infinity forbidden cells", () => {
-  // The Infinity routing path (numMunkres / numMunkresB) is only validated
+  // The Infinity routing path (inf/munkres.ts / inf/munkresB.ts) is only validated
   // by hand-written fixtures today. Inject sparse +Infinity to exercise
   // the dispatcher → numExec branch with property-level coverage.
   //
@@ -201,7 +201,10 @@ describe("munkres property: optimality with Infinity forbidden cells", () => {
             fc.integer({ min: 0, max: Y - 1 }),
             fc.integer({ min: 0, max: X - 1 }),
           ),
-          { minLength: 0, maxLength: Math.max(1, Math.floor(Math.min(Y, X) / 2)) },
+          {
+            minLength: 0,
+            maxLength: Math.max(1, Math.floor(Math.min(Y, X) / 2)),
+          },
         ),
       ),
     )

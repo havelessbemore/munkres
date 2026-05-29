@@ -4,7 +4,7 @@ import type { Pair } from "./types/pair.ts";
 import { exec } from "./core/munkres.ts";
 import { toPairs } from "./utils/matching.ts";
 
-import type { MunkresOptions } from "./munkres.options.ts";
+import type { MunkresOptions } from "./types/munkresOptions.ts";
 
 /**
  * Find the optimal assignments of `y` workers to `x` jobs to

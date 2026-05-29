@@ -89,7 +89,7 @@ Runs the algorithm and returns a set of optimal `[y, x]` assignment pairs. If se
 - [`Matrix<T>`](src/types/matrix.ts): a 2D matrix, `T[][]`.
 - [`MatrixLike<T>`](src/types/matrixLike.ts): a read-only 2D matrix accepting any `ArrayLike` (arrays, typed arrays, custom indexables).
 - [`Pair<A, B = A>`](src/types/pair.ts): a `[A, B]` tuple.
-- [`MunkresOptions`](src/munkres.options.ts): the options object for `munkres()`.
+- [`MunkresOptions`](src/types/munkresOptions.ts): the options object for `munkres()`.
 
 ### Helpers
 

@@ -62,6 +62,7 @@ Benchmarks run automatically on every commit to `main` (per-commit dashboard) an
 
 #### Tests
 
+- **Co-locate every test with the module it tests.** Name it `<module>.test.ts` (e.g. `utils/matrix.test.ts` beside `utils/matrix.ts`). When a module's tests grow large, split them by concern as `<module>.<concern>.test.ts` (e.g. `munkres.nan.test.ts`, `munkres.overflow.test.ts` beside `munkres.ts`). Shared test infrastructure (harness, fixtures, type-level tests) lives under `tests/`, and its own tests co-locate there too (e.g. `tests/utils/bruteForce.test.ts` beside `tests/utils/bruteForce.ts`).
 - Include sufficient tests
 - Add new tests when adding new features.
 - Update existing tests to reflect code changes.

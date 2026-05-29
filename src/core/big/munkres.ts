@@ -1,14 +1,14 @@
-import type { MatrixLike } from "../types/matrixLike.ts";
-import type { Matching } from "../types/matching.ts";
-import type { MutableArrayLike } from "../types/mutableArrayLike.ts";
+// Same algorithm as `../num/munkres.ts`; keep the two in sync.
+import type { MatrixLike } from "../../types/matrixLike.ts";
+import type { Matching } from "../../types/matching.ts";
+import type { MutableArrayLike } from "../../types/mutableArrayLike.ts";
 
-import { getMin } from "../utils/arrayLike.ts";
-import { partitionByMin } from "../utils/mutableArrayLike.ts";
+import { getMin, partitionByMin } from "./utils.ts";
 
-import { step4B } from "./numMunkresB.ts";
-import { step5 } from "./shared.ts";
+import { step4B } from "./munkresB.ts";
+import { step5 } from "../shared.ts";
 
-export function exec(matrix: MatrixLike<number>): Matching<number> {
+export function exec(matrix: MatrixLike<bigint>): Matching<bigint> {
   // Get dimensions
   const Y = matrix.length;
   const X = matrix[0]?.length ?? 0;
@@ -19,8 +19,8 @@ export function exec(matrix: MatrixLike<number>): Matching<number> {
   }
 
   // Step 1: Reduce
-  const dualX = new Array<number>(X);
-  const dualY = new Array<number>(Y);
+  const dualX = new Array<bigint>(X);
+  const dualY = new Array<bigint>(Y);
   step1(matrix, dualX, dualY);
 
   // Steps 2 & 3: Find initial matching
@@ -52,16 +52,16 @@ export function exec(matrix: MatrixLike<number>): Matching<number> {
  * @param dualY - The dual variables for each matrix row. Modified in place.
  */
 export function step1(
-  matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
+  matrix: MatrixLike<bigint>,
+  dualX: MutableArrayLike<bigint>,
+  dualY: MutableArrayLike<bigint>,
 ): void {
   const X = dualX.length;
   const Y = dualY.length;
 
   // If matrix is tall, skip row reduction
   if (Y > X) {
-    dualY.fill(0);
+    dualY.fill(0n);
   } else {
     // Reduce rows
     for (let y = 0; y < Y; ++y) {
@@ -71,7 +71,7 @@ export function step1(
 
   // If matrix is wide, skip column reduction
   if (Y < X) {
-    dualX.fill(0);
+    dualX.fill(0n);
     return;
   }
 
@@ -79,7 +79,7 @@ export function step1(
   let dy = dualY[0];
   let row = matrix[0];
   for (let x = 0; x < X; ++x) {
-    dualX[x] = row[x] - dy || 0;
+    dualX[x] = row[x] - dy;
   }
 
   // Reduce columns
@@ -87,7 +87,7 @@ export function step1(
     dy = dualY[y];
     row = matrix[y];
     for (let x = 0; x < X; ++x) {
-      const dx = row[x] - dy || 0;
+      const dx = row[x] - dy;
       if (dx < dualX[x]) {
         dualX[x] = dx;
       }
@@ -107,11 +107,11 @@ export function step1(
  * @returns The number of matches (stars) found.
  */
 export function steps2To3(
-  matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  starsX: number[],
-  starsY: number[],
+  matrix: MatrixLike<bigint>,
+  dualX: ArrayLike<bigint>,
+  dualY: ArrayLike<bigint>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): number {
   const X = dualX.length;
   const Y = dualY.length;
@@ -122,7 +122,7 @@ export function steps2To3(
     const dy = dualY[y];
     const row = matrix[y];
     for (let x = 0; x < X; ++x) {
-      if (starsX[x] === -1 && row[x] === (dualX[x] + dy || 0)) {
+      if (starsX[x] === -1 && dy === row[x] - dualX[x]) {
         starsX[x] = y;
         starsY[y] = x;
         ++stars;
@@ -148,11 +148,11 @@ export function steps2To3(
  */
 export function step4(
   unmatched: number,
-  matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  starsX: number[],
-  starsY: number[],
+  matrix: MatrixLike<bigint>,
+  dualX: MutableArrayLike<bigint>,
+  dualY: MutableArrayLike<bigint>,
+  starsX: MutableArrayLike<number>,
+  starsY: MutableArrayLike<number>,
 ): void {
   // If no unmatched row
   if (unmatched <= 0) {
@@ -161,7 +161,7 @@ export function step4(
 
   const X = dualX.length;
   const slack = new Uint32Array(X);
-  const slackV = new Array<number>(X);
+  const slackV = new Array<bigint>(X);
   const slackY = new Uint32Array(X);
 
   // Match unmatched rows
@@ -195,21 +195,21 @@ export function step4(
 export function step6(
   y: number,
   N: number,
-  dualX: number[],
-  dualY: number[],
+  dualX: MutableArrayLike<bigint>,
+  dualY: MutableArrayLike<bigint>,
   slack: ArrayLike<number>,
-  slackV: ArrayLike<number>,
+  slackV: ArrayLike<bigint>,
   starsX: ArrayLike<number>,
 ): void {
   const sum = slackV[slack[--N]];
-  dualY[y] = dualY[y] + sum || 0;
+  dualY[y] += sum;
 
   for (let i = 0; i < N; ++i) {
     const x = slack[i];
     y = starsX[x];
-    const min = sum - slackV[x] || 0;
-    dualX[x] = dualX[x] - min || 0;
-    dualY[y] = dualY[y] + min || 0;
+    const min = sum - slackV[x];
+    dualX[x] -= min;
+    dualY[y] += min;
   }
 }
 
@@ -227,12 +227,12 @@ export function step6(
  */
 export function match(
   y: number,
-  matrix: MatrixLike<number>,
-  dualX: number[],
-  dualY: number[],
-  starsX: number[],
+  matrix: MatrixLike<bigint>,
+  dualX: ArrayLike<bigint>,
+  dualY: ArrayLike<bigint>,
+  starsX: ArrayLike<number>,
   slack: MutableArrayLike<number>,
-  slackV: MutableArrayLike<number>,
+  slackV: MutableArrayLike<bigint>,
   slackY: MutableArrayLike<number>,
 ): number {
   const X = slack.length;
@@ -242,7 +242,7 @@ export function match(
   let row = matrix[y];
   for (let x = 0; x < X; ++x) {
     slack[x] = x;
-    slackV[x] = row[x] - (dualX[x] + dy || 0) || 0;
+    slackV[x] = row[x] - dualX[x] - dy;
     slackY[x] = y;
   }
 
@@ -255,11 +255,11 @@ export function match(
   for (let x = slack[0]; starsX[x] !== -1; x = slack[steps++]) {
     // Update slack
     y = starsX[x];
-    dy = dualY[y];
+    dy = dualY[y] - zero;
     row = matrix[y];
     for (let i = zeros; i < X; ++i) {
       x = slack[i];
-      const value = (row[x] - (dualX[x] + dy || 0) || 0) + zero || 0;
+      const value = row[x] - dualX[x] - dy;
       if (value >= slackV[x]) {
         continue;
       }
