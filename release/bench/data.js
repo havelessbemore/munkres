@@ -39,7 +39,8 @@ window.BENCHMARK_DATA = {
             "range": "±3.43%",
             "extra": "50 samples"
           }
-        ]
+        ],
+        "tag": "v2.0.2"
       },
       {
         "commit": {
@@ -77,7 +78,8 @@ window.BENCHMARK_DATA = {
             "range": "±3.58%",
             "extra": "50 samples"
           }
-        ]
+        ],
+        "tag": "v2.0.3"
       },
       {
         "commit": {
@@ -115,7 +117,8 @@ window.BENCHMARK_DATA = {
             "range": "±3.59%",
             "extra": "50 samples"
           }
-        ]
+        ],
+        "tag": "v2.0.4"
       },
       {
         "commit": {
@@ -151,7 +154,8 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "extra": "50 samples"
           }
-        ]
+        ],
+        "tag": "v2.0.5"
       },
       {
         "commit": {
@@ -189,7 +193,8 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "extra": "50 samples"
           }
-        ]
+        ],
+        "tag": "v2.1.0"
       }
     ]
   }

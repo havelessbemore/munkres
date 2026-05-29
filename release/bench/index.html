@@ -177,7 +177,7 @@
 
             const color = toolColors[dataset.length > 0 ? dataset[0].tool : '_'];
             const data = {
-              labels: dataset.map(d => d.commit.id.slice(0, 7)),
+              labels: dataset.map(d => d.tag || d.commit.id.slice(0, 7)),
               datasets: [
                 {
                   label: name,
@@ -193,7 +193,7 @@
                   {
                     scaleLabel: {
                       display: true,
-                      labelString: 'commit',
+                      labelString: 'release',
                     },
                   }
                 ],
@@ -214,7 +214,8 @@
                   afterTitle: items => {
                     const {index} = items[0];
                     const data = dataset[index];
-                    return '\n' + data.commit.message + '\n\n' + data.commit.timestamp + ' committed by @' + data.commit.committer.username + '\n';
+                    const tagLine = data.tag ? data.tag + ' (' + data.commit.id.slice(0, 7) + ')\n' : '';
+                    return '\n' + tagLine + data.commit.message + '\n\n' + data.commit.timestamp + ' committed by @' + data.commit.committer.username + '\n';
                   },
                   label: item => {
                     let label = item.value;
