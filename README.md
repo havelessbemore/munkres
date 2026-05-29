@@ -116,10 +116,10 @@ Performance is tracked automatically on every release and every commit to `main`
 As a ballpark (Apple M2, v2.1.0):
 | Matrix Size | `number` | `bigint` |
 | --- | --- | --- |
-| 64x64 | ~0.1ms | ~0.26ms |
-| 256x256 | ~2ms | ~8ms |
-| 1024x1024 | ~40ms | ~222ms |
-| 4096x4096 | ~1s | ~5.7s |
+| 64x64 | ~0.07ms | ~0.17ms |
+| 256x256 | ~1.2ms | ~3.7ms |
+| 1024x1024 | ~26ms | ~110ms |
+| 4096x4096 | ~0.73s | ~3.8s |
 
 ## Contributing
 
