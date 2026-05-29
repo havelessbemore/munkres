@@ -1,46 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780060749263,
+  "lastUpdate": 1780063957673,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
-      {
-        "commit": {
-          "author": {
-            "email": "dev.michael.rojas@gmail.com",
-            "name": "havelessbemore",
-            "username": "havelessbemore"
-          },
-          "committer": {
-            "email": "dev.michael.rojas@gmail.com",
-            "name": "havelessbemore",
-            "username": "havelessbemore"
-          },
-          "distinct": true,
-          "id": "c9c7e2f3be790ee2e5184605b2331877c77ed129",
-          "message": "Improve memory use by up to ~12%",
-          "timestamp": "2024-04-19T10:34:25-04:00",
-          "tree_id": "6ed95a7038d46dcd8ed9f7102a53bddff18ccf0c",
-          "url": "https://github.com/havelessbemore/munkres/commit/c9c7e2f3be790ee2e5184605b2331877c77ed129"
-        },
-        "date": 1713537572684,
-        "tool": "customSmallerIsBetter",
-        "benches": [
-          {
-            "name": "number[4096][4096]",
-            "value": 2251.7591420599997,
-            "unit": "ms",
-            "range": "±3.19%",
-            "extra": "50 samples"
-          },
-          {
-            "name": "bigint[2048][2048]",
-            "value": 1437.5237546,
-            "unit": "ms",
-            "range": "±3.58%",
-            "extra": "50 samples"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -3878,6 +3840,58 @@ window.BENCHMARK_DATA = {
             "name": "bigint[4096][4096]",
             "value": 7975.791253900001,
             "range": "±8.12%",
+            "unit": "ms",
+            "extra": "10 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7303b5218ea4927a5b7efe1cf2e8bc62b91e641b",
+          "message": "Merge pull request #144 from havelessbemore/refactor/reduce-core-duplication\n\nrefactor: dedupe step5/step5B and drop dead internal utilities",
+          "timestamp": "2026-05-29T10:09:54-04:00",
+          "tree_id": "d437adb7f46719ef90c97602c22f9c632e74ff5d",
+          "url": "https://github.com/havelessbemore/munkres/commit/7303b5218ea4927a5b7efe1cf2e8bc62b91e641b"
+        },
+        "date": 1780063957084,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[2048][2048]",
+            "value": 230.3568878000001,
+            "range": "±4.78%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "number[4096][4096]",
+            "value": 1316.9948689999999,
+            "range": "±6.43%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1324.9715724000012,
+            "range": "±7.79%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 7790.122900199998,
+            "range": "±8.23%",
             "unit": "ms",
             "extra": "10 samples"
           }
