@@ -27,7 +27,7 @@ let inMeasurement = false;
 const sweep = () => {
   if (inMeasurement) globalThis.gc?.();
 };
-const setMode = (_: unknown, mode: "run" | "warmup") => {
+const setMode = (_: unknown, mode?: "run" | "warmup") => {
   inMeasurement = mode === "run";
 };
 
@@ -41,7 +41,7 @@ const setMode = (_: unknown, mode: "run" | "warmup") => {
 // power-of-2 matrices, `cells >= 32768` excludes N=128 (16384 cells)
 // and includes N=256 (65536 cells) and up — the point where matrices
 // start landing in V8's old generation rather than nursery.
-const HEAVY_CELLS = 1 << 15; // 32768 cells; N >= 256 for square matrices
+const HEAVY_N = 256; // 32768 cells; N >= 256 for square matrices
 
 // `afterEach` hook for heavy tasks: drop the matrix reference AND force
 // a sync GC before the next iteration's `beforeEach` allocates a fresh
@@ -50,11 +50,8 @@ const HEAVY_CELLS = 1 << 15; // 32768 cells; N >= 256 for square matrices
 // `gen()` returns — which means BOTH matrices coexist briefly during
 // allocation of the new one. For 8192x8192 bigint that's 2 × ~1.6 GB
 // of boxed BigInts, exceeding any reasonable `--max-old-space-size`.
-function makeAfterEach(
-  cells: number,
-  clear: () => void,
-): (() => void) | undefined {
-  if (cells < HEAVY_CELLS) return undefined;
+function makeAfterEach(N: number, clear: () => void): (() => void) | undefined {
+  if (N < HEAVY_N) return undefined;
   return () => {
     clear();
     sweep();
@@ -69,7 +66,7 @@ function makeAfterEach(
 // observed "warmup hangs" — fast tasks would otherwise run millions of
 // warmup iters to fill `warmupTime: 250`).
 const BENCH_OPTS = {
-  iterations: 50,
+  iterations: 10,
   warmup: true,
   warmupIterations: 1,
   warmupTime: 0,
@@ -84,14 +81,14 @@ const suite = new Suite().addReporter(new TerminalReporter());
 // Number suite: 2x2 through 8192x8192 (13 sizes). 8192 takes ~5min at 50
 // samples; smaller sizes complete in well under a second each.
 suite.add(`number`, (bench = new Bench(BENCH_OPTS)));
-for (let i = 1; i <= 13; ++i) {
+for (let i = 1; i <= 12; ++i) {
   const N = 1 << i;
   let mat: Matrix<number>;
   bench.add(`${N}x${N}`, () => munkres(mat), {
     beforeEach: () => {
       mat = gen(N, N, genInt);
     },
-    afterEach: makeAfterEach(N * N, () => {
+    afterEach: makeAfterEach(N, () => {
       mat = [];
     }),
   });
@@ -107,28 +104,7 @@ for (let i = 1; i <= 12; ++i) {
     beforeEach: () => {
       mat = gen(N, N, genBig);
     },
-    afterEach: makeAfterEach(N * N, () => {
-      mat = [];
-    }),
-  });
-}
-
-// Bigint 8192: ~21 seconds per iteration; 50 samples would be ~17min.
-// Split it into a separate Bench with a 10-sample floor to keep total
-// runtime in line with the historical README, which reports 10 samples
-// for this size for the same reason.
-suite.add(
-  `bigint (huge)`,
-  (bench = new Bench({ ...BENCH_OPTS, iterations: 10 })),
-);
-{
-  const N = 8192;
-  let mat: Matrix<bigint>;
-  bench.add(`${N}x${N}`, () => munkres(mat), {
-    beforeEach: () => {
-      mat = gen(N, N, genBig);
-    },
-    afterEach: makeAfterEach(N * N, () => {
+    afterEach: makeAfterEach(N, () => {
       mat = [];
     }),
   });
