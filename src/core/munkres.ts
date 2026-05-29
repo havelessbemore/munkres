@@ -10,7 +10,7 @@ import { exec as numExec } from "./inf/munkres.ts";
 
 /**
  * Internal options for the dispatcher. The public-facing
- * `MunkresOptions` (in `src/munkres.options.ts`) is shaped to match.
+ * `MunkresOptions` (in `src/types/munkresOptions.ts`) is shaped to match.
  */
 interface ExecOptions {
   finite?: boolean;

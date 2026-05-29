@@ -73,7 +73,7 @@ const assignments = munkres(costMatrix);
 Runs the algorithm and returns a set of optimal `[y, x]` assignment pairs. If several optimal assignments exist, one is returned.
 
 - **`costMatrix`**: a `MatrixLike<number>` or `MatrixLike<bigint>` where `costMatrix[y][x]` is the cost of assigning worker `y` to job `x`. Use `Infinity` / `-Infinity` to forbid an assignment.
-- **`options.finite`** _(boolean, default `false`)_: promise the matrix is all-finite and in-range, skipping input validation for a small speedup on large matrices. If the promise is broken, the result is undefined (it won't throw). See [`MunkresOptions`](src/munkres.options.ts).
+- **`options.finite`** _(boolean, default `false`)_: promise the matrix is all-finite and in-range, skipping input validation for a small speedup on large matrices. If the promise is broken, the result is undefined (it won't throw). See [`MunkresOptions`](src/types/munkresOptions.ts).
 
 **Returns** `Pair<number>[]`, an array of `[y, x]` pairs, length `min(rows, cols)`.
 
@@ -89,7 +89,7 @@ Runs the algorithm and returns a set of optimal `[y, x]` assignment pairs. If se
 - [`Matrix<T>`](src/types/matrix.ts): a 2D matrix, `T[][]`.
 - [`MatrixLike<T>`](src/types/matrixLike.ts): a read-only 2D matrix accepting any `ArrayLike` (arrays, typed arrays, custom indexables).
 - [`Pair<A, B = A>`](src/types/pair.ts): a `[A, B]` tuple.
-- [`MunkresOptions`](src/munkres.options.ts): the options object for `munkres()`.
+- [`MunkresOptions`](src/types/munkresOptions.ts): the options object for `munkres()`.
 
 ### Helpers
 
