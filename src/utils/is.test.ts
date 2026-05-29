@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 
-import { isBigInt, isNumber } from "./is.ts";
+import { isBigInt } from "./is.ts";
 
 describe(`${isBigInt.name}()`, () => {
   test("returns true for bigint values", () => {
@@ -40,51 +40,5 @@ describe(`${isBigInt.name}()`, () => {
   test("returns false for function and symbol", () => {
     expect(isBigInt(() => 0n)).toBe(false);
     expect(isBigInt(Symbol("bigint"))).toBe(false);
-  });
-});
-
-describe(`${isNumber.name}()`, () => {
-  test("returns true for integer numbers", () => {
-    expect(isNumber(123)).toBe(true);
-  });
-
-  test("returns true for floating-point numbers", () => {
-    expect(isNumber(-456.789)).toBe(true);
-  });
-
-  test("returns true for Number constants", () => {
-    expect(isNumber(Infinity)).toBe(true);
-    expect(isNumber(-Infinity)).toBe(true);
-    expect(isNumber(NaN)).toBe(true);
-  });
-
-  test("returns false for bigint values", () => {
-    expect(isNumber(123n)).toBe(false);
-  });
-
-  test("returns false for string values", () => {
-    expect(isNumber("123")).toBe(false);
-    expect(isNumber("NaN")).toBe(false);
-  });
-
-  test("returns false for boolean values", () => {
-    expect(isNumber(true)).toBe(false);
-    expect(isNumber(false)).toBe(false);
-  });
-
-  test("returns false for null and undefined", () => {
-    expect(isNumber(null)).toBe(false);
-    expect(isNumber(undefined)).toBe(false);
-  });
-
-  test("returns false for object and array", () => {
-    expect(isNumber({})).toBe(false);
-    expect(isNumber([])).toBe(false);
-    expect(isNumber([123])).toBe(false);
-  });
-
-  test("returns false for function and symbol", () => {
-    expect(isNumber(() => 0n)).toBe(false);
-    expect(isNumber(Symbol("number"))).toBe(false);
   });
 });

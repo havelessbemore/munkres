@@ -3,7 +3,7 @@ import type { MutableArrayLike } from "../types/mutableArrayLike.ts";
 
 import { partitionByMin } from "../utils/mutableArrayLike.ts";
 
-import { step5B } from "./bigMunkresB.ts";
+import { step5B } from "./shared.ts";
 
 /**
  * This step iteratively improves upon an initial matching until a complete

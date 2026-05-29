@@ -9,6 +9,8 @@ import type { MutableArrayLike } from "../types/mutableArrayLike.ts";
 
 import { partitionByMin } from "../utils/mutableArrayLike.ts";
 
+import { step5B } from "./shared.ts";
+
 /**
  * This step iteratively improves upon an initial matching until a complete
  * matching is found. This involves updating dual variables and managing
@@ -54,36 +56,6 @@ export function step4B(
     // Update matching
     step5B(slack[N - 1], slackX, starsX, starsY);
   }
-}
-
-/**
- * Augments the current matching.
- *
- * This step effectively increases the number of matches (stars)
- * by 1, bringing the algorithm closer to an optimal assignment.
- *
- * Augmentation is performed by flipping matched and unmatched edges along
- * an augmenting path, starting from an unmatched node / edge and
- * continuing until no matched edge can be found.
- *
- * @param y - The starting node's row.
- * @param primeY - An array mapping primed rows to columns.
- * @param starsX - An array mapping star columns to row. Modified in place.
- * @param starsY - An array mapping star rows to columns. Modified in place.
- */
-export function step5B(
-  y: number,
-  primeY: ArrayLike<number>,
-  starsX: MutableArrayLike<number>,
-  starsY: MutableArrayLike<number>,
-): void {
-  do {
-    const x = primeY[y];
-    const sy = starsX[x];
-    starsX[x] = y;
-    starsY[y] = x;
-    y = sy;
-  } while (y !== -1);
 }
 
 /**
