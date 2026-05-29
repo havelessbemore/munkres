@@ -1,3 +1,4 @@
+// Same algorithm as `../num/munkres.ts`; keep the two in sync.
 import type { MatrixLike } from "../../types/matrixLike.ts";
 import type { Matching } from "../../types/matching.ts";
 import type { MutableArrayLike } from "../../types/mutableArrayLike.ts";
