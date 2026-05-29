@@ -1,46 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780030814273,
+  "lastUpdate": 1780031388945,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
-      {
-        "commit": {
-          "author": {
-            "email": "dev.michael.rojas@gmail.com",
-            "name": "Michael Rojas",
-            "username": "havelessbemore"
-          },
-          "committer": {
-            "email": "noreply@github.com",
-            "name": "GitHub",
-            "username": "web-flow"
-          },
-          "distinct": true,
-          "id": "147a5e7861c1be40f5ae56b4a20b26c239426ee2",
-          "message": "Update SECURITY.md",
-          "timestamp": "2024-04-17T16:12:46-04:00",
-          "tree_id": "154eccaf2a174708d84cb8d6ad916e299601d49c",
-          "url": "https://github.com/havelessbemore/munkres/commit/147a5e7861c1be40f5ae56b4a20b26c239426ee2"
-        },
-        "date": 1713385028573,
-        "tool": "customSmallerIsBetter",
-        "benches": [
-          {
-            "name": "number[4096][4096]",
-            "value": 2098.435002,
-            "unit": "ms",
-            "range": "±2.40%",
-            "extra": "50 samples"
-          },
-          {
-            "name": "bigint[2048][2048]",
-            "value": 1373.7351553199999,
-            "unit": "ms",
-            "range": "±3.05%",
-            "extra": "50 samples"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -3836,6 +3798,58 @@ window.BENCHMARK_DATA = {
             "name": "bigint[4096][4096]",
             "value": 7731.4958793000005,
             "range": "±7.99%",
+            "unit": "ms",
+            "extra": "10 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4bb9f99dd752f51bc71b7356627e07cda19a7d45",
+          "message": "Merge pull request #141 from havelessbemore/bench/release-tag-labels\n\nci(bench): label release datapoints by tag",
+          "timestamp": "2026-05-29T01:07:39-04:00",
+          "tree_id": "c460736b1ce4020c1d803f067bf1fa5b1bf9f3ac",
+          "url": "https://github.com/havelessbemore/munkres/commit/4bb9f99dd752f51bc71b7356627e07cda19a7d45"
+        },
+        "date": 1780031386970,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[2048][2048]",
+            "value": 173.03872230000005,
+            "range": "±4.93%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "number[4096][4096]",
+            "value": 1025.8893505,
+            "range": "±6.00%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1053.7638834000002,
+            "range": "±7.99%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 6277.556123699998,
+            "range": "±8.70%",
             "unit": "ms",
             "extra": "10 samples"
           }
