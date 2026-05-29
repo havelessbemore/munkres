@@ -1,46 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780065692798,
+  "lastUpdate": 1780075464483,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
-      {
-        "commit": {
-          "author": {
-            "email": "dev.michael.rojas@gmail.com",
-            "name": "havelessbemore",
-            "username": "havelessbemore"
-          },
-          "committer": {
-            "email": "dev.michael.rojas@gmail.com",
-            "name": "havelessbemore",
-            "username": "havelessbemore"
-          },
-          "distinct": true,
-          "id": "5bf745ca9a87449cc865fab16183b8d9c4ca1ff5",
-          "message": "Update README.md",
-          "timestamp": "2024-04-19T11:03:55-04:00",
-          "tree_id": "bb5a34a9795a95c6edadf4d1317f0c263fd02b45",
-          "url": "https://github.com/havelessbemore/munkres/commit/5bf745ca9a87449cc865fab16183b8d9c4ca1ff5"
-        },
-        "date": 1713539317124,
-        "tool": "customSmallerIsBetter",
-        "benches": [
-          {
-            "name": "number[4096][4096]",
-            "value": 2243.4312399800006,
-            "unit": "ms",
-            "range": "±2.72%",
-            "extra": "50 samples"
-          },
-          {
-            "name": "bigint[2048][2048]",
-            "value": 1486.737936980002,
-            "unit": "ms",
-            "range": "±3.83%",
-            "extra": "50 samples"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -3906,6 +3868,58 @@ window.BENCHMARK_DATA = {
             "name": "bigint[4096][4096]",
             "value": 7824.997563099998,
             "range": "±7.98%",
+            "unit": "ms",
+            "extra": "10 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ad372f1c29c5a4b344e2ee87268ec627937494a3",
+          "message": "Merge pull request #146 from havelessbemore/refactor/core-type-subdirs\n\nperf: split core into num/big/inf subdirs with monomorphic utils",
+          "timestamp": "2026-05-29T13:21:54-04:00",
+          "tree_id": "d6ae4927465acb8738b7b0802f05d834413062ae",
+          "url": "https://github.com/havelessbemore/munkres/commit/ad372f1c29c5a4b344e2ee87268ec627937494a3"
+        },
+        "date": 1780075463810,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[2048][2048]",
+            "value": 204.41642489999995,
+            "range": "±4.82%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "number[4096][4096]",
+            "value": 1106.3036263,
+            "range": "±5.80%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1185.105913000001,
+            "range": "±7.59%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 7305.951232499998,
+            "range": "±7.93%",
             "unit": "ms",
             "extra": "10 samples"
           }
