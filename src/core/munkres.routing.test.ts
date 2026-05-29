@@ -17,9 +17,9 @@
 
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import { exec as bigExec } from "./bigMunkres.ts";
-import { exec as numFiniteExec } from "./numFiniteMunkres.ts";
-import { exec as numExec } from "./numMunkres.ts";
+import { exec as bigExec } from "./big/munkres.ts";
+import { exec as numFiniteExec } from "./num/munkres.ts";
+import { exec as numExec } from "./inf/munkres.ts";
 import { exec } from "./munkres.ts";
 
 // Each factory is fully inlined: `vi.mock` calls are hoisted above all
@@ -27,7 +27,7 @@ import { exec } from "./munkres.ts";
 // any outer binding. Each core's `exec` becomes a spy returning an empty
 // matching (the dispatcher passes the result straight through, so the
 // exact shape is immaterial — only the call records matter here).
-vi.mock("./bigMunkres.ts", () => ({
+vi.mock("./big/munkres.ts", () => ({
   exec: vi.fn(() => ({
     dualX: [],
     dualY: [],
@@ -36,7 +36,7 @@ vi.mock("./bigMunkres.ts", () => ({
     starsY: [],
   })),
 }));
-vi.mock("./numFiniteMunkres.ts", () => ({
+vi.mock("./num/munkres.ts", () => ({
   exec: vi.fn(() => ({
     dualX: [],
     dualY: [],
@@ -45,7 +45,7 @@ vi.mock("./numFiniteMunkres.ts", () => ({
     starsY: [],
   })),
 }));
-vi.mock("./numMunkres.ts", () => ({
+vi.mock("./inf/munkres.ts", () => ({
   exec: vi.fn(() => ({
     dualX: [],
     dualY: [],

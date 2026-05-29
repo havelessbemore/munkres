@@ -1,9 +1,9 @@
-import type { MatrixLike } from "../types/matrixLike.ts";
-import type { MutableArrayLike } from "../types/mutableArrayLike.ts";
+import type { MatrixLike } from "../../types/matrixLike.ts";
+import type { MutableArrayLike } from "../../types/mutableArrayLike.ts";
 
-import { partitionByMin } from "../utils/mutableArrayLike.ts";
+import { partitionByMin } from "./utils.ts";
 
-import { step5B } from "./shared.ts";
+import { step5B } from "../shared.ts";
 
 /**
  * This step iteratively improves upon an initial matching until a complete
@@ -175,6 +175,7 @@ export function matchB<T extends number | bigint>(
   }
 
   // Initialize zeros
+  // @ts-expect-error ts(2769)
   let zeros = partitionByMin(slack, slackV, 0);
   let zero = slackV[slack[0]];
 
@@ -200,6 +201,7 @@ export function matchB<T extends number | bigint>(
 
     // Update zeros
     if (steps >= zeros) {
+      // @ts-expect-error ts(2769)
       zeros = partitionByMin(slack, slackV, zeros);
       zero = slackV[slack[steps]];
     }
