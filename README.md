@@ -17,7 +17,7 @@ Reach for it whenever you have a table of pairing costs (or profits) and need th
 - **Flexible:** `number` or `bigint` costs; square (_NxN_) or rectangular (_MxN_) matrices; any [`MatrixLike`](src/types/matrixLike.ts) input (arrays, typed arrays, custom indexables).
 - **Fast:** _O(M²N)_ time when _M ≤ N_ (_O(MN²)_ otherwise) and only _O(M + N)_ extra memory. [Benchmarks below](#benchmarks).
 - **Typed & dependency-free:** first-class TypeScript types, zero runtime dependencies, ships both ESM and CommonJS.
-- **Robust:** mark forbidden assignments with `Infinity`; built-in [helpers](#helpers) for building and transforming matrices.
+- **Robust:** force an assignment with `-Infinity` or avoid one with `Infinity`; built-in [helpers](#helpers) for building and transforming matrices.
 
 ## Install
 
@@ -72,14 +72,14 @@ const assignments = munkres(costMatrix);
 
 Runs the algorithm and returns a set of optimal `[y, x]` assignment pairs. If several optimal assignments exist, one is returned.
 
-- **`costMatrix`**: a `MatrixLike<number>` or `MatrixLike<bigint>` where `costMatrix[y][x]` is the cost of assigning worker `y` to job `x`. Use `Infinity` / `-Infinity` to forbid an assignment.
-- **`options.finite`** _(boolean, default `false`)_: promise the matrix is all-finite and in-range, skipping input validation for a small speedup on large matrices. If the promise is broken, the result is undefined (it won't throw). See [`MunkresOptions`](src/types/munkresOptions.ts).
+- **`costMatrix`**: a `MatrixLike<number>` or `MatrixLike<bigint>` where `costMatrix[y][x]` is the cost of assigning worker `y` to job `x`. Costs are minimized, so use `-Infinity` to force an assignment (chosen whenever possible) and `Infinity` to avoid one (used only as a last resort, when no finite alternative exists).
+- **`options.finite`** _(boolean, default `false`)_: promise the matrix is all-finite and in-range, skipping input validation for a small speedup on large matrices. If the promise is broken, the result is undefined (it won't throw). See [`MunkresOptions`](src/munkres.options.ts).
 
 **Returns** `Pair<number>[]`, an array of `[y, x]` pairs, length `min(rows, cols)`.
 
 **Throws**
 
-- `TypeError`: a `number` matrix contains `NaN`. (Use `Infinity` to forbid an assignment instead.)
+- `TypeError`: a `number` matrix contains `NaN`. (Use `Infinity` to avoid an assignment instead.)
 - `RangeError`: a `number` matrix's value range (`max - min`) exceeds `Number.MAX_VALUE / 2` and could overflow. Scale the matrix down, or use `bigint`.
 
 > **Precision:** the `number` path uses 64-bit floats. For integer costs that need an exact optimum (especially near or beyond `Number.MAX_SAFE_INTEGER`), use a `bigint` matrix for arbitrary precision.
