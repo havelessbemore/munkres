@@ -16,6 +16,116 @@ window.BENCHMARK_DATA = {
             "username": "havelessbemore"
           },
           "distinct": true,
+          "id": "06d9d9dd914063ae2c5398ccf7c4d6ed99c818bc",
+          "message": "Update README.md",
+          "timestamp": "2024-04-15T16:50:08-04:00",
+          "tree_id": "6fbffef47311e7cd5514d78aee5438f64182cd04",
+          "url": "https://github.com/havelessbemore/munkres/commit/06d9d9dd914063ae2c5398ccf7c4d6ed99c818bc"
+        },
+        "date": 1713214380553,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2269.2549197999997,
+            "unit": "ms",
+            "range": "±5.85%",
+            "extra": "10 samples"
+          }
+        ],
+        "tag": "v1.2.4"
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
+          "id": "619992934e7fc520e51dbe517124c5802fad7b5e",
+          "message": "Update README.md",
+          "timestamp": "2024-04-17T15:25:45-04:00",
+          "tree_id": "e987c7ecdf08453b94bc95624395a8618cc94ecd",
+          "url": "https://github.com/havelessbemore/munkres/commit/619992934e7fc520e51dbe517124c5802fad7b5e"
+        },
+        "date": 1713382224247,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2214.2220652600004,
+            "unit": "ms",
+            "range": "±2.75%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1477.1855837600008,
+            "unit": "ms",
+            "range": "±3.79%",
+            "extra": "50 samples"
+          }
+        ],
+        "tag": "v2.0.0"
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c65f669d3e8219188b370c7672d07bb839c0873b",
+          "message": "Update CHANGELOG.md",
+          "timestamp": "2024-04-20T12:36:05-04:00",
+          "tree_id": "86fe341e5be426a8845f310f31c8d6afd19a2c02",
+          "url": "https://github.com/havelessbemore/munkres/commit/c65f669d3e8219188b370c7672d07bb839c0873b"
+        },
+        "date": 1713631224671,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[4096][4096]",
+            "value": 2020.9280254399994,
+            "unit": "ms",
+            "range": "±3.00%",
+            "extra": "50 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1402.19099232,
+            "unit": "ms",
+            "range": "±3.07%",
+            "extra": "50 samples"
+          }
+        ],
+        "tag": "v2.0.1"
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "havelessbemore",
+            "username": "havelessbemore"
+          },
+          "distinct": true,
           "id": "a430b96a0b15b85d94b490fabceb3bd19ad9be02",
           "message": "Update CHANGELOG",
           "timestamp": "2024-04-30T12:28:46-04:00",
@@ -198,4 +308,4 @@ window.BENCHMARK_DATA = {
       }
     ]
   }
-};
+}
