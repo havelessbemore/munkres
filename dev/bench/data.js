@@ -1,46 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780059544259,
+  "lastUpdate": 1780060749263,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
-      {
-        "commit": {
-          "author": {
-            "email": "dev.michael.rojas@gmail.com",
-            "name": "havelessbemore",
-            "username": "havelessbemore"
-          },
-          "committer": {
-            "email": "dev.michael.rojas@gmail.com",
-            "name": "havelessbemore",
-            "username": "havelessbemore"
-          },
-          "distinct": true,
-          "id": "f9faa9670ab528298f7706bd3693616dafef75a6",
-          "message": "Refactor core",
-          "timestamp": "2024-04-19T09:39:47-04:00",
-          "tree_id": "6c4933a16b90ab984e771e97e2e4a870d0e0ebe7",
-          "url": "https://github.com/havelessbemore/munkres/commit/f9faa9670ab528298f7706bd3693616dafef75a6"
-        },
-        "date": 1713534423183,
-        "tool": "customSmallerIsBetter",
-        "benches": [
-          {
-            "name": "number[4096][4096]",
-            "value": 2200.988514820001,
-            "unit": "ms",
-            "range": "±3.06%",
-            "extra": "50 samples"
-          },
-          {
-            "name": "bigint[2048][2048]",
-            "value": 1437.023643700002,
-            "unit": "ms",
-            "range": "±3.20%",
-            "extra": "50 samples"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -3864,6 +3826,58 @@ window.BENCHMARK_DATA = {
             "name": "bigint[4096][4096]",
             "value": 7717.531109199998,
             "range": "±8.70%",
+            "unit": "ms",
+            "extra": "10 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ee1718a276b9396cf5c2df0b01553ec273bd3a7d",
+          "message": "Merge pull request #143 from havelessbemore/docs/readme-consumer-focus\n\ndocs: consumer-focused README + refreshed benchmark ballpark",
+          "timestamp": "2026-05-29T09:16:26-04:00",
+          "tree_id": "0dca2e048dd749b959e94e12a02dfd1e1aca3107",
+          "url": "https://github.com/havelessbemore/munkres/commit/ee1718a276b9396cf5c2df0b01553ec273bd3a7d"
+        },
+        "date": 1780060748197,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[2048][2048]",
+            "value": 206.72029709999998,
+            "range": "±6.49%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "number[4096][4096]",
+            "value": 1113.0922126,
+            "range": "±5.98%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1358.4349211999986,
+            "range": "±7.49%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 7975.791253900001,
+            "range": "±8.12%",
             "unit": "ms",
             "extra": "10 samples"
           }
