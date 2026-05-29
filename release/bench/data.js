@@ -356,7 +356,8 @@ window.BENCHMARK_DATA = {
             "unit": "ms",
             "extra": "10 samples"
           }
-        ]
+        ],
+        "tag": "v2.1.1"
       }
     ]
   }
