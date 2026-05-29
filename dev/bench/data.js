@@ -1,46 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779860897410,
+  "lastUpdate": 1780030094269,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
-      {
-        "commit": {
-          "author": {
-            "email": "dev.michael.rojas@gmail.com",
-            "name": "havelessbemore",
-            "username": "havelessbemore"
-          },
-          "committer": {
-            "email": "dev.michael.rojas@gmail.com",
-            "name": "havelessbemore",
-            "username": "havelessbemore"
-          },
-          "distinct": true,
-          "id": "6ce681ff92bb56b9d643efd89db807f841131b39",
-          "message": "Update CHANGELOG.md",
-          "timestamp": "2024-04-17T15:20:05-04:00",
-          "tree_id": "ac3dc3ed26c8b245319eb1dab47933acb5edca20",
-          "url": "https://github.com/havelessbemore/munkres/commit/6ce681ff92bb56b9d643efd89db807f841131b39"
-        },
-        "date": 1713381878487,
-        "tool": "customSmallerIsBetter",
-        "benches": [
-          {
-            "name": "number[4096][4096]",
-            "value": 2113.7864858000003,
-            "unit": "ms",
-            "range": "±2.54%",
-            "extra": "50 samples"
-          },
-          {
-            "name": "bigint[2048][2048]",
-            "value": 1414.6845260999992,
-            "unit": "ms",
-            "range": "±3.09%",
-            "extra": "50 samples"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -3808,6 +3770,58 @@ window.BENCHMARK_DATA = {
             "name": "bigint[4096][4096]",
             "value": 7684.187498399999,
             "range": "±8.54%",
+            "unit": "ms",
+            "extra": "10 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1e01ead82132dfff750c78abe8b82129a5a333a3",
+          "message": "Merge pull request #134 from havelessbemore/v2.1.1-prep\n\ndocs+test: clarify Infinity/range-check contract, pin routing, tune dependabot",
+          "timestamp": "2026-05-29T00:45:42-04:00",
+          "tree_id": "08cb80df80d97e127a61d49e4659369bb277b96c",
+          "url": "https://github.com/havelessbemore/munkres/commit/1e01ead82132dfff750c78abe8b82129a5a333a3"
+        },
+        "date": 1780030093489,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[2048][2048]",
+            "value": 236.35041290000012,
+            "range": "±5.23%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "number[4096][4096]",
+            "value": 1281.4577722000001,
+            "range": "±5.54%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1310.0993065000002,
+            "range": "±7.21%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 7371.700761400003,
+            "range": "±8.41%",
             "unit": "ms",
             "extra": "10 samples"
           }
