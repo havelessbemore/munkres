@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779859558388,
+  "lastUpdate": 1780093691132,
   "repoUrl": "https://github.com/havelessbemore/munkres",
   "entries": {
     "Munkres Benchmarks": [
@@ -305,6 +305,58 @@ window.BENCHMARK_DATA = {
           }
         ],
         "tag": "v2.1.0"
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dev.michael.rojas@gmail.com",
+            "name": "Michael Rojas",
+            "username": "havelessbemore"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fa3cae3749814cf8f1c63889e3b6cefa0efe7e2f",
+          "message": "Merge pull request #147 from havelessbemore/release/v2.1.1-prep\n\nrelease: prep v2.1.1",
+          "timestamp": "2026-05-29T18:17:57-04:00",
+          "tree_id": "a41c777994c6edafed38daebfd3e6254c43882e4",
+          "url": "https://github.com/havelessbemore/munkres/commit/fa3cae3749814cf8f1c63889e3b6cefa0efe7e2f"
+        },
+        "date": 1780093690218,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "number[2048][2048]",
+            "value": 219.25057710000004,
+            "range": "±4.31%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "number[4096][4096]",
+            "value": 1160.6355229,
+            "range": "±5.53%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[2048][2048]",
+            "value": 1228.4780132,
+            "range": "±7.37%",
+            "unit": "ms",
+            "extra": "10 samples"
+          },
+          {
+            "name": "bigint[4096][4096]",
+            "value": 7527.645488599999,
+            "range": "±8.27%",
+            "unit": "ms",
+            "extra": "10 samples"
+          }
+        ]
       }
     ]
   }
