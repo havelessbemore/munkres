@@ -13,11 +13,30 @@ This project is governed by the [Code of Conduct](./CODE_OF_CONDUCT.md). By cont
 
 ## Developing
 
+This project uses [pnpm](https://pnpm.io/). Clone and install:
+
+```bash
+git clone git@github.com:havelessbemore/munkres.git
+cd munkres
+pnpm install
+```
+
+Common tasks:
+
 - `pnpm run test`: Run tests
-- `pnpm run test:coverage`: Create coverage reports
+- `pnpm run test:coverage`: Create a coverage report (output in `./coverage/index.html`)
 - `pnpm run lint`: Check styleguide adherence
-- `pnpm run format`: Automatically adjust your code to the styleguide.
-- `pnpm run build`: Build the source
+- `pnpm run format`: Automatically adjust your code to the styleguide
+- `pnpm run build`: Build the source, emitting ESM (`.mjs`) and CommonJS (`.cjs`) modules to `dist/`
+
+### Benchmarks
+
+```bash
+pnpm run bench      # full local suite (all matrix sizes)
+pnpm run bench:ci   # the subset run in CI, written to benchmark_results/
+```
+
+Benchmarks run automatically on every commit to `main` (per-commit dashboard) and on every release tag (release-over-release dashboard). Both are published under [havelessbemore.github.io/munkres](https://havelessbemore.github.io/munkres/dev/bench/). The harness forces a GC between iterations (`--expose-gc`) and uses a seeded PRNG so results are comparable run-to-run; treat the dashboards as relative regression signals rather than absolute algorithm speed.
 
 ### Reporting Issues
 
