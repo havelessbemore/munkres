@@ -1,5 +1,38 @@
 # Change Log
 
+## [2.1.1](https://github.com/havelessbemore/munkres/compare/v2.1.0...v2.1.1) (2026-05-29)
+
+### Changed
+
+- The `TypeError` thrown when a number cost matrix contains `NaN` now says `Use Infinity to avoid an assignment.` instead of `Use Infinity to mark forbidden assignments.` The error class and the `[y][x]` coordinates in the message are unchanged.
+
+### Fixed
+
+- README and JSDoc now correctly describe Infinity semantics: the cost matrix is minimized, so `-Infinity` _forces_ an assignment (chosen whenever it is part of a valid solution) and `Infinity` _avoids_ one (used only as a last resort, when no finite alternative exists). The prior wording lumped both as "forbidden," which was wrong for `-Infinity`.
+
+### Performance
+
+- Per-domain monomorphic `getMin` / `partitionByMin`. The previously shared generic helpers in `utils/arrayLike.ts` / `utils/mutableArrayLike.ts` went polymorphic at runtime in any process that solved both `number` and `bigint` matrices, costing ~1.7–1.85× on the number path at 256–1024 once bigint had touched them. New per-domain copies (`src/core/num/utils.ts` for `number`, `src/core/big/utils.ts` for `bigint`) keep every call site monomorphic and restore the isolated-number speed under mixed loads. No change on single-domain processes.
+
+### Internal
+
+- `src/core/` reorganized into three type-domain subdirectories: `num/` (finite number), `big/` (bigint), and `inf/` (number with `±Infinity`), each holding its own `munkres.ts` / `munkresB.ts`. The dispatcher (`core/munkres.ts`) and the shared `step5` / `step5B` (`core/shared.ts`) remain at the core root.
+- The bigint solver is now concretely typed for `bigint`, mirroring the concrete-number solver in `num/`. The legacy generic `T extends number | bigint` form (overloads, `@ts-expect-error`, `as T` casts left over from when `bigMunkres` was the dual-purpose solver) has been removed.
+- Extracted byte-identical `step5` / `step5B` augmenting-path helpers into `src/core/shared.ts`, removing five redundant copies.
+- Removed unused internal utilities from `src/utils/`: `pad`, `padHeight`, `padWidth`, `rot90`, `rotNeg90`, `toString` (`matrix.ts`) and `isNumber` (`is.ts`), along with their tests. All were internal (not part of the public `src/index.ts` surface).
+- Moved `src/munkres.options.ts` to `src/types/munkresOptions.ts`, alongside the other type modules. The public import path (`import { MunkresOptions } from "munkres"`) is unchanged.
+- Documented the co-located test layout convention in `CONTRIBUTING.md`.
+
+### Docs
+
+- Rewrote the README around consumer-facing concerns; moved dev/contributor sections to `CONTRIBUTING.md`.
+- Refreshed the benchmark ballpark table with current local numbers (normalized to ~2 significant figures).
+- Clarified the Infinity / range-check contract in `munkres()`'s JSDoc and the dispatcher comments.
+
+### CI
+
+- Release benchmark dashboard split off from per-commit history; release datapoints now labeled by tag.
+
 ## [2.1.0](https://github.com/havelessbemore/munkres/compare/v2.0.5...v2.1.0) (2026-05-27)
 
 ### Added
