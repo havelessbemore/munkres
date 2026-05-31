@@ -8,7 +8,6 @@ const FIXTURE = path.resolve("tests/fixtures/bench/data.js");
 const SCRIPT = path.resolve("scripts/bench/migrate-dates.mjs");
 
 function loadData(file: string): {
-  raw: string;
   data: {
     entries: Record<
       string,
@@ -18,7 +17,7 @@ function loadData(file: string): {
 } {
   const raw = readFileSync(file, "utf8");
   const json = raw.replace(/^[^=]*=\s*/, "").replace(/;\s*$/, "");
-  return { raw, data: JSON.parse(json) };
+  return { data: JSON.parse(json) };
 }
 
 describe("scripts/bench/migrate-dates.mjs", () => {
@@ -79,7 +78,7 @@ describe("scripts/bench/migrate-dates.mjs", () => {
       "--data-file",
       file,
     ]).toString();
-    expect(stdout).toMatch(/updated:\s*\d+/i);
-    expect(stdout).toMatch(/unchanged:\s*\d+/i);
+    expect(stdout).toMatch(/updated:\s*2\b/);
+    expect(stdout).toMatch(/unchanged:\s*1\b/);
   });
 });
