@@ -9,6 +9,12 @@ on:
     branches: [main]
     tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      ref:
+        description: "Optional historical ref (tag, full SHA, or short SHA) to backfill. Empty = run HEAD."
+        type: string
+        required: false
+        default: ""
 permissions:
   contents: write
   deployments: write
@@ -26,6 +32,35 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Full history + tags so historical refs (tag/SHA/short SHA) can
+          # be resolved by the next step on backfill runs. The cost on
+          # normal pushes is a few seconds of clone time against minutes
+          # of bench work, so unconditional.
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Resolve historical ref
+        if: inputs.ref != ''
+        env:
+          REF: ${{ inputs.ref }}
+        run: |
+          set -euo pipefail
+          # Ensure the ref is fetched (covers both short-SHA and branch-pointed
+          # commits that the shallow-by-default checkout may have missed).
+          git fetch --force --tags origin
+          git fetch origin "$REF" || true
+          SHA=$(git rev-parse --verify "$REF^{commit}")
+          COMMITTED_AT=$(git show -s --format=%cI "$SHA")
+          TAG=$(git describe --exact-match --tags "$SHA" 2>/dev/null || true)
+          if [ -n "$TAG" ]; then IS_TAG=true; else IS_TAG=false; fi
+          {
+            echo "BACKFILL_SHA=$SHA"
+            echo "BACKFILL_COMMITTED_AT=$COMMITTED_AT"
+            echo "BACKFILL_TAG=$TAG"
+            echo "BACKFILL_IS_TAG=$IS_TAG"
+            echo "BACKFILL_ACTIVE=true"
+          } >> "$GITHUB_ENV"
+          echo "Resolved ref '$REF' to $SHA (committed $COMMITTED_AT)${TAG:+ as tag $TAG}"
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
       - name: Setup Node
