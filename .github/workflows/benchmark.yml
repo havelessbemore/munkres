@@ -9,6 +9,12 @@ on:
     branches: [main]
     tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      ref:
+        description: "Optional historical ref (tag, full SHA, or short SHA) to backfill. Empty = run HEAD."
+        type: string
+        required: false
+        default: ""
 permissions:
   contents: write
   deployments: write
@@ -26,6 +32,35 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          # Full history + tags so historical refs (tag/SHA/short SHA) can
+          # be resolved by the next step on backfill runs. The cost on
+          # normal pushes is a few seconds of clone time against minutes
+          # of bench work, so unconditional.
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Resolve historical ref
+        if: inputs.ref != ''
+        env:
+          REF: ${{ inputs.ref }}
+        run: |
+          set -euo pipefail
+          # Ensure the ref is fetched (covers both short-SHA and branch-pointed
+          # commits that the shallow-by-default checkout may have missed).
+          git fetch --force --tags origin
+          git fetch origin "$REF" || true
+          SHA=$(git rev-parse --verify "$REF^{commit}")
+          COMMITTED_AT=$(git show -s --format=%cI "$SHA")
+          TAG=$(git describe --exact-match --tags "$SHA" 2>/dev/null || true)
+          if [ -n "$TAG" ]; then IS_TAG=true; else IS_TAG=false; fi
+          {
+            echo "BACKFILL_SHA=$SHA"
+            echo "BACKFILL_COMMITTED_AT=$COMMITTED_AT"
+            echo "BACKFILL_TAG=$TAG"
+            echo "BACKFILL_IS_TAG=$IS_TAG"
+            echo "BACKFILL_ACTIVE=true"
+          } >> "$GITHUB_ENV"
+          echo "Resolved ref '$REF' to $SHA (committed $COMMITTED_AT)${TAG:+ as tag $TAG}"
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
       - name: Setup Node
@@ -39,8 +74,36 @@ jobs:
           cache: "pnpm"
       - name: Clean install
         run: pnpm install --frozen-lockfile
+      - name: Overlay historical src/
+        if: env.BACKFILL_ACTIVE == 'true'
+        run: |
+          set -euo pipefail
+          # Drop HEAD's src/ from the index so files removed/moved in the old
+          # ref do not linger. This matters because src/core/ was reshuffled
+          # by the core-type-subdirs refactor: a plain `git checkout <sha> --
+          # src/` over the current tree would leave HEAD-only paths in place.
+          git rm -rf --cached src/
+          git checkout "$BACKFILL_SHA" -- src/
+          echo "Overlaid src/ from $BACKFILL_SHA onto HEAD."
       - name: Run benchmarks
         run: pnpm run bench:ci
+      - name: Compute target dashboard
+        run: |
+          set -euo pipefail
+          if [ "${BACKFILL_ACTIVE:-false}" = "true" ]; then
+            IS_RELEASE="$BACKFILL_IS_TAG"
+          elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            IS_RELEASE=true
+          else
+            IS_RELEASE=false
+          fi
+          if [ "$IS_RELEASE" = "true" ]; then
+            DASH=release/bench
+          else
+            DASH=dev/bench
+          fi
+          echo "BENCH_DASHBOARD=$DASH" >> "$GITHUB_ENV"
+          echo "Writing to $DASH"
       - name: Store results
         # Pinned to the v1.22.1 commit SHA. Floating `@v1` would let
         # behavior change underneath us between runs; the SHA is bumped
@@ -52,73 +115,70 @@ jobs:
           output-file-path: benchmark_results/ci.txt
           github-token: ${{ secrets.BENCHMARK_TOKEN }}
           auto-push: true
-          # Tag pushes write to a separate release-only dashboard; every
-          # other push (main, manual) writes to the per-commit dashboard.
-          # The two are independent data.js files under gh-pages, so they
-          # render as separate pages:
-          #   /dev/bench     — per-commit, regression detection
-          #   /release/bench — release-over-release trend
-          benchmark-data-dir-path: ${{ startsWith(github.ref, 'refs/tags/') && 'release/bench' || 'dev/bench' }}
-          # Cap chart history; older datapoints are still in `data.js` but
-          # the rendered chart shows only the most recent 100 entries.
-          # (Releases are rare, so this never evicts a release point.)
+          # Routed by the prior `Compute target dashboard` step. Tag pushes
+          # and tag-resolved backfills write to release/bench; everything
+          # else writes to dev/bench. The two are independent data.js files
+          # under gh-pages, rendered as separate pages:
+          #   /dev/bench     : per-commit, regression detection
+          #   /release/bench : release-over-release trend
+          benchmark-data-dir-path: ${{ env.BENCH_DASHBOARD }}
+          # Cap chart history; older datapoints stay in `data.js` but the
+          # rendered chart shows only the most recent 100 entries.
           max-items-in-chart: 100
-          # Alert on a >150% slowdown vs the previous datapoint. On the
-          # per-commit dashboard that compares against the prior commit;
-          # on the release dashboard, against the prior release.
+          # Alert on a >150% slowdown vs the previous datapoint. Disabled on
+          # backfills because a backfilled point is reference data, not a
+          # gate, and an older slower commit dropped between newer points
+          # would otherwise fire a false regression.
           alert-threshold: "150%"
-          comment-on-alert: true
-          fail-on-alert: true
+          comment-on-alert: ${{ env.BACKFILL_ACTIVE != 'true' }}
+          fail-on-alert: ${{ env.BACKFILL_ACTIVE != 'true' }}
 
-      # The benchmark action records each datapoint by commit SHA + message,
-      # with no knowledge of the tag. On a tag push, stamp the just-appended
-      # release/bench entry with its tag (e.g. "v2.1.0") so the dashboard
-      # labels points by release rather than SHA. The release/bench
-      # index.html renders `tag || sha`, so this is purely additive — an
-      # unstamped point still shows its SHA.
-      - name: Label release datapoint by tag
-        if: startsWith(github.ref, 'refs/tags/')
+      # The benchmark action records each datapoint by the SHA that
+      # triggered the workflow, with no knowledge of the resolved tag or
+      # any backfilled historical ref. This step rewrites the just-
+      # appended entry:
+      #   - Backfill runs: replace commit metadata with the resolved ref's
+      #     metadata (fetched from the GitHub commits API), set date to the
+      #     commit timestamp, set tag if applicable, dedupe.
+      #   - Tag pushes (no backfill): set the tag field on the entry.
+      # Both cases re-sort entries ascending by date.
+      - name: Post-process appended entry
+        if: env.BACKFILL_ACTIVE == 'true' || startsWith(github.ref, 'refs/tags/')
         env:
-          RELEASE_TAG: ${{ github.ref_name }}
-          RELEASE_SHA: ${{ github.sha }}
           GH_TOKEN: ${{ secrets.BENCHMARK_TOKEN }}
         run: |
           set -euo pipefail
           work="$(mktemp -d)"
           git clone --branch gh-pages --depth 1 \
             "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$work"
-          cd "$work"
-          node - <<'NODE'
-          const fs = require("fs");
-          const file = "release/bench/data.js";
-          const raw = fs.readFileSync(file, "utf8");
-          // Strip the `window.BENCHMARK_DATA = ` assignment wrapper (and any
-          // trailing `;`) to recover the JSON the action wrote.
-          const data = JSON.parse(raw.replace(/^[^=]*=\s*/, "").replace(/;\s*$/, ""));
-          const tag = process.env.RELEASE_TAG;
-          const sha = process.env.RELEASE_SHA;
-          let changed = 0;
-          for (const list of Object.values(data.entries)) {
-            for (const e of list) {
-              if (e.commit.id === sha && e.tag !== tag) {
-                e.tag = tag;
-                ++changed;
-              }
-            }
-          }
-          if (changed > 0) {
-            // Re-emit in the action's exact format (pretty JSON, no trailing
-            // semicolon/newline) so the diff is just the added `tag` field.
-            fs.writeFileSync(file, "window.BENCHMARK_DATA = " + JSON.stringify(data, null, 2));
-          }
-          console.log(`tagged ${changed} entry/entries as ${tag}`);
-          NODE
-          if git diff --quiet; then
-            echo "No change (entry already tagged, or not yet present)."
+          data_file="$work/$BENCH_DASHBOARD/data.js"
+
+          if [ "${BACKFILL_ACTIVE:-false}" = "true" ]; then
+            commit_json="$(mktemp)"
+            gh api "repos/${GITHUB_REPOSITORY}/commits/${BACKFILL_SHA}" > "$commit_json"
+            node scripts/bench/process-entry.mjs \
+              --data-file "$data_file" \
+              --match-sha "$GITHUB_SHA" \
+              --backfill \
+              --commit-json "$commit_json" \
+              --tag "${BACKFILL_TAG:-}"
+            commit_msg="Backfill ${BACKFILL_SHA} (${BACKFILL_TAG:-${BACKFILL_SHA:0:7}}) into $BENCH_DASHBOARD"
           else
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add release/bench/data.js
-            git commit -m "Label release datapoint ${RELEASE_SHA} as ${RELEASE_TAG}"
-            git push origin gh-pages
+            node scripts/bench/process-entry.mjs \
+              --data-file "$data_file" \
+              --match-sha "$GITHUB_SHA" \
+              --tag-only \
+              --tag "$GITHUB_REF_NAME"
+            commit_msg="Label release datapoint ${GITHUB_SHA} as ${GITHUB_REF_NAME}"
           fi
+
+          cd "$work"
+          if git diff --quiet; then
+            echo "No change (entry already as desired, or not yet present)."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$BENCH_DASHBOARD/data.js"
+          git commit -m "$commit_msg"
+          git push origin gh-pages
