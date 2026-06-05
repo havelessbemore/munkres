@@ -22,7 +22,7 @@ window.BENCHMARK_DATA = {
           "tree_id": "6fbffef47311e7cd5514d78aee5438f64182cd04",
           "url": "https://github.com/havelessbemore/munkres/commit/06d9d9dd914063ae2c5398ccf7c4d6ed99c818bc"
         },
-        "date": 1713214380553,
+        "date": 1713214208000,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
@@ -54,7 +54,7 @@ window.BENCHMARK_DATA = {
           "tree_id": "e987c7ecdf08453b94bc95624395a8618cc94ecd",
           "url": "https://github.com/havelessbemore/munkres/commit/619992934e7fc520e51dbe517124c5802fad7b5e"
         },
-        "date": 1713382224247,
+        "date": 1713381945000,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
@@ -93,7 +93,7 @@ window.BENCHMARK_DATA = {
           "tree_id": "86fe341e5be426a8845f310f31c8d6afd19a2c02",
           "url": "https://github.com/havelessbemore/munkres/commit/c65f669d3e8219188b370c7672d07bb839c0873b"
         },
-        "date": 1713631224671,
+        "date": 1713630965000,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
@@ -132,7 +132,7 @@ window.BENCHMARK_DATA = {
           "tree_id": "30f1de1553dd462771c56db530f5344c0cafe542",
           "url": "https://github.com/havelessbemore/munkres/commit/a430b96a0b15b85d94b490fabceb3bd19ad9be02"
         },
-        "date": 1714494808971,
+        "date": 1714494526000,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
@@ -171,7 +171,7 @@ window.BENCHMARK_DATA = {
           "tree_id": "2fb66f7df76538896b752281287a66f2060d42db",
           "url": "https://github.com/havelessbemore/munkres/commit/10ec39023e736550b214e064dea15504b39aef5b"
         },
-        "date": 1716678997268,
+        "date": 1716678737000,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
@@ -210,7 +210,7 @@ window.BENCHMARK_DATA = {
           "tree_id": "933e787bd6be077b39e627f1ceb712186f4d715a",
           "url": "https://github.com/havelessbemore/munkres/commit/eaac3b10fdd65c2bf12e1e9f5a3567204e5581c3"
         },
-        "date": 1719095530095,
+        "date": 1719095272000,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
@@ -247,7 +247,7 @@ window.BENCHMARK_DATA = {
           "timestamp": "2026-05-26T05:20:39Z",
           "url": "https://github.com/havelessbemore/munkres/commit/a5125617bbab3c0b8922b4083349c03c2e836eb9"
         },
-        "date": 1779801835497,
+        "date": 1779772839000,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
@@ -286,7 +286,7 @@ window.BENCHMARK_DATA = {
           "tree_id": "2b4a7be35617c42595c56057cc844b195e67acfa",
           "url": "https://github.com/havelessbemore/munkres/commit/6208dd50d003923527076500c6a0e8d1959ec197"
         },
-        "date": 1779859558388,
+        "date": 1779859391000,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
@@ -325,7 +325,7 @@ window.BENCHMARK_DATA = {
           "tree_id": "a41c777994c6edafed38daebfd3e6254c43882e4",
           "url": "https://github.com/havelessbemore/munkres/commit/fa3cae3749814cf8f1c63889e3b6cefa0efe7e2f"
         },
-        "date": 1780093690218,
+        "date": 1780093077000,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
