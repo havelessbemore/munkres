@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # Full history + tags so historical refs (tag/SHA/short SHA) can
           # be resolved by the next step on backfill runs. The cost on
